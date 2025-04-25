@@ -1,3 +1,11 @@
+[project]
+name = "willgeben"
+version = "0.1.0"
+description = "Treibhaus donaufeld sharing platform"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+
 # ==== pytest ====
 [tool.pytest.ini_options]
 minversion = "6.0"
