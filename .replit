@@ -1,0 +1,31 @@
+modules = ["python-3.12", "web", "bash", "nodejs-20"]
+run = "npm run dev"
+
+[nix]
+channel = "stable-24_05"
+
+[deployment]
+run = ["sh", "-c", "npm run dev"]
+
+[[ports]]
+localPort = 3000
+externalPort = 80
+[nix]
+channel = "stable-22_11"
+
+[env]
+PORT = "8000"
+
+# Run Django in one shell
+[interpreter]
+command = ["bash", "-c", "python manage.py runserver 0.0.0.0:8000"]
+
+# This will be the main run button for both services
+[start]
+startCommand = "npm run dev"
+workDir = "."
+
+# Enable Replit's multiplexed shell
+[[hints]]
+regex = "Port [0-9]+ is in use by another program"
+message = "The port is already in use by another process. Try using a different port."
