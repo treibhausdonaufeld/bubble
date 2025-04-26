@@ -4,6 +4,20 @@ from .base import INSTALLED_APPS
 from .base import MIDDLEWARE
 from .base import WEBPACK_LOADER
 from .base import env
+import os
+
+# Make sure DEBUG is True
+DEBUG = True
+
+# Set specific Replit domain
+REPLIT_DOMAIN = "b3a06dff-d072-437b-bf27-5ae70632bc24-00-25yras0fyq8kl.kirk.replit.dev"
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
 
 # GENERAL
 # ------------------------------------------------------------------------------
@@ -15,7 +29,17 @@ SECRET_KEY = env(
     default="upQpahCzYPvj4nnOa6ysSU6zqtWGDhX2TdBEaYu35a0VGy6LKJfGvVMUX6vd3M6K",
 )
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1"]  # noqa: S104
+ALLOWED_HOSTS = [
+    "localhost", "0.0.0.0", "127.0.0.1",
+    "b3a06dff-d072-437b-bf27-5ae70632bc24-00-25yras0fyq8kl.kirk.replit.dev",
+    ".replit.dev", ".replit.app", "*"
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://b3a06dff-d072-437b-bf27-5ae70632bc24-00-25yras0fyq8kl.kirk.replit.dev',
+    'https://*.replit.dev',
+    'https://*.replit.app',
+]
 
 # CACHES
 # ------------------------------------------------------------------------------
@@ -34,11 +58,12 @@ EMAIL_HOST = env("EMAIL_HOST", default="mailpit")
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-port
 EMAIL_PORT = 1025
 
+ADMIN_URL = "admin/"
+
 # WhiteNoise
 # ------------------------------------------------------------------------------
 # http://whitenoise.evans.io/en/latest/django.html#using-whitenoise-in-development
 INSTALLED_APPS = ["whitenoise.runserver_nostatic", *INSTALLED_APPS]
-
 
 # django-debug-toolbar
 # ------------------------------------------------------------------------------
@@ -54,21 +79,21 @@ DEBUG_TOOLBAR_CONFIG = {
         # https://github.com/jazzband/django-debug-toolbar/issues/1875
         "debug_toolbar.panels.profiling.ProfilingPanel",
     ],
-    "SHOW_TEMPLATE_CONTEXT": True,
+    "SHOW_TEMPLATE_CONTEXT":
+    True,
 }
 # https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#internal-ips
 INTERNAL_IPS = ["127.0.0.1", "10.0.2.2"]
-if env("USE_DOCKER") == "yes":
-    import socket
-
-    hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
-    INTERNAL_IPS += [".".join(ip.split(".")[:-1] + ["1"]) for ip in ips]
-    try:
-        _, _, ips = socket.gethostbyname_ex("node")
-        INTERNAL_IPS.extend(ips)
-    except socket.gaierror:
-        # The node container isn't started (yet?)
-        pass
+if env("USE_DOCKER", default="no") == "yes":
+  import socket
+  hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+  INTERNAL_IPS += [".".join(ip.split(".")[:-1] + ["1"]) for ip in ips]
+  try:
+    _, _, ips = socket.gethostbyname_ex("node")
+    INTERNAL_IPS.extend(ips)
+  except socket.gaierror:
+    # The node container isn't started (yet?)
+    pass
 
 # django-extensions
 # ------------------------------------------------------------------------------
