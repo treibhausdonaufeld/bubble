@@ -21,6 +21,7 @@ SECRET_KEY = env("DJANGO_SECRET_KEY")
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = env.list(
     "DJANGO_ALLOWED_HOSTS",
+    "b3a06dff-d072-437b-bf27-5ae70632bc24-00-25yras0fyq8kl.kirk.replit.dev",
     default=["share.treibhausdonaufeld.at"],
 )
 
@@ -115,11 +116,13 @@ INSTALLED_APPS += ["anymail"]
 # https://anymail.readthedocs.io/en/stable/esps/mailgun/
 EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
 ANYMAIL = {
-    "MAILGUN_API_KEY": env("MAILGUN_API_KEY"),
-    "MAILGUN_SENDER_DOMAIN": env("MAILGUN_DOMAIN"),
-    "MAILGUN_API_URL": env("MAILGUN_API_URL", default="https://api.mailgun.net/v3"),
+    "MAILGUN_API_KEY":
+    env("MAILGUN_API_KEY"),
+    "MAILGUN_SENDER_DOMAIN":
+    env("MAILGUN_DOMAIN"),
+    "MAILGUN_API_URL":
+    env("MAILGUN_API_URL", default="https://api.mailgun.net/v3"),
 }
-
 
 # LOGGING
 # ------------------------------------------------------------------------------
@@ -132,7 +135,8 @@ LOGGING = {
     "disable_existing_loggers": True,
     "formatters": {
         "verbose": {
-            "format": "%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s",
+            "format":
+            "%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s",
         },
     },
     "handlers": {
@@ -142,7 +146,10 @@ LOGGING = {
             "formatter": "verbose",
         },
     },
-    "root": {"level": "INFO", "handlers": ["console"]},
+    "root": {
+        "level": "INFO",
+        "handlers": ["console"]
+    },
     "loggers": {
         "django.db.backends": {
             "level": "ERROR",
@@ -150,7 +157,11 @@ LOGGING = {
             "propagate": False,
         },
         # Errors logged by the SDK itself
-        "sentry_sdk": {"level": "ERROR", "handlers": ["console"], "propagate": False},
+        "sentry_sdk": {
+            "level": "ERROR",
+            "handlers": ["console"],
+            "propagate": False
+        },
         "django.security.DisallowedHost": {
             "level": "ERROR",
             "handlers": ["console"],
@@ -185,7 +196,10 @@ sentry_sdk.init(
 # -------------------------------------------------------------------------------
 # Tools that generate code samples can use SERVERS to point to the correct domain
 SPECTACULAR_SETTINGS["SERVERS"] = [
-    {"url": "https://share.treibhausdonaufeld.at", "description": "Production server"},
+    {
+        "url": "https://share.treibhausdonaufeld.at",
+        "description": "Production server"
+    },
 ]
 # Your stuff...
 # ------------------------------------------------------------------------------
