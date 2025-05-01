@@ -88,6 +88,13 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "willgeben.users",
+    'willgeben.core.apps.CoreConfig',
+    'willgeben.categories.apps.CategoriesConfig',
+    'willgeben.listings.apps.ListingsConfig',
+    'willgeben.messaging.apps.MessagingConfig',
+    'willgeben.bookings.apps.BookingsConfig',
+    'willgeben.favorites.apps.FavoritesConfig',
+    'willgeben.payments.apps.PaymentsConfig',
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -106,7 +113,9 @@ AUTHENTICATION_BACKENDS = [
     "allauth.account.auth_backends.AuthenticationBackend",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-user-model
+# or "users.User"
 AUTH_USER_MODEL = "users.User"
+
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-redirect-url
 LOGIN_REDIRECT_URL = "users:redirect"
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-url
