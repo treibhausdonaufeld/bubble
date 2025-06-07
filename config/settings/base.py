@@ -76,7 +76,7 @@ THIRD_PARTY_APPS = [
     "crispy_bootstrap5",
     "allauth",
     "allauth.account",
-    "allauth.mfa",
+    # "allauth.mfa",
     "allauth.socialaccount",
     "django_celery_beat",
     "rest_framework",
@@ -257,6 +257,7 @@ ADMINS = [("""Fabian Helm""", "fabian@hoad.at")]
 # https://docs.djangoproject.com/en/dev/ref/settings/#managers
 MANAGERS = ADMINS
 # https://cookiecutter-django.readthedocs.io/en/latest/settings.html#other-environment-settings
+
 # Force the `admin` sign in process to go through the `django-allauth` workflow
 DJANGO_ADMIN_FORCE_ALLAUTH = env.bool("DJANGO_ADMIN_FORCE_ALLAUTH",
                                       default=False)
