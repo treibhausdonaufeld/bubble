@@ -1,0 +1,239 @@
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib import messages
+from django.urls import reverse_lazy, reverse
+from django.views.generic import (
+    ListView, DetailView, CreateView, UpdateView, DeleteView
+)
+from django.db.models import Q
+from django.core.paginator import Paginator
+from django.http import JsonResponse
+
+from .models import Item, ItemTagRelation
+from .forms import ItemForm, ItemFilterForm
+from willgeben.categories.models import ItemCategory, ItemTag
+
+
+class ItemListView(ListView):
+    model = Item
+    template_name = 'items/item_list.html'
+    context_object_name = 'items'
+    paginate_by = 12
+
+    def get_queryset(self):
+        queryset = Item.objects.filter(active=True).select_related('user', 'category').prefetch_related('tags__tag')
+        
+        # Apply URL-based item_type filter (from /sell/, /give_away/, /borrow/ URLs)
+        item_type_filter = self.kwargs.get('item_type_filter')
+        if item_type_filter is not None:
+            queryset = queryset.filter(item_type=item_type_filter)
+        
+        # Apply GET parameter filters
+        search = self.request.GET.get('search')
+        if search:
+            queryset = queryset.filter(
+                Q(name__icontains=search) | Q(description__icontains=search)
+            )
+
+        category = self.request.GET.get('category')
+        if category:
+            queryset = queryset.filter(category_id=category)
+
+        # GET parameter item_type (for manual filtering)
+        item_type = self.request.GET.get('item_type')
+        if item_type:
+            queryset = queryset.filter(item_type=item_type)
+
+        status = self.request.GET.get('status')
+        if status:
+            queryset = queryset.filter(status=status)
+
+        tags = self.request.GET.getlist('tags')
+        if tags:
+            queryset = queryset.filter(tags__tag__in=tags).distinct()
+
+        # Apply sorting
+        sort = self.request.GET.get('sort', 'newest')
+        if sort == 'oldest':
+            queryset = queryset.order_by('date_created')
+        elif sort == 'price_low':
+            queryset = queryset.order_by('price')
+        elif sort == 'price_high':
+            queryset = queryset.order_by('-price')
+        elif sort == 'name':
+            queryset = queryset.order_by('name')
+        else:  # newest (default)
+            queryset = queryset.order_by('-date_created')
+            
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter_form'] = ItemFilterForm(self.request.GET)
+        
+        # Organize categories hierarchically
+        root_categories = ItemCategory.objects.filter(parent_category=None)
+        context['root_categories'] = root_categories
+        context['all_categories'] = ItemCategory.objects.all()
+        context['tags'] = ItemTag.objects.all()
+        
+        # Add sort options
+        sort_options = [
+            ('newest', 'Newest First'),
+            ('oldest', 'Oldest First'),
+            ('price_low', 'Price: Low to High'),
+            ('price_high', 'Price: High to Low'),
+            ('name', 'Name A-Z'),
+        ]
+        context['sort_options'] = sort_options
+        context['current_sort'] = self.request.GET.get('sort', 'newest')
+        
+        # Add view mode
+        context['view_mode'] = self.request.GET.get('view', 'grid')
+        
+        # Add context for current filter type
+        item_type_filter = self.kwargs.get('item_type_filter')
+        if item_type_filter is not None:
+            item_type_names = {0: 'sell', 1: 'give_away', 2: 'borrow'}
+            context['current_filter'] = item_type_names.get(item_type_filter)
+            context['current_filter_display'] = dict(Item.ITEM_TYPE_CHOICES).get(item_type_filter)
+        
+        # Add active filters for display
+        active_filters = []
+        if self.request.GET.get('search'):
+            active_filters.append(('search', f"Search: {self.request.GET.get('search')}"))
+        if self.request.GET.get('category'):
+            try:
+                cat = ItemCategory.objects.get(id=self.request.GET.get('category'))
+                active_filters.append(('category', f"Category: {cat.get_hierarchy()}"))
+            except ItemCategory.DoesNotExist:
+                pass
+        if self.request.GET.get('item_type'):
+            type_dict = dict(Item.ITEM_TYPE_CHOICES)
+            active_filters.append(('item_type', f"Type: {type_dict.get(int(self.request.GET.get('item_type')))}"))
+        if self.request.GET.get('status'):
+            status_dict = dict(Item.STATUS_CHOICES)
+            active_filters.append(('status', f"Condition: {status_dict.get(int(self.request.GET.get('status')))}"))
+        tags = self.request.GET.getlist('tags')
+        if tags:
+            tag_names = ItemTag.objects.filter(id__in=tags).values_list('name', flat=True)
+            for tag_name in tag_names:
+                active_filters.append(('tags', f"Tag: {tag_name}"))
+        context['active_filters'] = active_filters
+        
+        return context
+
+
+class ItemDetailView(DetailView):
+    model = Item
+    template_name = 'items/item_detail.html'
+    context_object_name = 'item'
+
+    def get_queryset(self):
+        return Item.objects.filter(active=True).select_related('user', 'category').prefetch_related('tags__tag', 'images')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['item_tags'] = self.object.tags.all()
+        context['item_images'] = self.object.images.all().order_by('ordering')
+        context['is_owner'] = self.request.user == self.object.user if self.request.user.is_authenticated else False
+        return context
+
+
+class ItemCreateView(LoginRequiredMixin, CreateView):
+    model = Item
+    form_class = ItemForm
+    template_name = 'items/item_form.html'
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        messages.success(self.request, 'Item created successfully!')
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('items:detail', kwargs={'pk': self.object.pk})
+
+
+class ItemUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Item
+    form_class = ItemForm
+    template_name = 'items/item_form.html'
+
+    def test_func(self):
+        obj = self.get_object()
+        return obj.user == self.request.user
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Item updated successfully!')
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('items:detail', kwargs={'pk': self.object.pk})
+
+
+class ItemDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Item
+    template_name = 'items/item_confirm_delete.html'
+    success_url = reverse_lazy('items:my_items')
+
+    def test_func(self):
+        obj = self.get_object()
+        return obj.user == self.request.user
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, 'Item deleted successfully!')
+        return super().delete(request, *args, **kwargs)
+
+
+class MyItemsView(LoginRequiredMixin, ListView):
+    model = Item
+    template_name = 'items/my_items.html'
+    context_object_name = 'items'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return Item.objects.filter(user=self.request.user).select_related('category').prefetch_related('tags__tag').order_by('-date_created')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['active_items'] = self.get_queryset().filter(active=True).count()
+        context['inactive_items'] = self.get_queryset().filter(active=False).count()
+        return context
+
+
+@login_required
+def toggle_item_status(request, pk):
+    """Toggle item active status"""
+    item = get_object_or_404(Item, pk=pk, user=request.user)
+    item.active = not item.active
+    item.save()
+    
+    status = "activated" if item.active else "deactivated"
+    messages.success(request, f'Item "{item.name}" has been {status}.')
+    
+    return redirect('items:my_items')
+
+
+def get_subcategories(request):
+    """AJAX view to get subcategories for a parent category"""
+    parent_id = request.GET.get('parent_id')
+    if parent_id:
+        subcategories = ItemCategory.objects.filter(parent_category_id=parent_id)
+        data = [{'id': cat.id, 'name': cat.name} for cat in subcategories]
+    else:
+        # Return root categories
+        root_categories = ItemCategory.objects.filter(parent_category=None)
+        data = [{'id': cat.id, 'name': cat.name} for cat in root_categories]
+    
+    return JsonResponse({'subcategories': data})

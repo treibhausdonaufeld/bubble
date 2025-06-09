@@ -1,6 +1,6 @@
 from django.db import models
-from listings.models import Item
-from bookings.models import Booking
+from willgeben.items.models import Item
+from willgeben.bookings.models import Booking
 from config.settings.base import AUTH_USER_MODEL
 
 

@@ -13,8 +13,7 @@ from rest_framework.authtoken.views import obtain_auth_token
 urlpatterns = [
     path("", include("willgeben.core.urls", namespace="core")),
 
-    # path('listings/', include('willgeben.listings.urls',
-    #                           namespace='listings')),
+    path('items/', include('willgeben.items.urls', namespace='items')),
     # path('messages/', include('willgeben.messaging.urls',
     #                           namespace='messages')),
     # path('bookings/', include('willgeben.bookings.urls',
