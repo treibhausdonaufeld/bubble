@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "My Items" %}{% endblock %}
+{% block title %}Meine Artikel{% endblock %}
 
 {% block content %}
 <div class="container">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>{% trans "My Items" %}</h2>
+    <h2>Meine Artikel</h2>
     <a href="{% url 'items:create' %}" class="btn btn-success">
-      <i class="fas fa-plus"></i> {% trans "Add New Item" %}
+      <i class="fas fa-plus"></i> Neuen Artikel hinzufügen
     </a>
   </div>
   
@@ -18,7 +18,7 @@
       <div class="card text-center">
         <div class="card-body">
           <h5 class="card-title text-success">{{ active_items }}</h5>
-          <p class="card-text">{% trans "Active Items" %}</p>
+          <p class="card-text">Aktive Artikel</p>
         </div>
       </div>
     </div>
@@ -26,7 +26,7 @@
       <div class="card text-center">
         <div class="card-body">
           <h5 class="card-title text-warning">{{ inactive_items }}</h5>
-          <p class="card-text">{% trans "Inactive Items" %}</p>
+          <p class="card-text">Inaktive Artikel</p>
         </div>
       </div>
     </div>
@@ -34,7 +34,7 @@
       <div class="card text-center">
         <div class="card-body">
           <h5 class="card-title text-info">{{ page_obj.paginator.count }}</h5>
-          <p class="card-text">{% trans "Total Items" %}</p>
+          <p class="card-text">Artikel Gesamt</p>
         </div>
       </div>
     </div>
@@ -43,21 +43,21 @@
   {% if items %}
     <div class="card">
       <div class="card-header">
-        <h5 class="mb-0">{% trans "Your Items" %}</h5>
+        <h5 class="mb-0">Ihre Artikel</h5>
       </div>
       <div class="card-body p-0">
         <div class="table-responsive">
           <table class="table table-hover mb-0">
             <thead class="table-light">
               <tr>
-                <th>{% trans "Item" %}</th>
-                <th>{% trans "Category" %}</th>
-                <th>{% trans "Type" %}</th>
-                <th>{% trans "Price" %}</th>
-                <th>{% trans "Status" %}</th>
-                <th>{% trans "Active" %}</th>
-                <th>{% trans "Created" %}</th>
-                <th>{% trans "Actions" %}</th>
+                <th>Artikel</th>
+                <th>Kategorie</th>
+                <th>Typ</th>
+                <th>Preis</th>
+                <th>Zustand</th>
+                <th>Aktiv</th>
+                <th>Erstellt</th>
+                <th>Aktionen</th>
               </tr>
             </thead>
             <tbody>
@@ -81,11 +81,11 @@
                   <td>{{ item.category.name }}</td>
                   <td>
                     {% if item.item_type == 0 %}
-                      <span class="badge bg-success">{% trans "Sale" %}</span>
+                      <span class="badge bg-success">Verkauf</span>
                     {% elif item.item_type == 1 %}
-                      <span class="badge bg-primary">{% trans "Give Away" %}</span>
+                      <span class="badge bg-primary">Verschenken</span>
                     {% elif item.item_type == 2 %}
-                      <span class="badge bg-info">{% trans "Borrow" %}</span>
+                      <span class="badge bg-info">Ausleihen</span>
                     {% endif %}
                   </td>
                   <td>
@@ -97,35 +97,35 @@
                   </td>
                   <td>
                     {% if item.status == 0 %}
-                      <span class="badge bg-light text-dark">{% trans "New" %}</span>
+                      <span class="badge bg-light text-dark">Neu</span>
                     {% elif item.status == 1 %}
-                      <span class="badge bg-warning">{% trans "Used" %}</span>
+                      <span class="badge bg-warning">Gebraucht</span>
                     {% elif item.status == 2 %}
-                      <span class="badge bg-secondary">{% trans "Old" %}</span>
+                      <span class="badge bg-secondary">Alt</span>
                     {% endif %}
                   </td>
                   <td>
                     {% if item.active %}
-                      <span class="badge bg-success">{% trans "Active" %}</span>
+                      <span class="badge bg-success">Aktiv</span>
                     {% else %}
-                      <span class="badge bg-secondary">{% trans "Inactive" %}</span>
+                      <span class="badge bg-secondary">Inaktiv</span>
                     {% endif %}
                   </td>
                   <td>{{ item.date_created|date:"M d, Y" }}</td>
                   <td>
                     <div class="btn-group btn-group-sm" role="group">
-                      <a href="{% url 'items:detail' item.pk %}" class="btn btn-outline-primary" title="{% trans 'View' %}">
+                      <a href="{% url 'items:detail' item.pk %}" class="btn btn-outline-primary" title="Anzeigen">
                         <i class="fas fa-eye"></i>
                       </a>
-                      <a href="{% url 'items:edit' item.pk %}" class="btn btn-outline-secondary" title="{% trans 'Edit' %}">
+                      <a href="{% url 'items:edit' item.pk %}" class="btn btn-outline-secondary" title="Bearbeiten">
                         <i class="fas fa-edit"></i>
                       </a>
                       <a href="{% url 'items:toggle_status' item.pk %}" 
                          class="btn btn-outline-{% if item.active %}warning{% else %}success{% endif %}" 
-                         title="{% if item.active %}{% trans 'Deactivate' %}{% else %}{% trans 'Activate' %}{% endif %}">
+                         title="{% if item.active %}Deaktivieren{% else %}Aktivieren{% endif %}">
                         <i class="fas fa-{% if item.active %}pause{% else %}play{% endif %}"></i>
                       </a>
-                      <a href="{% url 'items:delete' item.pk %}" class="btn btn-outline-danger" title="{% trans 'Delete' %}">
+                      <a href="{% url 'items:delete' item.pk %}" class="btn btn-outline-danger" title="Löschen">
                         <i class="fas fa-trash"></i>
                       </a>
                     </div>
@@ -144,10 +144,10 @@
         <ul class="pagination justify-content-center">
           {% if page_obj.has_previous %}
             <li class="page-item">
-              <a class="page-link" href="?page=1">{% trans "First" %}</a>
+              <a class="page-link" href="?page=1">Erste</a>
             </li>
             <li class="page-item">
-              <a class="page-link" href="?page={{ page_obj.previous_page_number }}">{% trans "Previous" %}</a>
+              <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Vorherige</a>
             </li>
           {% endif %}
           
@@ -157,10 +157,10 @@
           
           {% if page_obj.has_next %}
             <li class="page-item">
-              <a class="page-link" href="?page={{ page_obj.next_page_number }}">{% trans "Next" %}</a>
+              <a class="page-link" href="?page={{ page_obj.next_page_number }}">Nächste</a>
             </li>
             <li class="page-item">
-              <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">{% trans "Last" %}</a>
+              <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Letzte</a>
             </li>
           {% endif %}
         </ul>
@@ -169,10 +169,10 @@
   {% else %}
     <div class="text-center py-5">
       <i class="fas fa-inbox fa-5x text-muted mb-3"></i>
-      <h3>{% trans "No items yet" %}</h3>
-      <p class="text-muted">{% trans "You haven't created any items yet. Start by adding your first item!" %}</p>
+      <h3>Noch keine Artikel</h3>
+      <p class="text-muted">Sie haben noch keine Artikel erstellt. Fügen Sie Ihren ersten Artikel hinzu!</p>
       <a href="{% url 'items:create' %}" class="btn btn-primary btn-lg">
-        <i class="fas fa-plus"></i> {% trans "Add Your First Item" %}
+        <i class="fas fa-plus"></i> Ihren ersten Artikel hinzufügen
       </a>
     </div>
   {% endif %}

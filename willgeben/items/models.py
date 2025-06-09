@@ -2,8 +2,8 @@ from django.db import models
 from config.settings.base import AUTH_USER_MODEL
 from willgeben.categories.models import ItemCategory, ItemTag
 
-STATUS_CHOICES = [(0, 'new'), (1, 'used'), (2, 'old')]
-ITEM_TYPE_CHOICES = [(0, 'sell'), (1, 'give away'), (2, 'borrow'), (3, 'need')]
+STATUS_CHOICES = [(0, 'Neu'), (1, 'Gebraucht'), (2, 'Alt')]
+ITEM_TYPE_CHOICES = [(0, 'Verkaufen'), (1, 'Weggeben'), (2, 'Ausleihen'), (3, 'Brauchen')]
 
 
 class Item(models.Model):

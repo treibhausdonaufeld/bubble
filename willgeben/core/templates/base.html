@@ -50,7 +50,7 @@
               <ul class="navbar-nav mr-auto d-flex flex-row">
                 <li class="nav-item">
                   <a class="nav-link{% if request.resolver_match.url_name == 'home' %} active{% endif %}" href="{% url 'core:home' %}">
-                    Home
+                    Startseite
                   </a>
                 </li>
                 <li class="nav-item dropdown">
@@ -59,26 +59,26 @@
                   </a>
                   <ul class="dropdown-menu" aria-labelledby="itemsDropdown">
                     <li><a class="dropdown-item{% if request.resolver_match.url_name == 'need' %} active{% endif %}" href="{% url 'items:need' %}">Brauchen</a></li>
-                    <li><a class="dropdown-item{% if request.resolver_match.url_name == 'borrow' %} active{% endif %}" href="{% url 'items:borrow' %}">Ausborgen</a></li>
+                    <li><a class="dropdown-item{% if request.resolver_match.url_name == 'borrow' %} active{% endif %}" href="{% url 'items:borrow' %}">Ausleihen</a></li>
                     <li><a class="dropdown-item{% if request.resolver_match.url_name == 'sell' %} active{% endif %}" href="{% url 'items:sell' %}">Verkaufen</a></li>
-                    <li><a class="dropdown-item{% if request.resolver_match.url_name == 'give_away' %} active{% endif %}" href="{% url 'items:give_away' %}">Ausleihen</a></li>
+                    <li><a class="dropdown-item{% if request.resolver_match.url_name == 'give_away' %} active{% endif %}" href="{% url 'items:give_away' %}">Weggeben</a></li>
                     <li><a class="dropdown-item{% if request.resolver_match.url_name == 'list' %} active{% endif %}" href="{% url 'items:list' %}">Alle</a></li>
                   </ul>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link{% if request.resolver_match.app_name == 'services' %} active{% endif %}" href="#">
-                    Services
+                    Dienste
                   </a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link{% if request.resolver_match.url_name == 'about' %} active{% endif %}" href="{% url 'core:about' %}">
-                    About
+                    Über uns
                   </a>
                 </li>
                 {% if request.user.is_authenticated %}
                   <li class="nav-item">
                     <a class="nav-link{% if request.resolver_match.app_name == 'users' %} active{% endif %}"
-                       href="{% url 'users:detail' request.user.username %}">{% translate "My Profile" %}</a>
+                       href="{% url 'users:detail' request.user.username %}">{% translate "Mein Profile" %}</a>
                   </li>
                 {% else %}
                   {% if ACCOUNT_ALLOW_REGISTRATION %}

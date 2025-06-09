@@ -8,6 +8,7 @@ from django.views.generic import RedirectView
 from django.views.generic import UpdateView
 
 from willgeben.users.models import User
+from willgeben.users.forms import UserProfileUpdateForm
 
 
 class UserDetailView(LoginRequiredMixin, DetailView):
@@ -21,8 +22,8 @@ user_detail_view = UserDetailView.as_view()
 
 class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = User
-    fields = ["name"]
-    success_message = _("Information successfully updated")
+    form_class = UserProfileUpdateForm
+    success_message = _("Profil erfolgreich aktualisiert")
 
     def get_success_url(self) -> str:
         assert self.request.user.is_authenticated  # type guard
