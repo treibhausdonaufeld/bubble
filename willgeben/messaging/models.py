@@ -1,6 +1,6 @@
 from django.db import models
 from config.settings.base import AUTH_USER_MODEL
-from listings.models import Item
+from willgeben.items.models import Item
 
 
 class Message(models.Model):

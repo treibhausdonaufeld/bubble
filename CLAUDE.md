@@ -72,7 +72,9 @@ celery -A config.celery_app beat
   - `api_router.py`: DRF API URL routing
   - `celery_app.py`: Celery configuration
 - **willgeben/**: Main application directory
-  - `users/`: User management app with custom User model
+  - `users/`: User management app with custom User model and Profile
+  - `items/`: Item management app with CRUD operations and filtering
+  - `categories/`: Category and tag management for items and services
   - `static/`: Frontend assets (CSS, JS, SASS)
   - `templates/`: Django templates with Bootstrap 5
   - `contrib/sites/`: Custom sites framework migrations
@@ -85,23 +87,163 @@ celery -A config.celery_app beat
 - **Tasks**: Celery with Redis broker and django-celery-beat
 - **Deployment**: Docker with production configs
 
-### Settings Configuration
-- Uses django-environ for environment variable management
-- Multi-environment setup: local, production, test
-- Custom User model in `users.User`
-- API available at `/api/` with Swagger docs for admin users
-- CORS enabled for API endpoints
+## Data Models
 
-### Frontend Assets
-- Webpack handles JS/CSS bundling with hot reload in development
-- Bootstrap 5 customization via SASS variables in `static/sass/`
-- Asset compilation outputs to `static/js/vendors.js` and processed CSS
+### Items App (`items.models`)
 
-### Development Notes
-- Local email testing via Mailpit at http://127.0.0.1:8025
-- API documentation available in debug mode
-- Custom webpack configuration for development vs production builds
-- Celery beat uses database scheduler for periodic tasks
+#### Item Model
+Core entity representing physical items users want to share.
 
-## Architectural Notes
-- **items** is the basic unit for any element in the project
+**Item Types:**
+- **Sell (0)**: Items for sale with optional price
+- **Give Away (1)**: Free items to give away  
+- **Borrow (2)**: Items available for borrowing
+
+**Key Fields:**
+- `item_type`: Integer field with choices above
+- `name`, `description`: Item details
+- `price`: Required for selling items, empty for others
+- `status`: Item condition (new/used/old)
+- `user`: Item owner (ForeignKey to User)
+- `category`: Single ItemCategory assignment
+- `intern`: Boolean (only visible to intern users)
+- `th_payment`: Boolean (accepts Treibhaus payment)
+- `display_contact`: Boolean (show owner contact info)
+- `active`: Boolean (item is publicly visible)
+
+#### ItemTagRelation Model
+Many-to-many relationship between Items and ItemTags.
+
+#### Image Model
+Multiple images per item with ordering support.
+
+### Categories App (`categories.models`)
+
+#### ItemCategory Model
+Hierarchical organization system for items.
+- `parent_category`: Self-referential for unlimited nesting
+- `get_hierarchy()`: Returns full path (e.g., "Electronics > Phones")
+
+#### ServiceCategory Model  
+Flat organization system for future services (no hierarchy).
+
+#### ItemTag Model
+Independent labeling system for items.
+- Many-to-many relationship with Items via ItemTagRelation
+- Admin-managed only (users can select, not create)
+
+### Users App (`users.models`)
+
+#### Profile Model
+Extended user information linked to Django User.
+- `intern`: Boolean (enables admin features like intern/th_payment fields)
+- `address`, `phone`: Contact information
+- `email_reminder`: Notification preferences
+
+### Relationships
+- **Item ↔ ItemCategory**: One-to-many (each item has one category)
+- **Item ↔ ItemTag**: Many-to-many via ItemTagRelation
+- **Item ↔ User**: Many-to-one (user owns multiple items)
+- **User ↔ Profile**: One-to-one (automatic creation)
+
+## URL Structure
+
+### Items App URLs (`/items/`)
+```
+/items/                    # All items
+/items/sell/              # Items for sale (shareable)
+/items/give_away/         # Free items (shareable)  
+/items/borrow/            # Items to borrow (shareable)
+/items/<id>/              # Item detail
+/items/create/            # Create item (login required)
+/items/<id>/edit/         # Edit item (owner only)
+/items/<id>/delete/       # Delete item (owner only)
+/items/my-items/          # User's item management
+/items/<id>/toggle-status/ # Activate/deactivate item
+```
+
+**Filtering Support:**
+- GET parameters: `?search=laptop&category=1&tags=2,3&status=1`
+- URL-based type filtering: `/items/sell/?category=1&tags=2`
+- Shareable filtered links for easy sharing
+
+## Frontend Features
+
+### Item Management
+- **Complete CRUD operations** with proper permissions
+- **Tag selection** via checkboxes (admin-managed tags)
+- **Category hierarchies** with dropdown selection
+- **Image upload support** (multiple images per item)
+- **Responsive design** with Bootstrap 5
+
+### Filtering & Search
+- **Text search** across name and description
+- **Category filtering** with hierarchical support
+- **Tag filtering** with checkbox selection
+- **Item type filtering** via URL or form
+- **Status/condition filtering**
+- **Pagination** with customizable page size
+
+### User Experience
+- **Navigation pills** for quick type switching
+- **Shareable URLs** for specific item types and filters
+- **Owner-only actions** (edit/delete/toggle status)
+- **Intern-only features** (intern/th_payment fields for intern users)
+- **Contact display toggle** per item
+
+### Security & Permissions
+- **Login required** for create/edit/delete operations
+- **Owner verification** for item modifications
+- **Intern field visibility** based on user.profile.intern
+- **Form validation** for price requirements by item type
+
+## Future Services App Structure
+
+### Planned Architecture
+When implementing the services app, follow this structure:
+
+```
+willgeben/services/
+├── models.py           # Service model with ServiceCategory
+├── forms.py           # ServiceForm with ServiceTag support  
+├── views.py           # ServiceListView, ServiceDetailView, etc.
+├── urls.py            # URL patterns following items app pattern
+├── admin.py           # Admin interface for services
+└── templates/services/
+    ├── service_list.html
+    ├── service_detail.html
+    ├── service_form.html
+    └── my_services.html
+```
+
+### Service Model Structure
+```python
+class Service(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    category = models.ForeignKey(ServiceCategory, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    duration = models.DurationField()  # Service duration
+    location = models.CharField(max_length=255)  # Service location
+    availability = models.TextField()  # When service is available
+    active = models.BooleanField(default=True)
+    # ... other service-specific fields
+```
+
+### Services URLs (`/services/`)
+```
+/services/                 # All services
+/services/<category>/      # Services by category (flat structure)
+/services/<id>/           # Service detail  
+/services/create/         # Create service (login required)
+/services/<id>/edit/      # Edit service (owner only)
+/services/my-services/    # User's service management
+```
+
+### Key Differences from Items
+- **Flat categories**: ServiceCategory has no hierarchy
+- **Duration-based**: Services have time components
+- **Location-aware**: Services tied to physical locations
+- **Availability scheduling**: When services can be provided
+- **Different pricing model**: Services typically always have prices

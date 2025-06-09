@@ -1,8 +1,48 @@
 from django.contrib import admin
-from .models import Category, Tag, CategoryAvailableTagRelation
+from django.utils.html import format_html
+from .models import ItemCategory, ItemTag, ServiceCategory
 
-admin.site.register(Category)
-admin.site.register(Tag)
-admin.site.register(CategoryAvailableTagRelation)
 
-# Register your models here.
+@admin.register(ItemCategory)
+class ItemCategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'get_hierarchy_display', 'parent_category', 'description')
+    list_filter = ('parent_category',)
+    search_fields = ('name', 'description', 'prompt_name', 'prompt_description')
+    ordering = ('parent_category__name', 'name')
+    autocomplete_fields = ('parent_category',)
+
+    fieldsets = (
+        (None, {
+            'fields': ('name', 'parent_category', 'description')
+        }),
+        ('AI Prompts', {
+            'fields': ('prompt_name', 'prompt_description'),
+            'classes': ('collapse',),
+            'description': 'Optional fields for AI-generated content'
+        }),
+    )
+
+    def get_hierarchy_display(self, obj):
+        hierarchy = obj.get_hierarchy()
+        parts = hierarchy.split(' > ')
+        if len(parts) > 1:
+            parent_parts = ' > '.join(parts[:-1])
+            return format_html(
+                '<span style="color: #888;">{}</span> > <strong>{}</strong>',
+                parent_parts,
+                parts[-1]
+            )
+        return format_html('<strong>{}</strong>', hierarchy)
+
+    get_hierarchy_display.short_description = 'Category Hierarchy'
+    get_hierarchy_display.admin_order_field = 'name'
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('parent_category')
+
+
+@admin.register(ItemTag)
+class ItemTagAdmin(admin.ModelAdmin):
+    list_display = ('name', 'description')
+    search_fields = ('name', 'description')
+    ordering = ('name',)

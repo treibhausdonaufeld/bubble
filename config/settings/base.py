@@ -90,7 +90,7 @@ LOCAL_APPS = [
     "willgeben.users",
     'willgeben.core.apps.CoreConfig',
     'willgeben.categories.apps.CategoriesConfig',
-    'willgeben.listings.apps.ListingsConfig',
+    'willgeben.items.apps.ItemsConfig',
     'willgeben.messaging.apps.MessagingConfig',
     'willgeben.bookings.apps.BookingsConfig',
     'willgeben.favorites.apps.FavoritesConfig',
