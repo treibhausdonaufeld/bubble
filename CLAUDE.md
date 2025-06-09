@@ -6,6 +6,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **willgeben** is a Django-based sharing platform for Treibhaus donaufeld, built with Cookiecutter Django. It uses Docker for local development and includes Celery for background tasks, Django REST Framework for API endpoints, and webpack for frontend asset compilation.
 
+## Development Environment
+
+**IMPORTANT**: This project is developed using Dropbox and Just commands. All Django management commands should be run using `just manage <command>`.
+
+**Language**: The website is in German, so all texts, labels, and user-facing content must be in German only.
+
 ## Development Commands
 
 ### Docker Environment (Primary)
@@ -27,6 +33,15 @@ just logs [service]
 
 # Run Django management commands
 just manage <command>
+
+# Create migrations
+just manage makemigrations
+
+# Apply migrations
+just manage migrate
+
+# Create superuser
+just manage createsuperuser
 ```
 
 ### Frontend Development

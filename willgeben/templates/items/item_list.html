@@ -3,9 +3,9 @@
 
 {% block title %}
   {% if current_filter_display %}
-    {{ current_filter_display }} Items
+    {{ current_filter_display }} Sachen
   {% else %}
-    Items
+    Sachen
   {% endif %}
 {% endblock %}
 
@@ -213,7 +213,6 @@
     /* Enhanced Search */
     .search-input {
       border-radius: 2rem;
-      padding-left: 2.5rem;
     }
 
     .search-container {
@@ -226,6 +225,7 @@
       top: 50%;
       transform: translateY(-50%);
       color: #6c757d;
+      pointer-events: none;
     }
 
     /* Sort and View Controls */
@@ -283,7 +283,7 @@
           <i class="fas fa-tags"></i> {% trans "Verkaufen" %}
         </a>
         <a class="nav-link {% if current_filter == 'give_away' %}active{% endif %}" href="{% url 'items:give_away' %}">
-          <i class="fas fa-gift"></i> {% trans "Ausgeben" %}
+          <i class="fas fa-gift"></i> {% trans "Weggeben" %}
         </a>
         <a class="nav-link {% if current_filter == 'borrow' %}active{% endif %}" href="{% url 'items:borrow' %}">
           <i class="fas fa-handshake"></i> {% trans "Ausleihen" %}
@@ -336,7 +336,7 @@
               </label>
               <div class="search-container">
                 <i class="fas fa-search search-icon"></i>
-                {{ filter_form.search }}
+                <input type="text" name="search" class="form-control search-input" placeholder="{% trans 'Search items...' %}" value="{{ filter_form.search.value|default_if_none:'' }}">
               </div>
             </div>
 
@@ -362,7 +362,7 @@
             <!-- Item Type -->
             <div class="filter-section">
               <label for="{{ filter_form.item_type.id_for_label }}" class="form-label fw-bold">
-                <i class="fas fa-tag"></i> {% trans "Type" %}
+                <i class="fas fa-tag"></i> {% trans "Typ" %}
               </label>
               {{ filter_form.item_type }}
             </div>
@@ -375,7 +375,7 @@
 
               <div class="tag-selector">
                 <input type="text" class="form-control" id="tag-search"
-                       placeholder="{% trans 'Search and select tags...' %}">
+                     placeholder="Tags suchen und auswählen...">
                 <div class="tag-dropdown" id="tag-dropdown">
                   {% for tag in tags %}
                     <div class="tag-item" data-tag-id="{{ tag.id }}" data-tag-name="{{ tag.name }}">
@@ -392,7 +392,7 @@
             <!-- Status/Condition -->
             <div class="filter-section">
               <label for="{{ filter_form.status.id_for_label }}" class="form-label fw-bold">
-                <i class="fas fa-star"></i> {% trans "Condition" %}
+                <i class="fas fa-star"></i> {% trans "Zustand" %}
               </label>
               {{ filter_form.status }}
             </div>
@@ -400,7 +400,7 @@
             <!-- Sort -->
             <div class="filter-section">
               <label for="{{ filter_form.sort.id_for_label }}" class="form-label fw-bold">
-                <i class="fas fa-sort"></i> {% trans "Sort By" %}
+                <i class="fas fa-sort"></i> {% trans "Sortieren nach" %}
               </label>
               {{ filter_form.sort }}
             </div>
@@ -409,10 +409,10 @@
 
             <div class="pt-3">
               <button type="submit" class="btn btn-primary w-100 mb-2">
-                <i class="fas fa-search"></i> {% trans "Apply Filters" %}
+                <i class="fas fa-search"></i> {% trans "Filtern" %}
               </button>
               <a href="{% url 'items:list' %}" class="btn btn-outline-secondary w-100">
-                <i class="fas fa-undo"></i> {% trans "Reset All" %}
+                <i class="fas fa-undo"></i> {% trans "Filtern zurücksetzen" %}
               </a>
             </div>
           </form>
@@ -427,7 +427,7 @@
         <div class="row align-items-center">
           <div class="col-md-6">
             <h4 class="mb-0">
-              {% trans "Items" %}
+              {% trans "Sachen" %}
               <span class="badge bg-primary">{{ page_obj.paginator.count }}</span>
             </h4>
           </div>
@@ -446,7 +446,7 @@
               <!-- Add Item Button -->
               {% if user.is_authenticated %}
                 <a href="{% url 'items:create' %}" class="btn btn-success">
-                  <i class="fas fa-plus"></i> {% trans "Add Item" %}
+                  <i class="fas fa-plus"></i> {% trans "Sache erstellen" %}
                 </a>
               {% endif %}
             </div>

@@ -19,7 +19,7 @@ class ItemListView(ListView):
     model = Item
     template_name = 'items/item_list.html'
     context_object_name = 'items'
-    paginate_by = 12
+    paginate_by = 15
 
     def get_queryset(self):
         queryset = Item.objects.filter(active=True).select_related('user', 'category').prefetch_related('tags__tag')
@@ -33,8 +33,12 @@ class ItemListView(ListView):
         search = self.request.GET.get('search')
         if search:
             queryset = queryset.filter(
-                Q(name__icontains=search) | Q(description__icontains=search)
-            )
+                Q(name__icontains=search) | 
+                Q(description__icontains=search) |
+                Q(category__name__icontains=search) |
+                Q(category__parent_category__name__icontains=search) |
+                Q(tags__tag__name__icontains=search)
+            ).distinct()
 
         category = self.request.GET.get('category')
         if category:
@@ -80,10 +84,10 @@ class ItemListView(ListView):
         
         # Add sort options
         sort_options = [
-            ('newest', 'Newest First'),
-            ('oldest', 'Oldest First'),
-            ('price_low', 'Price: Low to High'),
-            ('price_high', 'Price: High to Low'),
+            ('newest', 'Neueste zuerst'),
+            ('oldest', 'Älteste zuerst'),
+            ('price_low', 'Preis: Niedrig zu Hoch'),
+            ('price_high', 'Preis: Hoch zu Niedrig'),
             ('name', 'Name A-Z'),
         ]
         context['sort_options'] = sort_options
@@ -138,6 +142,17 @@ class ItemDetailView(DetailView):
         context['item_tags'] = self.object.tags.all()
         context['item_images'] = self.object.images.all().order_by('ordering')
         context['is_owner'] = self.request.user == self.object.user if self.request.user.is_authenticated else False
+        
+        # Check if there's an existing conversation for this item and user
+        if self.request.user.is_authenticated:
+            from willgeben.messaging.models import Message
+            conversation_exists = Message.objects.filter(
+                item=self.object,
+                sender__in=[self.request.user, self.object.user],
+                receiver__in=[self.request.user, self.object.user]
+            ).exists()
+            context['conversation_exists'] = conversation_exists
+        
         return context
 
 
@@ -153,7 +168,7 @@ class ItemCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.user = self.request.user
-        messages.success(self.request, 'Item created successfully!')
+        messages.success(self.request, 'Artikel erfolgreich erstellt!')
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -175,7 +190,7 @@ class ItemUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return kwargs
 
     def form_valid(self, form):
-        messages.success(self.request, 'Item updated successfully!')
+        messages.success(self.request, 'Artikel erfolgreich aktualisiert!')
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -192,7 +207,7 @@ class ItemDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return obj.user == self.request.user
 
     def delete(self, request, *args, **kwargs):
-        messages.success(self.request, 'Item deleted successfully!')
+        messages.success(self.request, 'Artikel erfolgreich gelöscht!')
         return super().delete(request, *args, **kwargs)
 
 
@@ -219,8 +234,8 @@ def toggle_item_status(request, pk):
     item.active = not item.active
     item.save()
     
-    status = "activated" if item.active else "deactivated"
-    messages.success(request, f'Item "{item.name}" has been {status}.')
+    status = "aktiviert" if item.active else "deaktiviert"
+    messages.success(request, f'Artikel "{item.name}" wurde {status}.')
     
     return redirect('items:my_items')
 

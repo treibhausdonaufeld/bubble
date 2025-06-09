@@ -9,7 +9,8 @@ class ItemForm(forms.ModelForm):
         queryset=ItemTag.objects.all(),
         widget=forms.CheckboxSelectMultiple,
         required=False,
-        help_text="Select relevant tags for your item"
+        label="Tags",
+        help_text="Wählen Sie relevante Tags für Ihren Artikel"
     )
     
     class Meta:
@@ -19,8 +20,8 @@ class ItemForm(forms.ModelForm):
             'price', 'display_contact', 'profile_img_frame', 'active'
         ]
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Item name'}),
-            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Describe your item...'}),
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Artikelname'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Beschreiben Sie Ihren Artikel...'}),
             'category': forms.Select(attrs={'class': 'form-select'}),
             'item_type': forms.Select(attrs={'class': 'form-select'}),
             'status': forms.Select(attrs={'class': 'form-select'}),
@@ -30,11 +31,19 @@ class ItemForm(forms.ModelForm):
             'active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
         labels = {
-            'active': 'Published',
+            'name': 'Artikelname',
+            'description': 'Beschreibung',
+            'category': 'Kategorie',
+            'item_type': 'Artikel-Typ',
+            'status': 'Zustand',
+            'price': 'Preis',
+            'display_contact': 'Kontakt anzeigen',
+            'profile_img_frame': 'Profilbild-Rahmen',
+            'active': 'Veröffentlicht',
         }
         help_texts = {
-            'display_contact': 'Check to display your contact information',
-            'price': 'Leave empty for free items',
+            'display_contact': 'Ankreuzen, um Ihre Kontaktinformationen anzuzeigen',
+            'price': 'Leer lassen für kostenlose Artikel',
         }
 
     def __init__(self, *args, **kwargs):
@@ -50,14 +59,16 @@ class ItemForm(forms.ModelForm):
             self.fields['intern'] = forms.BooleanField(
                 required=False,
                 initial=False,
+                label='Intern',
                 widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-                help_text='Check if this item is for internal use only'
+                help_text='Ankreuzen, wenn dieser Artikel nur für internen Gebrauch ist'
             )
             self.fields['th_payment'] = forms.BooleanField(
                 required=False,
                 initial=False,
+                label='Treibhaus-Zahlung',
                 widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-                help_text='Accept Treibhaus payment method'
+                help_text='Treibhaus-Zahlungsmethode akzeptieren'
             )
             # Update Meta.fields to include intern fields
             self.Meta.fields = self.Meta.fields + ['intern', 'th_payment']
@@ -74,17 +85,17 @@ class ItemForm(forms.ModelForm):
         item_type = self.cleaned_data.get('item_type')
         
         if item_type == 0 and not price:  # Sell item without price
-            raise ValidationError("Price is required for items being sold.")
+            raise ValidationError("Preis ist für verkaufte Artikel erforderlich.")
         
         if item_type in [1, 2] and price:  # Give away or borrow with price
-            raise ValidationError("Price should not be set for items being given away or borrowed.")
+            raise ValidationError("Preis sollte nicht für Artikel gesetzt werden, die weggegeben oder verliehen werden.")
         
         return price
 
     def clean_name(self):
         name = self.cleaned_data.get('name')
         if len(name) < 3:
-            raise ValidationError("Item name must be at least 3 characters long.")
+            raise ValidationError("Artikelname muss mindestens 3 Zeichen lang sein.")
         return name
 
     def save(self, commit=True):
@@ -119,7 +130,7 @@ class ItemFilterForm(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={
             'class': 'form-control search-input',
-            'placeholder': 'Search items, tags, categories...'
+            'placeholder': 'Artikel, Tags, Kategorien suchen...'
         })
     )
     
@@ -127,26 +138,26 @@ class ItemFilterForm(forms.Form):
     parent_category = forms.ModelChoiceField(
         queryset=ItemCategory.objects.filter(parent_category=None),
         required=False,
-        empty_label="All Categories",
+        empty_label="Alle Kategorien",
         widget=forms.Select(attrs={'class': 'form-select category-filter', 'id': 'parent-category'})
     )
     
     subcategory = forms.ModelChoiceField(
         queryset=ItemCategory.objects.none(),
         required=False,
-        empty_label="All Subcategories", 
+        empty_label="Alle Unterkategorien", 
         widget=forms.Select(attrs={'class': 'form-select category-filter', 'id': 'subcategory'})
     )
     
     category = forms.ModelChoiceField(
         queryset=ItemCategory.objects.all(),
         required=False,
-        empty_label="All Categories",
+        empty_label="Alle Kategorien",
         widget=forms.HiddenInput()  # Hidden field for final category selection
     )
     
     item_type = forms.ChoiceField(
-        choices=[('', 'All Types')] + Item.ITEM_TYPE_CHOICES,
+        choices=[('', 'Alle Typen')] + Item.ITEM_TYPE_CHOICES,
         required=False,
         widget=forms.Select(attrs={'class': 'form-select'})
     )
@@ -158,17 +169,17 @@ class ItemFilterForm(forms.Form):
     )
     
     status = forms.ChoiceField(
-        choices=[('', 'All Conditions')] + Item.STATUS_CHOICES,
+        choices=[('', 'Alle Zustände')] + Item.STATUS_CHOICES,
         required=False,
         widget=forms.Select(attrs={'class': 'form-select'})
     )
     
     sort = forms.ChoiceField(
         choices=[
-            ('newest', 'Newest First'),
-            ('oldest', 'Oldest First'), 
-            ('price_low', 'Price: Low to High'),
-            ('price_high', 'Price: High to Low'),
+            ('newest', 'Neueste zuerst'),
+            ('oldest', 'Älteste zuerst'), 
+            ('price_low', 'Preis: Niedrig zu Hoch'),
+            ('price_high', 'Preis: Hoch zu Niedrig'),
             ('name', 'Name A-Z'),
         ],
         required=False,
@@ -177,7 +188,7 @@ class ItemFilterForm(forms.Form):
     )
     
     view = forms.ChoiceField(
-        choices=[('grid', 'Grid'), ('list', 'List')],
+        choices=[('grid', 'Raster'), ('list', 'Liste')],
         required=False,
         initial='grid',
         widget=forms.HiddenInput()

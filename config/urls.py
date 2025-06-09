@@ -14,8 +14,7 @@ urlpatterns = [
     path("", include("willgeben.core.urls", namespace="core")),
 
     path('items/', include('willgeben.items.urls', namespace='items')),
-    # path('messages/', include('willgeben.messaging.urls',
-    #                           namespace='messages')),
+    path('messaging/', include('willgeben.messaging.urls', namespace='messaging')),
     # path('bookings/', include('willgeben.bookings.urls',
     #                           namespace='bookings')),
     # path('favorites/',

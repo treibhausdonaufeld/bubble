@@ -53,6 +53,8 @@ CACHES = {
 
 # EMAIL
 # ------------------------------------------------------------------------------
+# Use console backend for local development to see emails in terminal
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-host
 EMAIL_HOST = env("EMAIL_HOST", default="mailpit")
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-port

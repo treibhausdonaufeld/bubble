@@ -3,9 +3,9 @@
 
 {% block title %}
   {% if object %}
-    {% trans "Edit Item" %} - {{ object.name }}
+    Artikel bearbeiten - {{ object.name }}
   {% else %}
-    {% trans "Add New Item" %}
+    Neuen Artikel hinzufügen
   {% endif %}
 {% endblock %}
 
@@ -17,9 +17,9 @@
         <div class="card-header">
           <h3>
             {% if object %}
-              {% trans "Edit Item" %} - {{ object.name }}
+              Artikel bearbeiten - {{ object.name }}
             {% else %}
-              {% trans "Add New Item" %}
+              Neuen Artikel hinzufügen
             {% endif %}
           </h3>
         </div>
@@ -119,7 +119,7 @@
             
             <!-- Settings -->
             <div class="mb-3">
-              <label class="form-label">{% trans "Settings" %}</label>
+              <label class="form-label">Einstellungen</label>
               
               <div class="form-check">
                 {{ form.display_contact }}
@@ -185,13 +185,13 @@
             <!-- Form Actions -->
             <div class="d-flex justify-content-between">
               <a href="{% if object %}{% url 'items:detail' object.pk %}{% else %}{% url 'items:list' %}{% endif %}" class="btn btn-outline-secondary">
-                {% trans "Cancel" %}
+                Abbrechen
               </a>
               <button type="submit" class="btn btn-primary">
                 {% if object %}
-                  {% trans "Update Item" %}
+                  Artikel aktualisieren
                 {% else %}
-                  {% trans "Create Item" %}
+                  Artikel erstellen
                 {% endif %}
               </button>
             </div>
