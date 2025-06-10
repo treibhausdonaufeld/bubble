@@ -1,13 +1,13 @@
 -r production.txt
 
 Werkzeug[watchdog]==3.1.3 # https://github.com/pallets/werkzeug
-ipdb==0.13.13  # https://github.com/gotcha/ipdb
-psycopg[c]==3.2.9  # https://github.com/psycopg/psycopg
+
+ipdb==0.13.13  # https://github.com/gotcha/ipdb 
 watchfiles==1.0.5  # https://github.com/samuelcolvin/watchfiles
 
 # Testing
 # ------------------------------------------------------------------------------
-mypy==1.16.0  # https://github.com/python/mypy
+mypy==1.13.0  # https://github.com/python/mypy
 django-stubs[compatible-mypy]==5.2.0  # https://github.com/typeddjango/django-stubs
 pytest==8.4.0  # https://github.com/pytest-dev/pytest
 pytest-sugar==1.0.0  # https://github.com/Teemu/pytest-sugar
@@ -23,6 +23,7 @@ sphinx-autobuild==2024.10.3 # https://github.com/GaretJax/sphinx-autobuild
 ruff==0.11.12  # https://github.com/astral-sh/ruff
 coverage==7.8.2  # https://github.com/nedbat/coveragepy
 djlint==1.36.4  # https://github.com/Riverside-Healthcare/djLint
+psycopg==3.2.6  # https://github.com/psycopg/psycopg
 pre-commit==4.2.0  # https://github.com/pre-commit/pre-commit
 
 # Django

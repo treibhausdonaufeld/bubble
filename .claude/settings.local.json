@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(docker logs:*)",
+      "Bash(curl:*)",
+      "Bash(docker exec:*)",
+      "Bash(just manage:*)",
+      "Bash(mkdir:*)",
+      "Bash(find:*)",
+      "Bash(mv:*)",
+      "Bash(pip show:*)",
+      "Bash(find:*)",
+      "Bash(gh issue list:*)"
+    ],
+    "deny": []
+  }
+}

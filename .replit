@@ -1,0 +1,74 @@
+modules = ["python-3.12", "web", "bash", "nodejs-20"]
+run = """
+#!/bin/bash
+
+# Install dependencies
+pip install -r requirements/base.txt
+pip install -r requirements/local.txt
+
+# Run migrations
+python manage.py migrate
+
+# Start Django server in the background and wait until it's fully up
+python manage.py runserver 0.0.0.0:8000 &
+DJANGO_PID=$!
+
+# Wait for Django to fully start (increase this if needed)
+echo "Waiting for Django server to start..."
+sleep 10
+
+# Check if Django server is running
+if ps -p $DJANGO_PID > /dev/null; then
+  echo "Django server started successfully."
+  
+  # Start npm dev server in the foreground
+  echo "Starting npm dev server..."
+  npm run dev
+else
+  echo "Django server failed to start properly. Check logs for errors."
+  exit 1
+fi
+"""
+
+[nix]
+channel = "stable-24_05"
+
+[deployment]
+run = ["sh", "-c", """
+  #!/bin/bash
+  
+  # Install dependencies
+  pip install -r requirements/base.txt
+  pip install -r requirements/local.txt
+  
+  # Run migrations
+  python manage.py migrate
+  
+  # Start Django server in the background and wait until it's fully up
+  python manage.py runserver 0.0.0.0:8000 &
+  DJANGO_PID=$!
+  
+  # Wait for Django to fully start (increase this if needed)
+  echo "Waiting for Django server to start..."
+  sleep 10
+  
+  # Check if Django server is running
+  if ps -p $DJANGO_PID > /dev/null; then
+    echo "Django server started successfully."
+    
+    # Start npm dev server in the foreground
+    echo "Starting npm dev server..."
+    npm run dev
+  else
+    echo "Django server failed to start properly. Check logs for errors."
+    exit 1
+  fi
+  """]
+
+[[ports]]
+localPort = 3000
+externalPort = 80
+
+[[ports]]
+localPort = 8000
+externalPort = 8000

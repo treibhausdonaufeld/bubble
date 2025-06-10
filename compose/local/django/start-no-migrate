@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -o errexit
+set -o pipefail
+set -o nounset
+
+# Skip all migrations and just run the server
+echo "Starting Django without migrations..."
+exec uvicorn config.asgi:application --host 0.0.0.0 --reload --reload-include '*.html'
