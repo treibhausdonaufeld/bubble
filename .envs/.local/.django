@@ -1,7 +1,8 @@
 # General
 # ------------------------------------------------------------------------------
-USE_DOCKER=yes
+USE_DOCKER=no
 IPYTHONDIR=/app/.ipython
+DJANGO_DEBUG=True
 # Redis
 # ------------------------------------------------------------------------------
 REDIS_URL=redis://redis:6379/0

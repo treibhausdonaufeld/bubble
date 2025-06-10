@@ -1,0 +1,404 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-06-09 21:53+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+#: willgeben/core/templates/allauth/layouts/entrance.html:13
+#: willgeben/core/templates/base.html:92
+msgid "Sign In"
+msgstr "Anmelden"
+
+#: willgeben/core/templates/base.html:81
+msgid "Mein Profile"
+msgstr "Mein Profil"
+
+#: willgeben/core/templates/base.html:87
+msgid "Sign Up"
+msgstr "Registrieren"
+
+#: willgeben/core/templates/pages/about.html:5
+msgid "About"
+msgstr ""
+
+#: willgeben/core/templates/pages/about.html:11
+msgid "About Willgeben"
+msgstr ""
+
+#: willgeben/core/templates/pages/about.html:12
+msgid ""
+"Willgeben is a platform for sharing items and services within the Treibhaus "
+"Donaufeld community."
+msgstr ""
+
+#: willgeben/templates/items/item_confirm_delete.html:4
+#: willgeben/templates/items/item_confirm_delete.html:14
+#: willgeben/templates/items/item_confirm_delete.html:94
+msgid "Delete Item"
+msgstr ""
+
+#: willgeben/templates/items/item_confirm_delete.html:32
+msgid "Warning:"
+msgstr ""
+
+#: willgeben/templates/items/item_confirm_delete.html:33
+msgid ""
+"Are you sure you want to delete this item? This action cannot be undone."
+msgstr ""
+
+#: willgeben/templates/items/item_confirm_delete.html:39
+msgid "Category:"
+msgstr ""
+
+#: willgeben/templates/items/item_confirm_delete.html:48
+msgid "Type:"
+msgstr ""
+
+#: willgeben/templates/items/item_confirm_delete.html:52
+#: willgeben/templates/items/item_list.html:476
+msgid "For Sale"
+msgstr ""
+
+#: willgeben/templates/items/item_confirm_delete.html:55
+#: willgeben/templates/items/item_list.html:478
+msgid "Give Away"
+msgstr ""
+
+#: willgeben/templates/items/item_confirm_delete.html:57
+#: willgeben/templates/items/item_list.html:480
+msgid "Borrow"
+msgstr ""
+
+#: willgeben/templates/items/item_confirm_delete.html:64
+msgid "Posted:"
+msgstr ""
+
+#: willgeben/templates/items/item_confirm_delete.html:74
+msgid "Tags:"
+msgstr ""
+
+#: willgeben/templates/items/item_confirm_delete.html:90
+msgid "Cancel"
+msgstr ""
+
+#: willgeben/templates/items/item_detail.html:23
+msgid "Vorherige"
+msgstr ""
+
+#: willgeben/templates/items/item_detail.html:27
+msgid "Nächste"
+msgstr ""
+
+#: willgeben/templates/items/item_detail.html:40
+msgid "Beschreibung"
+msgstr ""
+
+#: willgeben/templates/items/item_detail.html:56
+msgid "Aktionen"
+msgstr ""
+
+#: willgeben/templates/items/item_detail.html:59
+msgid "Bearbeiten"
+msgstr ""
+
+#: willgeben/templates/items/item_detail.html:61
+msgid "Deaktivieren"
+msgstr ""
+
+#: willgeben/templates/items/item_detail.html:61
+msgid "Aktivieren"
+msgstr ""
+
+#: willgeben/templates/items/item_detail.html:64
+msgid "Löschen"
+msgstr ""
+
+#: willgeben/templates/items/item_detail.html:74
+msgid "Zu verkaufen"
+msgstr ""
+
+#: willgeben/templates/items/item_detail.html:79
+#: willgeben/templates/items/item_list.html:286
+msgid "Weggeben"
+msgstr ""
+
+#: willgeben/templates/items/item_detail.html:80
+msgid "Kostenlos"
+msgstr ""
+
+#: willgeben/templates/items/item_detail.html:82
+#: willgeben/templates/items/item_list.html:289
+msgid "Ausleihen"
+msgstr ""
+
+#: willgeben/templates/items/item_detail.html:88
+msgid "Zustand:"
+msgstr ""
+
+#: willgeben/templates/items/item_detail.html:90
+msgid "Neu"
+msgstr ""
+
+#: willgeben/templates/items/item_detail.html:92
+msgid "Gebraucht"
+msgstr ""
+
+#: willgeben/templates/items/item_detail.html:94
+msgid "Alt"
+msgstr ""
+
+#: willgeben/templates/items/item_detail.html:100
+msgid "Kategorie:"
+msgstr ""
+
+#: willgeben/templates/items/item_detail.html:106
+msgid "Schlagwörter:"
+msgstr ""
+
+#: willgeben/templates/items/item_detail.html:115
+msgid "Erstellt:"
+msgstr ""
+
+#: willgeben/templates/items/item_detail.html:121
+msgid "Aktualisiert:"
+msgstr ""
+
+#: willgeben/templates/items/item_detail.html:130
+msgid "Kontakt"
+msgstr ""
+
+#: willgeben/templates/items/item_detail.html:153
+msgid "Kontaktinformationen werden nicht angezeigt"
+msgstr ""
+
+#: willgeben/templates/items/item_detail.html:158
+msgid "Anmelden"
+msgstr ""
+
+#: willgeben/templates/items/item_detail.html:158
+msgid "um alle Kontaktdaten zu sehen"
+msgstr ""
+
+#: willgeben/templates/items/item_detail.html:166
+#: willgeben/templates/messaging/send_message.html:4
+#: willgeben/templates/messaging/send_message.html:12
+#: willgeben/templates/messaging/send_message.html:32
+msgid "Anfrage senden"
+msgstr ""
+
+#: willgeben/templates/items/item_detail.html:181
+msgid "Nachrichten"
+msgstr ""
+
+#: willgeben/templates/items/item_detail.html:183
+msgid "Aktualisieren"
+msgstr ""
+
+#: willgeben/templates/items/item_detail.html:196
+msgid "Ihre Nachricht..."
+msgstr ""
+
+#: willgeben/templates/items/item_detail.html:198
+msgid "Senden"
+msgstr ""
+
+#: willgeben/templates/items/item_detail.html:213
+msgid "Zurück zu den Sachen"
+msgstr ""
+
+#: willgeben/templates/items/item_list.html:280
+msgid "Alle"
+msgstr ""
+
+#: willgeben/templates/items/item_list.html:283
+msgid "Verkaufen"
+msgstr ""
+
+#: willgeben/templates/items/item_list.html:303
+msgid "Filters"
+msgstr ""
+
+#: willgeben/templates/items/item_list.html:316
+msgid "Active Filters"
+msgstr ""
+
+#: willgeben/templates/items/item_list.html:325
+msgid "Clear All"
+msgstr ""
+
+#: willgeben/templates/items/item_list.html:335
+msgid "Search"
+msgstr ""
+
+#: willgeben/templates/items/item_list.html:339
+msgid "Search items..."
+msgstr ""
+
+#: willgeben/templates/items/item_list.html:346
+msgid "Category"
+msgstr ""
+
+#: willgeben/templates/items/item_list.html:350
+msgid "Main Category"
+msgstr ""
+
+#: willgeben/templates/items/item_list.html:355
+msgid "Subcategory"
+msgstr ""
+
+#: willgeben/templates/items/item_list.html:365
+msgid "Typ"
+msgstr ""
+
+#: willgeben/templates/items/item_list.html:373
+msgid "Tags"
+msgstr ""
+
+#: willgeben/templates/items/item_list.html:395
+msgid "Zustand"
+msgstr ""
+
+#: willgeben/templates/items/item_list.html:403
+msgid "Sortieren nach"
+msgstr ""
+
+#: willgeben/templates/items/item_list.html:412
+msgid "Filtern"
+msgstr ""
+
+#: willgeben/templates/items/item_list.html:415
+msgid "Filtern zurücksetzen"
+msgstr ""
+
+#: willgeben/templates/items/item_list.html:430
+msgid "Sachen"
+msgstr ""
+
+#: willgeben/templates/items/item_list.html:449
+msgid "Sache erstellen"
+msgstr ""
+
+#: willgeben/templates/items/item_list.html:499
+msgid "New"
+msgstr ""
+
+#: willgeben/templates/items/item_list.html:503
+msgid "Used"
+msgstr ""
+
+#: willgeben/templates/items/item_list.html:507
+msgid "Old"
+msgstr ""
+
+#: willgeben/templates/items/item_list.html:528
+msgid "View"
+msgstr ""
+
+#: willgeben/templates/items/item_list.html:545
+msgid "First"
+msgstr ""
+
+#: willgeben/templates/items/item_list.html:550
+msgid "Previous"
+msgstr ""
+
+#: willgeben/templates/items/item_list.html:557
+msgid "Page"
+msgstr ""
+
+#: willgeben/templates/items/item_list.html:557
+msgid "of"
+msgstr ""
+
+#: willgeben/templates/items/item_list.html:564
+msgid "Next"
+msgstr ""
+
+#: willgeben/templates/items/item_list.html:569
+msgid "Last"
+msgstr ""
+
+#: willgeben/templates/items/item_list.html:579
+msgid "No items found"
+msgstr ""
+
+#: willgeben/templates/items/item_list.html:580
+msgid "Try adjusting your filters or search terms."
+msgstr ""
+
+#: willgeben/templates/items/item_list.html:583
+msgid "Add the first item"
+msgstr ""
+
+#: willgeben/templates/messaging/conversation_messages.html:8
+msgid "Noch keine Nachrichten vorhanden."
+msgstr ""
+
+#: willgeben/templates/messaging/send_message.html:13
+msgid "Artikel:"
+msgstr ""
+
+#: willgeben/templates/messaging/send_message.html:29
+msgid "Zurück"
+msgstr ""
+
+#: willgeben/users/admin.py:25
+msgid "Personal info"
+msgstr ""
+
+#: willgeben/users/admin.py:27
+msgid "Permissions"
+msgstr ""
+
+#: willgeben/users/admin.py:38
+msgid "Important dates"
+msgstr ""
+
+#: willgeben/users/apps.py:9
+msgid "Users"
+msgstr ""
+
+#: willgeben/users/forms.py:24 willgeben/users/tests/test_forms.py:35
+msgid "This username has already been taken."
+msgstr ""
+
+#: willgeben/users/forms.py:52
+msgid "Name"
+msgstr ""
+
+#: willgeben/users/forms.py:57
+msgid "E-Mail"
+msgstr ""
+
+#: willgeben/users/forms.py:64
+msgid "Adresse"
+msgstr ""
+
+#: willgeben/users/forms.py:70
+msgid "Telefon"
+msgstr ""
+
+#: willgeben/users/models.py:20
+msgid "Name of User"
+msgstr ""
+
+#: willgeben/users/tests/test_views.py:72
+msgid "Information successfully updated"
+msgstr ""
+
+#: willgeben/users/views.py:26
+msgid "Profil erfolgreich aktualisiert"
+msgstr ""

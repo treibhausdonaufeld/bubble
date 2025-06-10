@@ -1,0 +1,15 @@
+{% load i18n %}
+
+<div class="message-item mb-3 {% if message.sender == current_user %}text-end{% endif %}">
+  <div class="d-inline-block">
+    <div class="card {% if message.sender == current_user %}bg-primary text-white{% else %}bg-light{% endif %}" style="max-width: 70%;">
+      <div class="card-body py-2 px-3">
+        <p class="mb-1">{{ message.message|linebreaks }}</p>
+        <small class="{% if message.sender == current_user %}text-white-50{% else %}text-muted{% endif %}">
+          <strong>{{ message.sender.username }}</strong> - 
+          {{ message.date_created|date:"j. M Y, H:i" }}
+        </small>
+      </div>
+    </div>
+  </div>
+</div>
