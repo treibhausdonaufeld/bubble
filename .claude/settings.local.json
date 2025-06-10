@@ -10,7 +10,8 @@
       "Bash(mv:*)",
       "Bash(pip show:*)",
       "Bash(find:*)",
-      "Bash(gh issue list:*)"
+      "Bash(gh issue list:*)",
+      "Bash(python manage.py:*)"
     ],
     "deny": []
   }

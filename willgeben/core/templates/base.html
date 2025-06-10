@@ -50,30 +50,44 @@
               <ul class="navbar-nav mr-auto d-flex flex-row">
                 <li class="nav-item">
                   <a class="nav-link{% if request.resolver_match.url_name == 'home' %} active{% endif %}" href="{% url 'core:home' %}">
-                    Startseite
+                    🏠 Startseite
                   </a>
                 </li>
                 <li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle{% if request.resolver_match.app_name == 'items' %} active{% endif %}" href="#" id="itemsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Sachen
+                    📦 Sachen
                   </a>
                   <ul class="dropdown-menu" aria-labelledby="itemsDropdown">
-                    <li><a class="dropdown-item{% if request.resolver_match.url_name == 'need' %} active{% endif %}" href="{% url 'items:need' %}">Brauchen</a></li>
-                    <li><a class="dropdown-item{% if request.resolver_match.url_name == 'borrow' %} active{% endif %}" href="{% url 'items:borrow' %}">Ausleihen</a></li>
-                    <li><a class="dropdown-item{% if request.resolver_match.url_name == 'sell' %} active{% endif %}" href="{% url 'items:sell' %}">Verkaufen</a></li>
-                    <li><a class="dropdown-item{% if request.resolver_match.url_name == 'give_away' %} active{% endif %}" href="{% url 'items:give_away' %}">Weggeben</a></li>
-                    <li><a class="dropdown-item{% if request.resolver_match.url_name == 'list' %} active{% endif %}" href="{% url 'items:list' %}">Alle</a></li>
+                    <li><a class="dropdown-item{% if request.resolver_match.url_name == 'need' %} active{% endif %}" href="{% url 'items:need' %}">🔍 Brauchen</a></li>
+                    <li><a class="dropdown-item{% if request.resolver_match.url_name == 'borrow' %} active{% endif %}" href="{% url 'items:borrow' %}">🤝 Ausleihen</a></li>
+                    <li><a class="dropdown-item{% if request.resolver_match.url_name == 'sell' %} active{% endif %}" href="{% url 'items:sell' %}">💰 Verkaufen</a></li>
+                    <li><a class="dropdown-item{% if request.resolver_match.url_name == 'give_away' %} active{% endif %}" href="{% url 'items:give_away' %}">🎁 Weggeben</a></li>
+                    <li><a class="dropdown-item{% if request.resolver_match.url_name == 'list' %} active{% endif %}" href="{% url 'items:list' %}">📋 Alle</a></li>
                   </ul>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link{% if request.resolver_match.app_name == 'services' %} active{% endif %}" href="#">
-                    Dienste
+                  <a class="nav-link{% if request.resolver_match.app_name == 'services' %} active{% endif %}" href="{% url 'services:list' %}">
+                    🛠️ Dienste
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link{% if request.resolver_match.url_name == 'about' %} active{% endif %}" href="{% url 'core:about' %}">
-                    Über uns
+                  <a class="nav-link{% if request.resolver_match.app_name == 'projects' %} active{% endif %}" href="{% url 'projects:list' %}">
+                    🚀 Projekte
                   </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link{% if request.resolver_match.app_name == 'events' %} active{% endif %}" href="{% url 'events:list' %}">
+                    📅 Events
+                  </a>
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle{% if request.resolver_match.app_name == 'users' %} active{% endif %}" href="#" id="usersDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    👥 Community
+                  </a>
+                  <ul class="dropdown-menu" aria-labelledby="usersDropdown">
+                    <li><a class="dropdown-item" href="{% url 'users:list' %}">🧑‍🤝‍🧑 Alle Nutzer</a></li>
+                    <li><a class="dropdown-item{% if request.resolver_match.url_name == 'about' %} active{% endif %}" href="{% url 'core:about' %}">ℹ️ Über uns</a></li>
+                  </ul>
                 </li>
                 {% if request.user.is_authenticated %}
                   <li class="nav-item">
