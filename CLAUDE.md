@@ -12,6 +12,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Language**: The website is in German, so all texts, labels, and user-facing content must be in German only.
 
+## Formatting Guidelines
+
+### User Mentions
+When mentioning user anywhere show like this username (Full Name) according to @willgeben/users/models.py 
+
 ## Development Commands
 
 ### Docker Environment (Primary)
@@ -262,3 +267,4 @@ class Service(models.Model):
 - **Location-aware**: Services tied to physical locations
 - **Availability scheduling**: When services can be provided
 - **Different pricing model**: Services typically always have prices
+```

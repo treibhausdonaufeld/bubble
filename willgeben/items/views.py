@@ -37,7 +37,9 @@ class ItemListView(ListView):
                 Q(description__icontains=search) |
                 Q(category__name__icontains=search) |
                 Q(category__parent_category__name__icontains=search) |
-                Q(tags__tag__name__icontains=search)
+                Q(tags__tag__name__icontains=search) |
+                Q(user__username__icontains=search) |
+                Q(user__name__icontains=search)
             ).distinct()
 
         category = self.request.GET.get('category')
