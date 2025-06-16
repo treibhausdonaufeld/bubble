@@ -27,7 +27,8 @@ class Item(models.Model):
     date_updated = models.DateTimeField(auto_now=True)
     status = models.IntegerField(blank=True, null=True, choices=STATUS_CHOICES)
     item_type = models.IntegerField(choices=ITEM_TYPE_CHOICES, default=0)
-    profile_img_frame = models.CharField(max_length=255, blank=True, null=True)
+    profile_img_frame = models.ImageField(upload_to='items/', blank=True, null=True)
+    profile_img_frame_alt = models.CharField(max_length=255, blank=True, null=True)
 
     # Add class constants for easy access
     STATUS_CHOICES = STATUS_CHOICES
@@ -49,7 +50,8 @@ class ItemTagRelation(models.Model):
 
 
 class Image(models.Model):
-  fname = models.CharField(max_length=255)
+  fname = models.ImageField(upload_to='items/images/')
+  fname_alt = models.CharField(max_length=255, blank=True, null=True)
   item = models.ForeignKey(Item,
                            on_delete=models.CASCADE,
                            related_name='images')

@@ -30,8 +30,6 @@ class ItemCategory(models.Model):
 class ServiceCategory(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
-    prompt_name = models.TextField(blank=True, null=True)
-    prompt_description = models.TextField(blank=True, null=True)
     # No hierarchy for services - flat structure
 
     class Meta:
@@ -52,3 +50,12 @@ class ItemTag(models.Model):
         return self.name
 
 
+class EventType(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True)
+
+    class Meta:
+        verbose_name_plural = "Event Types"
+
+    def __str__(self):
+        return self.name

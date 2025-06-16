@@ -1,15 +1,6 @@
 from django.db import models
 from config.settings.base import AUTH_USER_MODEL
-from willgeben.categories.models import ItemTag
-
-EVENT_TYPE_CHOICES = [
-    (0, 'Workshop'),
-    (1, 'Gemeinschaftsveranstaltung'),
-    (2, 'Bildungsveranstaltung'),
-    (3, 'Soziale Veranstaltung'),
-    (4, 'Freiwilligenarbeit'),
-    (5, 'Sonstiges')
-]
+from willgeben.categories.models import ItemTag, EventType
 
 
 class Event(models.Model):
@@ -26,9 +17,12 @@ class Event(models.Model):
                                      blank=True)
     name = models.CharField(max_length=255, verbose_name="Event Name")
     description = models.TextField(verbose_name="Beschreibung")
-    event_type = models.IntegerField(choices=EVENT_TYPE_CHOICES, default=0, verbose_name="Event Typ")
-    start_datetime = models.DateTimeField(verbose_name="Start Datum & Zeit")
-    end_datetime = models.DateTimeField(verbose_name="End Datum & Zeit")
+    event_type = models.ForeignKey(EventType, on_delete=models.CASCADE, verbose_name="Event Typ")
+    start_date = models.DateField(verbose_name="Start Datum")
+    end_date = models.DateField(verbose_name="End Datum")
+    is_full_day = models.BooleanField(default=False, verbose_name="Ganztägig")
+    start_time = models.TimeField(blank=True, null=True, verbose_name="Start Zeit")
+    end_time = models.TimeField(blank=True, null=True, verbose_name="End Zeit")
     location = models.CharField(max_length=255, verbose_name="Ort")
     max_attendees = models.PositiveIntegerField(blank=True, null=True, verbose_name="Max. Teilnehmer")
     price = models.DecimalField(max_digits=10,
@@ -41,16 +35,18 @@ class Event(models.Model):
     intern = models.BooleanField(default=False, verbose_name="Nur für Interne")
     registration_required = models.BooleanField(default=True, verbose_name="Anmeldung erforderlich")
     contact_info = models.TextField(blank=True, null=True, verbose_name="Kontakt Info")
+    profile_picture = models.ImageField(upload_to='events/', blank=True, null=True, verbose_name="Profilbild")
+    profile_picture_alt = models.CharField(max_length=255, blank=True, null=True, verbose_name="Profilbild Alt Text")
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name = "Event"
         verbose_name_plural = "Events"
-        ordering = ['start_datetime']
+        ordering = ['start_date', 'start_time']
 
     def __str__(self):
-        return f"{self.name} - {self.start_datetime.strftime('%d.%m.%Y')}"
+        return f"{self.name} - {self.start_date.strftime('%d.%m.%Y')}"
 
     @property
     def attendee_count(self):
@@ -65,7 +61,15 @@ class Event(models.Model):
     @property
     def is_upcoming(self):
         from django.utils import timezone
-        return self.start_datetime > timezone.now()
+        from datetime import datetime, time
+
+        now = timezone.now()
+        if self.is_full_day:
+            return self.start_date >= now.date()
+        else:
+            start_time = self.start_time or time(0, 0)
+            start_datetime = timezone.make_aware(datetime.combine(self.start_date, start_time))
+            return start_datetime > now
 
     @property
     def is_full(self):
@@ -82,3 +86,19 @@ class EventTagRelation(models.Model):
 
     def __str__(self):
         return f"{self.event.name} - {self.tag.name}"
+
+
+class EventImage(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(upload_to='event_images/', verbose_name="Bild Datei")
+    fname = models.CharField(max_length=255, blank=True, null=True, verbose_name="Dateiname")
+    alt_text = models.CharField(max_length=255, blank=True, null=True, verbose_name="Alt Text")
+    order = models.PositiveIntegerField(default=0, verbose_name="Reihenfolge")
+
+    class Meta:
+        ordering = ['order']
+        verbose_name = "Event Bild"
+        verbose_name_plural = "Event Bilder"
+
+    def __str__(self):
+        return f"{self.event.name} - Bild {self.order + 1}"
