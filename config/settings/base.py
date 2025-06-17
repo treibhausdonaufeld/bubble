@@ -13,8 +13,8 @@ env = environ.Env()
 
 READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=False)
 if READ_DOT_ENV_FILE:
-  # OS environment variables take precedence over variables from .env
-  env.read_env(str(BASE_DIR / ".env"))
+    # OS environment variables take precedence over variables from .env
+    env.read_env(str(BASE_DIR / ".env"))
 
 # GENERAL
 # ------------------------------------------------------------------------------
@@ -88,16 +88,16 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "willgeben.users",
-    'willgeben.core.apps.CoreConfig',
-    'willgeben.categories.apps.CategoriesConfig',
-    'willgeben.items.apps.ItemsConfig',
-    'willgeben.services.apps.ServicesConfig',
-    'willgeben.projects.apps.ProjectsConfig',
-    'willgeben.events.apps.EventsConfig',
-    'willgeben.messaging.apps.MessagingConfig',
-    'willgeben.bookings.apps.BookingsConfig',
-    'willgeben.favorites.apps.FavoritesConfig',
-    'willgeben.payments.apps.PaymentsConfig',
+    "willgeben.core.apps.CoreConfig",
+    "willgeben.categories.apps.CategoriesConfig",
+    "willgeben.items.apps.ItemsConfig",
+    "willgeben.services.apps.ServicesConfig",
+    "willgeben.projects.apps.ProjectsConfig",
+    "willgeben.events.apps.EventsConfig",
+    "willgeben.messaging.apps.MessagingConfig",
+    "willgeben.bookings.apps.BookingsConfig",
+    "willgeben.favorites.apps.FavoritesConfig",
+    "willgeben.payments.apps.PaymentsConfig",
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -137,21 +137,11 @@ PASSWORD_HASHERS = [
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-password-validators
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME":
-        "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
-    {
-        "NAME":
-        "django.contrib.auth.password_validation.MinimumLengthValidator"
-    },
-    {
-        "NAME":
-        "django.contrib.auth.password_validation.CommonPasswordValidator"
-    },
-    {
-        "NAME":
-        "django.contrib.auth.password_validation.NumericPasswordValidator"
-    },
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
 # MIDDLEWARE
@@ -230,7 +220,7 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 # FIXTURES
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#fixture-dirs
-FIXTURE_DIRS = (str(APPS_DIR / "fixtures"), )
+FIXTURE_DIRS = (str(APPS_DIR / "fixtures"),)
 
 # SECURITY
 # ------------------------------------------------------------------------------
@@ -262,8 +252,7 @@ MANAGERS = ADMINS
 # https://cookiecutter-django.readthedocs.io/en/latest/settings.html#other-environment-settings
 
 # Force the `admin` sign in process to go through the `django-allauth` workflow
-DJANGO_ADMIN_FORCE_ALLAUTH = env.bool("DJANGO_ADMIN_FORCE_ALLAUTH",
-                                      default=False)
+DJANGO_ADMIN_FORCE_ALLAUTH = env.bool("DJANGO_ADMIN_FORCE_ALLAUTH", default=False)
 
 # LOGGING
 # ------------------------------------------------------------------------------
@@ -275,8 +264,7 @@ LOGGING = {
     "disable_existing_loggers": False,
     "formatters": {
         "verbose": {
-            "format":
-            "%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s",
+            "format": "%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s",
         },
     },
     "handlers": {
@@ -286,10 +274,7 @@ LOGGING = {
             "formatter": "verbose",
         },
     },
-    "root": {
-        "level": "INFO",
-        "handlers": ["console"]
-    },
+    "root": {"level": "INFO", "handlers": ["console"]},
 }
 
 REDIS_URL = env("REDIS_URL", default="redis://redis:6379/0")
@@ -298,8 +283,8 @@ REDIS_SSL = REDIS_URL.startswith("rediss://")
 # Celery
 # ------------------------------------------------------------------------------
 if USE_TZ:
-  # https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-timezone
-  CELERY_TIMEZONE = TIME_ZONE
+    # https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-timezone
+    CELERY_TIMEZONE = TIME_ZONE
 # https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-broker_url
 CELERY_BROKER_URL = REDIS_URL
 # https://docs.celeryq.dev/en/stable/userguide/configuration.html#redis-backend-use-ssl
@@ -337,8 +322,7 @@ CELERY_TASK_SEND_SENT_EVENT = True
 CELERY_WORKER_HIJACK_ROOT_LOGGER = False
 # django-allauth
 # ------------------------------------------------------------------------------
-ACCOUNT_ALLOW_REGISTRATION = env.bool("DJANGO_ACCOUNT_ALLOW_REGISTRATION",
-                                      True)
+ACCOUNT_ALLOW_REGISTRATION = env.bool("DJANGO_ACCOUNT_ALLOW_REGISTRATION", True)
 # https://docs.allauth.org/en/latest/account/configuration.html
 ACCOUNT_LOGIN_METHODS = {"username"}
 # https://docs.allauth.org/en/latest/account/configuration.html
@@ -354,6 +338,25 @@ SOCIALACCOUNT_ADAPTER = "willgeben.users.adapters.SocialAccountAdapter"
 # https://docs.allauth.org/en/latest/socialaccount/configuration.html
 SOCIALACCOUNT_FORMS = {"signup": "willgeben.users.forms.UserSocialSignupForm"}
 
+SOCIALACCOUNT_PROVIDERS = {
+    "openid_connect": {
+        "APPS": [
+            {
+                "provider_id": "authentik",
+                "name": "Treibhaus Auth",
+                "client_id": env("AUTHENTIK_CLIENT_ID"),
+                "secret": env("AUTHENTIK_SECRET"),
+                "settings": {
+                    "server_url": env("AUTHENTIK_SERVER_URL"),
+                    # Optional: specify scopes, e.g.,
+                    # "SCOPE": ["openid", "profile", "email"],
+                    "oauth_pkce_enabled": True,
+                },
+            },
+        ],
+    },
+}
+
 # django-rest-framework
 # -------------------------------------------------------------------------------
 # django-rest-framework - https://www.django-rest-framework.org/api-guide/settings/
@@ -362,10 +365,8 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.TokenAuthentication",
     ),
-    "DEFAULT_PERMISSION_CLASSES":
-    ("rest_framework.permissions.IsAuthenticated", ),
-    "DEFAULT_SCHEMA_CLASS":
-    "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 # django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup
