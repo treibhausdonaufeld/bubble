@@ -280,3 +280,4 @@ webpack-stats.json
 !.envs/.local/
 
 db.sqlite3
+.envs/.local/.allauth
