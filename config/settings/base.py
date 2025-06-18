@@ -24,7 +24,7 @@ DEBUG = env.bool("DJANGO_DEBUG", False)
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # though not all of them may be available with every OS.
 # In Windows, this must be set to your system time zone.
-TIME_ZONE = "CET"
+TIME_ZONE = "Europe/Vienna"
 # https://docs.djangoproject.com/en/dev/ref/settings/#language-code
 LANGUAGE_CODE = "de-de"
 # https://docs.djangoproject.com/en/dev/ref/settings/#languages
@@ -46,7 +46,7 @@ LOCALE_PATHS = [str(BASE_DIR / "locale")]
 # DATABASES
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
-DATABASES = {"default": env.db("DATABASE_URL")}
+DATABASES = {"default": env.db("DATABASE_URL", "sqlite:///db.sqlite3")}
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
 # https://docs.djangoproject.com/en/stable/ref/settings/#std:setting-DEFAULT_AUTO_FIELD
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
@@ -190,7 +190,7 @@ TEMPLATES = [
         # https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-TEMPLATES-BACKEND
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         # https://docs.djangoproject.com/en/dev/ref/settings/#dirs
-        "DIRS": [str(APPS_DIR / "templates")],
+        "DIRS": [str(APPS_DIR / "templates"), str(APPS_DIR / "core" / "templates")],
         # https://docs.djangoproject.com/en/dev/ref/settings/#app-dirs
         "APP_DIRS": True,
         "OPTIONS": {
@@ -338,19 +338,28 @@ SOCIALACCOUNT_ADAPTER = "willgeben.users.adapters.SocialAccountAdapter"
 # https://docs.allauth.org/en/latest/socialaccount/configuration.html
 SOCIALACCOUNT_FORMS = {"signup": "willgeben.users.forms.UserSocialSignupForm"}
 
+SOCIALACCOUNT_ENABLED = env.bool("SOCIALACCOUNT_ENABLED", default=True)
+
+# SOCIALACCOUNT_ONLY = True
+
+# ACCOUNT_ALLOW_REGISTRATION = False
+
 SOCIALACCOUNT_PROVIDERS = {
     "openid_connect": {
         "APPS": [
             {
                 "provider_id": "authentik",
                 "name": "Treibhaus Auth",
-                "client_id": env("AUTHENTIK_CLIENT_ID"),
-                "secret": env("AUTHENTIK_SECRET"),
+                "client_id": env("AUTHENTIK_CLIENT_ID", default="default_client_id"),
+                "secret": env("AUTHENTIK_SECRET", default="default_secret"),
                 "settings": {
-                    "server_url": env("AUTHENTIK_SERVER_URL"),
+                    "server_url": env(
+                        "AUTHENTIK_SERVER_URL",
+                        default="http://authentik:8000",
+                    ),
                     # Optional: specify scopes, e.g.,
                     # "SCOPE": ["openid", "profile", "email"],
-                    "oauth_pkce_enabled": True,
+                    # "oauth_pkce_enabled": True,
                 },
             },
         ],

@@ -1,99 +1,94 @@
 {% extends "allauth/layouts/entrance.html" %}
+
 {% load i18n %}
 {% load account %}
 {% load crispy_forms_tags %}
+{% load socialaccount %}
 
-{% block head_title %}Anmelden{% endblock head_title %}
-
+{% block head_title %}
+  Anmelden
+{% endblock head_title %}
 {% block content %}
-<div class="card shadow">
-  <div class="card-header bg-primary text-white text-center">
-    <h3 class="mb-0">
-      <i class="fas fa-sign-in-alt me-2"></i>
-      Anmelden
-    </h3>
-  </div>
-  <div class="card-body p-4">
-    <p class="text-muted text-center mb-4">
-      Melden Sie sich an, um Gegenstände zu teilen und zu finden.
-    </p>
-
-    {% get_providers as socialaccount_providers %}
-    {% if socialaccount_providers %}
-      <div class="mb-4">
-        <h5 class="text-center mb-3">Anmelden mit:</h5>
-        {% include "socialaccount/snippets/provider_list.html" with process="login" %}
-      </div>
-      <hr>
-      <p class="text-center text-muted">oder</p>
-    {% endif %}
-
-    <form method="post" action="{% url 'account_login' %}" class="login">
-      {% csrf_token %}
-      
-      <div class="mb-3">
-        <label for="id_login" class="form-label">
-          <i class="fas fa-user me-1"></i>
-          Benutzername
-        </label>
-        <input type="text" 
-               name="login" 
-               id="id_login" 
-               class="form-control form-control-lg"
-               placeholder="Ihr Benutzername"
-               required>
-      </div>
-
-      <div class="mb-3">
-        <label for="id_password" class="form-label">
-          <i class="fas fa-lock me-1"></i>
-          Passwort
-        </label>
-        <input type="password" 
-               name="password" 
-               id="id_password" 
-               class="form-control form-control-lg"
-               placeholder="Ihr Passwort"
-               required>
-      </div>
-
-      {% if form.non_field_errors %}
-        <div class="alert alert-danger" role="alert">
-          {{ form.non_field_errors }}
-        </div>
-      {% endif %}
-
-      <div class="mb-3 form-check">
-        <input type="checkbox" 
-               name="remember" 
-               id="id_remember" 
-               class="form-check-input">
-        <label class="form-check-label" for="id_remember">
-          Angemeldet bleiben
-        </label>
-      </div>
-
-      <button type="submit" class="btn btn-primary btn-lg w-100 mb-3">
+  <div class="card shadow">
+    <div class="card-header bg-primary text-white text-center">
+      <h3 class="mb-0">
         <i class="fas fa-sign-in-alt me-2"></i>
         Anmelden
-      </button>
-
-      <div class="text-center">
-        <a href="{% url 'account_reset_password' %}" class="text-decoration-none">
-          Passwort vergessen?
-        </a>
-      </div>
-    </form>
-
-    <hr class="my-4">
-    
-    <div class="text-center">
-      <p class="mb-0">Noch kein Konto?</p>
-      <a href="{% url 'account_signup' %}" class="btn btn-outline-primary">
-        <i class="fas fa-user-plus me-2"></i>
-        Registrieren
-      </a>
+      </h3>
+    </div>
+    <div class="card-body p-4">
+      <p class="text-muted text-center mb-4">Melden Sie sich an, um Gegenstände zu teilen und zu finden.</p>
+      {% get_providers as socialaccount_providers %}
+      {% if socialaccount_providers
+        %}
+        <div class="mb-4">
+          <h5 class="text-center mb-3">Anmelden mit:</h5>
+          {% include "socialaccount/snippets/provider_list.html" with
+          process="login" %}
+        </div>
+        <hr />
+        <p class="text-center text-muted">oder</p>
+      {% endif %}
+      <!-- {% if SOCIALACCOUNT_ENABLED %}
+        {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
+{% endif %} -->
+      {% if not SOCIALACCOUNT_ONLY %}
+        <form method="post" action="{% url 'account_login' %}" class="login">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="id_login" class="form-label">
+              <i class="fas fa-user me-1"></i>
+              Benutzername
+            </label>
+            <input type="text"
+                   name="login"
+                   id="id_login"
+                   class="form-control form-control-lg"
+                   placeholder="Ihr Benutzername"
+                   required />
+          </div>
+          <div class="mb-3">
+            <label for="id_password" class="form-label">
+              <i class="fas fa-lock me-1"></i>
+              Passwort
+            </label>
+            <input type="password"
+                   name="password"
+                   id="id_password"
+                   class="form-control form-control-lg"
+                   placeholder="Ihr Passwort"
+                   required />
+          </div>
+          {% if form.non_field_errors %}
+            <div class="alert alert-danger" role="alert">{{ form.non_field_errors }}</div>
+          {% endif %}
+          <div class="mb-3 form-check">
+            <input type="checkbox"
+                   name="remember"
+                   id="id_remember"
+                   class="form-check-input" />
+            <label class="form-check-label" for="id_remember">Angemeldet bleiben</label>
+          </div>
+          <button type="submit" class="btn btn-primary btn-lg w-100 mb-3">
+            <i class="fas fa-sign-in-alt me-2"></i>
+            Anmelden
+          </button>
+          <div class="text-center">
+            <a href="{% url 'account_reset_password' %}"
+               class="text-decoration-none">Passwort vergessen?</a>
+          </div>
+        </form>
+        {% if ACCOUNT_ALLOW_REGISTRATION %}
+          <hr class="my-4" />
+          <div class="text-center">
+            <p class="mb-0">Noch kein Konto?</p>
+            <a href="{% url 'account_signup' %}" class="btn btn-outline-primary">
+              <i class="fas fa-user-plus me-2"></i>
+              Registrieren
+            </a>
+          </div>
+        {% endif %}
+      {% endif %}
     </div>
   </div>
-</div>
 {% endblock content %}
