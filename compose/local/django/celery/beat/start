@@ -3,6 +3,8 @@
 set -o errexit
 set -o nounset
 
+# Change to app directory
+cd /app
 
 rm -f './celerybeat.pid'
-exec watchfiles --filter python celery.__main__.main --args '-A config.celery_app beat -l INFO'
+exec /app/.venv/bin/watchfiles --filter python /app/.venv/bin/celery.__main__.main --args '-A config.celery_app beat -l INFO'

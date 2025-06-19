@@ -31,9 +31,10 @@ if __name__ == "__main__":
         print("Creating tables manually...")
         
         # Import all models to register them
-        from willgeben.users.models import User, Profile
-        from willgeben.categories.models import ItemCategory, ItemTag
-        from willgeben.items.models import Item, ItemTagRelation, Image
+        from bubble.users.models import User, Profile
+        from bubble.categories.models import ItemCategory
+        from bubble.tags.models import ItemTag
+        from bubble.items.models import Item, ItemTagRelation, Image
         
         # Create tables manually
         from django.core.management.sql import sql_create_index

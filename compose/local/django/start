@@ -4,7 +4,10 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
+# Change to app directory
+cd /app
 
-python manage.py migrate
-python manage.py createsuperuser --noinput --username admin --email admin@example.com || echo "Superuser already exists"
-exec uvicorn config.asgi:application --host 0.0.0.0 --reload --reload-include '*.html'
+# Run Django commands using the virtual environment directly
+/app/.venv/bin/python3 manage.py migrate
+/app/.venv/bin/python3 manage.py createsuperuser --noinput --username admin --email admin@example.com || echo "Superuser already exists"
+exec /app/.venv/bin/uvicorn config.asgi:application --host 0.0.0.0 --reload --reload-include '*.html'

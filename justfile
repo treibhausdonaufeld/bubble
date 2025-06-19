@@ -36,3 +36,7 @@ logs *args:
 # manage: Executes `manage.py` command.
 manage +args:
     @docker compose run --rm django python ./manage.py {{args}}
+
+# manage: Executes `manage.py` command.
+run +args:
+    @docker compose run --rm django {{args}}

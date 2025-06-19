@@ -28,7 +28,7 @@ django.setup()
 
 # -- Project information -----------------------------------------------------
 
-project = "willgeben"
+project = "bubble"
 copyright = """2025, Fabian Helm"""  # noqa: A001
 author = "Fabian Helm"
 

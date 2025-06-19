@@ -58,21 +58,21 @@ RUN chmod +x /start-flower
 
 USER dev-user
 
-WORKDIR /home/dev-user/
+WORKDIR ${APP_HOME}
 
-# Requirements are installed here to ensure they will be cached.
-COPY uv.lock pyproject.toml ./
+# copy application code to WORKDIR first
+COPY --chown=dev-user:dev-user . ${APP_HOME}
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
 RUN --mount=type=cache,target=$HOME/.cache/uv \
-  uv sync --frozen
+  uv sync
 
 ENV PATH="/home/dev-user/.venv/bin:$PATH"
 
 WORKDIR ${APP_HOME}
 
-# copy application code to WORKDIR
-COPY . ${APP_HOME}
+ENV PATH="/app/.venv/bin:$PATH"
+ENV PYTHONPATH="/app/.venv/lib/python3.12/site-packages:$PYTHONPATH"
 
 ENTRYPOINT ["/entrypoint"]

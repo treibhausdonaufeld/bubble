@@ -1,0 +1,288 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{{ item.name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-8">
+      <!-- Item Images -->
+      {% if item_images %}
+        <div id="itemCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
+          <div class="carousel-inner">
+            {% for image in item_images %}
+              <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                <img src="{{ image.fname }}" class="d-block w-100" alt="{{ item.name }}" style="height: 400px; object-fit: cover;">
+              </div>
+            {% endfor %}
+          </div>
+          {% if item_images|length > 1 %}
+            <button class="carousel-control-prev" type="button" data-bs-target="#itemCarousel" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">{% trans "Previous" %}</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#itemCarousel" data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">{% trans "Next" %}</span>
+            </button>
+          {% endif %}
+        </div>
+      {% else %}
+        <div class="bg-light d-flex align-items-center justify-content-center mb-4" style="height: 400px;">
+          <i class="fas fa-image fa-5x text-muted"></i>
+        </div>
+      {% endif %}
+
+      <!-- Item Description -->
+      <div class="card">
+        <div class="card-header">
+          <h5>{% trans "Description" %}</h5>
+        </div>
+        <div class="card-body">
+          <p>{{ item.description|linebreaks }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <!-- Item Info Card -->
+      <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h4 class="mb-0">{{ item.name }}</h4>
+          {% if is_owner %}
+            <div class="dropdown">
+              <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                {% trans "Actions" %}
+              </button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{% url 'items:edit' item.pk %}">{% trans "Edit" %}</a></li>
+                <li><a class="dropdown-item" href="{% url 'items:toggle_status' item.pk %}">
+                  {% if item.active %}{% trans "Deactivate" %}{% else %}{% trans "Activate" %}{% endif %}
+                </a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item text-danger" href="{% url 'items:delete' item.pk %}">{% trans "Delete" %}</a></li>
+              </ul>
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="card-body">
+          <!-- Type and Price -->
+          <div class="mb-3">
+            {% if item.item_type == 0 %}
+              <span class="badge bg-success fs-6">{% trans "For Sale" %}</span>
+              {% if item.price %}
+                <div class="h4 text-success mt-2">€{{ item.price }}</div>
+              {% endif %}
+            {% elif item.item_type == 1 %}
+              <span class="badge bg-primary fs-6">{% trans "Give Away" %}</span>
+              <div class="h4 text-primary mt-2">{% trans "Free" %}</div>
+            {% elif item.item_type == 2 %}
+              <span class="badge bg-info fs-6">{% trans "Borrow" %}</span>
+            {% endif %}
+          </div>
+
+          <!-- Condition -->
+          <div class="mb-3">
+            <strong>{% trans "Condition:" %}</strong>
+            {% if item.status == 0 %}
+              <span class="badge bg-light text-dark">{% trans "New" %}</span>
+            {% elif item.status == 1 %}
+              <span class="badge bg-warning">{% trans "Used" %}</span>
+            {% elif item.status == 2 %}
+              <span class="badge bg-secondary">{% trans "Old" %}</span>
+            {% endif %}
+          </div>
+
+          <!-- Category -->
+          <div class="mb-3">
+            <strong>{% trans "Category:" %}</strong> {{ item.category.name }}
+          </div>
+
+          <!-- Tags -->
+          {% if item_tags %}
+            <div class="mb-3">
+              <strong>{% trans "Tags:" %}</strong><br>
+              {% for tag_relation in item_tags %}
+                <span class="badge bg-secondary me-1">{{ tag_relation.tag.name }}</span>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <!-- Posted Date -->
+          <div class="mb-3">
+            <strong>{% trans "Created:" %}</strong> {{ item.date_created|date:"F j, Y" }}
+          </div>
+
+          <!-- Updated Date -->
+          {% if item.date_updated != item.date_created %}
+            <div class="mb-3">
+              <strong>{% trans "Updated:" %}</strong> {{ item.date_updated|date:"F j, Y" }}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Contact Card -->
+      <div class="card">
+        <div class="card-header">
+          <h5>{% trans "Contact" %}</h5>
+        </div>
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-2">
+            <i class="fas fa-user me-2"></i>
+            <strong>{{ item.user.username }}</strong>
+          </div>
+
+          {% if item.display_contact and item.user.profile %}
+            {% if item.user.email %}
+              <div class="d-flex align-items-center mb-2">
+                <i class="fas fa-envelope me-2"></i>
+                <a href="mailto:{{ item.user.email }}">{{ item.user.email }}</a>
+              </div>
+            {% endif %}
+
+            {% if item.user.profile.phone %}
+              <div class="d-flex align-items-center mb-2">
+                <i class="fas fa-phone me-2"></i>
+                <span>{{ item.user.profile.phone }}</span>
+              </div>
+            {% endif %}
+          {% else %}
+            <p class="text-muted">{% trans "Contact information is not displayed" %}</p>
+          {% endif %}
+
+          {% if not user.is_authenticated %}
+            <div class="alert alert-info">
+              <a href="{% url 'account_login' %}">{% trans "Sign In" %}</a> {% trans "to see all contact details" %}
+            </div>
+          {% endif %}
+
+          <!-- Message/Request Button -->
+          {% if user.is_authenticated and user != item.user %}
+            <div class="mt-3">
+              <a href="{% url 'messaging:send_message' item.pk %}" class="btn btn-success w-100">
+                <i class="fas fa-envelope me-2"></i>{% trans "Send Request" %}
+              </a>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Conversation Section -->
+  {% if user.is_authenticated and user == item.user or user.is_authenticated and conversation_exists %}
+    <div class="row mt-4">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">{% trans "Messages" %}</h5>
+            <button class="btn btn-outline-primary btn-sm" id="refreshMessages">
+              <i class="fas fa-sync"></i> {% trans "Refresh" %}
+            </button>
+          </div>
+          <div class="card-body">
+            <div id="conversationMessages" style="max-height: 400px; overflow-y: auto;">
+              <!-- Messages will be loaded here -->
+            </div>
+            
+            {% if user != item.user %}
+              <hr>
+              <form id="messageForm" class="mt-3">
+                {% csrf_token %}
+                <div class="input-group">
+                  <textarea class="form-control" name="message" rows="2" placeholder="{% trans 'Your message...' %}" required></textarea>
+                  <button class="btn btn-primary" type="submit">
+                    <i class="fas fa-paper-plane"></i> {% trans "Send" %}
+                  </button>
+                </div>
+              </form>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  <!-- Back Button -->
+  <div class="row mt-4">
+    <div class="col-12">
+      <a href="{% url 'items:list' %}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left"></i> {% trans "Back to Items" %}
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const conversationMessages = document.getElementById('conversationMessages');
+    const messageForm = document.getElementById('messageForm');
+    const refreshButton = document.getElementById('refreshMessages');
+    
+    // Function to load conversation
+    function loadConversation() {
+        if (!conversationMessages) return;
+        
+        fetch(`/messaging/conversation/{{ item.pk }}/`)
+            .then(response => response.json())
+            .then(data => {
+                conversationMessages.innerHTML = data.html;
+                conversationMessages.scrollTop = conversationMessages.scrollHeight;
+            })
+            .catch(error => console.error('Error loading conversation:', error));
+    }
+    
+    // Function to send message via AJAX
+    function sendMessage(formData) {
+        fetch(`/messaging/send-ajax/{{ item.pk }}/`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Add new message to conversation
+                conversationMessages.insertAdjacentHTML('beforeend', data.message_html);
+                conversationMessages.scrollTop = conversationMessages.scrollHeight;
+                // Clear form
+                messageForm.reset();
+            } else {
+                alert('Error sending message');
+            }
+        })
+        .catch(error => {
+            console.error('Error sending message:', error);
+            alert('Error sending message');
+        });
+    }
+    
+    // Load conversation on page load
+    loadConversation();
+    
+    // Handle message form submission
+    if (messageForm) {
+        messageForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            sendMessage(formData);
+        });
+    }
+    
+    // Handle refresh button
+    if (refreshButton) {
+        refreshButton.addEventListener('click', function() {
+            loadConversation();
+        });
+    }
+    
+    // Auto-refresh every 30 seconds
+    setInterval(loadConversation, 30000);
+});
+</script>
+{% endblock %}

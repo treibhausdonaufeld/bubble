@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+  {% if object %}
+    {% trans "Edit Article" %} - {{ object.name }}
+  {% else %}
+    {% trans "Add New Article" %}
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h3>
+            {% if object %}
+              {% trans "Edit Article" %} - {{ object.name }}
+            {% else %}
+              {% trans "Add New Article" %}
+            {% endif %}
+          </h3>
+        </div>
+        
+        <div class="card-body">
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <!-- Basic Information -->
+            <div class="row mb-3">
+              <div class="col-md-12">
+                <label for="{{ form.name.id_for_label }}" class="form-label">{{ form.name.label }} *</label>
+                {{ form.name }}
+                {% if form.name.errors %}
+                  <div class="text-danger">{{ form.name.errors }}</div>
+                {% endif %}
+                {% if form.name.help_text %}
+                  <div class="form-text">{{ form.name.help_text }}</div>
+                {% endif %}
+              </div>
+            </div>
+            
+            <div class="row mb-3">
+              <div class="col-md-12">
+                <label for="{{ form.description.id_for_label }}" class="form-label">{{ form.description.label }} *</label>
+                {{ form.description }}
+                {% if form.description.errors %}
+                  <div class="text-danger">{{ form.description.errors }}</div>
+                {% endif %}
+                {% if form.description.help_text %}
+                  <div class="form-text">{{ form.description.help_text }}</div>
+                {% endif %}
+              </div>
+            </div>
+            
+            <!-- Category and Type -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="{{ form.category.id_for_label }}" class="form-label">{{ form.category.label }} *</label>
+                {{ form.category }}
+                {% if form.category.errors %}
+                  <div class="text-danger">{{ form.category.errors }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                <label for="{{ form.item_type.id_for_label }}" class="form-label">{{ form.item_type.label }} *</label>
+                {{ form.item_type }}
+                {% if form.item_type.errors %}
+                  <div class="text-danger">{{ form.item_type.errors }}</div>
+                {% endif %}
+              </div>
+            </div>
+            
+            <!-- Status and Price -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="{{ form.status.id_for_label }}" class="form-label">{{ form.status.label }} *</label>
+                {{ form.status }}
+                {% if form.status.errors %}
+                  <div class="text-danger">{{ form.status.errors }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                <label for="{{ form.price.id_for_label }}" class="form-label">{{ form.price.label }}</label>
+                {{ form.price }}
+                {% if form.price.errors %}
+                  <div class="text-danger">{{ form.price.errors }}</div>
+                {% endif %}
+                {% if form.price.help_text %}
+                  <div class="form-text">{{ form.price.help_text }}</div>
+                {% endif %}
+              </div>
+            </div>
+            
+            <!-- Tags -->
+            <div class="mb-3">
+              <label class="form-label">{{ form.tags.label }}</label>
+              <div class="row" style="max-height: 200px; overflow-y: auto;">
+                {% for checkbox in form.tags %}
+                  <div class="col-md-4 col-sm-6">
+                    <div class="form-check">
+                      {{ checkbox.tag }}
+                      <label class="form-check-label" for="{{ checkbox.id_for_label }}">
+                        {{ checkbox.choice_label }}
+                      </label>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+              {% if form.tags.errors %}
+                <div class="text-danger">{{ form.tags.errors }}</div>
+              {% endif %}
+              {% if form.tags.help_text %}
+                <div class="form-text">{{ form.tags.help_text }}</div>
+              {% endif %}
+            </div>
+            
+            <!-- Settings -->
+            <div class="mb-3">
+              <label class="form-label">{% trans "Settings" %}</label>
+              
+              <div class="form-check">
+                {{ form.display_contact }}
+                <label class="form-check-label" for="{{ form.display_contact.id_for_label }}">
+                  {{ form.display_contact.label }}
+                </label>
+                {% if form.display_contact.help_text %}
+                  <div class="form-text">{{ form.display_contact.help_text }}</div>
+                {% endif %}
+              </div>
+              
+              <div class="form-check">
+                {{ form.active }}
+                <label class="form-check-label" for="{{ form.active.id_for_label }}">
+                  {{ form.active.label }}
+                </label>
+              </div>
+              
+              <!-- Intern-only fields -->
+              {% if form.intern %}
+                <div class="form-check">
+                  {{ form.intern }}
+                  <label class="form-check-label" for="{{ form.intern.id_for_label }}">
+                    {{ form.intern.label }}
+                  </label>
+                  {% if form.intern.help_text %}
+                    <div class="form-text">{{ form.intern.help_text }}</div>
+                  {% endif %}
+                </div>
+              {% endif %}
+              
+              {% if form.th_payment %}
+                <div class="form-check">
+                  {{ form.th_payment }}
+                  <label class="form-check-label" for="{{ form.th_payment.id_for_label }}">
+                    {{ form.th_payment.label }}
+                  </label>
+                  {% if form.th_payment.help_text %}
+                    <div class="form-text">{{ form.th_payment.help_text }}</div>
+                  {% endif %}
+                </div>
+              {% endif %}
+            </div>
+            
+            <!-- Profile Image Frame -->
+            {% if form.profile_img_frame %}
+              <div class="mb-3">
+                <label for="{{ form.profile_img_frame.id_for_label }}" class="form-label">{{ form.profile_img_frame.label }}</label>
+                {{ form.profile_img_frame }}
+                {% if form.profile_img_frame.errors %}
+                  <div class="text-danger">{{ form.profile_img_frame.errors }}</div>
+                {% endif %}
+              </div>
+            {% endif %}
+            
+            <!-- Form Errors -->
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger">
+                {{ form.non_field_errors }}
+              </div>
+            {% endif %}
+            
+            <!-- Form Actions -->
+            <div class="d-flex justify-content-between">
+              <a href="{% if object %}{% url 'items:detail' object.pk %}{% else %}{% url 'items:list' %}{% endif %}" class="btn btn-outline-secondary">
+                {% trans "Cancel" %}
+              </a>
+              <button type="submit" class="btn btn-primary">
+                {% if object %}
+                  {% trans "Update Article" %}
+                {% else %}
+                  {% trans "Create Article" %}
+                {% endif %}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Show/hide price field based on item type
+  const itemTypeField = document.getElementById('{{ form.item_type.id_for_label }}');
+  const priceField = document.getElementById('{{ form.price.id_for_label }}');
+  const priceContainer = priceField.closest('.col-md-6');
+  
+  function togglePriceField() {
+    if (itemTypeField.value === '0') { // Sell
+      priceContainer.style.display = 'block';
+      priceField.setAttribute('required', 'required');
+    } else { // Give away or Borrow
+      priceContainer.style.display = 'none';
+      priceField.removeAttribute('required');
+      priceField.value = '';
+    }
+  }
+  
+  itemTypeField.addEventListener('change', togglePriceField);
+  togglePriceField(); // Initial call
+});
+</script>
+{% endblock %}

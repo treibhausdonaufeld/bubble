@@ -1,5 +1,5 @@
 [project]
-name = "willgeben"
+name = "bubble"
 version = "0.1.0"
 description = "Treibhaus donaufeld sharing platform"
 readme = "README.md"
@@ -30,6 +30,13 @@ dependencies = [
     "whitenoise",
 ]
 
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools-scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["bubble*"]
+
 # ==== pytest ====
 [tool.pytest.ini_options]
 minversion = "6.0"
@@ -41,7 +48,7 @@ python_files = [
 
 # ==== Coverage ====
 [tool.coverage.run]
-include = ["willgeben/**"]
+include = ["bubble/**"]
 omit = ["*/migrations/*", "*/tests/*"]
 plugins = ["django_coverage_plugin"]
 

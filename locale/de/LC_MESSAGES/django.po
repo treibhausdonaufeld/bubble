@@ -402,3 +402,202 @@ msgstr ""
 #: willgeben/users/views.py:26
 msgid "Profil erfolgreich aktualisiert"
 msgstr ""
+
+# New English translations
+msgid "Homepage"
+msgstr "Startseite"
+
+msgid "Items"
+msgstr "Sachen"
+
+msgid "Need"
+msgstr "Brauchen"
+
+msgid "Sell"
+msgstr "Verkaufen"
+
+msgid "All"
+msgstr "Alle"
+
+msgid "Services"
+msgstr "Dienste"
+
+msgid "Projects"
+msgstr "Projekte"
+
+msgid "Events"
+msgstr "Events"
+
+msgid "Community"
+msgstr "Community"
+
+msgid "All Users"
+msgstr "Alle Nutzer"
+
+msgid "About Us"
+msgstr "Über uns"
+
+msgid "My Profile"
+msgstr "Mein Profil"
+
+msgid "Previous"
+msgstr "Vorherige"
+
+msgid "Next"
+msgstr "Nächste"
+
+msgid "Description"
+msgstr "Beschreibung"
+
+msgid "Actions"
+msgstr "Aktionen"
+
+msgid "Edit"
+msgstr "Bearbeiten"
+
+msgid "Deactivate"
+msgstr "Deaktivieren"
+
+msgid "Activate"
+msgstr "Aktivieren"
+
+msgid "Delete"
+msgstr "Löschen"
+
+msgid "Free"
+msgstr "Kostenlos"
+
+msgid "Condition:"
+msgstr "Zustand:"
+
+msgid "New"
+msgstr "Neu"
+
+msgid "Used"
+msgstr "Gebraucht"
+
+msgid "Old"
+msgstr "Alt"
+
+msgid "Created:"
+msgstr "Erstellt:"
+
+msgid "Updated:"
+msgstr "Aktualisiert:"
+
+msgid "Contact"
+msgstr "Kontakt"
+
+msgid "Contact information is not displayed"
+msgstr "Kontaktinformationen werden nicht angezeigt"
+
+msgid "to see all contact details"
+msgstr "um alle Kontaktdaten zu sehen"
+
+msgid "Send Request"
+msgstr "Anfrage senden"
+
+msgid "Messages"
+msgstr "Nachrichten"
+
+msgid "Refresh"
+msgstr "Aktualisieren"
+
+msgid "Your message..."
+msgstr "Ihre Nachricht..."
+
+msgid "Send"
+msgstr "Senden"
+
+msgid "Back to Items"
+msgstr "Zurück zu den Sachen"
+
+msgid "Filters"
+msgstr "Filter"
+
+msgid "Active Filters"
+msgstr "Aktive Filter"
+
+msgid "Clear All"
+msgstr "Alle löschen"
+
+msgid "Search"
+msgstr "Suchen"
+
+msgid "Search items..."
+msgstr "Artikel suchen..."
+
+msgid "Category"
+msgstr "Kategorie"
+
+msgid "Main Category"
+msgstr "Hauptkategorie"
+
+msgid "Subcategory"
+msgstr "Unterkategorie"
+
+msgid "Type"
+msgstr "Typ"
+
+msgid "Search and select tags..."
+msgstr "Tags suchen und auswählen..."
+
+msgid "Sort by"
+msgstr "Sortieren nach"
+
+msgid "Filter"
+msgstr "Filtern"
+
+msgid "Reset Filters"
+msgstr "Filter zurücksetzen"
+
+msgid "Create Item"
+msgstr "Artikel erstellen"
+
+msgid "View"
+msgstr "Ansehen"
+
+msgid "First"
+msgstr "Erste"
+
+msgid "Page"
+msgstr "Seite"
+
+msgid "of"
+msgstr "von"
+
+msgid "Last"
+msgstr "Letzte"
+
+msgid "No items found"
+msgstr "Keine Artikel gefunden"
+
+msgid "Try adjusting your filters or search terms."
+msgstr "Versuchen Sie, Ihre Filter oder Suchbegriffe anzupassen."
+
+msgid "Add the first item"
+msgstr "Den ersten Artikel hinzufügen"
+
+msgid "Edit Article"
+msgstr "Artikel bearbeiten"
+
+msgid "Add New Article"
+msgstr "Neuen Artikel hinzufügen"
+
+msgid "Settings"
+msgstr "Einstellungen"
+
+msgid "Update Article"
+msgstr "Artikel aktualisieren"
+
+msgid "Create Article"
+msgstr "Artikel erstellen"
+
+msgid "Article:"
+msgstr "Artikel:"
+
+msgid "Back"
+msgstr "Zurück"
+
+msgid "No messages available yet."
+msgstr "Noch keine Nachrichten vorhanden."
