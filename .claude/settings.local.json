@@ -31,7 +31,9 @@
       "Bash(docker:*)",
       "Bash(just down:*)",
       "Bash(just prune:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(rg:*)",
+      "Bash(grep:*)"
     ],
     "deny": []
   }

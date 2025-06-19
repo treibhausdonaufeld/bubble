@@ -1,10 +1,11 @@
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 from config.settings.base import AUTH_USER_MODEL
 from bubble.categories.models import ItemCategory
 from bubble.tags.models import ItemTag
 
-STATUS_CHOICES = [(0, 'New'), (1, 'Used'), (2, 'Old')]
-ITEM_TYPE_CHOICES = [(0, 'Sell'), (1, 'Give Away'), (2, 'Borrow'), (3, 'Need')]
+STATUS_CHOICES = [(0, _('New')), (1, _('Used')), (2, _('Old'))]
+ITEM_TYPE_CHOICES = [(0, _('For Sale')), (1, _('Give Away')), (2, _('Borrow')), (3, _('Need'))]
 
 
 class Item(models.Model):

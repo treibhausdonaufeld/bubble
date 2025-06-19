@@ -149,7 +149,7 @@
       right: 0.5rem;
       z-index: 2;
     }
-    
+
     .item-type-badge .badge {
       font-size: 0.75rem;
       padding: 0.35rem 0.65rem;
@@ -287,19 +287,19 @@
     <div class="col-12">
       <nav class="nav nav-pills justify-content-center">
         <a class="nav-link {% if not current_filter %}active{% endif %}" href="{% url 'items:list' %}">
-          <i class="fas fa-th-large"></i> {% trans "Alle" %}
+          <i class="fas fa-th-large"></i> {% trans "All" %}
         </a>
         <a class="nav-link {% if current_filter == 'sell' %}active{% endif %}" href="{% url 'items:sell' %}">
-          <i class="fas fa-tags"></i> {% trans "Verkaufen" %}
+          <i class="fas fa-tags"></i> {% trans "For Sale" %}
         </a>
         <a class="nav-link {% if current_filter == 'give_away' %}active{% endif %}" href="{% url 'items:give_away' %}">
-          <i class="fas fa-gift"></i> {% trans "Weggeben" %}
+          <i class="fas fa-gift"></i> {% trans "Give Away" %}
         </a>
         <a class="nav-link {% if current_filter == 'borrow' %}active{% endif %}" href="{% url 'items:borrow' %}">
-          <i class="fas fa-handshake"></i> {% trans "Ausleihen" %}
+          <i class="fas fa-handshake"></i> {% trans "Borrow" %}
         </a>
         <a class="nav-link {% if current_filter == 'need' %}active{% endif %}" href="{% url 'items:need' %}">
-          <i class="fas fa-search"></i> {% trans "Brauchen" %}
+          <i class="fas fa-search"></i> {% trans "Need" %}
         </a>
       </nav>
     </div>
@@ -486,13 +486,13 @@
                     <!-- Item Type Badge -->
                     <div class="item-type-badge">
                       {% if item.item_type == 0 %}
-                        <span class="badge bg-success">{% trans "Verkaufen" %}</span>
+                        <span class="badge bg-success">{% trans "For Sale" %}</span>
                       {% elif item.item_type == 1 %}
-                        <span class="badge bg-primary">{% trans "Weggeben" %}</span>
+                        <span class="badge bg-primary">{% trans "Give Away" %}</span>
                       {% elif item.item_type == 2 %}
-                        <span class="badge bg-info">{% trans "Ausleihen" %}</span>
+                        <span class="badge bg-info">{% trans "Borrow" %}</span>
                       {% elif item.item_type == 3 %}
-                        <span class="badge bg-warning">{% trans "Brauchen" %}</span>
+                        <span class="badge bg-warning">{% trans "Need" %}</span>
                       {% endif %}
                     </div>
 
@@ -507,17 +507,17 @@
                   <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start mb-2">
                       <h5 class="card-title mb-0">{{ item.name }}</h5>
-                      <span class="badge 
-                        {% if item.item_type == 0 %}bg-success{% elif item.item_type == 1 %}bg-primary{% elif item.item_type == 2 %}bg-info{% elif item.item_type == 3 %}bg-warning{% endif %} 
+                      <span class="badge
+                        {% if item.item_type == 0 %}bg-success{% elif item.item_type == 1 %}bg-primary{% elif item.item_type == 2 %}bg-info{% elif item.item_type == 3 %}bg-warning{% endif %}
                         ms-2" style="font-size: 0.7rem;">
                         {% if item.item_type == 0 %}
-                          {% trans "Verkaufen" %}
+                          {% trans "For Sale" %}
                         {% elif item.item_type == 1 %}
-                          {% trans "Weggeben" %}
+                          {% trans "Give Away" %}
                         {% elif item.item_type == 2 %}
-                          {% trans "Ausleihen" %}
+                          {% trans "Borrow" %}
                         {% elif item.item_type == 3 %}
-                          {% trans "Brauchen" %}
+                          {% trans "Need" %}
                         {% endif %}
                       </span>
                     </div>
