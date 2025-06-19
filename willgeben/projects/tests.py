@@ -1,5 +1,6 @@
-from django.test import TestCase
 from django.contrib.auth import get_user_model
+from django.test import TestCase
+
 from .models import Project
 
 User = get_user_model()
@@ -8,19 +9,19 @@ User = get_user_model()
 class ProjectModelTest(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(
-            username='testuser',
-            email='test@example.com'
+            username="testuser",
+            email="test@example.com",
         )
 
     def test_project_creation(self):
         project = Project.objects.create(
-            name='Test Project',
-            description='Test description',
-            creator=self.user
+            name="Test Project",
+            description="Test description",
+            creator=self.user,
         )
-        self.assertEqual(project.name, 'Test Project')
-        self.assertEqual(str(project), 'Test Project')
-        self.assertTrue(project.active)
-        self.assertEqual(project.status, 0)  # Planning
-        self.assertEqual(project.participant_count, 0)
-        self.assertTrue(project.has_space)
+        assert project.name == "Test Project"
+        assert str(project) == "Test Project"
+        assert project.active
+        assert project.status == 0  # Planning
+        assert project.participant_count == 0
+        assert project.has_space
