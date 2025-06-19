@@ -602,8 +602,8 @@ msgid "No messages available yet."
 msgstr "Noch keine Nachrichten vorhanden."
 
 # Home page translations
-msgid "Welcome to Bubble"
-msgstr "Willkommen bei Bubble"
+msgid "Welcome to bubble"
+msgstr "Willkommen bei bubble"
 
 msgid "Your platform for sharing items and services in the Treibhaus Donaufeld community"
 msgstr "Ihre Plattform für das Teilen von Gegenständen und Dienstleistungen in der Treibhaus Donaufeld Gemeinschaft"
@@ -680,8 +680,8 @@ msgstr "Lernen Sie Ihre Nachbarn kennen"
 msgid "About Treibhaus Donaufeld"
 msgstr "Über Treibhaus Donaufeld"
 
-msgid "Bubble is part of the Treibhaus Donaufeld community platform and promotes sustainable sharing and neighborly connections."
-msgstr "Bubble ist Teil der Treibhaus Donaufeld Gemeinschaftsplattform und fördert nachhaltiges Teilen und nachbarschaftliche Verbindungen."
+msgid "bubble is part of the Treibhaus Donaufeld community platform and promotes sustainable sharing and neighborly connections."
+msgstr "bubble ist Teil der Treibhaus Donaufeld Gemeinschaftsplattform und fördert nachhaltiges Teilen und nachbarschaftliche Verbindungen."
 
 msgid "Learn more"
 msgstr "Mehr erfahren"
