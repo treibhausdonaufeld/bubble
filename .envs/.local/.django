@@ -1,6 +1,6 @@
 # General
 # ------------------------------------------------------------------------------
-USE_DOCKER=no
+USE_DOCKER=yes
 IPYTHONDIR=/app/.ipython
 DJANGO_DEBUG=True
 # Redis
@@ -14,4 +14,10 @@ REDIS_URL=redis://redis:6379/0
 CELERY_FLOWER_USER=zALHNREbxTszOuVWgrBmRYjNltmZQCZa
 CELERY_FLOWER_PASSWORD=zzrfR3xJyNoaYBYmT2ujEYhVAW7DcKyNKbtNCxazGB1aE8lv7d14x6AZY8jEhzFf
 DJANGO_DEBUG=True
-DATABASE_URL=postgres://postgres:U1MnSYNB3M8JgEUSfXqII3ykYSNc1LXbhYiWG12lf9wTicI8EABWjNIyaLF0TDTn@postgres:5432/willgeben
+DATABASE_URL=postgres://postgres:U1MnSYNB3M8JgEUSfXqII3ykYSNc1LXbhYiWG12lf9wTicI8EABWjNIyaLF0TDTn@postgres:5432/bubble
+
+# Authentik OAuth (local development placeholders)
+# ------------------------------------------------------------------------------
+AUTHENTIK_CLIENT_ID=local-dev-client-id
+AUTHENTIK_SECRET=local-dev-secret
+AUTHENTIK_SERVER_URL=http://localhost:9000

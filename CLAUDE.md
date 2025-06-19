@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**willgeben** is a Django-based sharing platform for Treibhaus donaufeld, built with Cookiecutter Django. It uses Docker for local development and includes Celery for background tasks, Django REST Framework for API endpoints, and webpack for frontend asset compilation.
+**bubble** is a Django-based sharing platform for Treibhaus donaufeld, built with Cookiecutter Django. It uses Docker for local development and includes Celery for background tasks, Django REST Framework for API endpoints, and webpack for frontend asset compilation.
 
 ## Development Environment
 
@@ -15,7 +15,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Formatting Guidelines
 
 ### User Mentions
-When mentioning user anywhere show like this username (Full Name) according to @willgeben/users/models.py 
+When mentioning user anywhere show like this username (Full Name) according to @bubble/users/models.py 
 
 ## Development Commands
 
@@ -64,11 +64,11 @@ npm run build
 pytest
 
 # Type checking
-mypy willgeben
+mypy bubble
 
 # Code formatting/linting
-ruff check willgeben
-ruff format willgeben
+ruff check bubble
+ruff format bubble
 
 # Test coverage
 coverage run -m pytest
@@ -91,7 +91,7 @@ celery -A config.celery_app beat
   - `settings/`: Environment-specific settings (base, local, production, test)
   - `api_router.py`: DRF API URL routing
   - `celery_app.py`: Celery configuration
-- **willgeben/**: Main application directory
+- **bubble/**: Main application directory
   - `users/`: User management app with custom User model and Profile
   - `items/`: Item management app with CRUD operations and filtering
   - `categories/`: Category and tag management for items and services
@@ -133,6 +133,8 @@ Core entity representing physical items users want to share.
 
 #### ItemTagRelation Model
 Many-to-many relationship between Items and ItemTags.
+
+
 
 #### Image Model
 Multiple images per item with ordering support.
@@ -223,7 +225,7 @@ Extended user information linked to Django User.
 When implementing the services app, follow this structure:
 
 ```
-willgeben/services/
+bubble/services/
 ├── models.py           # Service model with ServiceCategory
 ├── forms.py           # ServiceForm with ServiceTag support  
 ├── views.py           # ServiceListView, ServiceDetailView, etc.

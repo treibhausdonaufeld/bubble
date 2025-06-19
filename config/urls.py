@@ -11,21 +11,19 @@ from drf_spectacular.views import SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
-    path("", include("willgeben.core.urls", namespace="core")),
+    path("", include("bubble.core.urls", namespace="core")),
 
-    path('items/', include('willgeben.items.urls', namespace='items')),
-    path('services/', include('willgeben.services.urls', namespace='services')),
-    path('projects/', include('willgeben.projects.urls', namespace='projects')),
-    path('events/', include('willgeben.events.urls', namespace='events')),
-    path('messaging/', include('willgeben.messaging.urls', namespace='messaging')),
-    # path('bookings/', include('willgeben.bookings.urls',
+    path('items/', include('bubble.items.urls', namespace='items')),
+    path('messaging/', include('bubble.messaging.urls', namespace='messaging')),
+    path('tags/', include('bubble.tags.urls', namespace='tags')),
+    # path('bookings/', include('bubble.bookings.urls',
     #                           namespace='bookings')),
     # path('favorites/',
-    #      include('willgeben.favorites.urls', namespace='favorites')),
-    # path('payments/', include('willgeben.payments.urls',
+    #      include('bubble.favorites.urls', namespace='favorites')),
+    # path('payments/', include('bubble.payments.urls',
     #                           namespace='payments')),
     path(settings.ADMIN_URL, admin.site.urls),
-    path("users/", include("willgeben.users.urls", namespace="users")),
+    path("users/", include("bubble.users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
     # ...

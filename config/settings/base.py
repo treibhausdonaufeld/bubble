@@ -7,8 +7,8 @@ from pathlib import Path
 import environ
 
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
-# willgeben/
-APPS_DIR = BASE_DIR / "willgeben"
+# bubble/
+APPS_DIR = BASE_DIR / "bubble"
 env = environ.Env()
 
 READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=False)
@@ -88,17 +88,15 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
-    "willgeben.users",
-    "willgeben.core.apps.CoreConfig",
-    "willgeben.categories.apps.CategoriesConfig",
-    "willgeben.items.apps.ItemsConfig",
-    "willgeben.services.apps.ServicesConfig",
-    "willgeben.projects.apps.ProjectsConfig",
-    "willgeben.events.apps.EventsConfig",
-    "willgeben.messaging.apps.MessagingConfig",
-    "willgeben.bookings.apps.BookingsConfig",
-    "willgeben.favorites.apps.FavoritesConfig",
-    "willgeben.payments.apps.PaymentsConfig",
+    "bubble.users",
+    "bubble.core.apps.CoreConfig",
+    "bubble.categories.apps.CategoriesConfig",
+    "bubble.items.apps.ItemsConfig",
+    "bubble.messaging.apps.MessagingConfig",
+    "bubble.bookings.apps.BookingsConfig",
+    "bubble.favorites.apps.FavoritesConfig",
+    "bubble.payments.apps.PaymentsConfig",
+    "bubble.tags.apps.TagsConfig",
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -107,7 +105,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 # MIGRATIONS
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#migration-modules
-MIGRATION_MODULES = {"sites": "willgeben.contrib.sites.migrations"}
+MIGRATION_MODULES = {"sites": "bubble.contrib.sites.migrations"}
 
 # AUTHENTICATION
 # ------------------------------------------------------------------------------
@@ -205,7 +203,7 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
-                "willgeben.users.context_processors.allauth_settings",
+                "bubble.users.context_processors.allauth_settings",
             ],
         },
     },
@@ -331,13 +329,13 @@ ACCOUNT_SIGNUP_FIELDS = ["email*", "username*", "password1*", "password2*"]
 # https://docs.allauth.org/en/latest/account/configuration.html
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 # https://docs.allauth.org/en/latest/account/configuration.html
-ACCOUNT_ADAPTER = "willgeben.users.adapters.AccountAdapter"
+ACCOUNT_ADAPTER = "bubble.users.adapters.AccountAdapter"
 # https://docs.allauth.org/en/latest/account/forms.html
-ACCOUNT_FORMS = {"signup": "willgeben.users.forms.UserSignupForm"}
+ACCOUNT_FORMS = {"signup": "bubble.users.forms.UserSignupForm"}
 # https://docs.allauth.org/en/latest/socialaccount/configuration.html
-SOCIALACCOUNT_ADAPTER = "willgeben.users.adapters.SocialAccountAdapter"
+SOCIALACCOUNT_ADAPTER = "bubble.users.adapters.SocialAccountAdapter"
 # https://docs.allauth.org/en/latest/socialaccount/configuration.html
-SOCIALACCOUNT_FORMS = {"signup": "willgeben.users.forms.UserSocialSignupForm"}
+SOCIALACCOUNT_FORMS = {"signup": "bubble.users.forms.UserSocialSignupForm"}
 
 SOCIALACCOUNT_ENABLED = env.bool("SOCIALACCOUNT_ENABLED", default=True)
 
@@ -385,8 +383,8 @@ CORS_URLS_REGEX = r"^/api/.*$"
 # By Default swagger ui is available only to admin user(s). You can change permission classes to change that
 # See more configuration options at https://drf-spectacular.readthedocs.io/en/latest/settings.html#settings
 SPECTACULAR_SETTINGS = {
-    "TITLE": "willgeben API",
-    "DESCRIPTION": "Documentation of API endpoints of willgeben",
+    "TITLE": "bubble API",
+    "DESCRIPTION": "Documentation of API endpoints of bubble",
     "VERSION": "1.0.0",
     "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAdminUser"],
     "SCHEMA_PATH_PREFIX": "/api/",

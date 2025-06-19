@@ -2,6 +2,6 @@
 # ------------------------------------------------------------------------------
 POSTGRES_HOST=postgres
 POSTGRES_PORT=5432
-POSTGRES_DB=willgeben
+POSTGRES_DB=bubble
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=U1MnSYNB3M8JgEUSfXqII3ykYSNc1LXbhYiWG12lf9wTicI8EABWjNIyaLF0TDTn
