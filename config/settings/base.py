@@ -78,6 +78,7 @@ THIRD_PARTY_APPS = [
     "allauth.account",
     # "allauth.mfa",
     "allauth.socialaccount",
+    "allauth.socialaccount.providers.openid_connect",
     "django_celery_beat",
     "rest_framework",
     "rest_framework.authtoken",
