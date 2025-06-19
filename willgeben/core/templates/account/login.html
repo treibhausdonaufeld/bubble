@@ -19,19 +19,14 @@
     <div class="card-body p-4">
       <p class="text-muted text-center mb-4">Melden Sie sich an, um Gegenstände zu teilen und zu finden.</p>
       {% get_providers as socialaccount_providers %}
-      {% if socialaccount_providers
-        %}
+      {% if socialaccount_providers %}
         <div class="mb-4">
           <h5 class="text-center mb-3">Anmelden mit:</h5>
-          {% include "socialaccount/snippets/provider_list.html" with
-          process="login" %}
+          {% include "socialaccount/snippets/provider_list.html" with process="login" %}
         </div>
         <hr />
         <p class="text-center text-muted">oder</p>
       {% endif %}
-      <!-- {% if SOCIALACCOUNT_ENABLED %}
-        {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
-{% endif %} -->
       {% if not SOCIALACCOUNT_ONLY %}
         <form method="post" action="{% url 'account_login' %}" class="login">
           {% csrf_token %}
