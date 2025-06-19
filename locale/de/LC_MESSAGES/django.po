@@ -23,7 +23,7 @@ msgid "Sign In"
 msgstr "Anmelden"
 
 #: willgeben/core/templates/base.html:81
-msgid "Mein Profile"
+msgid "My Profile"
 msgstr "Mein Profil"
 
 #: willgeben/core/templates/base.html:87
@@ -32,216 +32,215 @@ msgstr "Registrieren"
 
 #: willgeben/core/templates/pages/about.html:5
 msgid "About"
-msgstr ""
+msgstr "Über uns"
 
 #: willgeben/core/templates/pages/about.html:11
 msgid "About Willgeben"
-msgstr ""
+msgstr "Über Willgeben"
 
 #: willgeben/core/templates/pages/about.html:12
 msgid ""
 "Willgeben is a platform for sharing items and services within the Treibhaus "
 "Donaufeld community."
 msgstr ""
+"Willgeben ist eine Plattform zum Teilen von Gegenständen und Dienstleistungen "
+"innerhalb der Treibhaus Donaufeld Gemeinschaft."
 
 #: willgeben/templates/items/item_confirm_delete.html:4
 #: willgeben/templates/items/item_confirm_delete.html:14
 #: willgeben/templates/items/item_confirm_delete.html:94
 msgid "Delete Item"
-msgstr ""
+msgstr "Artikel löschen"
 
 #: willgeben/templates/items/item_confirm_delete.html:32
 msgid "Warning:"
-msgstr ""
+msgstr "Warnung:"
 
 #: willgeben/templates/items/item_confirm_delete.html:33
 msgid ""
 "Are you sure you want to delete this item? This action cannot be undone."
 msgstr ""
+"Sind Sie sicher, dass Sie diesen Artikel löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
 
 #: willgeben/templates/items/item_confirm_delete.html:39
 msgid "Category:"
-msgstr ""
+msgstr "Kategorie:"
 
 #: willgeben/templates/items/item_confirm_delete.html:48
 msgid "Type:"
-msgstr ""
+msgstr "Typ:"
 
 #: willgeben/templates/items/item_confirm_delete.html:52
 #: willgeben/templates/items/item_list.html:476
 msgid "For Sale"
-msgstr ""
+msgstr "Zu verkaufen"
 
 #: willgeben/templates/items/item_confirm_delete.html:55
 #: willgeben/templates/items/item_list.html:478
 msgid "Give Away"
-msgstr ""
+msgstr "Weggeben"
 
 #: willgeben/templates/items/item_confirm_delete.html:57
 #: willgeben/templates/items/item_list.html:480
 msgid "Borrow"
-msgstr ""
+msgstr "Ausleihen"
 
 #: willgeben/templates/items/item_confirm_delete.html:64
 msgid "Posted:"
-msgstr ""
+msgstr "Veröffentlicht:"
 
 #: willgeben/templates/items/item_confirm_delete.html:74
 msgid "Tags:"
-msgstr ""
+msgstr "Schlagwörter:"
 
 #: willgeben/templates/items/item_confirm_delete.html:90
 msgid "Cancel"
-msgstr ""
+msgstr "Abbrechen"
 
 #: willgeben/templates/items/item_detail.html:23
-msgid "Vorherige"
-msgstr ""
+msgid "Previous"
+msgstr "Vorherige"
 
 #: willgeben/templates/items/item_detail.html:27
-msgid "Nächste"
-msgstr ""
+msgid "Next"
+msgstr "Nächste"
 
 #: willgeben/templates/items/item_detail.html:40
-msgid "Beschreibung"
-msgstr ""
+msgid "Description"
+msgstr "Beschreibung"
 
 #: willgeben/templates/items/item_detail.html:56
-msgid "Aktionen"
-msgstr ""
+msgid "Actions"
+msgstr "Aktionen"
 
 #: willgeben/templates/items/item_detail.html:59
-msgid "Bearbeiten"
-msgstr ""
+msgid "Edit"
+msgstr "Bearbeiten"
 
 #: willgeben/templates/items/item_detail.html:61
-msgid "Deaktivieren"
-msgstr ""
+msgid "Deactivate"
+msgstr "Deaktivieren"
 
 #: willgeben/templates/items/item_detail.html:61
-msgid "Aktivieren"
-msgstr ""
+msgid "Activate"
+msgstr "Aktivieren"
 
 #: willgeben/templates/items/item_detail.html:64
-msgid "Löschen"
-msgstr ""
-
-#: willgeben/templates/items/item_detail.html:74
-msgid "Zu verkaufen"
-msgstr ""
+msgid "Delete"
+msgstr "Löschen"
 
 #: willgeben/templates/items/item_detail.html:79
 #: willgeben/templates/items/item_list.html:286
-msgid "Weggeben"
-msgstr ""
+msgid "Give Away"
+msgstr "Weggeben"
 
 #: willgeben/templates/items/item_detail.html:80
-msgid "Kostenlos"
-msgstr ""
+msgid "Free"
+msgstr "Kostenlos"
 
 #: willgeben/templates/items/item_detail.html:82
 #: willgeben/templates/items/item_list.html:289
-msgid "Ausleihen"
-msgstr ""
+msgid "Borrow"
+msgstr "Ausleihen"
 
 #: willgeben/templates/items/item_detail.html:88
-msgid "Zustand:"
-msgstr ""
+msgid "Condition:"
+msgstr "Zustand:"
 
 #: willgeben/templates/items/item_detail.html:90
-msgid "Neu"
-msgstr ""
+msgid "New"
+msgstr "Neu"
 
 #: willgeben/templates/items/item_detail.html:92
-msgid "Gebraucht"
-msgstr ""
+msgid "Used"
+msgstr "Gebraucht"
 
 #: willgeben/templates/items/item_detail.html:94
-msgid "Alt"
-msgstr ""
+msgid "Old"
+msgstr "Alt"
 
 #: willgeben/templates/items/item_detail.html:100
-msgid "Kategorie:"
-msgstr ""
+msgid "Category:"
+msgstr "Kategorie:"
 
 #: willgeben/templates/items/item_detail.html:106
-msgid "Schlagwörter:"
-msgstr ""
+msgid "Tags:"
+msgstr "Schlagwörter:"
 
 #: willgeben/templates/items/item_detail.html:115
-msgid "Erstellt:"
-msgstr ""
+msgid "Created:"
+msgstr "Erstellt:"
 
 #: willgeben/templates/items/item_detail.html:121
-msgid "Aktualisiert:"
-msgstr ""
+msgid "Updated:"
+msgstr "Aktualisiert:"
 
 #: willgeben/templates/items/item_detail.html:130
-msgid "Kontakt"
-msgstr ""
+msgid "Contact"
+msgstr "Kontakt"
 
 #: willgeben/templates/items/item_detail.html:153
-msgid "Kontaktinformationen werden nicht angezeigt"
-msgstr ""
+msgid "Contact information is not displayed"
+msgstr "Kontaktinformationen werden nicht angezeigt"
 
 #: willgeben/templates/items/item_detail.html:158
-msgid "Anmelden"
-msgstr ""
+msgid "Sign In"
+msgstr "Anmelden"
 
 #: willgeben/templates/items/item_detail.html:158
-msgid "um alle Kontaktdaten zu sehen"
-msgstr ""
+msgid "to see all contact details"
+msgstr "um alle Kontaktdaten zu sehen"
 
 #: willgeben/templates/items/item_detail.html:166
 #: willgeben/templates/messaging/send_message.html:4
 #: willgeben/templates/messaging/send_message.html:12
 #: willgeben/templates/messaging/send_message.html:32
-msgid "Anfrage senden"
-msgstr ""
+msgid "Send Request"
+msgstr "Anfrage senden"
 
 #: willgeben/templates/items/item_detail.html:181
-msgid "Nachrichten"
-msgstr ""
+msgid "Messages"
+msgstr "Nachrichten"
 
 #: willgeben/templates/items/item_detail.html:183
-msgid "Aktualisieren"
-msgstr ""
+msgid "Refresh"
+msgstr "Aktualisieren"
 
 #: willgeben/templates/items/item_detail.html:196
-msgid "Ihre Nachricht..."
-msgstr ""
+msgid "Your message..."
+msgstr "Ihre Nachricht..."
 
 #: willgeben/templates/items/item_detail.html:198
-msgid "Senden"
-msgstr ""
+msgid "Send"
+msgstr "Senden"
 
 #: willgeben/templates/items/item_detail.html:213
-msgid "Zurück zu den Sachen"
-msgstr ""
+msgid "Back to Items"
+msgstr "Zurück zu den Sachen"
 
 #: willgeben/templates/items/item_list.html:280
-msgid "Alle"
-msgstr ""
+msgid "All"
+msgstr "Alle"
 
 #: willgeben/templates/items/item_list.html:283
-msgid "Verkaufen"
-msgstr ""
+msgid "Sell"
+msgstr "Verkaufen"
 
 #: willgeben/templates/items/item_list.html:303
 msgid "Filters"
-msgstr ""
+msgstr "Filter"
 
 #: willgeben/templates/items/item_list.html:316
 msgid "Active Filters"
-msgstr ""
+msgstr "Aktive Filter"
 
 #: willgeben/templates/items/item_list.html:325
 msgid "Clear All"
-msgstr ""
+msgstr "Alle löschen"
 
 #: willgeben/templates/items/item_list.html:335
 msgid "Search"
-msgstr ""
+msgstr "Suchen"
 
 #: willgeben/templates/items/item_list.html:339
 msgid "Search items..."
@@ -280,7 +279,7 @@ msgid "Filtern"
 msgstr ""
 
 #: willgeben/templates/items/item_list.html:415
-msgid "Filtern zurücksetzen"
+msgid "Reset Filters"
 msgstr ""
 
 #: willgeben/templates/items/item_list.html:430
@@ -352,7 +351,7 @@ msgid "Artikel:"
 msgstr ""
 
 #: willgeben/templates/messaging/send_message.html:29
-msgid "Zurück"
+msgid "Back"
 msgstr ""
 
 #: willgeben/users/admin.py:25
@@ -601,3 +600,401 @@ msgstr "Zurück"
 
 msgid "No messages available yet."
 msgstr "Noch keine Nachrichten vorhanden."
+
+# Home page translations
+msgid "Welcome to Bubble"
+msgstr "Willkommen bei Bubble"
+
+msgid "Your platform for sharing items and services in the Treibhaus Donaufeld community"
+msgstr "Ihre Plattform für das Teilen von Gegenständen und Dienstleistungen in der Treibhaus Donaufeld Gemeinschaft"
+
+msgid "Browse and share physical items in our community"
+msgstr "Stöbern und teilen Sie physische Gegenstände in unserer Gemeinschaft"
+
+msgid "Browse All Items"
+msgstr "Alle Artikel durchsuchen"
+
+msgid "Add New Item"
+msgstr "Neuen Artikel hinzufügen"
+
+msgid "My Items"
+msgstr "Meine Artikel"
+
+msgid "Offer and find services in our community"
+msgstr "Bieten und finden Sie Dienstleistungen in unserer Gemeinschaft"
+
+msgid "Services coming soon!"
+msgstr "Dienstleistungen kommen bald!"
+
+msgid "Share skills, repairs, tutoring and more"
+msgstr "Fähigkeiten teilen, Reparaturen, Nachhilfe und mehr"
+
+msgid "Browse Services"
+msgstr "Dienstleistungen durchsuchen"
+
+msgid "Offer Service"
+msgstr "Dienstleistung anbieten"
+
+msgid "Your Account"
+msgstr "Ihr Konto"
+
+msgid "Welcome back, %(username)s!"
+msgstr "Willkommen zurück, %(username)s!"
+
+msgid "Internal User"
+msgstr "Interner Benutzer"
+
+msgid "Member since %(date)s"
+msgstr "Mitglied seit %(date)s"
+
+msgid "View Profile"
+msgstr "Profil anzeigen"
+
+msgid "Edit Profile"
+msgstr "Profil bearbeiten"
+
+msgid "Logout"
+msgstr "Abmelden"
+
+msgid "Join our community!"
+msgstr "Treten Sie unserer Gemeinschaft bei!"
+
+msgid "Create an account to start sharing items and connecting with neighbors"
+msgstr "Erstellen Sie ein Konto, um mit dem Teilen von Gegenständen und dem Kontakt zu Nachbarn zu beginnen"
+
+msgid "Your active items"
+msgstr "Ihre aktiven Artikel"
+
+msgid "Browse"
+msgstr "Stöbern"
+
+msgid "Discover community items"
+msgstr "Gemeinschaftsartikel entdecken"
+
+msgid "Connect"
+msgstr "Verbinden"
+
+msgid "Get to know your neighbors"
+msgstr "Lernen Sie Ihre Nachbarn kennen"
+
+msgid "About Treibhaus Donaufeld"
+msgstr "Über Treibhaus Donaufeld"
+
+msgid "Bubble is part of the Treibhaus Donaufeld community platform and promotes sustainable sharing and neighborly connections."
+msgstr "Bubble ist Teil der Treibhaus Donaufeld Gemeinschaftsplattform und fördert nachhaltiges Teilen und nachbarschaftliche Verbindungen."
+
+msgid "Learn more"
+msgstr "Mehr erfahren"
+
+# Model choices translations
+msgid "New"
+msgstr "Neu"
+
+msgid "Used"
+msgstr "Gebraucht"
+
+msgid "Old"
+msgstr "Alt"
+
+# Updated item type choices to match templates
+msgid "For Sale"
+msgstr "Zu verkaufen"
+
+# Bookings model
+msgid "Pending"
+msgstr "Ausstehend"
+
+msgid "Confirmed"
+msgstr "Bestätigt"
+
+msgid "Cancelled"
+msgstr "Abgebrochen"
+
+msgid "Completed"
+msgstr "Abgeschlossen"
+
+msgid "Monday"
+msgstr "Montag"
+
+msgid "Tuesday"
+msgstr "Dienstag"
+
+msgid "Wednesday"
+msgstr "Mittwoch"
+
+msgid "Thursday"
+msgstr "Donnerstag"
+
+msgid "Friday"
+msgstr "Freitag"
+
+msgid "Saturday"
+msgstr "Samstag"
+
+msgid "Sunday"
+msgstr "Sonntag"
+
+# Payments model
+msgid "Failed"
+msgstr "Fehlgeschlagen"
+
+msgid "Refunded"
+msgstr "Erstattet"
+
+# Categories model
+msgid "Item Categories"
+msgstr "Artikel-Kategorien"
+
+msgid "Item Tags"
+msgstr "Artikel-Tags"
+
+# Forms translations
+msgid "Tags"
+msgstr "Tags"
+
+msgid "Select relevant tags for your item"
+msgstr "Wählen Sie relevante Tags für Ihren Artikel"
+
+msgid "Item name"
+msgstr "Artikelname"
+
+msgid "Describe your item..."
+msgstr "Beschreiben Sie Ihren Artikel..."
+
+msgid "Price in Euro"
+msgstr "Preis in Euro"
+
+msgid "Profile image frame"
+msgstr "Profilbild-Rahmen"
+
+msgid "Description"
+msgstr "Beschreibung"
+
+msgid "Item type"
+msgstr "Artikel-Typ"
+
+msgid "Condition"
+msgstr "Zustand"
+
+msgid "Price"
+msgstr "Preis"
+
+msgid "Show contact"
+msgstr "Kontakt anzeigen"
+
+msgid "Published"
+msgstr "Veröffentlicht"
+
+msgid "Check to display your contact information"
+msgstr "Ankreuzen, um Ihre Kontaktinformationen anzuzeigen"
+
+msgid "Leave empty for free items"
+msgstr "Leer lassen für kostenlose Artikel"
+
+msgid "Internal"
+msgstr "Intern"
+
+msgid "Check if this item is for internal use only"
+msgstr "Ankreuzen, wenn dieser Artikel nur für internen Gebrauch ist"
+
+msgid "Treibhaus payment"
+msgstr "Treibhaus-Zahlung"
+
+msgid "Accept Treibhaus payment method"
+msgstr "Treibhaus-Zahlungsmethode akzeptieren"
+
+msgid "Price is required for items for sale."
+msgstr "Preis ist für verkaufte Artikel erforderlich."
+
+msgid "Price should not be set for items that are given away or borrowed."
+msgstr "Preis sollte nicht für Artikel gesetzt werden, die weggegeben oder verliehen werden."
+
+msgid "Item name must be at least 3 characters long."
+msgstr "Artikelname muss mindestens 3 Zeichen lang sein."
+
+msgid "Search items, tags, categories..."
+msgstr "Artikel, Tags, Kategorien suchen..."
+
+msgid "All categories"
+msgstr "Alle Kategorien"
+
+msgid "All subcategories"
+msgstr "Alle Unterkategorien"
+
+msgid "All types"
+msgstr "Alle Typen"
+
+msgid "All conditions"
+msgstr "Alle Zustände"
+
+msgid "Newest first"
+msgstr "Neueste zuerst"
+
+msgid "Oldest first"
+msgstr "Älteste zuerst"
+
+msgid "Price: Low to High"
+msgstr "Preis: Niedrig zu Hoch"
+
+msgid "Price: High to Low"
+msgstr "Preis: Hoch zu Niedrig"
+
+msgid "Name A-Z"
+msgstr "Name A-Z"
+
+msgid "Grid"
+msgstr "Raster"
+
+msgid "List"
+msgstr "Liste"
+
+msgid "Your message..."
+msgstr "Ihre Nachricht..."
+
+msgid "Message"
+msgstr "Nachricht"
+
+msgid "Name"
+msgstr "Name"
+
+# View messages
+msgid "Item created successfully!"
+msgstr "Artikel erfolgreich erstellt!"
+
+msgid "Item updated successfully!"
+msgstr "Artikel erfolgreich aktualisiert!"
+
+msgid "Item deleted successfully!"
+msgstr "Artikel erfolgreich gelöscht!"
+
+msgid "Item '%(name)s' has been activated."
+msgstr "Artikel '%(name)s' wurde aktiviert."
+
+msgid "Item '%(name)s' has been deactivated."
+msgstr "Artikel '%(name)s' wurde deaktiviert."
+
+msgid "Your request has been sent!"
+msgstr "Ihre Anfrage wurde gesendet!"
+
+# My Items template
+msgid "My Items"
+msgstr "Meine Artikel"
+
+msgid "Active Items"
+msgstr "Aktive Artikel"
+
+msgid "Inactive Items"
+msgstr "Inaktive Artikel"
+
+msgid "Total Items"
+msgstr "Artikel Gesamt"
+
+msgid "Your Items"
+msgstr "Ihre Artikel"
+
+msgid "Item"
+msgstr "Artikel"
+
+msgid "Type"
+msgstr "Typ"
+
+msgid "Active"
+msgstr "Aktiv"
+
+msgid "Deactivate"
+msgstr "Deaktivieren"
+
+msgid "Activate"
+msgstr "Aktivieren"
+
+msgid "No items yet"
+msgstr "Noch keine Artikel"
+
+msgid "You haven't created any items yet. Add your first item!"
+msgstr "Sie haben noch keine Artikel erstellt. Fügen Sie Ihren ersten Artikel hinzu!"
+
+msgid "Add your first item"
+msgstr "Ihren ersten Artikel hinzufügen"
+
+# User detail template
+msgid "Email"
+msgstr "E-Mail"
+
+# Authentication translations
+msgid "Sign in to share and find items."
+msgstr "Melden Sie sich an, um Gegenstände zu teilen und zu finden."
+
+msgid "Sign in with:"
+msgstr "Anmelden mit:"
+
+msgid "or"
+msgstr "oder"
+
+msgid "Username"
+msgstr "Benutzername"
+
+msgid "Your username"
+msgstr "Ihr Benutzername"
+
+msgid "Password"
+msgstr "Passwort"
+
+msgid "Your password"
+msgstr "Ihr Passwort"
+
+msgid "Stay signed in"
+msgstr "Angemeldet bleiben"
+
+msgid "Forgot password?"
+msgstr "Passwort vergessen?"
+
+msgid "Don't have an account yet?"
+msgstr "Noch kein Konto?"
+
+msgid "Create an account to become part of the Treibhaus Donaufeld community."
+msgstr "Erstellen Sie ein Konto, um Teil der Treibhaus Donaufeld Gemeinschaft zu werden."
+
+msgid "Sign up with:"
+msgstr "Registrieren mit:"
+
+msgid "Email address"
+msgstr "E-Mail-Adresse"
+
+msgid "Choose a username"
+msgstr "Wählen Sie einen Benutzernamen"
+
+msgid "your@email.com"
+msgstr "ihre@email.com"
+
+msgid "Create a secure password"
+msgstr "Sicheres Passwort erstellen"
+
+msgid "Confirm password"
+msgstr "Passwort bestätigen"
+
+msgid "Repeat password"
+msgstr "Passwort wiederholen"
+
+msgid "Note:"
+msgstr "Hinweis:"
+
+msgid "After registration, you will receive an email to confirm your email address."
+msgstr "Nach der Registrierung erhalten Sie eine E-Mail zur Bestätigung Ihrer E-Mail-Adresse."
+
+msgid "Create account"
+msgstr "Konto erstellen"
+
+msgid "Already have an account?"
+msgstr "Haben Sie bereits ein Konto?"
+
+msgid "Reset Password"
+msgstr "Passwort zurücksetzen"
+
+msgid "Enter your email address and we will send you a link to reset your password."
+msgstr "Geben Sie Ihre E-Mail-Adresse ein und wir senden Ihnen einen Link zum Zurücksetzen Ihres Passworts."
+
+msgid "Send reset email"
+msgstr "Zurücksetzungs-E-Mail senden"
+
+msgid "Remember your password?"
+msgstr "Passwort wieder eingefallen?"

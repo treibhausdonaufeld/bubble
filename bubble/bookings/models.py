@@ -1,11 +1,12 @@
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 from config.settings.base import AUTH_USER_MODEL
 from bubble.items.models import Item
 
 
 class Booking(models.Model):
-  STATUS_CHOICES = ((1, 'Pending'), (2, 'Confirmed'), (3, 'Cancelled'),
-                    (4, 'Completed'))
+  STATUS_CHOICES = ((1, _('Pending')), (2, _('Confirmed')), (3, _('Cancelled')),
+                    (4, _('Completed')))
 
   status = models.IntegerField(choices=STATUS_CHOICES, default=1)
   item = models.ForeignKey(Item,
@@ -26,9 +27,8 @@ class Booking(models.Model):
 
 
 class OpeningHour(models.Model):
-  DAYS_OF_WEEK = ((1, 'Monday'), (2, 'Tuesday'), (3, 'Wednesday'),
-                  (4, 'Thursday'), (5, 'Friday'), (6, 'Saturday'), (7,
-                                                                    'Sunday'))
+  DAYS_OF_WEEK = ((1, _('Monday')), (2, _('Tuesday')), (3, _('Wednesday')),
+                  (4, _('Thursday')), (5, _('Friday')), (6, _('Saturday')), (7, _('Sunday')))
 
   item = models.ForeignKey(Item,
                            on_delete=models.CASCADE,

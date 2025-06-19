@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
 from django.template.loader import render_to_string
+from django.utils.translation import gettext_lazy as _
 from bubble.items.models import Item
 from .models import Message
 from .forms import MessageForm
@@ -21,7 +22,7 @@ def send_message(request, item_id):
             message.sender = request.user
             message.receiver = item.user
             message.save()
-            messages.success(request, 'Ihre Anfrage wurde gesendet!')
+            messages.success(request, _("Your request has been sent!"))
             return redirect('items:detail', pk=item.id)
     else:
         form = MessageForm()

@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib import messages
 from django.urls import reverse_lazy, reverse
+from django.utils.translation import gettext_lazy as _
 from django.views.generic import (
     ListView, DetailView, CreateView, UpdateView, DeleteView
 )
@@ -85,13 +86,13 @@ class ItemListView(ListView):
         context['all_categories'] = ItemCategory.objects.all()
         context['tags'] = ItemTag.objects.all()
         
-        # Add sort options
+        # Add sort options - these are already translated in forms
         sort_options = [
-            ('newest', 'Neueste zuerst'),
-            ('oldest', 'Älteste zuerst'),
-            ('price_low', 'Preis: Niedrig zu Hoch'),
-            ('price_high', 'Preis: Hoch zu Niedrig'),
-            ('name', 'Name A-Z'),
+            ('newest', _("Newest first")),
+            ('oldest', _("Oldest first")),
+            ('price_low', _("Price: Low to High")),
+            ('price_high', _("Price: High to Low")),
+            ('name', _("Name A-Z")),
         ]
         context['sort_options'] = sort_options
         context['current_sort'] = self.request.GET.get('sort', 'newest')
@@ -171,7 +172,7 @@ class ItemCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.user = self.request.user
-        messages.success(self.request, 'Artikel erfolgreich erstellt!')
+        messages.success(self.request, _("Item created successfully!"))
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -193,7 +194,7 @@ class ItemUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return kwargs
 
     def form_valid(self, form):
-        messages.success(self.request, 'Artikel erfolgreich aktualisiert!')
+        messages.success(self.request, _("Item updated successfully!"))
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -210,7 +211,7 @@ class ItemDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return obj.user == self.request.user
 
     def delete(self, request, *args, **kwargs):
-        messages.success(self.request, 'Artikel erfolgreich gelöscht!')
+        messages.success(self.request, _("Item deleted successfully!"))
         return super().delete(request, *args, **kwargs)
 
 
@@ -237,8 +238,10 @@ def toggle_item_status(request, pk):
     item.active = not item.active
     item.save()
     
-    status = "aktiviert" if item.active else "deaktiviert"
-    messages.success(request, f'Artikel "{item.name}" wurde {status}.')
+    if item.active:
+        messages.success(request, _("Item '%(name)s' has been activated.") % {'name': item.name})
+    else:
+        messages.success(request, _("Item '%(name)s' has been deactivated.") % {'name': item.name})
     
     return redirect('items:my_items')
 

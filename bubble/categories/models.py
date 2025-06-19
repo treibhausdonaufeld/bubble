@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 class ItemCategory(models.Model):
@@ -15,7 +16,7 @@ class ItemCategory(models.Model):
     )
 
     class Meta:
-        verbose_name_plural = "Item Categories"
+        verbose_name_plural = _("Item Categories")
 
     def __str__(self):
         return self.name

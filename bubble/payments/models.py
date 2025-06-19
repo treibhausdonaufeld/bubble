@@ -1,12 +1,13 @@
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 from bubble.items.models import Item
 from bubble.bookings.models import Booking
 from config.settings.base import AUTH_USER_MODEL
 
 
 class InternPayment(models.Model):
-  STATUS_CHOICES = ((1, 'Pending'), (2, 'Completed'), (3, 'Failed'),
-                    (4, 'Refunded'))
+  STATUS_CHOICES = ((1, _('Pending')), (2, _('Completed')), (3, _('Failed')),
+                    (4, _('Refunded')))
 
   booking = models.ForeignKey(Booking,
                               on_delete=models.CASCADE,
