@@ -7,6 +7,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.contrib.messages.middleware import MessageMiddleware
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.http import HttpRequest
+from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.test import RequestFactory
 from django.urls import reverse
@@ -32,7 +33,7 @@ class TestUserUpdateView:
     """
 
     def dummy_get_response(self, request: HttpRequest):
-        return None
+        return HttpResponse()
 
     def test_get_success_url(self, user: User, rf: RequestFactory):
         view = UserUpdateView()
@@ -69,7 +70,7 @@ class TestUserUpdateView:
         view.form_valid(form)
 
         messages_sent = [m.message for m in messages.get_messages(request)]
-        assert messages_sent == [_("Information successfully updated")]
+        assert messages_sent == [_("Profil erfolgreich aktualisiert")]
 
 
 class TestUserRedirectView:
