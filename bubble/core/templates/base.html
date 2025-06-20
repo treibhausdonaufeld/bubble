@@ -36,7 +36,8 @@
       <div class="mb-1">
         <nav class="navbar navbar-expand-md navbar-light bg-light">
           <div class="container-fluid">
-            <button class="navbar-toggler navbar-toggler-right"
+            <a class="navbar-brand" href="{% url 'core:home' %}">bubble</a>
+            <button class="navbar-toggler"
                     type="button"
                     data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent"
@@ -45,54 +46,58 @@
                     aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
             </button>
-            <a class="navbar-brand" href="{% url 'core:home' %}">bubble</a>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-              <ul class="navbar-nav mr-auto d-flex flex-row">
-                <li class="nav-item">
-                  <a class="nav-link{% if request.resolver_match.url_name == 'home' %} active{% endif %}" href="{% url 'core:home' %}">
-                    🏠 {% trans "Homepage" %}
-                  </a>
-                </li>
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle{% if request.resolver_match.app_name == 'items' %} active{% endif %}" href="#" id="itemsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    📦 {% trans "Items" %}
-                  </a>
-                  <ul class="dropdown-menu" aria-labelledby="itemsDropdown">
-                    <li><a class="dropdown-item{% if request.resolver_match.url_name == 'need' %} active{% endif %}" href="{% url 'items:need' %}">🔍 {% trans "Need" %}</a></li>
-                    <li><a class="dropdown-item{% if request.resolver_match.url_name == 'borrow' %} active{% endif %}" href="{% url 'items:borrow' %}">🤝 {% trans "Borrow" %}</a></li>
-                    <li><a class="dropdown-item{% if request.resolver_match.url_name == 'sell' %} active{% endif %}" href="{% url 'items:sell' %}">💰 {% trans "For Sale" %}</a></li>
-                    <li><a class="dropdown-item{% if request.resolver_match.url_name == 'give_away' %} active{% endif %}" href="{% url 'items:give_away' %}">🎁 {% trans "Give Away" %}</a></li>
-                    <li><a class="dropdown-item{% if request.resolver_match.url_name == 'list' %} active{% endif %}" href="{% url 'items:list' %}">📋 {% trans "All" %}</a></li>
+            <div class="collapse navbar-collapse fullscreen-menu" id="navbarSupportedContent">
+              <!-- Mobile Menu -->
+              <div class="mobile-menu-container">
+                <div class="mobile-menu main-menu active">
+                  <ul class="navbar-nav me-auto mb-2 mb-lg-0 flex-column flex-md-row">
+                    {% include 'includes/nav_main_items.html' with is_mobile=True %}
                   </ul>
-                </li>
-
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle{% if request.resolver_match.app_name == 'users' %} active{% endif %}" href="#" id="usersDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    👥 {% trans "Community" %}
-                  </a>
-                  <ul class="dropdown-menu" aria-labelledby="usersDropdown">
-                    <li><a class="dropdown-item" href="{% url 'users:list' %}">🧑‍🤝‍🧑 {% trans "All Users" %}</a></li>
-                    <li><a class="dropdown-item{% if request.resolver_match.url_name == 'about' %} active{% endif %}" href="{% url 'core:about' %}">ℹ️ {% trans "About Us" %}</a></li>
+                </div>
+                
+                <!-- Items Submenu -->
+                <div class="mobile-menu submenu" id="items-submenu">
+                  <div class="submenu-header">
+                    <button class="back-button">← {% trans "Items" %}</button>
+                  </div>
+                  <ul class="navbar-nav">
+                    {% include 'includes/nav_items_submenu.html' %}
                   </ul>
-                </li>
-                {% if request.user.is_authenticated %}
-                  <li class="nav-item">
-                    <a class="nav-link{% if request.resolver_match.app_name == 'users' %} active{% endif %}"
-                       href="{% url 'users:detail' request.user.username %}">{% trans "My Profile" %}</a>
-                  </li>
-                {% else %}
-                  {% if ACCOUNT_ALLOW_REGISTRATION %}
-                    <li class="nav-item">
-                      {# URL provided by django-allauth/account/urls.py #}
-                      <a id="sign-up-link" class="nav-link" href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a>
-                    </li>
-                  {% endif %}
-                  <li class="nav-item">
-                    {# URL provided by django-allauth/account/urls.py #}
-                    <a id="log-in-link" class="nav-link" href="{% url 'account_login' %}">{% trans "Sign In" %}</a>
-                  </li>
-                {% endif %}
+                </div>
+                
+                <!-- Community Submenu -->
+                <div class="mobile-menu submenu" id="community-submenu">
+                  <div class="submenu-header">
+                    <button class="back-button">← {% trans "Community" %}</button>
+                  </div>
+                  <ul class="navbar-nav">
+                    {% include 'includes/nav_community_submenu.html' %}
+                  </ul>
+                </div>
+              </div>
+              
+              <!-- Desktop Menu -->
+              <ul class="navbar-nav me-auto mb-2 mb-lg-0 flex-column flex-md-row desktop-only">
+                {% include 'includes/nav_main_items.html' %}
               </ul>
+              {# Language Switcher #}
+              <div class="d-flex ms-md-auto mt-3 mt-md-0 language-switcher">
+                {% get_current_language as LANGUAGE_CODE %}
+                <a href="#" onclick="document.getElementById('lang-de').submit(); return false;" class="nav-link px-2{% if LANGUAGE_CODE == 'de' %} fw-bold text-primary{% endif %}">DE</a>
+                <span class="nav-link px-0">|</span>
+                <a href="#" onclick="document.getElementById('lang-en').submit(); return false;" class="nav-link px-2{% if LANGUAGE_CODE == 'en' %} fw-bold text-primary{% endif %}">EN</a>
+                
+                <form id="lang-de" action="{% url 'set_language' %}" method="post" class="d-none">
+                  {% csrf_token %}
+                  <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                  <input name="language" type="hidden" value="de">
+                </form>
+                <form id="lang-en" action="{% url 'set_language' %}" method="post" class="d-none">
+                  {% csrf_token %}
+                  <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                  <input name="language" type="hidden" value="en">
+                </form>
+              </div>
             </div>
           </div>
         </nav>
@@ -129,6 +134,76 @@
       });
     </script>
       {% endcomment %}
+      
+      <script>
+        window.addEventListener('DOMContentLoaded', () => {
+          // Mobile submenu functionality
+          const submenuTriggers = document.querySelectorAll('.mobile-submenu-trigger');
+          const backButtons = document.querySelectorAll('.back-button');
+          const mainMenu = document.querySelector('.main-menu');
+          
+          // Handle submenu triggers
+          submenuTriggers.forEach(trigger => {
+            trigger.addEventListener('click', (e) => {
+              e.preventDefault();
+              
+              // Only handle on mobile
+              if (window.innerWidth >= 768) return;
+              
+              const submenuId = trigger.dataset.submenu;
+              const submenu = document.getElementById(submenuId);
+              
+              if (submenu) {
+                // Slide main menu left
+                mainMenu.classList.remove('active');
+                mainMenu.classList.add('slide-left');
+                
+                // Slide submenu in
+                setTimeout(() => {
+                  submenu.classList.add('active');
+                }, 50);
+              }
+            });
+          });
+          
+          // Handle back buttons
+          backButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+              e.preventDefault();
+              
+              const submenu = button.closest('.submenu');
+              
+              if (submenu) {
+                // Slide submenu out
+                submenu.classList.remove('active');
+                
+                // Slide main menu back
+                setTimeout(() => {
+                  mainMenu.classList.remove('slide-left');
+                  mainMenu.classList.add('active');
+                }, 50);
+              }
+            });
+          });
+          
+          // Reset menu state when navbar is closed
+          const navbarToggler = document.querySelector('.navbar-toggler');
+          const navbarCollapse = document.querySelector('.navbar-collapse');
+          
+          if (navbarToggler && navbarCollapse) {
+            navbarToggler.addEventListener('click', () => {
+              // Reset all menus to initial state when opening/closing
+              setTimeout(() => {
+                const allMenus = document.querySelectorAll('.mobile-menu');
+                allMenus.forEach(menu => {
+                  menu.classList.remove('active', 'slide-left');
+                });
+                mainMenu.classList.add('active');
+              }, 100);
+            });
+          }
+        });
+      </script>
     {% endblock inline_javascript %}
   </body>
 </html>

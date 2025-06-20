@@ -11,6 +11,7 @@ from drf_spectacular.views import SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
+    path("i18n/", include("django.conf.urls.i18n")),
     path("", include("bubble.core.urls", namespace="core")),
 
     path('items/', include('bubble.items.urls', namespace='items')),

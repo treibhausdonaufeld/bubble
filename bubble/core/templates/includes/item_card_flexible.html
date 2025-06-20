@@ -1,0 +1,105 @@
+{% load i18n %}
+{# 
+  Flexible item card component
+  
+  Parameters:
+  - item: The item object (required)
+  - show_footer: Show footer with user info and view button (default: True)
+  - show_category: Show category info (default: True) 
+  - show_date: Show creation date (default: True)
+  - show_status: Show item status badge (default: True)
+  - show_type_badge: Show type badge on image (default: True)
+  - show_price: Show price tag (default: True)
+  - truncate_words: Number of words to show in description (default: 15)
+  - image_height: Height of image in pixels (default: 200)
+  - custom_link: Custom link for the view button (optional)
+  - custom_link_text: Custom text for the view button (default: "View")
+#}
+
+<div class="card item-card h-100">
+  <div class="item-image">
+    {% if item.images.first %}
+      <img src="{{ item.images.first.fname }}" class="card-img-top" alt="{{ item.name }}" style="height: {{ image_height|default:200 }}px; object-fit: cover;">
+    {% else %}
+      <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: {{ image_height|default:200 }}px;">
+        <i class="fas fa-image fa-3x text-muted"></i>
+      </div>
+    {% endif %}
+
+    <!-- Item Type Badge -->
+    {% if show_type_badge|default:True %}
+      <div class="item-type-badge">
+        {% if item.item_type == 0 %}
+          <span class="badge bg-success">{% trans "For Sale" %}</span>
+        {% elif item.item_type == 1 %}
+          <span class="badge bg-primary">{% trans "Give Away" %}</span>
+        {% elif item.item_type == 2 %}
+          <span class="badge bg-info">{% trans "Borrow" %}</span>
+        {% elif item.item_type == 3 %}
+          <span class="badge bg-warning">{% trans "Need" %}</span>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <!-- Price Tag -->
+    {% if show_price|default:True and item.item_type == 0 and item.price %}
+      <div class="price-tag">
+        €{{ item.price }}
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="card-body">
+    <h5 class="card-title mb-2">{{ item.name }}</h5>
+
+    {% if show_status|default:True %}
+      <div class="mb-2">
+        {% if item.status == 0 %}
+          <span class="badge bg-light text-dark">
+            <i class="fas fa-star"></i> {% trans "New" %}
+          </span>
+        {% elif item.status == 1 %}
+          <span class="badge bg-warning">
+            <i class="fas fa-star-half-alt"></i> {% trans "Used" %}
+          </span>
+        {% elif item.status == 2 %}
+          <span class="badge bg-secondary">
+            <i class="fas fa-star-o"></i> {% trans "Old" %}
+          </span>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="d-flex justify-content-between align-items-center">
+      {% if show_category|default:True %}
+        <small class="text-muted">
+          <i class="fas fa-folder"></i> {{ item.category.get_hierarchy }}
+        </small>
+      {% endif %}
+      {% if show_date|default:True %}
+        <small class="text-muted">
+          <i class="fas fa-calendar"></i> {{ item.date_created|date:"M d" }}
+        </small>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if show_footer|default:True %}
+    <div class="card-footer bg-transparent">
+      <div class="d-flex justify-content-between align-items-center">
+        <small class="text-muted">
+          <i class="fas fa-user"></i> {{ item.user.username }}{% if item.user.name %} ({{ item.user.name }}){% endif %}
+        </small>
+        {% if custom_link %}
+          <a href="{{ custom_link }}" class="btn btn-outline-primary btn-sm">
+            <i class="fas fa-eye"></i> {% trans custom_link_text|default:"View" %}
+          </a>
+        {% else %}
+          <a href="{% url 'items:detail' item.pk %}" class="btn btn-outline-primary btn-sm">
+            <i class="fas fa-eye"></i> {% trans custom_link_text|default:"View" %}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+</div>
