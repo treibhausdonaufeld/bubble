@@ -30,26 +30,26 @@
           <!-- Item Type Navigation -->
           <div class="row g-2 mb-3">
             <div class="col-4">
-              <a href="{% url 'items:sell' %}" class="btn btn-success btn-sm w-100">
+              <a href="{% url 'items:list' %}?item_type=0" class="btn btn-success btn-sm w-100">
                 <i class="fas fa-tag"></i><br>
                 <small>{% trans "For Sale" %}</small>
               </a>
             </div>
             <div class="col-4">
-              <a href="{% url 'items:give_away' %}" class="btn btn-info btn-sm w-100">
+              <a href="{% url 'items:list' %}?item_type=1" class="btn btn-info btn-sm w-100">
                 <i class="fas fa-gift"></i><br>
                 <small>{% trans "Give Away" %}</small>
               </a>
             </div>
             <div class="col-4">
-              <a href="{% url 'items:borrow' %}" class="btn btn-warning btn-sm w-100">
+              <a href="{% url 'items:list' %}?item_type=2" class="btn btn-warning btn-sm w-100">
                 <i class="fas fa-handshake"></i><br>
                 <small>{% trans "Borrow" %}</small>
               </a>
             </div>
             <div class="col-4">
-              <a href="{% url 'items:need' %}" class="btn btn-warning btn-sm w-100">
-                <i class="fas fa-handshake"></i><br>
+              <a href="{% url 'items:list' %}?item_type=3" class="btn btn-secondary btn-sm w-100">
+                <i class="fas fa-search"></i><br>
                 <small>{% trans "Need" %}</small>
               </a>
             </div>

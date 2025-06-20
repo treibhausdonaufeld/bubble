@@ -26,11 +26,6 @@ class ItemListView(ListView):
     def get_queryset(self):
         queryset = Item.objects.filter(active=True).select_related('user', 'category').prefetch_related('tags__tag')
         
-        # Apply URL-based item_type filter (from /sell/, /give_away/, /borrow/ URLs)
-        item_type_filter = self.kwargs.get('item_type_filter')
-        if item_type_filter is not None:
-            queryset = queryset.filter(item_type=item_type_filter)
-        
         # Apply GET parameter filters
         search = self.request.GET.get('search')
         if search:
@@ -46,9 +41,16 @@ class ItemListView(ListView):
 
         category = self.request.GET.get('category')
         if category:
-            queryset = queryset.filter(category_id=category)
+            # Get selected category and all its descendants for hierarchical filtering
+            try:
+                selected_category = ItemCategory.objects.get(id=category)
+                descendant_ids = self._get_all_descendant_category_ids(selected_category)
+                queryset = queryset.filter(category_id__in=descendant_ids)
+            except ItemCategory.DoesNotExist:
+                # If category doesn't exist, use original filter to avoid errors
+                queryset = queryset.filter(category_id=category)
 
-        # GET parameter item_type (for manual filtering)
+        # GET parameter item_type filtering
         item_type = self.request.GET.get('item_type')
         if item_type:
             queryset = queryset.filter(item_type=item_type)
@@ -78,12 +80,65 @@ class ItemListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        
+        # Create filter form with GET parameters
         context['filter_form'] = ItemFilterForm(self.request.GET)
         
-        # Organize categories hierarchically
-        root_categories = ItemCategory.objects.filter(parent_category=None)
-        context['root_categories'] = root_categories
-        context['all_categories'] = ItemCategory.objects.all()
+        # Get categories that have active items for current filter
+        base_item_queryset = Item.objects.filter(active=True)
+        
+        # Apply item_type filter from GET params
+        item_type = self.request.GET.get('item_type')
+        if item_type:
+            base_item_queryset = base_item_queryset.filter(item_type=item_type)
+        
+        # Get categories that have items in the filtered queryset
+        categories_with_items = ItemCategory.objects.filter(
+            items__in=base_item_queryset
+        ).distinct()
+        
+        # Get all parent categories needed to build the full tree
+        all_needed_categories = set()
+        for cat in categories_with_items:
+            # Add this category and all its parents
+            current = cat
+            while current:
+                all_needed_categories.add(current.id)
+                current = current.parent_category
+        
+        # Get the full category objects needed for the tree
+        tree_categories = ItemCategory.objects.filter(
+            id__in=all_needed_categories
+        ).select_related('parent_category').prefetch_related('subcategories')
+        
+        # Build hierarchical structure
+        def build_category_tree(categories, categories_with_direct_items):
+            """Build a nested structure of categories with their subcategories"""
+            category_dict = {}
+            root_categories = []
+            direct_item_ids = {cat.id for cat in categories_with_direct_items}
+            
+            # First pass: create dict of all categories
+            for cat in categories:
+                category_dict[cat.id] = {
+                    'category': cat,
+                    'subcategories': [],
+                    'has_direct_items': cat.id in direct_item_ids
+                }
+            
+            # Second pass: organize into hierarchy
+            for cat in categories:
+                if cat.parent_category and cat.parent_category.id in category_dict:
+                    category_dict[cat.parent_category.id]['subcategories'].append(
+                        category_dict[cat.id]
+                    )
+                elif cat.parent_category is None:
+                    root_categories.append(category_dict[cat.id])
+            
+            return root_categories
+        
+        context['category_tree'] = build_category_tree(tree_categories, categories_with_items)
+        context['all_categories'] = categories_with_items
         context['tags'] = ItemTag.objects.all()
         
         # Add sort options - these are already translated in forms
@@ -100,12 +155,16 @@ class ItemListView(ListView):
         # Add view mode
         context['view_mode'] = self.request.GET.get('view', 'grid')
         
-        # Add context for current filter type
-        item_type_filter = self.kwargs.get('item_type_filter')
-        if item_type_filter is not None:
-            item_type_names = {0: 'sell', 1: 'give_away', 2: 'borrow'}
-            context['current_filter'] = item_type_names.get(item_type_filter)
-            context['current_filter_display'] = dict(Item.ITEM_TYPE_CHOICES).get(item_type_filter)
+        # Add context for current filter type from GET params
+        item_type_param = self.request.GET.get('item_type')
+        if item_type_param:
+            try:
+                item_type_filter = int(item_type_param)
+                item_type_names = {0: 'sell', 1: 'give_away', 2: 'borrow', 3: 'need'}
+                context['current_filter'] = item_type_names.get(item_type_filter)
+                context['current_filter_display'] = dict(Item.ITEM_TYPE_CHOICES).get(item_type_filter)
+            except (ValueError, TypeError):
+                pass
         
         # Add active filters for display
         active_filters = []
@@ -131,6 +190,23 @@ class ItemListView(ListView):
         context['active_filters'] = active_filters
         
         return context
+    
+    def _get_all_descendant_category_ids(self, category):
+        """
+        Recursively get all descendant category IDs including the parent category itself.
+        This enables hierarchical filtering where selecting a parent category 
+        includes items from all its subcategories.
+        """
+        category_ids = [category.id]
+        
+        # Get all direct children
+        children = ItemCategory.objects.filter(parent_category=category)
+        
+        # Recursively get descendants of each child
+        for child in children:
+            category_ids.extend(self._get_all_descendant_category_ids(child))
+        
+        return category_ids
 
 
 class ItemDetailView(DetailView):

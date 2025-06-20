@@ -1,0 +1,19 @@
+{% load i18n %}
+
+{% if request.user.is_authenticated %}
+  <li class="nav-item">
+    <a class="nav-link{% if request.resolver_match.app_name == 'users' %} active{% endif %}"
+       href="{% url 'users:detail' request.user.username %}">{% trans "My Profile" %}</a>
+  </li>
+{% else %}
+  {% if ACCOUNT_ALLOW_REGISTRATION %}
+    <li class="nav-item">
+      {# URL provided by django-allauth/account/urls.py #}
+      <a id="sign-up-link" class="nav-link" href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a>
+    </li>
+  {% endif %}
+  <li class="nav-item">
+    {# URL provided by django-allauth/account/urls.py #}
+    <a id="log-in-link" class="nav-link" href="{% url 'account_login' %}">{% trans "Sign In" %}</a>
+  </li>
+{% endif %}

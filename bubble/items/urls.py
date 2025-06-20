@@ -7,12 +7,6 @@ urlpatterns = [
     # Main item list
     path('', views.ItemListView.as_view(), name='list'),
 
-    # Item type filtered lists (shareable URLs)
-    path('sell/', views.ItemListView.as_view(), {'item_type_filter': 0}, name='sell'),
-    path('give_away/', views.ItemListView.as_view(), {'item_type_filter': 1}, name='give_away'),
-    path('borrow/', views.ItemListView.as_view(), {'item_type_filter': 2}, name='borrow'),
-    path('need/', views.ItemListView.as_view(), {'item_type_filter': 3}, name='need'),
-
     # Item detail
     path('<int:pk>/', views.ItemDetailView.as_view(), name='detail'),
 

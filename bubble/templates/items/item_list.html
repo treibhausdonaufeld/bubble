@@ -187,6 +187,39 @@
       flex: 1;
     }
 
+    /* Floating Filter Button */
+    .floating-filter-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      transition: all 0.3s ease;
+      font-size: 1.2rem;
+    }
+
+    .floating-filter-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+    }
+
+    .floating-filter-btn.has-filters {
+      background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 4px 12px rgba(0,0,0,0.15), 0 0 0 0 rgba(40, 167, 69, 0.7); }
+      70% { box-shadow: 0 4px 12px rgba(0,0,0,0.15), 0 0 0 10px rgba(40, 167, 69, 0); }
+      100% { box-shadow: 0 4px 12px rgba(0,0,0,0.15), 0 0 0 0 rgba(40, 167, 69, 0); }
+    }
+
     /* Mobile Responsive */
     @media (max-width: 768px) {
       .filter-sidebar {
@@ -217,6 +250,16 @@
 
       .filter-overlay.show {
         display: block;
+      }
+
+      .floating-filter-btn {
+        bottom: 80px; /* Higher on mobile to avoid interference */
+      }
+    }
+
+    @media (min-width: 769px) {
+      .floating-filter-btn {
+        display: none; /* Hide on desktop when sidebar is visible */
       }
     }
 
@@ -270,6 +313,94 @@
     .view-toggle button:hover:not(.active) {
       background: #f8f9fa;
     }
+
+    /* Category Tree Styles */
+    .category-tree {
+      max-height: 300px;
+      overflow-y: auto;
+      border: 1px solid #dee2e6;
+      border-radius: 0.375rem;
+      padding: 0.5rem;
+    }
+
+    .category-item {
+      margin-bottom: 0.5rem;
+    }
+
+    .category-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.5rem;
+      background: #f8f9fa;
+      border-radius: 0.25rem;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .category-header:hover {
+      background: #e9ecef;
+    }
+
+    .category-name {
+      font-weight: 500;
+      margin-left: 0.5rem;
+    }
+
+    .toggle-icon {
+      transition: transform 0.3s ease;
+    }
+
+    .category-header[aria-expanded="true"] .toggle-icon {
+      transform: rotate(180deg);
+    }
+
+    .category-actions {
+      padding: 0.25rem 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .category-label, .subcategory-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      margin: 0;
+      font-weight: normal;
+      flex: 1;
+    }
+
+    .category-label:hover, .subcategory-label:hover {
+      color: #007bff;
+    }
+
+    .category-children {
+      margin-left: 1rem;
+      border-left: 2px solid #dee2e6;
+      padding-left: 0.5rem;
+    }
+
+    .subcategory-item {
+      padding: 0.25rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .subcategory-label {
+      color: #6c757d;
+    }
+
+    input[type="radio"][name="category"] {
+      margin: 0;
+    }
+
+    input[type="radio"][name="category"]:checked + label {
+      color: #007bff;
+      font-weight: 500;
+    }
   </style>
 {% endblock %}
 
@@ -282,28 +413,6 @@
     </button>
   </div>
 
-  <!-- Quick Type Navigation -->
-  <div class="row mb-3">
-    <div class="col-12">
-      <nav class="nav nav-pills justify-content-center">
-        <a class="nav-link {% if not current_filter %}active{% endif %}" href="{% url 'items:list' %}">
-          <i class="fas fa-th-large"></i> {% trans "All" %}
-        </a>
-        <a class="nav-link {% if current_filter == 'sell' %}active{% endif %}" href="{% url 'items:sell' %}">
-          <i class="fas fa-tags"></i> {% trans "For Sale" %}
-        </a>
-        <a class="nav-link {% if current_filter == 'give_away' %}active{% endif %}" href="{% url 'items:give_away' %}">
-          <i class="fas fa-gift"></i> {% trans "Give Away" %}
-        </a>
-        <a class="nav-link {% if current_filter == 'borrow' %}active{% endif %}" href="{% url 'items:borrow' %}">
-          <i class="fas fa-handshake"></i> {% trans "Borrow" %}
-        </a>
-        <a class="nav-link {% if current_filter == 'need' %}active{% endif %}" href="{% url 'items:need' %}">
-          <i class="fas fa-search"></i> {% trans "Need" %}
-        </a>
-      </nav>
-    </div>
-  </div>
 
   <div class="row">
     <!-- Enhanced Filters Sidebar -->
@@ -342,35 +451,6 @@
               <hr>
             {% endif %}
 
-            <!-- Enhanced Search -->
-            <div class="filter-section">
-              <label class="form-label fw-bold">
-                <i class="fas fa-search"></i> {% trans "Search" %}
-              </label>
-              <div class="search-container">
-                <i class="fas fa-search search-icon"></i>
-                <input type="text" name="search" class="form-control search-input" placeholder="{% trans 'Search items...' %}" value="{{ filter_form.search.value|default_if_none:'' }}">
-              </div>
-            </div>
-
-            <!-- Hierarchical Categories -->
-            <div class="filter-section">
-              <label class="form-label fw-bold">
-                <i class="fas fa-folder"></i> {% trans "Category" %}
-              </label>
-
-              <div class="mb-2">
-                <label for="parent-category" class="form-label text-muted small">{% trans "Main Category" %}</label>
-                {{ filter_form.parent_category }}
-              </div>
-
-              <div class="mb-2" id="subcategory-container" style="display: none;">
-                <label for="subcategory" class="form-label text-muted small">{% trans "Subcategory" %}</label>
-                {{ filter_form.subcategory }}
-              </div>
-
-              {{ filter_form.category }}
-            </div>
 
             <!-- Item Type -->
             <div class="filter-section">
@@ -379,6 +459,94 @@
               </label>
               {{ filter_form.item_type }}
             </div>
+
+            <!-- Enhanced Search -->
+            <div class="filter-section">
+              <label class="form-label fw-bold">
+                <i class="fas fa-search"></i> {% trans "Search" %}
+              </label>
+              <div class="search-container">
+                <i class="fas fa-search search-icon" style="cursor: pointer;" id="search-icon"></i>
+                <input type="text" name="search" class="form-control search-input" placeholder="{% trans 'Search items...' %}" value="{{ filter_form.search.value|default_if_none:'' }}" style="padding-left: 2.5rem;">
+              </div>
+            </div>
+
+            <!-- Dynamic Categories Tree -->
+            <div class="filter-section">
+              <label class="form-label fw-bold">
+                <i class="fas fa-folder"></i> {% trans "Category" %}
+              </label>
+
+              <div class="category-tree">
+                {% for root_category in category_tree %}
+                  <div class="category-item">
+                    <div class="category-header" data-bs-toggle="collapse" data-bs-target="#category-{{ root_category.category.id }}" aria-expanded="false">
+                      <i class="fas fa-folder"></i>
+                      <span class="category-name">{{ root_category.category.name }}</span>
+                      {% if root_category.subcategories %}
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                      {% endif %}
+                    </div>
+                    
+                    <div class="category-actions">
+                      <input type="radio" name="category" value="{{ root_category.category.id }}" 
+                             id="cat_{{ root_category.category.id }}"
+                             data-include-children="true"
+                             {% if filter_form.category.value == root_category.category.id|stringformat:"s" %}checked{% endif %}>
+                      <label for="cat_{{ root_category.category.id }}" class="category-label">
+                        {{ root_category.category.name }} <small class="text-muted">(inkl. Unterkategorien)</small>
+                      </label>
+                    </div>
+                    
+                    {% if root_category.subcategories %}
+                      <div class="collapse category-children" id="category-{{ root_category.category.id }}">
+                        {% for subcategory in root_category.subcategories %}
+                          <div class="subcategory-item">
+                            <input type="radio" name="category" value="{{ subcategory.category.id }}"
+                                   id="cat_{{ subcategory.category.id }}"
+                                   {% if filter_form.category.value == subcategory.category.id|stringformat:"s" %}checked{% endif %}>
+                            <label for="cat_{{ subcategory.category.id }}" class="subcategory-label">
+                              <i class="fas fa-folder-open"></i>
+                              {{ subcategory.category.name }}
+                            </label>
+                          </div>
+                          
+                          {% if subcategory.subcategories %}
+                            <div class="category-children ms-3">
+                              {% for subsubcategory in subcategory.subcategories %}
+                                <div class="subcategory-item">
+                                  <input type="radio" name="category" value="{{ subsubcategory.category.id }}"
+                                         id="cat_{{ subsubcategory.category.id }}"
+                                         {% if filter_form.category.value == subsubcategory.category.id|stringformat:"s" %}checked{% endif %}>
+                                  <label for="cat_{{ subsubcategory.category.id }}" class="subcategory-label">
+                                    <i class="fas fa-file"></i>
+                                    {{ subsubcategory.category.name }}
+                                  </label>
+                                </div>
+                              {% endfor %}
+                            </div>
+                          {% endif %}
+                        {% endfor %}
+                      </div>
+                    {% endif %}
+                  </div>
+                {% endfor %}
+                
+                <!-- Clear category option -->
+                <div class="category-item">
+                  <div class="category-actions">
+                    <input type="radio" name="category" value="" id="cat_all"
+                           {% if not filter_form.category.value %}checked{% endif %}>
+                    <label for="cat_all" class="category-label">
+                      <i class="fas fa-th-large"></i>
+                      {% trans "All Categories" %}
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
 
             <!-- Enhanced Tags Selector -->
             <div class="filter-section">
@@ -473,93 +641,7 @@
           <div class="row">
             {% for item in items %}
               <div class="col-lg-4 col-md-6 mb-4 item-column">
-                <div class="card item-card h-100">
-                  <div class="item-image">
-                    {% if item.images.first %}
-                      <img src="{{ item.images.first.fname }}" class="card-img-top" alt="{{ item.name }}" style="height: 200px; object-fit: cover;">
-                    {% else %}
-                      <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
-                        <i class="fas fa-image fa-3x text-muted"></i>
-                      </div>
-                    {% endif %}
-
-                    <!-- Item Type Badge -->
-                    <div class="item-type-badge">
-                      {% if item.item_type == 0 %}
-                        <span class="badge bg-success">{% trans "For Sale" %}</span>
-                      {% elif item.item_type == 1 %}
-                        <span class="badge bg-primary">{% trans "Give Away" %}</span>
-                      {% elif item.item_type == 2 %}
-                        <span class="badge bg-info">{% trans "Borrow" %}</span>
-                      {% elif item.item_type == 3 %}
-                        <span class="badge bg-warning">{% trans "Need" %}</span>
-                      {% endif %}
-                    </div>
-
-                    <!-- Price Tag -->
-                    {% if item.item_type == 0 and item.price %}
-                      <div class="price-tag">
-                        €{{ item.price }}
-                      </div>
-                    {% endif %}
-                  </div>
-
-                  <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                      <h5 class="card-title mb-0">{{ item.name }}</h5>
-                      <span class="badge
-                        {% if item.item_type == 0 %}bg-success{% elif item.item_type == 1 %}bg-primary{% elif item.item_type == 2 %}bg-info{% elif item.item_type == 3 %}bg-warning{% endif %}
-                        ms-2" style="font-size: 0.7rem;">
-                        {% if item.item_type == 0 %}
-                          {% trans "For Sale" %}
-                        {% elif item.item_type == 1 %}
-                          {% trans "Give Away" %}
-                        {% elif item.item_type == 2 %}
-                          {% trans "Borrow" %}
-                        {% elif item.item_type == 3 %}
-                          {% trans "Need" %}
-                        {% endif %}
-                      </span>
-                    </div>
-                    <p class="card-text text-muted">{{ item.description|truncatewords:15 }}</p>
-
-                    <div class="mb-2">
-                      {% if item.status == 0 %}
-                        <span class="badge bg-light text-dark">
-                          <i class="fas fa-star"></i> {% trans "New" %}
-                        </span>
-                      {% elif item.status == 1 %}
-                        <span class="badge bg-warning">
-                          <i class="fas fa-star-half-alt"></i> {% trans "Used" %}
-                        </span>
-                      {% elif item.status == 2 %}
-                        <span class="badge bg-secondary">
-                          <i class="fas fa-star-o"></i> {% trans "Old" %}
-                        </span>
-                      {% endif %}
-                    </div>
-
-                    <div class="d-flex justify-content-between align-items-center">
-                      <small class="text-muted">
-                        <i class="fas fa-folder"></i> {{ item.category.get_hierarchy }}
-                      </small>
-                      <small class="text-muted">
-                        <i class="fas fa-calendar"></i> {{ item.date_created|date:"M d" }}
-                      </small>
-                    </div>
-                  </div>
-
-                  <div class="card-footer bg-transparent">
-                    <div class="d-flex justify-content-between align-items-center">
-                      <small class="text-muted">
-                        <i class="fas fa-user"></i> {{ item.user.username }}{% if item.user.name %} ({{ item.user.name }}){% endif %}
-                      </small>
-                      <a href="{% url 'items:detail' item.pk %}" class="btn btn-outline-primary btn-sm">
-                        <i class="fas fa-eye"></i> {% trans "View" %}
-                      </a>
-                    </div>
-                  </div>
-                </div>
+                {% include 'includes/item_card.html' with item=item %}
               </div>
             {% endfor %}
           </div>
@@ -649,59 +731,50 @@ document.addEventListener('DOMContentLoaded', function() {
     filterOverlay.addEventListener('click', hideFilters);
   }
 
-  // Hierarchical category selection
-  const parentCategorySelect = document.getElementById('parent-category');
-  const subcategorySelect = document.getElementById('subcategory');
-  const categoryInput = document.querySelector('input[name="category"]');
-  const subcategoryContainer = document.getElementById('subcategory-container');
-
-  function updateSubcategories() {
-    const parentId = parentCategorySelect.value;
-
-    if (!parentId) {
-      subcategoryContainer.style.display = 'none';
-      subcategorySelect.innerHTML = '<option value="">All Subcategories</option>';
-      categoryInput.value = '';
-      return;
-    }
-
-    // Fetch subcategories via AJAX
-    fetch(`{% url 'items:get_subcategories' %}?parent_id=${parentId}`)
-      .then(response => response.json())
-      .then(data => {
-        subcategorySelect.innerHTML = '<option value="">All Subcategories</option>';
-
-        data.subcategories.forEach(cat => {
-          subcategorySelect.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
-        });
-
-        if (data.subcategories.length > 0) {
-          subcategoryContainer.style.display = 'block';
-        } else {
-          subcategoryContainer.style.display = 'none';
-          categoryInput.value = parentId;
-        }
-      });
-  }
-
-  parentCategorySelect.addEventListener('change', updateSubcategories);
-
-  subcategorySelect.addEventListener('change', function() {
-    const subcategoryId = this.value;
-    const parentId = parentCategorySelect.value;
-
-    if (subcategoryId) {
-      categoryInput.value = subcategoryId;
-    } else if (parentId) {
-      categoryInput.value = parentId;
-    } else {
-      categoryInput.value = '';
-    }
+  // Auto-submit functionality for all form controls
+  const form = document.getElementById('filter-form');
+  
+  // Category tree auto-submit on selection
+  const categoryRadios = document.querySelectorAll('input[name="category"]');
+  categoryRadios.forEach(radio => {
+    radio.addEventListener('change', () => {
+      form.submit();
+    });
   });
-
-  // Initialize category hierarchy on page load
-  if (parentCategorySelect.value) {
-    updateSubcategories();
+  
+  // Item type auto-submit
+  const itemTypeSelect = document.querySelector('select[name="item_type"]');
+  if (itemTypeSelect) {
+    itemTypeSelect.addEventListener('change', () => {
+      form.submit();
+    });
+  }
+  
+  // Status auto-submit
+  const statusSelect = document.querySelector('select[name="status"]');
+  if (statusSelect) {
+    statusSelect.addEventListener('change', () => {
+      form.submit();
+    });
+  }
+  
+  // Search auto-submit on Enter key and search icon click
+  const searchInput = document.querySelector('input[name="search"]');
+  const searchIcon = document.getElementById('search-icon');
+  
+  if (searchInput) {
+    searchInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        form.submit();
+      }
+    });
+  }
+  
+  if (searchIcon) {
+    searchIcon.addEventListener('click', () => {
+      form.submit();
+    });
   }
 
   // Enhanced tag selector
@@ -795,7 +868,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // Tag item clicks
+  // Tag item clicks with auto-submit
   tagDropdown.addEventListener('click', (e) => {
     const tagItem = e.target.closest('.tag-item');
     if (tagItem) {
@@ -807,14 +880,24 @@ document.addEventListener('DOMContentLoaded', function() {
       } else {
         addTag(tagId, tagName);
       }
+      
+      // Auto-submit after tag selection change
+      setTimeout(() => {
+        form.submit();
+      }, 100);
     }
   });
 
-  // Remove tag clicks
+  // Remove tag clicks with auto-submit
   selectedTagsContainer.addEventListener('click', (e) => {
     if (e.target.classList.contains('remove')) {
       const tagId = e.target.dataset.tagId;
       removeTag(tagId);
+      
+      // Auto-submit after tag removal
+      setTimeout(() => {
+        form.submit();
+      }, 100);
     }
   });
 
@@ -844,7 +927,7 @@ document.addEventListener('DOMContentLoaded', function() {
       viewInput.value = viewMode;
 
       // Submit form to update URL
-      document.getElementById('filter-form').submit();
+      form.submit();
     });
   });
 
@@ -862,12 +945,40 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  // Auto-submit on sort change
+  // Sort change - no auto-submit, but update floating button state
   const sortSelect = document.querySelector('select[name="sort"]');
   if (sortSelect) {
     sortSelect.addEventListener('change', () => {
-      document.getElementById('filter-form').submit();
+      updateFloatingButtonState();
     });
+  }
+  
+  // Update floating button visual state based on active filters
+  function updateFloatingButtonState() {
+    const itemTypeSelect = document.querySelector('select[name="item_type"]');
+    const statusSelect = document.querySelector('select[name="status"]');
+    
+    const hasActiveFilters = 
+      (searchInput && searchInput.value.trim()) ||
+      (itemTypeSelect && itemTypeSelect.value) ||
+      (statusSelect && statusSelect.value) ||
+      (sortSelect && sortSelect.value !== sortSelect.options[0].value) ||
+      selectedTags.length > 0 ||
+      document.querySelector('input[name="category"]:checked:not(#cat_all)');
+    
+    if (floatingBtn) {
+      if (hasActiveFilters) {
+        floatingBtn.classList.add('has-filters');
+      } else {
+        floatingBtn.classList.remove('has-filters');
+      }
+    }
+  }
+  
+  // Monitor form changes to update floating button state
+  if (form) {
+    form.addEventListener('change', updateFloatingButtonState);
+    form.addEventListener('input', updateFloatingButtonState);
   }
 });
 </script>
