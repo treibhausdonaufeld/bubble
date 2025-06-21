@@ -55,13 +55,12 @@ COPY ./compose/local/django/celery/flower/start /start-flower
 RUN sed -i 's/\r$//g' /start-flower
 RUN chmod +x /start-flower
 
-
 USER dev-user
 
-WORKDIR ${APP_HOME}
+WORKDIR /home/dev-user/
 
-# copy application code to WORKDIR first
-COPY --chown=dev-user:dev-user . ${APP_HOME}
+# Requirements are installed here to ensure they will be cached.
+COPY uv.lock pyproject.toml ./
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
@@ -72,7 +71,7 @@ ENV PATH="/home/dev-user/.venv/bin:$PATH"
 
 WORKDIR ${APP_HOME}
 
-ENV PATH="/app/.venv/bin:$PATH"
-ENV PYTHONPATH="/app/.venv/lib/python3.12/site-packages:$PYTHONPATH"
+# copy application code to WORKDIR first
+COPY --chown=dev-user:dev-user . ${APP_HOME}
 
 ENTRYPOINT ["/entrypoint"]
