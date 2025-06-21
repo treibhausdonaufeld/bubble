@@ -269,11 +269,11 @@ tags
 dump.rdb
 
 ### Project template
-willgeben/media/
+bubble/media/
 
 .pytest_cache/
 .ipython/
-willgeben/static/webpack_bundles/
+bubble/static/webpack_bundles/
 webpack-stats.json
 .env
 .envs/*
