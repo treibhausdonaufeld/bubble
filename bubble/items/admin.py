@@ -1,8 +1,9 @@
 from django.contrib import admin
-from .models import Item, Image, ItemTagRelation
+
+from .models import Image
+from .models import Item
 
 admin.site.register(Item)
 admin.site.register(Image)
-admin.site.register(ItemTagRelation)
 
 # Register your models here.
