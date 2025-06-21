@@ -29,9 +29,10 @@ TIME_ZONE = "Europe/Vienna"
 LANGUAGE_CODE = "de"
 # https://docs.djangoproject.com/en/dev/ref/settings/#languages
 from django.utils.translation import gettext_lazy as _
+
 LANGUAGES = [
-    ('de', _('Deutsch')),
-    ('en', _('English')),
+    ("de", _("Deutsch")),
+    ("en", _("English")),
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#site-id
 SITE_ID = 1
@@ -95,7 +96,6 @@ LOCAL_APPS = [
     "bubble.bookings.apps.BookingsConfig",
     "bubble.favorites.apps.FavoritesConfig",
     "bubble.payments.apps.PaymentsConfig",
-    "bubble.tags.apps.TagsConfig",
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
