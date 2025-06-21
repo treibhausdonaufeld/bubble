@@ -23,7 +23,7 @@ ENV BUILD_ENV=${BUILD_ENVIRONMENT}
 WORKDIR ${APP_HOME}
 
 RUN addgroup --system django \
-  && adduser --system --ingroup django django
+  && useradd --uid 1000 --gid django --shell /bin/bash --create-home django 
 
 # Install required system dependencies
 RUN apt-get update && apt-get install --no-install-recommends -y \
@@ -62,21 +62,22 @@ COPY --chown=django:django ./compose/production/django/celery/flower/start /star
 RUN sed -i 's/\r$//g' /start-flower
 RUN chmod +x /start-flower
 
+# Requirements are installed here to ensure they will be cached.
+COPY --chown=django:django uv.lock pyproject.toml ./
 
-# copy application code to WORKDIR
-COPY --from=client-builder --chown=django:django ${APP_HOME} ${APP_HOME}
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
-
-# make django owner of the WORKDIR directory as well.
 RUN chown -R django:django ${APP_HOME}
 
 USER django
 
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+RUN uv sync --frozen --no-dev
 
-RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --frozen --no-dev
+# copy application code to WORKDIR
+COPY --from=client-builder --chown=django:django ${APP_HOME} ${APP_HOME}
 
+# make django owner of the WORKDIR directory as well.
+RUN chown -R django:django ${APP_HOME}
 
 RUN DATABASE_URL="" \
   DJANGO_SETTINGS_MODULE="config.settings.test" \

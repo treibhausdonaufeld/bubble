@@ -23,6 +23,7 @@ dependencies = [
     "flower",
     "hiredis",
     "pillow",
+    "psycopg[binary]>=3.2.9",
     "python-slugify",
     "redis",
     "uvicorn-worker",
