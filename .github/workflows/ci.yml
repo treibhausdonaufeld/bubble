@@ -5,6 +5,7 @@ env:
   DOCKER_BUILDKIT: 1
   COMPOSE_DOCKER_CLI_BUILD: 1
   REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 on:
   pull_request:
