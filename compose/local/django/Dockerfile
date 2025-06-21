@@ -55,6 +55,8 @@ COPY ./compose/local/django/celery/flower/start /start-flower
 RUN sed -i 's/\r$//g' /start-flower
 RUN chmod +x /start-flower
 
+RUN chown -R dev-user:dev-user ${APP_HOME}
+
 USER dev-user
 
 WORKDIR /home/dev-user/
