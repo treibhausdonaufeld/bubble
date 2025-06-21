@@ -1,29 +1,5 @@
 # define an alias for the specific python version used in this file.
-FROM docker.io/python:3.12.10-slim-bookworm AS python
-
-
-# Python build stage
-FROM python AS python-build-stage
-
-ENV PYTHONDONTWRITEBYTECODE=1
-
-RUN apt-get update && apt-get install --no-install-recommends -y \
-  # dependencies for building Python packages
-  build-essential \
-  # psycopg dependencies
-  libpq-dev \
-  # cleaning up unused files
-  && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
-  && rm -rf /var/lib/apt/lists/*
-
-# Requirements are installed here to ensure they will be cached.
-COPY ./requirements /requirements
-
-# create python dependency wheels
-RUN pip wheel --no-cache-dir --wheel-dir /usr/src/app/wheels  \
-  -r /requirements/local.txt -r /requirements/production.txt \
-  && rm -rf /requirements
-
+FROM docker.io/python:3.13-slim-bookworm AS python
 
 # Python 'run' stage
 FROM python AS python-run-stage
@@ -48,12 +24,13 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && rm -rf /var/lib/apt/lists/*
 
-# copy python dependency wheels from python-build-stage
-COPY --from=python-build-stage /usr/src/app/wheels /wheels
+# Requirements are installed here to ensure they will be cached.
+COPY uv.lock pyproject.toml ./
 
-# use wheels to install python dependencies
-RUN pip install --no-cache /wheels/* \
-  && rm -rf /wheels
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+
+RUN --mount=type=cache,target=$HOME/.cache/uv \
+  uv sync
 
 COPY ./compose/local/docs/start /start-docs
 RUN sed -i 's/\r$//g' /start-docs
