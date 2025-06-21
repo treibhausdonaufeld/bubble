@@ -24,16 +24,15 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && rm -rf /var/lib/apt/lists/*
 
+COPY ./compose/local/docs/start /start-docs
+RUN sed -i 's/\r$//g' /start-docs
+RUN chmod +x /start-docs
+
 # Requirements are installed here to ensure they will be cached.
 COPY uv.lock pyproject.toml ./
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
-RUN --mount=type=cache,target=$HOME/.cache/uv \
-  uv sync
-
-COPY ./compose/local/docs/start /start-docs
-RUN sed -i 's/\r$//g' /start-docs
-RUN chmod +x /start-docs
+RUN uv sync --locked --no-dev
 
 WORKDIR /docs
