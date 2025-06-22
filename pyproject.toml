@@ -28,7 +28,7 @@ dependencies = [
     "psycopg[binary]",
     "python-slugify",
     "redis",
-    "sentry-sdk",
+    "sentry-sdk[django]",
     "uvicorn-worker",
     "uvicorn[standard]",
     "whitenoise",
