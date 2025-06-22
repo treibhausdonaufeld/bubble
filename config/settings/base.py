@@ -321,13 +321,16 @@ CELERY_TASK_SEND_SENT_EVENT = True
 CELERY_WORKER_HIJACK_ROOT_LOGGER = False
 # django-allauth
 # ------------------------------------------------------------------------------
-ACCOUNT_ALLOW_REGISTRATION = env.bool("DJANGO_ACCOUNT_ALLOW_REGISTRATION", True)
+ACCOUNT_ALLOW_REGISTRATION = env.bool("ACCOUNT_ALLOW_REGISTRATION", True)
+
+SOCIALACCOUNT_ONLY = env.bool("SOCIALACCOUNT_ONLY", default=False)
+
 # https://docs.allauth.org/en/latest/account/configuration.html
 ACCOUNT_LOGIN_METHODS = {"username"}
 # https://docs.allauth.org/en/latest/account/configuration.html
 ACCOUNT_SIGNUP_FIELDS = ["email*", "username*", "password1*", "password2*"]
 # https://docs.allauth.org/en/latest/account/configuration.html
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_EMAIL_VERIFICATION = "none" if SOCIALACCOUNT_ONLY else "mandatory"
 # https://docs.allauth.org/en/latest/account/configuration.html
 ACCOUNT_ADAPTER = "bubble.users.adapters.AccountAdapter"
 # https://docs.allauth.org/en/latest/account/forms.html
@@ -339,31 +342,40 @@ SOCIALACCOUNT_FORMS = {"signup": "bubble.users.forms.UserSocialSignupForm"}
 
 SOCIALACCOUNT_ENABLED = env.bool("SOCIALACCOUNT_ENABLED", default=True)
 
-# SOCIALACCOUNT_ONLY = True
 
-# ACCOUNT_ALLOW_REGISTRATION = False
+SOCIALACCOUNT_PROVIDERS = {"openid_connect": {"APPS": []}}
 
-SOCIALACCOUNT_PROVIDERS = {
-    "openid_connect": {
-        "APPS": [
-            {
-                "provider_id": "authentik",
-                "name": "Treibhaus Auth",
-                "client_id": env("AUTHENTIK_CLIENT_ID", default="default_client_id"),
-                "secret": env("AUTHENTIK_SECRET", default="default_secret"),
-                "settings": {
-                    "server_url": env(
-                        "AUTHENTIK_SERVER_URL",
-                        default="http://authentik:8000",
-                    ),
-                    # Optional: specify scopes, e.g.,
-                    # "SCOPE": ["openid", "profile", "email"],
-                    # "oauth_pkce_enabled": True,
-                },
+if nextcloud_server_url := env("NEXTCLOUD_SERVER_URL", default=""):
+    SOCIALACCOUNT_PROVIDERS["openid_connect"]["APPS"].append(
+        {
+            "provider_id": "nextcloud",
+            "name": "Nextcloud",
+            "client_id": env("NEXTCLOUD_CLIENT_ID", default="default_client_id"),
+            "secret": env("NEXTCLOUD_SECRET", default="default_secret"),
+            "settings": {
+                "server_url": nextcloud_server_url,
+                # Optional: specify scopes, e.g.,
+                # "SCOPE": ["openid", "profile", "email"],
+                # "oauth_pkce_enabled": True,
             },
-        ],
-    },
-}
+        }
+    )
+
+if authentik_server_url := env("AUTHENTIK_SERVER_URL", default=""):
+    SOCIALACCOUNT_PROVIDERS["openid_connect"]["APPS"].append(
+        {
+            "provider_id": "authentik",
+            "name": "Authentik (neu)",
+            "client_id": env("AUTHENTIK_CLIENT_ID", default="default_client_id"),
+            "secret": env("AUTHENTIK_SECRET", default="default_secret"),
+            "settings": {
+                "server_url": authentik_server_url,
+                # Optional: specify scopes, e.g.,
+                # "SCOPE": ["openid", "profile", "email"],
+                # "oauth_pkce_enabled": True,
+            },
+        }
+    )
 
 # django-rest-framework
 # -------------------------------------------------------------------------------
