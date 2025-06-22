@@ -1,0 +1,40 @@
+/* These styles are generated from project.scss. */
+
+/* Navigation active states */
+.navbar-nav .nav-link.active {
+  font-weight: bold;
+  background-color: rgba(0,123,255,0.1);
+  border-radius: 0.25rem;
+}
+
+.dropdown-item.active {
+  background-color: #007bff;
+  color: white;
+}
+
+/* Ensure navbar displays in row */
+.navbar-nav {
+  flex-direction: row !important;
+}
+
+.navbar-nav .nav-item {
+  margin-right: 1rem;
+}
+
+.navbar-nav .dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+}
+
+.alert-debug {
+  color: black;
+  background-color: white;
+  border-color: #d6e9c6;
+}
+
+.alert-error {
+  color: #b94a48;
+  background-color: #f2dede;
+  border-color: #eed3d7;
+}
