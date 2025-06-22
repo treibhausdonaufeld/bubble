@@ -5,7 +5,6 @@ import ssl
 from pathlib import Path
 
 import environ
-
 # https://docs.djangoproject.com/en/dev/ref/settings/#languages
 from django.utils.translation import gettext_lazy as _
 
