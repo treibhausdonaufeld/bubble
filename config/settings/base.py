@@ -80,6 +80,7 @@ THIRD_PARTY_APPS = [
     # "allauth.mfa",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.openid_connect",
+    "allauth.socialaccount.providers.nextcloud",
     "django_celery_beat",
     "rest_framework",
     "rest_framework.authtoken",
@@ -342,40 +343,38 @@ SOCIALACCOUNT_FORMS = {"signup": "bubble.users.forms.UserSocialSignupForm"}
 
 SOCIALACCOUNT_ENABLED = env.bool("SOCIALACCOUNT_ENABLED", default=True)
 
-
-SOCIALACCOUNT_PROVIDERS = {"openid_connect": {"APPS": []}}
+SOCIALACCOUNT_PROVIDERS = {}
 
 if nextcloud_server_url := env("NEXTCLOUD_SERVER_URL", default=""):
-    SOCIALACCOUNT_PROVIDERS["openid_connect"]["APPS"].append(
-        {
-            "provider_id": "nextcloud",
-            "name": "Nextcloud",
-            "client_id": env("NEXTCLOUD_CLIENT_ID", default="default_client_id"),
-            "secret": env("NEXTCLOUD_SECRET", default="default_secret"),
-            "settings": {
-                "server_url": nextcloud_server_url,
-                # Optional: specify scopes, e.g.,
-                # "SCOPE": ["openid", "profile", "email"],
-                # "oauth_pkce_enabled": True,
-            },
-        }
-    )
+    SOCIALACCOUNT_PROVIDERS["nextcloud"] = {
+        "APPS": [
+            {
+                "client_id": env("NEXTCLOUD_CLIENT_ID", default="default_client_id"),
+                "secret": env("NEXTCLOUD_SECRET", default="default_secret"),
+                "settings": {
+                    "server": nextcloud_server_url,
+                },
+            }
+        ]
+    }
 
 if authentik_server_url := env("AUTHENTIK_SERVER_URL", default=""):
-    SOCIALACCOUNT_PROVIDERS["openid_connect"]["APPS"].append(
-        {
-            "provider_id": "authentik",
-            "name": "Authentik (neu)",
-            "client_id": env("AUTHENTIK_CLIENT_ID", default="default_client_id"),
-            "secret": env("AUTHENTIK_SECRET", default="default_secret"),
-            "settings": {
-                "server_url": authentik_server_url,
-                # Optional: specify scopes, e.g.,
-                # "SCOPE": ["openid", "profile", "email"],
-                # "oauth_pkce_enabled": True,
-            },
-        }
-    )
+    SOCIALACCOUNT_PROVIDERS["openid_connect"] = {
+        "APPS": [
+            {
+                "provider_id": "authentik",
+                "name": "Authentik (neu)",
+                "client_id": env("AUTHENTIK_CLIENT_ID", default="default_client_id"),
+                "secret": env("AUTHENTIK_SECRET", default="default_secret"),
+                "settings": {
+                    "server_url": authentik_server_url,
+                    # Optional: specify scopes, e.g.,
+                    # "SCOPE": ["openid", "profile", "email"],
+                    # "oauth_pkce_enabled": True,
+                },
+            }
+        ]
+    }
 
 # django-rest-framework
 # -------------------------------------------------------------------------------
