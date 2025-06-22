@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+
 {% load i18n %}
 
 {% block title %}
@@ -8,372 +9,311 @@
     {% trans "Add New Article" %}
   {% endif %}
 {% endblock %}
-
 {% block content %}
-<div class="container">
-  <div class="row justify-content-center">
-    <div class="col-md-8">
-      <div class="card">
-        <div class="card-header">
-          <h3>
-            {% if object %}
-              {% trans "Edit Article" %} - {{ object.name }}
-            {% else %}
-              {% trans "Add New Article" %}
-            {% endif %}
-          </h3>
-        </div>
-        
-        <div class="card-body">
-          <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            
-            <!-- Basic Information -->
-            <div class="row mb-3">
-              <div class="col-md-12">
-                <label for="{{ form.name.id_for_label }}" class="form-label">{{ form.name.label }} *</label>
-                {{ form.name }}
-                {% if form.name.errors %}
-                  <div class="text-danger">{{ form.name.errors }}</div>
-                {% endif %}
-                {% if form.name.help_text %}
-                  <div class="form-text">{{ form.name.help_text }}</div>
-                {% endif %}
-              </div>
-            </div>
-            
-            <div class="row mb-3">
-              <div class="col-md-12">
-                <label for="{{ form.description.id_for_label }}" class="form-label">{{ form.description.label }} *</label>
-                {{ form.description }}
-                {% if form.description.errors %}
-                  <div class="text-danger">{{ form.description.errors }}</div>
-                {% endif %}
-                {% if form.description.help_text %}
-                  <div class="form-text">{{ form.description.help_text }}</div>
-                {% endif %}
-              </div>
-            </div>
-            
-            <!-- Category and Type -->
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <label class="form-label">{% trans "Category" %} *</label>
-                
-                <!-- Dynamic category selection area -->
-                <div id="category-selection-area">
-                  <div class="category-level mb-2">
-                    <select class="form-select category-dropdown" data-level="0">
-                      <option value="">{% trans "Choose main category" %}</option>
-                    </select>
-                  </div>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">
+            <h3>
+              {% if object %}
+                {% trans "Edit Article" %} - {{ object.name }}
+              {% else %}
+                {% trans "Add New Article" %}
+              {% endif %}
+            </h3>
+          </div>
+          <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+              <!-- Basic Information -->
+              <div class="row mb-3">
+                <div class="col-md-12">
+                  <label for="{{ form.name.id_for_label }}" class="form-label">{{ form.name.label }} *</label>
+                  {{ form.name }}
+                  {% if form.name.errors %}<div class="text-danger">{{ form.name.errors }}</div>{% endif %}
+                  {% if form.name.help_text %}<div class="form-text">{{ form.name.help_text }}</div>{% endif %}
                 </div>
-                
-                <!-- Hidden field to store selected category -->
-                {{ form.selected_category }}
-                
-                <!-- Category breadcrumb -->
-                <div id="category-breadcrumb" class="mt-2" style="display: none;">
-                  <small class="text-muted">
-                    <span class="fw-bold">{% trans "Selected:" %}</span>
-                    <span id="breadcrumb-text"></span>
-                  </small>
+              </div>
+              <div class="row mb-3">
+                <div class="col-md-12">
+                  <label for="{{ form.description.id_for_label }}" class="form-label">{{ form.description.label }} *</label>
+                  {{ form.description }}
+                  {% if form.description.errors %}<div class="text-danger">{{ form.description.errors }}</div>{% endif %}
+                  {% if form.description.help_text %}<div class="form-text">{{ form.description.help_text }}</div>{% endif %}
                 </div>
-                
-                {% if form.selected_category.errors %}
-                  <div class="text-danger">{{ form.selected_category.errors }}</div>
-                {% endif %}
               </div>
-              <div class="col-md-6">
-                <label for="{{ form.item_type.id_for_label }}" class="form-label">{{ form.item_type.label }} *</label>
-                {{ form.item_type }}
-                {% if form.item_type.errors %}
-                  <div class="text-danger">{{ form.item_type.errors }}</div>
-                {% endif %}
-              </div>
-            </div>
-            
-            <!-- Status and Price -->
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <label for="{{ form.status.id_for_label }}" class="form-label">{{ form.status.label }} *</label>
-                {{ form.status }}
-                {% if form.status.errors %}
-                  <div class="text-danger">{{ form.status.errors }}</div>
-                {% endif %}
-              </div>
-              <div class="col-md-6">
-                <label for="{{ form.price.id_for_label }}" class="form-label">{{ form.price.label }}</label>
-                {{ form.price }}
-                {% if form.price.errors %}
-                  <div class="text-danger">{{ form.price.errors }}</div>
-                {% endif %}
-                {% if form.price.help_text %}
-                  <div class="form-text">{{ form.price.help_text }}</div>
-                {% endif %}
-              </div>
-            </div>
-            
-            <!-- Tags -->
-            <div class="mb-3">
-              <label class="form-label">{{ form.tags.label }}</label>
-              <div class="row" style="max-height: 200px; overflow-y: auto;">
-                {% for checkbox in form.tags %}
-                  <div class="col-md-4 col-sm-6">
-                    <div class="form-check">
-                      {{ checkbox.tag }}
-                      <label class="form-check-label" for="{{ checkbox.id_for_label }}">
-                        {{ checkbox.choice_label }}
-                      </label>
+              <!-- Category and Type -->
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label class="form-label">{% trans "Category" %} *</label>
+                  <!-- Dynamic category selection area -->
+                  <div id="category-selection-area">
+                    <div class="category-level mb-2">
+                      <select class="form-select category-dropdown" data-level="0">
+                        <option value="">{% trans "Choose main category" %}</option>
+                      </select>
                     </div>
                   </div>
-                {% endfor %}
-              </div>
-              {% if form.tags.errors %}
-                <div class="text-danger">{{ form.tags.errors }}</div>
-              {% endif %}
-              {% if form.tags.help_text %}
-                <div class="form-text">{{ form.tags.help_text }}</div>
-              {% endif %}
-            </div>
-            
-            <!-- Settings -->
-            <div class="mb-3">
-              <label class="form-label">{% trans "Settings" %}</label>
-              
-              <div class="form-check">
-                {{ form.display_contact }}
-                <label class="form-check-label" for="{{ form.display_contact.id_for_label }}">
-                  {{ form.display_contact.label }}
-                </label>
-                {% if form.display_contact.help_text %}
-                  <div class="form-text">{{ form.display_contact.help_text }}</div>
-                {% endif %}
-              </div>
-              
-              <div class="form-check">
-                {{ form.active }}
-                <label class="form-check-label" for="{{ form.active.id_for_label }}">
-                  {{ form.active.label }}
-                </label>
-              </div>
-              
-              <!-- Intern-only fields -->
-              {% if form.intern %}
-                <div class="form-check">
-                  {{ form.intern }}
-                  <label class="form-check-label" for="{{ form.intern.id_for_label }}">
-                    {{ form.intern.label }}
-                  </label>
-                  {% if form.intern.help_text %}
-                    <div class="form-text">{{ form.intern.help_text }}</div>
-                  {% endif %}
+                  <!-- Hidden field to store selected category -->
+                  {{ form.selected_category }}
+                  <!-- Category breadcrumb -->
+                  <div id="category-breadcrumb" class="mt-2" style="display: none;">
+                    <small class="text-muted">
+                      <span class="fw-bold">{% trans "Selected:" %}</span>
+                      <span id="breadcrumb-text"></span>
+                    </small>
+                  </div>
+                  {% if form.selected_category.errors %}<div class="text-danger">{{ form.selected_category.errors }}</div>{% endif %}
                 </div>
-              {% endif %}
-              
-              {% if form.th_payment %}
-                <div class="form-check">
-                  {{ form.th_payment }}
-                  <label class="form-check-label" for="{{ form.th_payment.id_for_label }}">
-                    {{ form.th_payment.label }}
-                  </label>
-                  {% if form.th_payment.help_text %}
-                    <div class="form-text">{{ form.th_payment.help_text }}</div>
-                  {% endif %}
+                <div class="col-md-6">
+                  <label for="{{ form.item_type.id_for_label }}" class="form-label">{{ form.item_type.label }} *</label>
+                  {{ form.item_type }}
+                  {% if form.item_type.errors %}<div class="text-danger">{{ form.item_type.errors }}</div>{% endif %}
                 </div>
-              {% endif %}
-            </div>
-            
-            <!-- Profile Image Frame -->
-            {% if form.profile_img_frame %}
+              </div>
+              <!-- Status and Price -->
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="{{ form.status.id_for_label }}" class="form-label">{{ form.status.label }} *</label>
+                  {{ form.status }}
+                  {% if form.status.errors %}<div class="text-danger">{{ form.status.errors }}</div>{% endif %}
+                </div>
+                <div class="col-md-6">
+                  <label for="{{ form.price.id_for_label }}" class="form-label">{{ form.price.label }}</label>
+                  {{ form.price }}
+                  {% if form.price.errors %}<div class="text-danger">{{ form.price.errors }}</div>{% endif %}
+                  {% if form.price.help_text %}<div class="form-text">{{ form.price.help_text }}</div>{% endif %}
+                </div>
+              </div>
+              <!-- Tags -->
               <div class="mb-3">
-                <label for="{{ form.profile_img_frame.id_for_label }}" class="form-label">{{ form.profile_img_frame.label }}</label>
-                {{ form.profile_img_frame }}
-                {% if form.profile_img_frame.errors %}
-                  <div class="text-danger">{{ form.profile_img_frame.errors }}</div>
+                <label class="form-label">{{ form.tags.label }}</label>
+                <div class="row" style="max-height: 200px; overflow-y: auto;">
+                  {% for checkbox in form.tags %}
+                    <div class="col-md-4 col-sm-6">
+                      <div class="form-check">
+                        {{ checkbox.tag }}
+                        <label class="form-check-label" for="{{ checkbox.id_for_label }}">{{ checkbox.choice_label }}</label>
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+                {% if form.tags.errors %}<div class="text-danger">{{ form.tags.errors }}</div>{% endif %}
+                {% if form.tags.help_text %}<div class="form-text">{{ form.tags.help_text }}</div>{% endif %}
+              </div>
+              <!-- Settings -->
+              <div class="mb-3">
+                <label class="form-label">{% trans "Settings" %}</label>
+                <div class="form-check">
+                  {{ form.display_contact }}
+                  <label class="form-check-label"
+                         for="{{ form.display_contact.id_for_label }}">{{ form.display_contact.label }}</label>
+                  {% if form.display_contact.help_text %}<div class="form-text">{{ form.display_contact.help_text }}</div>{% endif %}
+                </div>
+                <div class="form-check">
+                  {{ form.active }}
+                  <label class="form-check-label" for="{{ form.active.id_for_label }}">{{ form.active.label }}</label>
+                </div>
+                <!-- Intern-only fields -->
+                {% if form.intern %}
+                  <div class="form-check">
+                    {{ form.intern }}
+                    <label class="form-check-label" for="{{ form.intern.id_for_label }}">{{ form.intern.label }}</label>
+                    {% if form.intern.help_text %}<div class="form-text">{{ form.intern.help_text }}</div>{% endif %}
+                  </div>
+                {% endif %}
+                {% if form.th_payment %}
+                  <div class="form-check">
+                    {{ form.th_payment }}
+                    <label class="form-check-label" for="{{ form.th_payment.id_for_label }}">{{ form.th_payment.label }}</label>
+                    {% if form.th_payment.help_text %}<div class="form-text">{{ form.th_payment.help_text }}</div>{% endif %}
+                  </div>
                 {% endif %}
               </div>
-            {% endif %}
-            
-            <!-- Form Errors -->
-            {% if form.non_field_errors %}
-              <div class="alert alert-danger">
-                {{ form.non_field_errors }}
+              <!-- Profile Image Frame -->
+              {% if form.profile_img_frame %}
+                <div class="mb-3">
+                  <label for="{{ form.profile_img_frame.id_for_label }}" class="form-label">{{ form.profile_img_frame.label }}</label>
+                  {{ form.profile_img_frame }}
+                  {% if form.profile_img_frame.errors %}<div class="text-danger">{{ form.profile_img_frame.errors }}</div>{% endif %}
+                </div>
+              {% endif %}
+              <!-- Form Errors -->
+              {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+              <!-- Form Actions -->
+              <div class="d-flex justify-content-between">
+                <a href="{% if object %}{% url 'items:detail' object.pk %}{% else %}{% url 'items:list' %}{% endif %}"
+                   class="btn btn-outline-secondary">{% trans "Cancel" %}</a>
+                <button type="submit" class="btn btn-primary">
+                  {% if object %}
+                    {% trans "Update Article" %}
+                  {% else %}
+                    {% trans "Create Article" %}
+                  {% endif %}
+                </button>
               </div>
-            {% endif %}
-            
-            <!-- Form Actions -->
-            <div class="d-flex justify-content-between">
-              <a href="{% if object %}{% url 'items:detail' object.pk %}{% else %}{% url 'items:list' %}{% endif %}" class="btn btn-outline-secondary">
-                {% trans "Cancel" %}
-              </a>
-              <button type="submit" class="btn btn-primary">
-                {% if object %}
-                  {% trans "Update Article" %}
-                {% else %}
-                  {% trans "Create Article" %}
-                {% endif %}
-              </button>
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Show/hide price field based on item type
+      const itemTypeField = document.getElementById('{{ form.item_type.id_for_label }}');
+      const priceField = document.getElementById('{{ form.price.id_for_label }}');
+      const priceContainer = priceField.closest('.col-md-6');
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  // Show/hide price field based on item type
-  const itemTypeField = document.getElementById('{{ form.item_type.id_for_label }}');
-  const priceField = document.getElementById('{{ form.price.id_for_label }}');
-  const priceContainer = priceField.closest('.col-md-6');
-  
-  function togglePriceField() {
-    if (itemTypeField.value === '0') { // Sell
-      priceContainer.style.display = 'block';
-      priceField.setAttribute('required', 'required');
-    } else { // Give away or Borrow
-      priceContainer.style.display = 'none';
-      priceField.removeAttribute('required');
-      priceField.value = '';
-    }
-  }
-  
-  itemTypeField.addEventListener('change', togglePriceField);
-  togglePriceField(); // Initial call
-  
-  // Dynamic unlimited-depth category selection
-  const categorySelectionArea = document.getElementById('category-selection-area');
-  const selectedCategoryField = document.getElementById('{{ form.selected_category.id_for_label }}');
-  const categoryBreadcrumb = document.getElementById('category-breadcrumb');
-  const breadcrumbText = document.getElementById('breadcrumb-text');
-  
-  let categoryHierarchy = []; // Track selected categories at each level
-  
-  function loadCategoriesForLevel(level, parentId = null) {
-    const dropdown = categorySelectionArea.querySelector(`[data-level="${level}"]`);
-    if (!dropdown) return;
-    
-    // Show loading state
-    dropdown.innerHTML = '<option value="">{% trans "Loading..." %}</option>';
-    
-    // Determine API URL
-    const url = parentId 
-      ? `{% url 'items:get_subcategories' %}?parent_id=${parentId}`
-      : `{% url 'items:get_subcategories' %}`;
-    
-    fetch(url)
-      .then(response => response.json())
-      .then(data => {
-        const categories = data.subcategories || [];
-        
-        // Clear dropdown
-        dropdown.innerHTML = level === 0 
-          ? '<option value="">{% trans "Choose main category" %}</option>'
-          : '<option value="">{% trans "Choose subcategory" %}</option>';
-        
-        // Add categories
-        categories.forEach(category => {
-          const option = document.createElement('option');
-          option.value = category.id;
-          option.textContent = category.name;
-          dropdown.appendChild(option);
-        });
-        
-        // If no categories, hide this level
-        if (categories.length === 0 && level > 0) {
-          dropdown.closest('.category-level').style.display = 'none';
+      function togglePriceField() {
+        if (itemTypeField.value === '0') { // Sell
+          priceContainer.style.display = 'block';
+          priceField.setAttribute('required', 'required');
+        } else { // Give away or Borrow
+          priceContainer.style.display = 'none';
+          priceField.removeAttribute('required');
+          priceField.value = '';
         }
-      })
-      .catch(error => {
-        console.error('Error loading categories:', error);
-        dropdown.innerHTML = '<option value="">{% trans "Error loading categories" %}</option>';
-      });
-  }
-  
-  function onCategorySelected(level, categoryId, categoryName) {
-    // Update hierarchy tracking
-    categoryHierarchy = categoryHierarchy.slice(0, level + 1);
-    categoryHierarchy[level] = { id: categoryId, name: categoryName };
-    
-    // Remove deeper level dropdowns
-    const deeperLevels = categorySelectionArea.querySelectorAll(`[data-level]`);
-    deeperLevels.forEach(dropdown => {
-      if (parseInt(dropdown.dataset.level) > level) {
-        dropdown.closest('.category-level').remove();
       }
-    });
-    
-    if (categoryId) {
-      // Set selected category
-      selectedCategoryField.value = categoryId;
-      
-      // Update breadcrumb
-      const breadcrumbPath = categoryHierarchy.map(cat => cat.name).join(' > ');
-      breadcrumbText.textContent = breadcrumbPath;
-      categoryBreadcrumb.style.display = 'block';
-      
-      // Check if this category has subcategories
-      fetch(`{% url 'items:get_subcategories' %}?parent_id=${categoryId}`)
-        .then(response => response.json())
-        .then(data => {
-          if (data.subcategories && data.subcategories.length > 0) {
-            // Add next level dropdown
-            const nextLevel = level + 1;
-            const nextLevelDiv = document.createElement('div');
-            nextLevelDiv.className = 'category-level mb-2';
-            nextLevelDiv.innerHTML = `
+
+      itemTypeField.addEventListener('change', togglePriceField);
+      togglePriceField(); // Initial call
+
+      // Dynamic unlimited-depth category selection
+      const categorySelectionArea = document.getElementById('category-selection-area');
+      const selectedCategoryField = document.getElementById('{{ form.selected_category.id_for_label }}');
+      const categoryBreadcrumb = document.getElementById('category-breadcrumb');
+      const breadcrumbText = document.getElementById('breadcrumb-text');
+
+      let categoryHierarchy = []; // Track selected categories at each level
+
+      function loadCategoriesForLevel(level, parentId = null) {
+        const dropdown = categorySelectionArea.querySelector(`[data-level="${level}"]`);
+        if (!dropdown) return;
+
+        // Show loading state
+        dropdown.innerHTML = '<option value="">{% trans "Loading..." %}</option>';
+
+        // Determine API URL
+        const url = parentId ?
+          `{% url 'items:get_subcategories' %}?parent_id=${parentId}` :
+          `{% url 'items:get_subcategories' %}`;
+
+        fetch(url)
+          .then(response => response.json())
+          .then(data => {
+            const categories = data.subcategories || [];
+
+            // Clear dropdown
+            dropdown.innerHTML = level === 0 ?
+              '<option value="">{% trans "Choose main category" %}</option>' :
+              '<option value="">{% trans "Choose subcategory" %}</option>';
+
+            // Add categories
+            categories.forEach(category => {
+              const option = document.createElement('option');
+              option.value = category.id;
+              option.textContent = category.name;
+              dropdown.appendChild(option);
+            });
+
+            // If no categories, hide this level
+            if (categories.length === 0 && level > 0) {
+              dropdown.closest('.category-level').style.display = 'none';
+            }
+          })
+          .catch(error => {
+            console.error('Error loading categories:', error);
+            dropdown.innerHTML = '<option value="">{% trans "Error loading categories" %}</option>';
+          });
+      }
+
+      function onCategorySelected(level, categoryId, categoryName) {
+        // Update hierarchy tracking
+        categoryHierarchy = categoryHierarchy.slice(0, level + 1);
+        categoryHierarchy[level] = {
+          id: categoryId,
+          name: categoryName
+        };
+
+        // Remove deeper level dropdowns
+        const deeperLevels = categorySelectionArea.querySelectorAll(`[data-level]`);
+        deeperLevels.forEach(dropdown => {
+          if (parseInt(dropdown.dataset.level) > level) {
+            dropdown.closest('.category-level').remove();
+          }
+        });
+
+        if (categoryId) {
+          // Set selected category
+          selectedCategoryField.value = categoryId;
+
+          // Update breadcrumb
+          const breadcrumbPath = categoryHierarchy.map(cat => cat.name).join(' > ');
+          breadcrumbText.textContent = breadcrumbPath;
+          categoryBreadcrumb.style.display = 'block';
+
+          // Check if this category has subcategories
+          fetch(`{% url 'items:get_subcategories' %}?parent_id=${categoryId}`)
+            .then(response => response.json())
+            .then(data => {
+              if (data.subcategories && data.subcategories.length > 0) {
+                // Add next level dropdown
+                const nextLevel = level + 1;
+                const nextLevelDiv = document.createElement('div');
+                nextLevelDiv.className = 'category-level mb-2';
+                nextLevelDiv.innerHTML = `
               <select class="form-select category-dropdown" data-level="${nextLevel}">
                 <option value="">{% trans "Choose subcategory" %}</option>
               </select>
             `;
-            categorySelectionArea.appendChild(nextLevelDiv);
-            
-            // Load categories for next level
-            loadCategoriesForLevel(nextLevel, categoryId);
-            
-            // Add event listener for next level
-            const nextDropdown = nextLevelDiv.querySelector('.category-dropdown');
-            nextDropdown.addEventListener('change', function() {
-              const selectedOption = this.options[this.selectedIndex];
-              onCategorySelected(nextLevel, this.value, selectedOption.text);
+                categorySelectionArea.appendChild(nextLevelDiv);
+
+                // Load categories for next level
+                loadCategoriesForLevel(nextLevel, categoryId);
+
+                // Add event listener for next level
+                const nextDropdown = nextLevelDiv.querySelector('.category-dropdown');
+                nextDropdown.addEventListener('change', function() {
+                  const selectedOption = this.options[this.selectedIndex];
+                  onCategorySelected(nextLevel, this.value, selectedOption.text);
+                });
+              }
             });
-          }
-        });
-    } else {
-      // Clear selection
-      selectedCategoryField.value = '';
-      categoryBreadcrumb.style.display = 'none';
-    }
-  }
-  
-  // Initialize first level
-  loadCategoriesForLevel(0);
-  
-  // Add event listener for first level
-  const firstDropdown = categorySelectionArea.querySelector('[data-level="0"]');
-  firstDropdown.addEventListener('change', function() {
-    const selectedOption = this.options[this.selectedIndex];
-    onCategorySelected(0, this.value, selectedOption.text);
-  });
-  
-  // Load existing category for edit form
-  const existingCategoryId = selectedCategoryField.value;
-  if (existingCategoryId) {
-    // Fetch category hierarchy and rebuild dropdowns
-    fetch(`{% url 'items:get_subcategories' %}?get_hierarchy=${existingCategoryId}`)
-      .then(response => response.json())
-      .then(data => {
-        // This would need the backend to support get_hierarchy parameter
-        // For now, we'll just show the selected category
-        categoryBreadcrumb.style.display = 'block';
-        breadcrumbText.textContent = '{% trans "Current selection" %}';
-      })
-      .catch(error => {
-        console.error('Error loading existing category:', error);
+        } else {
+          // Clear selection
+          selectedCategoryField.value = '';
+          categoryBreadcrumb.style.display = 'none';
+        }
+      }
+
+      // Initialize first level
+      loadCategoriesForLevel(0);
+
+      // Add event listener for first level
+      const firstDropdown = categorySelectionArea.querySelector('[data-level="0"]');
+      firstDropdown.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        onCategorySelected(0, this.value, selectedOption.text);
       });
-  }
-});
-</script>
+
+      // Load existing category for edit form
+      const existingCategoryId = selectedCategoryField.value;
+      if (existingCategoryId) {
+        // Fetch category hierarchy and rebuild dropdowns
+        fetch(`{% url 'items:get_subcategories' %}?get_hierarchy=${existingCategoryId}`)
+          .then(response => response.json())
+          .then(data => {
+            // This would need the backend to support get_hierarchy parameter
+            // For now, we'll just show the selected category
+            categoryBreadcrumb.style.display = 'block';
+            breadcrumbText.textContent = '{% trans "Current selection" %}';
+          })
+          .catch(error => {
+            console.error('Error loading existing category:', error);
+          });
+      }
+    });
+  </script>
 {% endblock %}

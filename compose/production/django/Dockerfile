@@ -23,7 +23,7 @@ ENV BUILD_ENV=${BUILD_ENVIRONMENT}
 WORKDIR ${APP_HOME}
 
 RUN addgroup --system django \
-  && useradd --uid 1000 --gid django --shell /bin/bash --create-home django 
+  && useradd --uid 1000 --gid django --shell /bin/bash --create-home django
 
 # Install required system dependencies
 RUN apt-get update && apt-get install --no-install-recommends -y \

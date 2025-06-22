@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+
 {% load i18n %}
 
 {% block title %}
@@ -8,7 +9,6 @@
     Items
   {% endif %}
 {% endblock %}
-
 {% block css %}
   {{ block.super }}
   <style>
@@ -16,7 +16,7 @@
     .filter-sidebar {
       background: #f8f9fa;
       border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     .filter-header {
@@ -122,12 +122,12 @@
       border: none;
       border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
 
     .item-card:hover {
       transform: translateY(-4px);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
     }
 
     .item-image {
@@ -157,14 +157,14 @@
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
 
     .price-tag {
       position: absolute;
       bottom: 0.5rem;
       left: 0.5rem;
-      background: rgba(0,0,0,0.8);
+      background: rgba(0, 0, 0, 0.8);
       color: white;
       padding: 0.25rem 0.5rem;
       border-radius: 0.5rem;
@@ -199,14 +199,14 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
       transition: all 0.3s ease;
       font-size: 1.2rem;
     }
 
     .floating-filter-btn:hover {
       transform: scale(1.1);
-      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
     }
 
     .floating-filter-btn.has-filters {
@@ -215,9 +215,17 @@
     }
 
     @keyframes pulse {
-      0% { box-shadow: 0 4px 12px rgba(0,0,0,0.15), 0 0 0 0 rgba(40, 167, 69, 0.7); }
-      70% { box-shadow: 0 4px 12px rgba(0,0,0,0.15), 0 0 0 10px rgba(40, 167, 69, 0); }
-      100% { box-shadow: 0 4px 12px rgba(0,0,0,0.15), 0 0 0 0 rgba(40, 167, 69, 0); }
+      0% {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 0 0 0 rgba(40, 167, 69, 0.7);
+      }
+
+      70% {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 0 0 10px rgba(40, 167, 69, 0);
+      }
+
+      100% {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 0 0 0 rgba(40, 167, 69, 0);
+      }
     }
 
     /* Mobile Responsive */
@@ -243,7 +251,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0,0,0,0.5);
+        background: rgba(0, 0, 0, 0.5);
         z-index: 1040;
         display: none;
       }
@@ -253,13 +261,15 @@
       }
 
       .floating-filter-btn {
-        bottom: 80px; /* Higher on mobile to avoid interference */
+        bottom: 80px;
+        /* Higher on mobile to avoid interference */
       }
     }
 
     @media (min-width: 769px) {
       .floating-filter-btn {
-        display: none; /* Hide on desktop when sidebar is visible */
+        display: none;
+        /* Hide on desktop when sidebar is visible */
       }
     }
 
@@ -287,7 +297,7 @@
       border-radius: 8px;
       padding: 1rem;
       margin-bottom: 1rem;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
 
     .view-toggle {
@@ -362,7 +372,8 @@
       gap: 0.5rem;
     }
 
-    .category-label, .subcategory-label {
+    .category-label,
+    .subcategory-label {
       display: flex;
       align-items: center;
       gap: 0.5rem;
@@ -372,7 +383,8 @@
       flex: 1;
     }
 
-    .category-label:hover, .subcategory-label:hover {
+    .category-label:hover,
+    .subcategory-label:hover {
       color: #007bff;
     }
 
@@ -397,589 +409,592 @@
       margin: 0;
     }
 
-    input[type="radio"][name="category"]:checked + label {
+    input[type="radio"][name="category"]:checked+label {
       color: #007bff;
       font-weight: 500;
     }
   </style>
 {% endblock %}
-
 {% block content %}
-<div class="container-fluid">
-  <!-- Mobile Filter Toggle -->
-  <div class="d-md-none mb-3">
-    <button class="btn btn-outline-primary" id="mobile-filter-toggle">
-      <i class="fas fa-filter"></i> {% trans "Filters" %}
-    </button>
-  </div>
-
-
-  <div class="row">
-    <!-- Enhanced Filters Sidebar -->
-    <div class="col-md-3">
-      <div class="filter-overlay" id="filter-overlay"></div>
-      <div class="filter-sidebar" id="filter-sidebar">
-        <div class="filter-header">
-          <div class="d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">
-              <i class="fas fa-filter"></i> {% trans "Filters" %}
-            </h5>
-            <button class="btn btn-sm btn-outline-light d-md-none" id="close-filters">
-              <i class="fas fa-times"></i>
-            </button>
+  <div class="container-fluid">
+    <!-- Mobile Filter Toggle -->
+    <div class="d-md-none mb-3">
+      <button class="btn btn-outline-primary" id="mobile-filter-toggle">
+        <i class="fas fa-filter"></i> {% trans "Filters" %}
+      </button>
+    </div>
+    <div class="row">
+      <!-- Enhanced Filters Sidebar -->
+      <div class="col-md-3">
+        <div class="filter-overlay" id="filter-overlay"></div>
+        <div class="filter-sidebar" id="filter-sidebar">
+          <div class="filter-header">
+            <div class="d-flex justify-content-between align-items-center">
+              <h5 class="mb-0">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+              </h5>
+              <button class="btn btn-sm btn-outline-light d-md-none" id="close-filters">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
           </div>
-        </div>
-
-        <div class="p-3">
-          <form method="get" id="filter-form">
-            <!-- Active Filters Display -->
-            {% if active_filters %}
-              <div class="active-filters">
-                <h6>{% trans "Active Filters" %}:</h6>
-                {% for filter_type, filter_value in active_filters %}
-                  <span class="filter-chip">
-                    {{ filter_value }}
-                    <span class="remove" data-filter="{{ filter_type }}">&times;</span>
-                  </span>
-                {% endfor %}
-                <div class="mt-2">
-                  <a href="{% url 'items:list' %}" class="btn btn-sm btn-outline-secondary">
-                    {% trans "Clear All" %}
-                  </a>
+          <div class="p-3">
+            <form method="get" id="filter-form">
+              <!-- Active Filters Display -->
+              {% if active_filters %}
+                <div class="active-filters">
+                  <h6>{% trans "Active Filters" %}:</h6>
+                  {% for filter_type, filter_value in active_filters %}
+                    <span class="filter-chip">
+                      {{ filter_value }}
+                      <span class="remove" data-filter="{{ filter_type }}">&times;</span>
+                    </span>
+                  {% endfor %}
+                  <div class="mt-2">
+                    <a href="{% url 'items:list' %}"
+                       class="btn btn-sm btn-outline-secondary">{% trans "Clear All" %}</a>
+                  </div>
+                </div>
+                <hr />
+              {% endif %}
+              <!-- Item Type -->
+              <div class="filter-section">
+                <label for="{{ filter_form.item_type.id_for_label }}"
+                       class="form-label fw-bold">
+                  <i class="fas fa-tag"></i> {% trans "Typ" %}
+                </label>
+                {{ filter_form.item_type }}
+              </div>
+              <!-- Enhanced Search -->
+              <div class="filter-section">
+                <label class="form-label fw-bold">
+                  <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <div class="search-container">
+                  <i class="fas fa-search search-icon"
+                     style="cursor: pointer"
+                     id="search-icon"></i>
+                  <input type="text"
+                         name="search"
+                         class="form-control search-input"
+                         placeholder="{% trans 'Search items...' %}"
+                         value="{{ filter_form.search.value|default_if_none:'' }}"
+                         style="padding-left: 2.5rem" />
                 </div>
               </div>
-              <hr>
-            {% endif %}
-
-
-            <!-- Item Type -->
-            <div class="filter-section">
-              <label for="{{ filter_form.item_type.id_for_label }}" class="form-label fw-bold">
-                <i class="fas fa-tag"></i> {% trans "Typ" %}
-              </label>
-              {{ filter_form.item_type }}
-            </div>
-
-            <!-- Enhanced Search -->
-            <div class="filter-section">
-              <label class="form-label fw-bold">
-                <i class="fas fa-search"></i> {% trans "Search" %}
-              </label>
-              <div class="search-container">
-                <i class="fas fa-search search-icon" style="cursor: pointer;" id="search-icon"></i>
-                <input type="text" name="search" class="form-control search-input" placeholder="{% trans 'Search items...' %}" value="{{ filter_form.search.value|default_if_none:'' }}" style="padding-left: 2.5rem;">
-              </div>
-            </div>
-
-            <!-- Dynamic Categories Tree -->
-            <div class="filter-section">
-              <label class="form-label fw-bold">
-                <i class="fas fa-folder"></i> {% trans "Category" %}
-              </label>
-
-              <div class="category-tree">
-                {% for root_category in category_tree %}
-                  <div class="category-item">
-                    <div class="category-header" data-bs-toggle="collapse" data-bs-target="#category-{{ root_category.category.id }}" aria-expanded="false">
-                      <i class="fas fa-folder"></i>
-                      <span class="category-name">{{ root_category.category.name }}</span>
+              <!-- Dynamic Categories Tree -->
+              <div class="filter-section">
+                <label class="form-label fw-bold">
+                  <i class="fas fa-folder"></i> {% trans "Category" %}
+                </label>
+                <div class="category-tree">
+                  {% for root_category in category_tree %}
+                    <div class="category-item">
+                      <div class="category-header"
+                           data-bs-toggle="collapse"
+                           data-bs-target="#category-{{ root_category.category.id }}"
+                           aria-expanded="false">
+                        <i class="fas fa-folder"></i>
+                        <span class="category-name">{{ root_category.category.name }}</span>
+                        {% if root_category.subcategories %}<i class="fas fa-chevron-down toggle-icon"></i>{% endif %}
+                      </div>
+                      <div class="category-actions">
+                        <input type="radio"
+                               name="category"
+                               value="{{ root_category.category.id }}"
+                               id="cat_{{ root_category.category.id }}"
+                               data-include-children="true"
+                               {% if filter_form.category.value == root_category.category.id|stringformat:"s" %}checked{% endif %} />
+                        <label for="cat_{{ root_category.category.id }}" class="category-label">
+                          {{ root_category.category.name }} <small class="text-muted">(inkl. Unterkategorien)</small>
+                        </label>
+                      </div>
                       {% if root_category.subcategories %}
-                        <i class="fas fa-chevron-down toggle-icon"></i>
+                        <div class="collapse category-children"
+                             id="category-{{ root_category.category.id }}">
+                          {% for subcategory in root_category.subcategories %}
+                            <div class="subcategory-item">
+                              <input type="radio"
+                                     name="category"
+                                     value="{{ subcategory.category.id }}"
+                                     id="cat_{{ subcategory.category.id }}"
+                                     {% if filter_form.category.value == subcategory.category.id|stringformat:"s" %}checked{% endif %} />
+                              <label for="cat_{{ subcategory.category.id }}" class="subcategory-label">
+                                <i class="fas fa-folder-open"></i>
+                                {{ subcategory.category.name }}
+                              </label>
+                            </div>
+                            {% if subcategory.subcategories %}
+                              <div class="category-children ms-3">
+                                {% for subsubcategory in subcategory.subcategories %}
+                                  <div class="subcategory-item">
+                                    <input type="radio"
+                                           name="category"
+                                           value="{{ subsubcategory.category.id }}"
+                                           id="cat_{{ subsubcategory.category.id }}"
+                                           {% if filter_form.category.value == subsubcategory.category.id|stringformat:"s" %}checked{% endif %} />
+                                    <label for="cat_{{ subsubcategory.category.id }}" class="subcategory-label">
+                                      <i class="fas fa-file"></i>
+                                      {{ subsubcategory.category.name }}
+                                    </label>
+                                  </div>
+                                {% endfor %}
+                              </div>
+                            {% endif %}
+                          {% endfor %}
+                        </div>
                       {% endif %}
                     </div>
-                    
+                  {% endfor %}
+                  <!-- Clear category option -->
+                  <div class="category-item">
                     <div class="category-actions">
-                      <input type="radio" name="category" value="{{ root_category.category.id }}" 
-                             id="cat_{{ root_category.category.id }}"
-                             data-include-children="true"
-                             {% if filter_form.category.value == root_category.category.id|stringformat:"s" %}checked{% endif %}>
-                      <label for="cat_{{ root_category.category.id }}" class="category-label">
-                        {{ root_category.category.name }} <small class="text-muted">(inkl. Unterkategorien)</small>
+                      <input type="radio"
+                             name="category"
+                             value=""
+                             id="cat_all"
+                             {% if not filter_form.category.value %}checked{% endif %} />
+                      <label for="cat_all" class="category-label">
+                        <i class="fas fa-th-large"></i>
+                        {% trans "All Categories" %}
                       </label>
                     </div>
-                    
-                    {% if root_category.subcategories %}
-                      <div class="collapse category-children" id="category-{{ root_category.category.id }}">
-                        {% for subcategory in root_category.subcategories %}
-                          <div class="subcategory-item">
-                            <input type="radio" name="category" value="{{ subcategory.category.id }}"
-                                   id="cat_{{ subcategory.category.id }}"
-                                   {% if filter_form.category.value == subcategory.category.id|stringformat:"s" %}checked{% endif %}>
-                            <label for="cat_{{ subcategory.category.id }}" class="subcategory-label">
-                              <i class="fas fa-folder-open"></i>
-                              {{ subcategory.category.name }}
-                            </label>
-                          </div>
-                          
-                          {% if subcategory.subcategories %}
-                            <div class="category-children ms-3">
-                              {% for subsubcategory in subcategory.subcategories %}
-                                <div class="subcategory-item">
-                                  <input type="radio" name="category" value="{{ subsubcategory.category.id }}"
-                                         id="cat_{{ subsubcategory.category.id }}"
-                                         {% if filter_form.category.value == subsubcategory.category.id|stringformat:"s" %}checked{% endif %}>
-                                  <label for="cat_{{ subsubcategory.category.id }}" class="subcategory-label">
-                                    <i class="fas fa-file"></i>
-                                    {{ subsubcategory.category.name }}
-                                  </label>
-                                </div>
-                              {% endfor %}
-                            </div>
-                          {% endif %}
-                        {% endfor %}
+                  </div>
+                </div>
+              </div>
+              <!-- Enhanced Tags Selector -->
+              <div class="filter-section">
+                <label class="form-label fw-bold">
+                  <i class="fas fa-hashtag"></i> {% trans "Tags" %}
+                </label>
+                <div class="tag-selector">
+                  <input type="text"
+                         class="form-control"
+                         id="tag-search"
+                         placeholder="{% trans 'Search and select tags...' %}" />
+                  <div class="tag-dropdown" id="tag-dropdown">
+                    {% for tag in tags %}
+                      <div class="tag-item"
+                           data-tag-id="{{ tag.id }}"
+                           data-tag-name="{{ tag.name }}">
+                        <i class="fas fa-tag"></i> {{ tag.name }}
                       </div>
-                    {% endif %}
-                  </div>
-                {% endfor %}
-                
-                <!-- Clear category option -->
-                <div class="category-item">
-                  <div class="category-actions">
-                    <input type="radio" name="category" value="" id="cat_all"
-                           {% if not filter_form.category.value %}checked{% endif %}>
-                    <label for="cat_all" class="category-label">
-                      <i class="fas fa-th-large"></i>
-                      {% trans "All Categories" %}
-                    </label>
+                    {% endfor %}
                   </div>
                 </div>
+                <div class="selected-tags" id="selected-tags"></div>
+                {{ filter_form.tags }}
               </div>
-            </div>
-
-
-
-            <!-- Enhanced Tags Selector -->
-            <div class="filter-section">
-              <label class="form-label fw-bold">
-                <i class="fas fa-hashtag"></i> {% trans "Tags" %}
-              </label>
-
-              <div class="tag-selector">
-                <input type="text" class="form-control" id="tag-search"
-                     placeholder="{% trans 'Search and select tags...' %}">
-                <div class="tag-dropdown" id="tag-dropdown">
-                  {% for tag in tags %}
-                    <div class="tag-item" data-tag-id="{{ tag.id }}" data-tag-name="{{ tag.name }}">
-                      <i class="fas fa-tag"></i> {{ tag.name }}
-                    </div>
-                  {% endfor %}
-                </div>
+              <!-- Status/Condition -->
+              <div class="filter-section">
+                <label for="{{ filter_form.status.id_for_label }}"
+                       class="form-label fw-bold">
+                  <i class="fas fa-star"></i> {% trans "Zustand" %}
+                </label>
+                {{ filter_form.status }}
               </div>
-
-              <div class="selected-tags" id="selected-tags"></div>
-              {{ filter_form.tags }}
-            </div>
-
-            <!-- Status/Condition -->
-            <div class="filter-section">
-              <label for="{{ filter_form.status.id_for_label }}" class="form-label fw-bold">
-                <i class="fas fa-star"></i> {% trans "Zustand" %}
-              </label>
-              {{ filter_form.status }}
-            </div>
-
-            <!-- Sort -->
-            <div class="filter-section">
-              <label for="{{ filter_form.sort.id_for_label }}" class="form-label fw-bold">
-                <i class="fas fa-sort"></i> {% trans "Sortieren nach" %}
-              </label>
-              {{ filter_form.sort }}
-            </div>
-
-            {{ filter_form.view }}
-
-            <div class="pt-3">
-              <button type="submit" class="btn btn-primary w-100 mb-2">
-                <i class="fas fa-search"></i> {% trans "Filtern" %}
-              </button>
-              <a href="{% url 'items:list' %}" class="btn btn-outline-secondary w-100">
-                <i class="fas fa-undo"></i> {% trans "Filtern zurücksetzen" %}
-              </a>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-
-    <!-- Main Content Area -->
-    <div class="col-md-9">
-      <!-- Controls Bar -->
-      <div class="controls-bar">
-        <div class="row align-items-center">
-          <div class="col-md-6">
-            <h4 class="mb-0">
-              {% trans "Sachen" %}
-              <span class="badge bg-primary">{{ page_obj.paginator.count }}</span>
-            </h4>
-          </div>
-          <div class="col-md-6">
-            <div class="d-flex justify-content-end align-items-center gap-3">
-              <!-- View Toggle -->
-              <div class="view-toggle">
-                <button type="button" class="view-btn {% if view_mode == 'grid' %}active{% endif %}" data-view="grid">
-                  <i class="fas fa-th"></i>
+              <!-- Sort -->
+              <div class="filter-section">
+                <label for="{{ filter_form.sort.id_for_label }}" class="form-label fw-bold">
+                  <i class="fas fa-sort"></i> {% trans "Sortieren nach" %}
+                </label>
+                {{ filter_form.sort }}
+              </div>
+              {{ filter_form.view }}
+              <div class="pt-3">
+                <button type="submit" class="btn btn-primary w-100 mb-2">
+                  <i class="fas fa-search"></i> {% trans "Filtern" %}
                 </button>
-                <button type="button" class="view-btn {% if view_mode == 'list' %}active{% endif %}" data-view="list">
-                  <i class="fas fa-list"></i>
-                </button>
-              </div>
-
-              <!-- Add Item Button -->
-              {% if user.is_authenticated %}
-                <a href="{% url 'items:create' %}" class="btn btn-success">
-                  <i class="fas fa-plus"></i> {% trans "Sache erstellen" %}
+                <a href="{% url 'items:list' %}" class="btn btn-outline-secondary w-100">
+                  <i class="fas fa-undo"></i> {% trans "Filtern zurücksetzen" %}
                 </a>
-              {% endif %}
-            </div>
+              </div>
+            </form>
           </div>
         </div>
       </div>
-
-      <!-- Items Display -->
-      {% if items %}
-        <div class="items-container {% if view_mode == 'list' %}list-view{% else %}grid-view{% endif %}" id="items-container">
-          <div class="row">
-            {% for item in items %}
-              <div class="col-lg-4 col-md-6 mb-4 item-column">
-                {% include 'includes/item_card.html' with item=item %}
+      <!-- Main Content Area -->
+      <div class="col-md-9">
+        <!-- Controls Bar -->
+        <div class="controls-bar">
+          <div class="row align-items-center">
+            <div class="col-md-6">
+              <h4 class="mb-0">
+                {% trans "Sachen" %}
+                <span class="badge bg-primary">{{ page_obj.paginator.count }}</span>
+              </h4>
+            </div>
+            <div class="col-md-6">
+              <div class="d-flex justify-content-end align-items-center gap-3">
+                <!-- View Toggle -->
+                <div class="view-toggle">
+                  <button type="button"
+                          class="view-btn {% if view_mode == 'grid' %}active{% endif %}"
+                          data-view="grid">
+                    <i class="fas fa-th"></i>
+                  </button>
+                  <button type="button"
+                          class="view-btn {% if view_mode == 'list' %}active{% endif %}"
+                          data-view="list">
+                    <i class="fas fa-list"></i>
+                  </button>
+                </div>
+                <!-- Add Item Button -->
+                {% if user.is_authenticated %}
+                  <a href="{% url 'items:create' %}" class="btn btn-success">
+                    <i class="fas fa-plus"></i> {% trans "Sache erstellen" %}
+                  </a>
+                {% endif %}
               </div>
-            {% endfor %}
+            </div>
           </div>
         </div>
-
-        <!-- Enhanced Pagination -->
-        {% if is_paginated %}
-          <nav aria-label="Items pagination" class="mt-4">
-            <ul class="pagination justify-content-center">
-              {% if page_obj.has_previous %}
-                <li class="page-item">
-                  <a class="page-link" href="?{{ request.GET.urlencode }}&page=1">
-                    <i class="fas fa-angle-double-left"></i> {% trans "First" %}
-                  </a>
+        <!-- Items Display -->
+        {% if items %}
+          <div class="items-container {% if view_mode == 'list' %}list-view{% else %}grid-view{% endif %}"
+               id="items-container">
+            <div class="row">
+              {% for item in items %}
+                <div class="col-lg-4 col-md-6 mb-4 item-column">{% include 'includes/item_card.html' with item=item %}</div>
+              {% endfor %}
+            </div>
+          </div>
+          <!-- Enhanced Pagination -->
+          {% if is_paginated %}
+            <nav aria-label="Items pagination" class="mt-4">
+              <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                  <li class="page-item">
+                    <a class="page-link" href="?{{ request.GET.urlencode }}&page=1">
+                      <i class="fas fa-angle-double-left"></i> {% trans "First" %}
+                    </a>
+                  </li>
+                  <li class="page-item">
+                    <a class="page-link"
+                       href="?{{ request.GET.urlencode }}&page={{ page_obj.previous_page_number }}">
+                      <i class="fas fa-angle-left"></i> {% trans "Previous" %}
+                    </a>
+                  </li>
+                {% endif %}
+                <li class="page-item active">
+                  <span class="page-link">
+                    {% trans "Page" %} {{ page_obj.number }} {% trans "of" %} {{ page_obj.paginator.num_pages }}
+                  </span>
                 </li>
-                <li class="page-item">
-                  <a class="page-link" href="?{{ request.GET.urlencode }}&page={{ page_obj.previous_page_number }}">
-                    <i class="fas fa-angle-left"></i> {% trans "Previous" %}
-                  </a>
-                </li>
-              {% endif %}
-
-              <li class="page-item active">
-                <span class="page-link">
-                  {% trans "Page" %} {{ page_obj.number }} {% trans "of" %} {{ page_obj.paginator.num_pages }}
-                </span>
-              </li>
-
-              {% if page_obj.has_next %}
-                <li class="page-item">
-                  <a class="page-link" href="?{{ request.GET.urlencode }}&page={{ page_obj.next_page_number }}">
-                    {% trans "Next" %} <i class="fas fa-angle-right"></i>
-                  </a>
-                </li>
-                <li class="page-item">
-                  <a class="page-link" href="?{{ request.GET.urlencode }}&page={{ page_obj.paginator.num_pages }}">
-                    {% trans "Last" %} <i class="fas fa-angle-double-right"></i>
-                  </a>
-                </li>
-              {% endif %}
-            </ul>
-          </nav>
-        {% endif %}
-      {% else %}
-        <div class="text-center py-5">
-          <i class="fas fa-search fa-4x text-muted mb-4"></i>
-          <h3>{% trans "No items found" %}</h3>
-          <p class="text-muted mb-4">{% trans "Try adjusting your filters or search terms." %}</p>
-          {% if user.is_authenticated %}
-            <a href="{% url 'items:create' %}" class="btn btn-primary btn-lg">
-              <i class="fas fa-plus"></i> {% trans "Add the first item" %}
-            </a>
+                {% if page_obj.has_next %}
+                  <li class="page-item">
+                    <a class="page-link"
+                       href="?{{ request.GET.urlencode }}&page={{ page_obj.next_page_number }}">
+                      {% trans "Next" %} <i class="fas fa-angle-right"></i>
+                    </a>
+                  </li>
+                  <li class="page-item">
+                    <a class="page-link"
+                       href="?{{ request.GET.urlencode }}&page={{ page_obj.paginator.num_pages }}">
+                      {% trans "Last" %} <i class="fas fa-angle-double-right"></i>
+                    </a>
+                  </li>
+                {% endif %}
+              </ul>
+            </nav>
           {% endif %}
-        </div>
-      {% endif %}
+        {% else %}
+          <div class="text-center py-5">
+            <i class="fas fa-search fa-4x text-muted mb-4"></i>
+            <h3>{% trans "No items found" %}</h3>
+            <p class="text-muted mb-4">{% trans "Try adjusting your filters or search terms." %}</p>
+            {% if user.is_authenticated %}
+              <a href="{% url 'items:create' %}" class="btn btn-primary btn-lg">
+                <i class="fas fa-plus"></i> {% trans "Add the first item" %}
+              </a>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
     </div>
   </div>
-</div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Mobile filter toggle
+      const mobileToggle = document.getElementById('mobile-filter-toggle');
+      const filterSidebar = document.getElementById('filter-sidebar');
+      const filterOverlay = document.getElementById('filter-overlay');
+      const closeFilters = document.getElementById('close-filters');
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  // Mobile filter toggle
-  const mobileToggle = document.getElementById('mobile-filter-toggle');
-  const filterSidebar = document.getElementById('filter-sidebar');
-  const filterOverlay = document.getElementById('filter-overlay');
-  const closeFilters = document.getElementById('close-filters');
-
-  function showFilters() {
-    filterSidebar.classList.add('show');
-    filterOverlay.classList.add('show');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function hideFilters() {
-    filterSidebar.classList.remove('show');
-    filterOverlay.classList.remove('show');
-    document.body.style.overflow = '';
-  }
-
-  if (mobileToggle) {
-    mobileToggle.addEventListener('click', showFilters);
-  }
-  if (closeFilters) {
-    closeFilters.addEventListener('click', hideFilters);
-  }
-  if (filterOverlay) {
-    filterOverlay.addEventListener('click', hideFilters);
-  }
-
-  // Auto-submit functionality for all form controls
-  const form = document.getElementById('filter-form');
-  
-  // Category tree auto-submit on selection
-  const categoryRadios = document.querySelectorAll('input[name="category"]');
-  categoryRadios.forEach(radio => {
-    radio.addEventListener('change', () => {
-      form.submit();
-    });
-  });
-  
-  // Item type auto-submit
-  const itemTypeSelect = document.querySelector('select[name="item_type"]');
-  if (itemTypeSelect) {
-    itemTypeSelect.addEventListener('change', () => {
-      form.submit();
-    });
-  }
-  
-  // Status auto-submit
-  const statusSelect = document.querySelector('select[name="status"]');
-  if (statusSelect) {
-    statusSelect.addEventListener('change', () => {
-      form.submit();
-    });
-  }
-  
-  // Search auto-submit on Enter key and search icon click
-  const searchInput = document.querySelector('input[name="search"]');
-  const searchIcon = document.getElementById('search-icon');
-  
-  if (searchInput) {
-    searchInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        form.submit();
+      function showFilters() {
+        filterSidebar.classList.add('show');
+        filterOverlay.classList.add('show');
+        document.body.style.overflow = 'hidden';
       }
-    });
-  }
-  
-  if (searchIcon) {
-    searchIcon.addEventListener('click', () => {
-      form.submit();
-    });
-  }
 
-  // Enhanced tag selector
-  const tagSearch = document.getElementById('tag-search');
-  const tagDropdown = document.getElementById('tag-dropdown');
-  const selectedTagsContainer = document.getElementById('selected-tags');
-  const tagsInput = document.querySelector('input[name="tags"]');
-  let selectedTags = [];
+      function hideFilters() {
+        filterSidebar.classList.remove('show');
+        filterOverlay.classList.remove('show');
+        document.body.style.overflow = '';
+      }
 
-  // Initialize selected tags from URL parameters
-  const urlParams = new URLSearchParams(window.location.search);
-  const initialTags = urlParams.getAll('tags');
-  initialTags.forEach(tagId => {
-    const tagElement = document.querySelector(`[data-tag-id="${tagId}"]`);
-    if (tagElement) {
-      addTag(tagId, tagElement.dataset.tagName);
-    }
-  });
+      if (mobileToggle) {
+        mobileToggle.addEventListener('click', showFilters);
+      }
+      if (closeFilters) {
+        closeFilters.addEventListener('click', hideFilters);
+      }
+      if (filterOverlay) {
+        filterOverlay.addEventListener('click', hideFilters);
+      }
 
-  function addTag(tagId, tagName) {
-    if (selectedTags.find(tag => tag.id === tagId)) return;
+      // Auto-submit functionality for all form controls
+      const form = document.getElementById('filter-form');
 
-    selectedTags.push({ id: tagId, name: tagName });
-    updateSelectedTagsDisplay();
-    updateTagsInput();
-    updateTagDropdown();
-  }
+      // Category tree auto-submit on selection
+      const categoryRadios = document.querySelectorAll('input[name="category"]');
+      categoryRadios.forEach(radio => {
+        radio.addEventListener('change', () => {
+          form.submit();
+        });
+      });
 
-  function removeTag(tagId) {
-    selectedTags = selectedTags.filter(tag => tag.id !== tagId);
-    updateSelectedTagsDisplay();
-    updateTagsInput();
-    updateTagDropdown();
-  }
+      // Item type auto-submit
+      const itemTypeSelect = document.querySelector('select[name="item_type"]');
+      if (itemTypeSelect) {
+        itemTypeSelect.addEventListener('change', () => {
+          form.submit();
+        });
+      }
 
-  function updateSelectedTagsDisplay() {
-    selectedTagsContainer.innerHTML = '';
-    selectedTags.forEach(tag => {
-      const tagBadge = document.createElement('span');
-      tagBadge.className = 'tag-badge';
-      tagBadge.innerHTML = `
+      // Status auto-submit
+      const statusSelect = document.querySelector('select[name="status"]');
+      if (statusSelect) {
+        statusSelect.addEventListener('change', () => {
+          form.submit();
+        });
+      }
+
+      // Search auto-submit on Enter key and search icon click
+      const searchInput = document.querySelector('input[name="search"]');
+      const searchIcon = document.getElementById('search-icon');
+
+      if (searchInput) {
+        searchInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            form.submit();
+          }
+        });
+      }
+
+      if (searchIcon) {
+        searchIcon.addEventListener('click', () => {
+          form.submit();
+        });
+      }
+
+      // Enhanced tag selector
+      const tagSearch = document.getElementById('tag-search');
+      const tagDropdown = document.getElementById('tag-dropdown');
+      const selectedTagsContainer = document.getElementById('selected-tags');
+      const tagsInput = document.querySelector('input[name="tags"]');
+      let selectedTags = [];
+
+      // Initialize selected tags from URL parameters
+      const urlParams = new URLSearchParams(window.location.search);
+      const initialTags = urlParams.getAll('tags');
+      initialTags.forEach(tagId => {
+        const tagElement = document.querySelector(`[data-tag-id="${tagId}"]`);
+        if (tagElement) {
+          addTag(tagId, tagElement.dataset.tagName);
+        }
+      });
+
+      function addTag(tagId, tagName) {
+        if (selectedTags.find(tag => tag.id === tagId)) return;
+
+        selectedTags.push({
+          id: tagId,
+          name: tagName
+        });
+        updateSelectedTagsDisplay();
+        updateTagsInput();
+        updateTagDropdown();
+      }
+
+      function removeTag(tagId) {
+        selectedTags = selectedTags.filter(tag => tag.id !== tagId);
+        updateSelectedTagsDisplay();
+        updateTagsInput();
+        updateTagDropdown();
+      }
+
+      function updateSelectedTagsDisplay() {
+        selectedTagsContainer.innerHTML = '';
+        selectedTags.forEach(tag => {
+          const tagBadge = document.createElement('span');
+          tagBadge.className = 'tag-badge';
+          tagBadge.innerHTML = `
         <i class="fas fa-tag"></i> ${tag.name}
         <span class="remove" data-tag-id="${tag.id}">&times;</span>
       `;
-      selectedTagsContainer.appendChild(tagBadge);
-    });
-  }
+          selectedTagsContainer.appendChild(tagBadge);
+        });
+      }
 
-  function updateTagsInput() {
-    const tagIds = selectedTags.map(tag => tag.id);
-    tagsInput.value = tagIds.join(',');
-  }
+      function updateTagsInput() {
+        const tagIds = selectedTags.map(tag => tag.id);
+        tagsInput.value = tagIds.join(',');
+      }
 
-  function updateTagDropdown() {
-    const tagItems = tagDropdown.querySelectorAll('.tag-item');
-    tagItems.forEach(item => {
-      const tagId = item.dataset.tagId;
-      if (selectedTags.find(tag => tag.id === tagId)) {
-        item.classList.add('selected');
-      } else {
-        item.classList.remove('selected');
+      function updateTagDropdown() {
+        const tagItems = tagDropdown.querySelectorAll('.tag-item');
+        tagItems.forEach(item => {
+          const tagId = item.dataset.tagId;
+          if (selectedTags.find(tag => tag.id === tagId)) {
+            item.classList.add('selected');
+          } else {
+            item.classList.remove('selected');
+          }
+        });
+      }
+
+      // Tag search functionality
+      tagSearch.addEventListener('focus', () => {
+        tagDropdown.style.display = 'block';
+      });
+
+      tagSearch.addEventListener('blur', (e) => {
+        // Delay hiding to allow clicks on dropdown items
+        setTimeout(() => {
+          if (!tagDropdown.contains(e.relatedTarget)) {
+            tagDropdown.style.display = 'none';
+          }
+        }, 150);
+      });
+
+      tagSearch.addEventListener('input', () => {
+        const searchTerm = tagSearch.value.toLowerCase();
+        const tagItems = tagDropdown.querySelectorAll('.tag-item');
+
+        tagItems.forEach(item => {
+          const tagName = item.dataset.tagName.toLowerCase();
+          if (tagName.includes(searchTerm)) {
+            item.style.display = 'block';
+          } else {
+            item.style.display = 'none';
+          }
+        });
+      });
+
+      // Tag item clicks with auto-submit
+      tagDropdown.addEventListener('click', (e) => {
+        const tagItem = e.target.closest('.tag-item');
+        if (tagItem) {
+          const tagId = tagItem.dataset.tagId;
+          const tagName = tagItem.dataset.tagName;
+
+          if (tagItem.classList.contains('selected')) {
+            removeTag(tagId);
+          } else {
+            addTag(tagId, tagName);
+          }
+
+          // Auto-submit after tag selection change
+          setTimeout(() => {
+            form.submit();
+          }, 100);
+        }
+      });
+
+      // Remove tag clicks with auto-submit
+      selectedTagsContainer.addEventListener('click', (e) => {
+        if (e.target.classList.contains('remove')) {
+          const tagId = e.target.dataset.tagId;
+          removeTag(tagId);
+
+          // Auto-submit after tag removal
+          setTimeout(() => {
+            form.submit();
+          }, 100);
+        }
+      });
+
+      // View mode toggle
+      const viewButtons = document.querySelectorAll('.view-btn');
+      const itemsContainer = document.getElementById('items-container');
+      const viewInput = document.querySelector('input[name="view"]');
+
+      viewButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const viewMode = button.dataset.view;
+
+          // Update button states
+          viewButtons.forEach(btn => btn.classList.remove('active'));
+          button.classList.add('active');
+
+          // Update container classes
+          if (viewMode === 'list') {
+            itemsContainer.classList.remove('grid-view');
+            itemsContainer.classList.add('list-view');
+          } else {
+            itemsContainer.classList.remove('list-view');
+            itemsContainer.classList.add('grid-view');
+          }
+
+          // Update form input
+          viewInput.value = viewMode;
+
+          // Submit form to update URL
+          form.submit();
+        });
+      });
+
+      // Filter chip removal
+      document.addEventListener('click', (e) => {
+        if (e.target.classList.contains('remove') && e.target.dataset.filter) {
+          const filterType = e.target.dataset.filter;
+
+          // Create new URL without this filter
+          const url = new URL(window.location);
+          url.searchParams.delete(filterType);
+
+          // Redirect to updated URL
+          window.location.href = url.toString();
+        }
+      });
+
+      // Sort change - no auto-submit, but update floating button state
+      const sortSelect = document.querySelector('select[name="sort"]');
+      if (sortSelect) {
+        sortSelect.addEventListener('change', () => {
+          updateFloatingButtonState();
+        });
+      }
+
+      // Update floating button visual state based on active filters
+      function updateFloatingButtonState() {
+        const itemTypeSelect = document.querySelector('select[name="item_type"]');
+        const statusSelect = document.querySelector('select[name="status"]');
+
+        const hasActiveFilters =
+          (searchInput && searchInput.value.trim()) ||
+          (itemTypeSelect && itemTypeSelect.value) ||
+          (statusSelect && statusSelect.value) ||
+          (sortSelect && sortSelect.value !== sortSelect.options[0].value) ||
+          selectedTags.length > 0 ||
+          document.querySelector('input[name="category"]:checked:not(#cat_all)');
+
+        if (floatingBtn) {
+          if (hasActiveFilters) {
+            floatingBtn.classList.add('has-filters');
+          } else {
+            floatingBtn.classList.remove('has-filters');
+          }
+        }
+      }
+
+      // Monitor form changes to update floating button state
+      if (form) {
+        form.addEventListener('change', updateFloatingButtonState);
+        form.addEventListener('input', updateFloatingButtonState);
       }
     });
-  }
-
-  // Tag search functionality
-  tagSearch.addEventListener('focus', () => {
-    tagDropdown.style.display = 'block';
-  });
-
-  tagSearch.addEventListener('blur', (e) => {
-    // Delay hiding to allow clicks on dropdown items
-    setTimeout(() => {
-      if (!tagDropdown.contains(e.relatedTarget)) {
-        tagDropdown.style.display = 'none';
-      }
-    }, 150);
-  });
-
-  tagSearch.addEventListener('input', () => {
-    const searchTerm = tagSearch.value.toLowerCase();
-    const tagItems = tagDropdown.querySelectorAll('.tag-item');
-
-    tagItems.forEach(item => {
-      const tagName = item.dataset.tagName.toLowerCase();
-      if (tagName.includes(searchTerm)) {
-        item.style.display = 'block';
-      } else {
-        item.style.display = 'none';
-      }
-    });
-  });
-
-  // Tag item clicks with auto-submit
-  tagDropdown.addEventListener('click', (e) => {
-    const tagItem = e.target.closest('.tag-item');
-    if (tagItem) {
-      const tagId = tagItem.dataset.tagId;
-      const tagName = tagItem.dataset.tagName;
-
-      if (tagItem.classList.contains('selected')) {
-        removeTag(tagId);
-      } else {
-        addTag(tagId, tagName);
-      }
-      
-      // Auto-submit after tag selection change
-      setTimeout(() => {
-        form.submit();
-      }, 100);
-    }
-  });
-
-  // Remove tag clicks with auto-submit
-  selectedTagsContainer.addEventListener('click', (e) => {
-    if (e.target.classList.contains('remove')) {
-      const tagId = e.target.dataset.tagId;
-      removeTag(tagId);
-      
-      // Auto-submit after tag removal
-      setTimeout(() => {
-        form.submit();
-      }, 100);
-    }
-  });
-
-  // View mode toggle
-  const viewButtons = document.querySelectorAll('.view-btn');
-  const itemsContainer = document.getElementById('items-container');
-  const viewInput = document.querySelector('input[name="view"]');
-
-  viewButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      const viewMode = button.dataset.view;
-
-      // Update button states
-      viewButtons.forEach(btn => btn.classList.remove('active'));
-      button.classList.add('active');
-
-      // Update container classes
-      if (viewMode === 'list') {
-        itemsContainer.classList.remove('grid-view');
-        itemsContainer.classList.add('list-view');
-      } else {
-        itemsContainer.classList.remove('list-view');
-        itemsContainer.classList.add('grid-view');
-      }
-
-      // Update form input
-      viewInput.value = viewMode;
-
-      // Submit form to update URL
-      form.submit();
-    });
-  });
-
-  // Filter chip removal
-  document.addEventListener('click', (e) => {
-    if (e.target.classList.contains('remove') && e.target.dataset.filter) {
-      const filterType = e.target.dataset.filter;
-
-      // Create new URL without this filter
-      const url = new URL(window.location);
-      url.searchParams.delete(filterType);
-
-      // Redirect to updated URL
-      window.location.href = url.toString();
-    }
-  });
-
-  // Sort change - no auto-submit, but update floating button state
-  const sortSelect = document.querySelector('select[name="sort"]');
-  if (sortSelect) {
-    sortSelect.addEventListener('change', () => {
-      updateFloatingButtonState();
-    });
-  }
-  
-  // Update floating button visual state based on active filters
-  function updateFloatingButtonState() {
-    const itemTypeSelect = document.querySelector('select[name="item_type"]');
-    const statusSelect = document.querySelector('select[name="status"]');
-    
-    const hasActiveFilters = 
-      (searchInput && searchInput.value.trim()) ||
-      (itemTypeSelect && itemTypeSelect.value) ||
-      (statusSelect && statusSelect.value) ||
-      (sortSelect && sortSelect.value !== sortSelect.options[0].value) ||
-      selectedTags.length > 0 ||
-      document.querySelector('input[name="category"]:checked:not(#cat_all)');
-    
-    if (floatingBtn) {
-      if (hasActiveFilters) {
-        floatingBtn.classList.add('has-filters');
-      } else {
-        floatingBtn.classList.remove('has-filters');
-      }
-    }
-  }
-  
-  // Monitor form changes to update floating button state
-  if (form) {
-    form.addEventListener('change', updateFloatingButtonState);
-    form.addEventListener('input', updateFloatingButtonState);
-  }
-});
-</script>
+  </script>
 {% endblock %}

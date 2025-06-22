@@ -8,8 +8,8 @@ from django.views.generic import ListView
 from django.views.generic import RedirectView
 from django.views.generic import UpdateView
 
-from bubble.users.models import User
 from bubble.users.forms import UserProfileUpdateForm
+from bubble.users.models import User
 
 
 class UserDetailView(LoginRequiredMixin, DetailView):
@@ -50,12 +50,12 @@ user_redirect_view = UserRedirectView.as_view()
 
 class UserListView(ListView):
     model = User
-    template_name = 'users/user_list.html'
-    context_object_name = 'users'
+    template_name = "users/user_list.html"
+    context_object_name = "users"
     paginate_by = 20
-    
+
     def get_queryset(self):
-        return User.objects.filter(is_active=True).order_by('username')
+        return User.objects.filter(is_active=True).order_by("username")
 
 
 user_list_view = UserListView.as_view()

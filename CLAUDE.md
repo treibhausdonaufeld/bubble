@@ -15,7 +15,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Formatting Guidelines
 
 ### User Mentions
-When mentioning user anywhere show like this username (Full Name) according to @bubble/users/models.py 
+When mentioning user anywhere show like this username (Full Name) according to @bubble/users/models.py
 
 ## Development Commands
 
@@ -24,7 +24,7 @@ When mentioning user anywhere show like this username (Full Name) according to @
 # Build containers
 just build
 
-# Start development environment  
+# Start development environment
 just up
 
 # Stop containers
@@ -116,7 +116,7 @@ Core entity representing physical items users want to share.
 
 **Item Types:**
 - **Sell (0)**: Items for sale with optional price
-- **Give Away (1)**: Free items to give away  
+- **Give Away (1)**: Free items to give away
 - **Borrow (2)**: Items available for borrowing
 
 **Key Fields:**
@@ -146,7 +146,7 @@ Hierarchical organization system for items.
 - `parent_category`: Self-referential for unlimited nesting
 - `get_hierarchy()`: Returns full path (e.g., "Electronics > Phones")
 
-#### ServiceCategory Model  
+#### ServiceCategory Model
 Flat organization system for future services (no hierarchy).
 
 #### ItemTag Model
@@ -174,7 +174,7 @@ Extended user information linked to Django User.
 ```
 /items/                    # All items
 /items/sell/              # Items for sale (shareable)
-/items/give_away/         # Free items (shareable)  
+/items/give_away/         # Free items (shareable)
 /items/borrow/            # Items to borrow (shareable)
 /items/<id>/              # Item detail
 /items/create/            # Create item (login required)
@@ -227,7 +227,7 @@ When implementing the services app, follow this structure:
 ```
 bubble/services/
 ├── models.py           # Service model with ServiceCategory
-├── forms.py           # ServiceForm with ServiceTag support  
+├── forms.py           # ServiceForm with ServiceTag support
 ├── views.py           # ServiceListView, ServiceDetailView, etc.
 ├── urls.py            # URL patterns following items app pattern
 ├── admin.py           # Admin interface for services
@@ -257,7 +257,7 @@ class Service(models.Model):
 ```
 /services/                 # All services
 /services/<category>/      # Services by category (flat structure)
-/services/<id>/           # Service detail  
+/services/<id>/           # Service detail
 /services/create/         # Create service (login required)
 /services/<id>/edit/      # Edit service (owner only)
 /services/my-services/    # User's service management
