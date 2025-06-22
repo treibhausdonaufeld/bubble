@@ -211,7 +211,6 @@ class ItemListView(ListView):
                     f"Condition: {status_dict.get(int(self.request.GET.get('status')))}",
                 ),
             )
-        tags = self.request.GET.getlist("tags")
 
         context["active_filters"] = active_filters
 

@@ -6,6 +6,9 @@ from pathlib import Path
 
 import environ
 
+# https://docs.djangoproject.com/en/dev/ref/settings/#languages
+from django.utils.translation import gettext_lazy as _
+
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 # bubble/
 APPS_DIR = BASE_DIR / "bubble"
@@ -27,8 +30,6 @@ DEBUG = env.bool("DJANGO_DEBUG", False)
 TIME_ZONE = "Europe/Vienna"
 # https://docs.djangoproject.com/en/dev/ref/settings/#language-code
 LANGUAGE_CODE = "de"
-# https://docs.djangoproject.com/en/dev/ref/settings/#languages
-from django.utils.translation import gettext_lazy as _
 
 LANGUAGES = [
     ("de", _("Deutsch")),

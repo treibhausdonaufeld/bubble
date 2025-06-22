@@ -2,16 +2,18 @@
 
 {% load i18n %}
 
-{% block title %}{% trans "About" %}{% endblock %}
-
+{% block title %}
+  {% trans "About" %}
+{% endblock %}
 {% block content %}
-<div class="container">
-  <div class="row justify-content-center text-center mb-5">
-    <div class="col-lg-8">
-      <h1 class="display-4 mb-4">{% trans "About Willgeben" %}</h1>
-      <p class="lead">{% trans "Willgeben is a platform for sharing items and services within the Treibhaus Donaufeld community." %}</p>
+  <div class="container">
+    <div class="row justify-content-center text-center mb-5">
+      <div class="col-lg-8">
+        <h1 class="display-4 mb-4">{% trans "About Willgeben" %}</h1>
+        <p class="lead">
+          {% trans "Willgeben is a platform for sharing items and services within the Treibhaus Donaufeld community." %}
+        </p>
+      </div>
     </div>
   </div>
-</div>
-
 {% endblock %}

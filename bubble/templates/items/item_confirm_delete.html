@@ -1,103 +1,101 @@
 {% extends "base.html" %}
+
 {% load i18n %}
 
-{% block title %}{% trans "Delete Item" %} - {{ object.name }}{% endblock %}
-
+{% block title %}
+  {% trans "Delete Item" %} - {{ object.name }}
+{% endblock %}
 {% block content %}
-<div class="container">
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <div class="card">
-        <div class="card-header bg-danger text-white">
-          <h4 class="mb-0">
-            <i class="fas fa-exclamation-triangle"></i>
-            {% trans "Delete Item" %}
-          </h4>
-        </div>
-        
-        <div class="card-body">
-          <div class="text-center mb-4">
-            {% if object.images.first %}
-              <img src="{{ object.images.first.fname }}" alt="{{ object.name }}" class="img-thumbnail" style="max-width: 200px; max-height: 150px;">
-            {% else %}
-              <div class="bg-light d-flex align-items-center justify-content-center" style="width: 200px; height: 150px; margin: 0 auto;">
-                <i class="fas fa-image fa-3x text-muted"></i>
-              </div>
-            {% endif %}
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header bg-danger text-white">
+            <h4 class="mb-0">
+              <i class="fas fa-exclamation-triangle"></i>
+              {% trans "Delete Item" %}
+            </h4>
           </div>
-          
-          <h5 class="text-center mb-3">{{ object.name }}</h5>
-          
-          <div class="alert alert-warning">
-            <strong>{% trans "Warning:" %}</strong>
-            {% trans "Are you sure you want to delete this item? This action cannot be undone." %}
-          </div>
-          
-          <div class="item-details mb-4">
-            <div class="row">
-              <div class="col-6">
-                <strong>{% trans "Category:" %}</strong>
-              </div>
-              <div class="col-6">
-                {{ object.category.name }}
-              </div>
+          <div class="card-body">
+            <div class="text-center mb-4">
+              {% if object.images.first %}
+                <img src="{{ object.images.first.fname }}"
+                     alt="{{ object.name }}"
+                     class="img-thumbnail"
+                     style="max-width: 200px;
+                            max-height: 150px" />
+              {% else %}
+                <div class="bg-light d-flex align-items-center justify-content-center"
+                     style="width: 200px;
+                            height: 150px;
+                            margin: 0 auto">
+                  <i class="fas fa-image fa-3x text-muted"></i>
+                </div>
+              {% endif %}
             </div>
-            
-            <div class="row">
-              <div class="col-6">
-                <strong>{% trans "Type:" %}</strong>
-              </div>
-              <div class="col-6">
-                {% if object.item_type == 0 %}
-                  {% trans "For Sale" %}
-                  {% if object.price %} - €{{ object.price }}{% endif %}
-                {% elif object.item_type == 1 %}
-                  {% trans "Give Away" %}
-                {% elif object.item_type == 2 %}
-                  {% trans "Borrow" %}
-                {% endif %}
-              </div>
+            <h5 class="text-center mb-3">{{ object.name }}</h5>
+            <div class="alert alert-warning">
+              <strong>{% trans "Warning:" %}</strong>
+              {% trans "Are you sure you want to delete this item? This action cannot be undone." %}
             </div>
-            
-            <div class="row">
-              <div class="col-6">
-                <strong>{% trans "Posted:" %}</strong>
-              </div>
-              <div class="col-6">
-                {{ object.date_created|date:"F d, Y" }}
-              </div>
-            </div>
-            
-            {% if object.tags.exists %}
+            <div class="item-details mb-4">
               <div class="row">
                 <div class="col-6">
-                  <strong>{% trans "Tags:" %}</strong>
+                  <strong>{% trans "Category:" %}</strong>
+                </div>
+                <div class="col-6">{{ object.category.name }}</div>
+              </div>
+              <div class="row">
+                <div class="col-6">
+                  <strong>{% trans "Type:" %}</strong>
                 </div>
                 <div class="col-6">
-                  {% for tag_relation in object.tags.all %}
-                    <span class="badge bg-secondary me-1">{{ tag_relation.tag.name }}</span>
-                  {% endfor %}
+                  {% if object.item_type == 0 %}
+                    {% trans "For Sale" %}
+                    {% if object.price %}- €{{ object.price }}{% endif %}
+                  {% elif object.item_type == 1 %}
+                    {% trans "Give Away" %}
+                  {% elif object.item_type == 2 %}
+                    {% trans "Borrow" %}
+                  {% endif %}
                 </div>
               </div>
-            {% endif %}
-          </div>
-          
-          <form method="post">
-            {% csrf_token %}
-            <div class="d-flex justify-content-between">
-              <a href="{% url 'items:detail' object.pk %}" class="btn btn-outline-secondary">
-                <i class="fas fa-arrow-left"></i>
-                {% trans "Cancel" %}
-              </a>
-              <button type="submit" class="btn btn-danger">
-                <i class="fas fa-trash"></i>
-                {% trans "Delete Item" %}
-              </button>
+              <div class="row">
+                <div class="col-6">
+                  <strong>{% trans "Posted:" %}</strong>
+                </div>
+                <div class="col-6">{{ object.date_created|date:"F d, Y" }}</div>
+              </div>
+              {% if object.tags.exists %}
+                <div class="row">
+                  <div class="col-6">
+                    <strong>{% trans "Tags:" %}</strong>
+                  </div>
+                  <div class="col-6">
+                    {% for tag_relation in object.tags.all %}
+                      <span class="badge bg-secondary me-1">{{ tag_relation.tag.name }}</span>
+                    {% endfor %}
+                  </div>
+                </div>
+              {% endif %}
             </div>
-          </form>
+            <form method="post">
+              {% csrf_token %}
+              <div class="d-flex justify-content-between">
+                <a href="{% url 'items:detail' object.pk %}"
+                   class="btn btn-outline-secondary">
+                  <i class="fas fa-arrow-left"></i>
+                  {% trans "Cancel" %}
+                </a>
+                <button type="submit" class="btn btn-danger">
+                  <i class="fas fa-trash"></i>
+                  {% trans "Delete Item" %}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 {% endblock %}

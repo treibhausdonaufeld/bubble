@@ -8,11 +8,11 @@ class ItemCategory(models.Model):
     prompt_name = models.TextField(blank=True, null=True)
     prompt_description = models.TextField(blank=True, null=True)
     parent_category = models.ForeignKey(
-        'self',
+        "self",
         on_delete=models.CASCADE,
-        related_name='subcategories',
+        related_name="subcategories",
         blank=True,
-        null=True
+        null=True,
     )
 
     class Meta:
@@ -26,5 +26,3 @@ class ItemCategory(models.Model):
         if self.parent_category:
             return f"{self.parent_category.get_hierarchy()} > {self.name}"
         return self.name
-
-

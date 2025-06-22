@@ -46,7 +46,8 @@
                     aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse fullscreen-menu" id="navbarSupportedContent">
+            <div class="collapse navbar-collapse fullscreen-menu"
+                 id="navbarSupportedContent">
               <!-- Mobile Menu -->
               <div class="mobile-menu-container">
                 <div class="mobile-menu main-menu active">
@@ -54,7 +55,6 @@
                     {% include 'includes/nav_main_items.html' with is_mobile=True %}
                   </ul>
                 </div>
-                
                 <!-- Items Submenu -->
                 <div class="mobile-menu submenu" id="items-submenu">
                   <div class="submenu-header">
@@ -64,7 +64,6 @@
                     {% include 'includes/nav_items_submenu.html' %}
                   </ul>
                 </div>
-                
                 <!-- Community Submenu -->
                 <div class="mobile-menu submenu" id="community-submenu">
                   <div class="submenu-header">
@@ -75,7 +74,6 @@
                   </ul>
                 </div>
               </div>
-              
               <!-- Desktop Menu -->
               <ul class="navbar-nav me-auto mb-2 mb-lg-0 flex-column flex-md-row desktop-only">
                 {% include 'includes/nav_main_items.html' %}
@@ -83,19 +81,28 @@
               {# Language Switcher #}
               <div class="d-flex ms-md-auto mt-3 mt-md-0 language-switcher">
                 {% get_current_language as LANGUAGE_CODE %}
-                <a href="#" onclick="document.getElementById('lang-de').submit(); return false;" class="nav-link px-2{% if LANGUAGE_CODE == 'de' %} fw-bold text-primary{% endif %}">DE</a>
+                <a href="#"
+                   onclick="document.getElementById('lang-de').submit(); return false;"
+                   class="nav-link px-2{% if LANGUAGE_CODE == 'de' %} fw-bold text-primary{% endif %}">DE</a>
                 <span class="nav-link px-0">|</span>
-                <a href="#" onclick="document.getElementById('lang-en').submit(); return false;" class="nav-link px-2{% if LANGUAGE_CODE == 'en' %} fw-bold text-primary{% endif %}">EN</a>
-                
-                <form id="lang-de" action="{% url 'set_language' %}" method="post" class="d-none">
+                <a href="#"
+                   onclick="document.getElementById('lang-en').submit(); return false;"
+                   class="nav-link px-2{% if LANGUAGE_CODE == 'en' %} fw-bold text-primary{% endif %}">EN</a>
+                <form id="lang-de"
+                      action="{% url 'set_language' %}"
+                      method="post"
+                      class="d-none">
                   {% csrf_token %}
-                  <input name="next" type="hidden" value="{{ request.get_full_path }}">
-                  <input name="language" type="hidden" value="de">
+                  <input name="next" type="hidden" value="{{ request.get_full_path }}" />
+                  <input name="language" type="hidden" value="de" />
                 </form>
-                <form id="lang-en" action="{% url 'set_language' %}" method="post" class="d-none">
+                <form id="lang-en"
+                      action="{% url 'set_language' %}"
+                      method="post"
+                      class="d-none">
                   {% csrf_token %}
-                  <input name="next" type="hidden" value="{{ request.get_full_path }}">
-                  <input name="language" type="hidden" value="en">
+                  <input name="next" type="hidden" value="{{ request.get_full_path }}" />
+                  <input name="language" type="hidden" value="en" />
                 </form>
               </div>
             </div>
@@ -134,30 +141,29 @@
       });
     </script>
       {% endcomment %}
-      
       <script>
         window.addEventListener('DOMContentLoaded', () => {
           // Mobile submenu functionality
           const submenuTriggers = document.querySelectorAll('.mobile-submenu-trigger');
           const backButtons = document.querySelectorAll('.back-button');
           const mainMenu = document.querySelector('.main-menu');
-          
+
           // Handle submenu triggers
           submenuTriggers.forEach(trigger => {
             trigger.addEventListener('click', (e) => {
               e.preventDefault();
-              
+
               // Only handle on mobile
               if (window.innerWidth >= 768) return;
-              
+
               const submenuId = trigger.dataset.submenu;
               const submenu = document.getElementById(submenuId);
-              
+
               if (submenu) {
                 // Slide main menu left
                 mainMenu.classList.remove('active');
                 mainMenu.classList.add('slide-left');
-                
+
                 // Slide submenu in
                 setTimeout(() => {
                   submenu.classList.add('active');
@@ -165,18 +171,18 @@
               }
             });
           });
-          
+
           // Handle back buttons
           backButtons.forEach(button => {
             button.addEventListener('click', (e) => {
               e.preventDefault();
-              
+
               const submenu = button.closest('.submenu');
-              
+
               if (submenu) {
                 // Slide submenu out
                 submenu.classList.remove('active');
-                
+
                 // Slide main menu back
                 setTimeout(() => {
                   mainMenu.classList.remove('slide-left');
@@ -185,11 +191,11 @@
               }
             });
           });
-          
+
           // Reset menu state when navbar is closed
           const navbarToggler = document.querySelector('.navbar-toggler');
           const navbarCollapse = document.querySelector('.navbar-collapse');
-          
+
           if (navbarToggler && navbarCollapse) {
             navbarToggler.addEventListener('click', () => {
               // Reset all menus to initial state when opening/closing

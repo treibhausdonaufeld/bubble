@@ -1,10 +1,10 @@
 from allauth.account.forms import SignupForm
 from allauth.socialaccount.forms import SignupForm as SocialSignupForm
+from django import forms
 from django.contrib.auth import forms as admin_forms
 from django.utils.translation import gettext_lazy as _
-from django import forms
 
-from .models import User, Profile
+from .models import User
 
 
 class UserAdminChangeForm(admin_forms.UserChangeForm):
@@ -45,48 +45,49 @@ class UserProfileUpdateForm(forms.ModelForm):
     """
     Form for updating user profile information including User and Profile fields.
     """
+
     # User fields
     name = forms.CharField(
         max_length=255,
         required=False,
         label=_("Name"),
-        widget=forms.TextInput(attrs={'class': 'form-control'})
+        widget=forms.TextInput(attrs={"class": "form-control"}),
     )
     email = forms.EmailField(
         required=True,
         label=_("E-Mail"),
-        widget=forms.EmailInput(attrs={'class': 'form-control'})
+        widget=forms.EmailInput(attrs={"class": "form-control"}),
     )
-    
+
     # Profile fields
     address = forms.CharField(
         required=False,
         label=_("Adresse"),
-        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3})
+        widget=forms.Textarea(attrs={"class": "form-control", "rows": 3}),
     )
     phone = forms.CharField(
         max_length=15,
         required=False,
         label=_("Telefon"),
-        widget=forms.TextInput(attrs={'class': 'form-control'})
+        widget=forms.TextInput(attrs={"class": "form-control"}),
     )
 
     class Meta:
         model = User
-        fields = ['name', 'email']
+        fields = ["name", "email"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if self.instance and hasattr(self.instance, 'profile'):
-            self.fields['address'].initial = self.instance.profile.address
-            self.fields['phone'].initial = self.instance.profile.phone
+        if self.instance and hasattr(self.instance, "profile"):
+            self.fields["address"].initial = self.instance.profile.address
+            self.fields["phone"].initial = self.instance.profile.phone
 
     def save(self, commit=True):
         user = super().save(commit=commit)
         if commit:
             # Update profile fields
             profile = user.profile
-            profile.address = self.cleaned_data['address']
-            profile.phone = self.cleaned_data['phone']
+            profile.address = self.cleaned_data["address"]
+            profile.phone = self.cleaned_data["phone"]
             profile.save()
         return user
