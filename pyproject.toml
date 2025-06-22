@@ -10,6 +10,7 @@ dependencies = [
     "crispy-bootstrap5",
     "django",
     "django-allauth[mfa,socialaccount]",
+    "django-allow-cidr>=0.8.0",
     "django-anymail[mailgun]",
     "django-celery-beat",
     "django-cors-headers",

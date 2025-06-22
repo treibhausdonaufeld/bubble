@@ -20,6 +20,8 @@ ALLOWED_HOSTS = env.list(
     default=["bubble.treibhausdonaufeld.at"],
 )
 
+ALLOWED_CIDR_NETS = ["172.16.0.0/12"]
+
 # DATABASES
 # ------------------------------------------------------------------------------
 DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=60)
