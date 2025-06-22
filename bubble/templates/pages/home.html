@@ -160,7 +160,7 @@
                 </div>
                 <div class="col-md-4">
                   <div class="d-grid gap-2">
-                    {% if ACCOUNT_ALLOW_REGISTRATION %}
+                    {% if ACCOUNT_ALLOW_REGISTRATION and not SOCIALACCOUNT_ONLY %}
                     <a href="{% url 'account_signup' %}" class="btn btn-primary btn-sm">
                       <i class="fas fa-user-plus"></i> {% trans "Sign Up" %}
                     </a>
