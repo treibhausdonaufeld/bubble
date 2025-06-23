@@ -52,7 +52,10 @@ class OpeningHour(models.Model):
     time_to = models.TimeField()
 
     def __str__(self):
-        return f"{self.get_day_display()} {self.time_from} - {self.time_to} for {self.item.name}"
+        return (
+            f"{self.get_day_display()} {self.time_from} - "
+            f"{self.time_to} for {self.item.name}"
+        )
 
 
 class ExceptionalOpeningHour(models.Model):
@@ -66,4 +69,7 @@ class ExceptionalOpeningHour(models.Model):
     time_to = models.TimeField()
 
     def __str__(self):
-        return f"Exception on {self.date}: {self.time_from} - {self.time_to} for {self.item.name}"
+        return (
+            f"Exception on {self.date}: {self.time_from} - "
+            f"{self.time_to} for {self.item.name}"
+        )

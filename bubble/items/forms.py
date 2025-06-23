@@ -3,12 +3,13 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 from bubble.categories.models import ItemCategory
-
-from .models import Image
-from .models import Item
+from bubble.items.models import Image
+from bubble.items.models import Item
 
 
 class ItemForm(forms.ModelForm):
+    MIN_ITEM_NAME_LENGTH = 3
+
     # Dynamic cascading category dropdown
     # Only one field needed - will be populated dynamically with JavaScript
     selected_category = forms.ModelChoiceField(
@@ -103,7 +104,7 @@ class ItemForm(forms.ModelForm):
                 help_text=_("Accept Treibhaus payment method"),
             )
             # Update Meta.fields to include intern fields
-            self.Meta.fields = self.Meta.fields + ["intern", "th_payment"]
+            self.Meta.fields = [*self.Meta.fields, "intern", "th_payment"]
 
         # Pre-select existing tags if editing an item
         if self.instance.pk:
@@ -115,10 +116,10 @@ class ItemForm(forms.ModelForm):
         # Make price required for sell and borrow items
         if hasattr(self, "instance") and self.instance.pk:
             # For existing items, check the item type
-            if self.instance.item_type == 0:  # Sell
+            if self.instance.item_type == Item.ITEM_TYPE_FOR_SALE:  # Sell
                 self.fields["price"].required = True
                 self.fields["price"].label = _("Preis")
-            elif self.instance.item_type == 2:  # Borrow
+            elif self.instance.item_type == Item.ITEM_TYPE_BORROW:  # Borrow
                 self.fields["price"].required = False
                 self.fields["price"].label = _("Preis pro Woche")
                 self.fields["price"].help_text = _(
@@ -135,20 +136,24 @@ class ItemForm(forms.ModelForm):
         price = self.cleaned_data.get("price")
         item_type = self.cleaned_data.get("item_type")
 
-        if item_type == 0 and not price:  # Sell item without price
-            raise ValidationError(_("Preis ist erforderlich für Verkaufsartikel."))
+        if (
+            item_type == Item.ITEM_TYPE_FOR_SALE and not price
+        ):  # Sell item without price
+            raise ValidationError(_("Price is required for items for sale."))
 
-        if item_type == 1:  # Give away items
+        if item_type == Item.ITEM_TYPE_GIVE_AWAY:  # Give away items
             if not price:
                 raise ValidationError(
                     _(
-                        "Wenn der Artikel kostenlos ist, wählen Sie den Typ 'Verschenken'.",
+                        "If the item is free, please select the 'Give away' type.",
                     ),
                 )
             # For give away items, always set price to 0
             return 0.00
 
-        if item_type == 2 and not price:  # Borrow item without price
+        if (
+            item_type == Item.ITEM_TYPE_BORROW and not price
+        ):  # Borrow item without price
             # For borrow items, empty price means free borrowing
             return 0.00
 
@@ -167,11 +172,14 @@ class ItemForm(forms.ModelForm):
 
     def clean_name(self):
         name = self.cleaned_data.get("name")
-        if len(name) < 3:
-            raise ValidationError(_("Item name must be at least 3 characters long."))
+        if len(name) < self.MIN_ITEM_NAME_LENGTH:
+            raise ValidationError(
+                _("Item name must be at least %(min_length)d characters long.")
+                % {"min_length": self.MIN_ITEM_NAME_LENGTH},
+            )
         return name
 
-    def save(self, commit=True):
+    def save(self, *, commit: bool = True):
         instance = super().save(commit=False)
 
         if self.user:
@@ -191,18 +199,8 @@ class ItemForm(forms.ModelForm):
 
         if commit:
             instance.save()
-            self.save_tags(instance)
 
         return instance
-
-    def save_tags(self, instance):
-        # Clear existing tag relationships
-        ItemTagRelation.objects.filter(item=instance).delete()
-
-        # Create new tag relationships
-        selected_tags = self.cleaned_data.get("tags", [])
-        for tag in selected_tags:
-            ItemTagRelation.objects.create(item=instance, tag=tag)
 
 
 class ItemFilterForm(forms.Form):
@@ -243,13 +241,13 @@ class ItemFilterForm(forms.Form):
     )
 
     item_type = forms.ChoiceField(
-        choices=[("", _("All types"))] + Item.ITEM_TYPE_CHOICES,
+        choices=[("", _("All types")), *Item.ITEM_TYPE_CHOICES],
         required=False,
         widget=forms.Select(attrs={"class": "form-select"}),
     )
 
     status = forms.ChoiceField(
-        choices=[("", _("All conditions"))] + Item.STATUS_CHOICES,
+        choices=[("", _("All conditions")), *Item.STATUS_CHOICES],
         required=False,
         widget=forms.Select(attrs={"class": "form-select"}),
     )

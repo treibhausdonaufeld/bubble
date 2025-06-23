@@ -4,9 +4,9 @@ from django.utils.translation import gettext_lazy as _
 
 class ItemCategory(models.Model):
     name = models.CharField(max_length=100)
-    description = models.TextField(blank=True, null=True)
-    prompt_name = models.TextField(blank=True, null=True)
-    prompt_description = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True)
+    prompt_name = models.TextField(blank=True)
+    prompt_description = models.TextField(blank=True)
     parent_category = models.ForeignKey(
         "self",
         on_delete=models.CASCADE,
