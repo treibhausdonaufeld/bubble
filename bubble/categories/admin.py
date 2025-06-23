@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 
-from .models import ItemCategory
+from bubble.categories.models import ItemCategory
 
 
 @admin.register(ItemCategory)

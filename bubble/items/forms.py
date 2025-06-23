@@ -106,13 +106,6 @@ class ItemForm(forms.ModelForm):
             # Update Meta.fields to include intern fields
             self.Meta.fields = [*self.Meta.fields, "intern", "th_payment"]
 
-        # Pre-select existing tags if editing an item
-        if self.instance.pk:
-            self.fields["tags"].initial = self.instance.tags.values_list(
-                "tag_id",
-                flat=True,
-            )
-
         # Make price required for sell and borrow items
         if hasattr(self, "instance") and self.instance.pk:
             # For existing items, check the item type
@@ -142,12 +135,6 @@ class ItemForm(forms.ModelForm):
             raise ValidationError(_("Price is required for items for sale."))
 
         if item_type == Item.ITEM_TYPE_GIVE_AWAY:  # Give away items
-            if not price:
-                raise ValidationError(
-                    _(
-                        "If the item is free, please select the 'Give away' type.",
-                    ),
-                )
             # For give away items, always set price to 0
             return 0.00
 
