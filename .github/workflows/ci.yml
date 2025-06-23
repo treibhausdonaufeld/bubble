@@ -23,6 +23,9 @@ concurrency:
 jobs:
   linter:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
     steps:
       - name: Checkout Code Repository
         uses: actions/checkout@v4
@@ -38,6 +41,8 @@ jobs:
   # With no caching at all the entire ci process takes 3m to complete!
   pytest:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout Code Repository
