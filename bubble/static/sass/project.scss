@@ -51,6 +51,15 @@ $red: #b94a48;
   color: white;
 }
 
+.bubble-logo {
+  height: 1em;
+  width: auto;
+  max-height: 32px;
+  margin-right: 0.5em;
+  vertical-align: middle;
+}
+
+
 // Desktop navbar styles
 @media (min-width: 768px) {
   // Hide mobile menu structure on desktop
