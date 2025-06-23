@@ -252,7 +252,6 @@
           // Update breadcrumb
           const breadcrumbPath = categoryHierarchy.map(cat => cat.name).join(' > ');
           breadcrumbText.textContent = breadcrumbPath;
-          showCategoryBreadcrumb(true);
 
           // Check if this category has subcategories
           fetch(`{% url 'items:get_subcategories' %}?parent_id=${categoryId}`)
@@ -284,7 +283,6 @@
         } else {
           // Clear selection
           selectedCategoryField.value = '';
-          showCategoryBreadcrumb(false);
         }
       }
 
@@ -307,7 +305,6 @@
           .then(data => {
             // This would need the backend to support get_hierarchy parameter
             // For now, we'll just show the selected category
-            showCategoryBreadcrumb(true);
             breadcrumbText.textContent = '{% trans "Current selection" %}';
           })
           .catch(error => {

@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
-from bubble.categories.models import Category
+from bubble.categories.models import ItemCategory
 
 
 class Command(BaseCommand):
@@ -18,7 +18,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         if options["clear"]:
             self.stdout.write("Clearing existing categories...")
-            Category.objects.all().delete()
+            ItemCategory.objects.all().delete()
             self.stdout.write(self.style.SUCCESS("✓ Categories cleared"))
 
         categories_data = {
@@ -124,7 +124,7 @@ class Command(BaseCommand):
         created_count = 0
 
         for main_cat_name, main_cat_data in categories_data.items():
-            main_category, created = Category.objects.get_or_create(
+            main_category, created = ItemCategory.objects.get_or_create(
                 name=main_cat_name,
                 defaults={"description": main_cat_data["description"]},
             )
@@ -135,7 +135,7 @@ class Command(BaseCommand):
                 self.stdout.write(f"  - Main category exists: {main_cat_name}")
 
             for subcat_name, subcat_desc in main_cat_data["subcategories"]:
-                subcategory, created = Category.objects.get_or_create(
+                subcategory, created = ItemCategory.objects.get_or_create(
                     name=subcat_name,
                     parent_category=main_category,
                     defaults={"description": subcat_desc},
@@ -153,5 +153,5 @@ class Command(BaseCommand):
             ),
         )
 
-        total_categories = Category.objects.count()
+        total_categories = ItemCategory.objects.count()
         self.stdout.write(f"Total categories in database: {total_categories}")

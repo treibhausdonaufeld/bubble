@@ -1,5 +1,9 @@
 const { merge } = require("webpack-merge");
 const commonConfig = require("./common.config");
+
+// Use BACKEND_URL env variable or fallback to localhost:8000
+const backendUrl = process.env.BACKEND_URL || "http://localhost:8000";
+
 module.exports = merge(commonConfig, {
   mode: "development",
   devtool: "inline-source-map",
@@ -8,7 +12,7 @@ module.exports = merge(commonConfig, {
     proxy: [
       {
         context: ["/"],
-        target: "http://django:8000",
+        target: backendUrl,
         changeOrigin: true,
       },
     ],

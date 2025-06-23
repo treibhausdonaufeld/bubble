@@ -29,11 +29,7 @@ class ItemListView(ListView):
     paginate_by = 15
 
     def get_queryset(self):
-        queryset = (
-            Item.objects.filter(active=True)
-            .select_related("user", "category")
-            .prefetch_related("tags__tag")
-        )
+        queryset = Item.objects.filter(active=True).select_related("user", "category")
 
         # Apply GET parameter filters
         search = self.request.GET.get("search")
@@ -243,12 +239,11 @@ class ItemDetailView(DetailView):
         return (
             Item.objects.filter(active=True)
             .select_related("user", "category")
-            .prefetch_related("tags__tag", "images")
+            .prefetch_related("images")
         )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["item_tags"] = self.object.tags.all()
         context["item_images"] = self.object.images.all().order_by("ordering")
         context["is_owner"] = (
             self.request.user == self.object.user
@@ -335,7 +330,6 @@ class MyItemsView(LoginRequiredMixin, ListView):
         return (
             Item.objects.filter(user=self.request.user)
             .select_related("category")
-            .prefetch_related("tags__tag")
             .order_by("-date_created")
         )
 
