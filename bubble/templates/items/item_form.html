@@ -8,7 +8,7 @@
   {% else %}
     {% trans "Add New Article" %}
   {% endif %}
-{% endblock %}
+{% endblock title %}
 {% block content %}
   <div class="container">
     <div class="row justify-content-center">
@@ -58,7 +58,7 @@
                   <!-- Hidden field to store selected category -->
                   {{ form.selected_category }}
                   <!-- Category breadcrumb -->
-                  <div id="category-breadcrumb" class="mt-2" style="display: none;">
+                  <div id="category-breadcrumb" class="mt-2 d-none">
                     <small class="text-muted">
                       <span class="fw-bold">{% trans "Selected:" %}</span>
                       <span id="breadcrumb-text"></span>
@@ -89,7 +89,7 @@
               <!-- Tags -->
               <div class="mb-3">
                 <label class="form-label">{{ form.tags.label }}</label>
-                <div class="row" style="max-height: 200px; overflow-y: auto;">
+                <div class="row tag-list-scroll">
                   {% for checkbox in form.tags %}
                     <div class="col-md-4 col-sm-6">
                       <div class="form-check">
@@ -252,7 +252,7 @@
           // Update breadcrumb
           const breadcrumbPath = categoryHierarchy.map(cat => cat.name).join(' > ');
           breadcrumbText.textContent = breadcrumbPath;
-          categoryBreadcrumb.style.display = 'block';
+          showCategoryBreadcrumb(true);
 
           // Check if this category has subcategories
           fetch(`{% url 'items:get_subcategories' %}?parent_id=${categoryId}`)
@@ -284,7 +284,7 @@
         } else {
           // Clear selection
           selectedCategoryField.value = '';
-          categoryBreadcrumb.style.display = 'none';
+          showCategoryBreadcrumb(false);
         }
       }
 
@@ -307,7 +307,7 @@
           .then(data => {
             // This would need the backend to support get_hierarchy parameter
             // For now, we'll just show the selected category
-            categoryBreadcrumb.style.display = 'block';
+            showCategoryBreadcrumb(true);
             breadcrumbText.textContent = '{% trans "Current selection" %}';
           })
           .catch(error => {
@@ -316,4 +316,11 @@
       }
     });
   </script>
-{% endblock %}
+{% endblock content %}
+<!-- Reminder: Add the following CSS to your stylesheet -->
+<!--
+.tag-list-scroll {
+  max-height: 200px;
+  overflow-y: auto;
+}
+-->

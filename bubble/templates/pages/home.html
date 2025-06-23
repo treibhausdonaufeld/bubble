@@ -4,7 +4,7 @@
 
 {% block title %}
   {% trans "Welcome to bubble" %}
-{% endblock %}
+{% endblock title %}
 {% block content %}
   <div class="container">
     <!-- Hero Section -->
@@ -161,9 +161,9 @@
                 <div class="col-md-4">
                   <div class="d-grid gap-2">
                     {% if ACCOUNT_ALLOW_REGISTRATION and not SOCIALACCOUNT_ONLY %}
-                    <a href="{% url 'account_signup' %}" class="btn btn-primary btn-sm">
-                      <i class="fas fa-user-plus"></i> {% trans "Sign Up" %}
-                    </a>
+                      <a href="{% url 'account_signup' %}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-user-plus"></i> {% trans "Sign Up" %}
+                      </a>
                     {% endif %}
                     <a href="{% url 'account_login' %}"
                        class="btn btn-outline-primary btn-sm">
@@ -224,4 +224,4 @@
       </div>
     </div>
   </div>
-{% endblock %}
+{% endblock content %}

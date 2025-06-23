@@ -2,7 +2,9 @@
 
 {% load i18n %}
 
-{% block title %}{{ item.name }}{% endblock %}
+{% block title %}
+  {{ item.name }}
+{% endblock title %}
 {% block content %}
   <div class="container">
     <!-- Mobile Layout: Title, Images, Description, Contact -->
@@ -101,10 +103,8 @@
               {% for image in item_images %}
                 <div class="carousel-item {% if forloop.first %}active{% endif %}">
                   <img src="{{ image.fname }}"
-                       class="d-block w-100"
-                       alt="{{ item.name }}"
-                       style="height: 400px;
-                              object-fit: cover" />
+                       class="d-block w-100 item-image"
+                       alt="{{ item.name }}" />
                 </div>
               {% endfor %}
             </div>
@@ -126,8 +126,7 @@
             {% endif %}
           </div>
         {% else %}
-          <div class="bg-light d-flex align-items-center justify-content-center mb-4"
-               style="height: 400px">
+          <div class="bg-light d-flex align-items-center justify-content-center mb-4 item-image">
             <i class="fas fa-image fa-5x text-muted"></i>
           </div>
         {% endif %}
@@ -393,4 +392,11 @@
       setInterval(loadConversation, 30000);
     });
   </script>
-{% endblock %}
+{% endblock content %}
+<!-- Reminder: Add the following CSS to your stylesheet -->
+<!--
+.item-image {
+  height: 400px;
+  object-fit: cover;
+}
+-->

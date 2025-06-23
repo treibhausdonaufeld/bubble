@@ -2,9 +2,21 @@
 
 {% load i18n %}
 
+<style>
+  .item-image-delete {
+    max-width: 200px;
+    max-height: 150px;
+  }
+
+  .item-image-delete-placeholder {
+    width: 200px;
+    height: 150px;
+    margin: 0 auto;
+  }
+</style>
 {% block title %}
   {% trans "Delete Item" %} - {{ object.name }}
-{% endblock %}
+{% endblock title %}
 {% block content %}
   <div class="container">
     <div class="row justify-content-center">
@@ -21,14 +33,9 @@
               {% if object.images.first %}
                 <img src="{{ object.images.first.fname }}"
                      alt="{{ object.name }}"
-                     class="img-thumbnail"
-                     style="max-width: 200px;
-                            max-height: 150px" />
+                     class="img-thumbnail item-image-delete" />
               {% else %}
-                <div class="bg-light d-flex align-items-center justify-content-center"
-                     style="width: 200px;
-                            height: 150px;
-                            margin: 0 auto">
+                <div class="bg-light d-flex align-items-center justify-content-center item-image-delete-placeholder">
                   <i class="fas fa-image fa-3x text-muted"></i>
                 </div>
               {% endif %}
@@ -98,4 +105,4 @@
       </div>
     </div>
   </div>
-{% endblock %}
+{% endblock content %}

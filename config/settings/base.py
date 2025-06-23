@@ -356,8 +356,8 @@ if nextcloud_server_url := env("NEXTCLOUD_SERVER_URL", default=""):
                 "settings": {
                     "server": nextcloud_server_url,
                 },
-            }
-        ]
+            },
+        ],
     }
 
 if authentik_server_url := env("AUTHENTIK_SERVER_URL", default=""):
@@ -374,8 +374,8 @@ if authentik_server_url := env("AUTHENTIK_SERVER_URL", default=""):
                     # "SCOPE": ["openid", "profile", "email"],
                     # "oauth_pkce_enabled": True,
                 },
-            }
-        ]
+            },
+        ],
     }
 
 # django-rest-framework
