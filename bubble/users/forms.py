@@ -74,7 +74,10 @@ class UserProfileUpdateForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ["name", "email"]
+        fields = [
+            "name",
+            "email",
+        ]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -82,7 +85,7 @@ class UserProfileUpdateForm(forms.ModelForm):
             self.fields["address"].initial = self.instance.profile.address
             self.fields["phone"].initial = self.instance.profile.phone
 
-    def save(self, commit=True):
+    def save(self, *, commit=True):
         user = super().save(commit=commit)
         if commit:
             # Update profile fields

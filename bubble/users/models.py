@@ -37,13 +37,13 @@ class Profile(models.Model):
         on_delete=models.CASCADE,
         related_name="profile",
     )
-    address = models.TextField(blank=True, null=True)
-    phone = models.CharField(max_length=15, blank=True, null=True)
+    address = models.TextField(blank=True)
+    phone = models.CharField(max_length=15, blank=True)
     email_reminder = models.BooleanField(default=True)
     intern = models.BooleanField(default=False)
-    bio = models.TextField(blank=True, null=True)
+    bio = models.TextField(blank=True)
     profile_image = models.ImageField(upload_to="users/", blank=True, null=True)
-    profile_image_alt = models.CharField(max_length=255, blank=True, null=True)
+    profile_image_alt = models.CharField(max_length=255, blank=True)
     is_superuser = models.BooleanField(default=False)
     last_login = models.DateTimeField(blank=True, null=True)
     date_joined = models.DateTimeField(auto_now_add=True)

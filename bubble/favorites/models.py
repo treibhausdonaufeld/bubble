@@ -23,7 +23,7 @@ class Favorite(models.Model):
         return f"{self.user.username} favorites {self.item.name}"
 
 
-# reservation of item on bubble, but not time slot like booking, but "I want to reserve this item"
+# reservation of item on bubble, but "I want to reserve this item"
 class Interest(models.Model):
     user = models.ForeignKey(
         AUTH_USER_MODEL,
@@ -35,7 +35,7 @@ class Interest(models.Model):
         on_delete=models.CASCADE,
         related_name="interested_by",
     )
-    comment = models.TextField(blank=True, null=True)
+    comment = models.TextField(blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
 
     class Meta:

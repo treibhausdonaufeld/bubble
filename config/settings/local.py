@@ -1,6 +1,9 @@
 # ruff: noqa: E501
 from .base import *  # noqa: F403
-from .base import INSTALLED_APPS, MIDDLEWARE, WEBPACK_LOADER, env
+from .base import INSTALLED_APPS
+from .base import MIDDLEWARE
+from .base import WEBPACK_LOADER
+from .base import env
 
 # Make sure DEBUG is True
 DEBUG = True

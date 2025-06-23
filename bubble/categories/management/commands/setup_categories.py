@@ -148,7 +148,8 @@ class Command(BaseCommand):
 
         self.stdout.write(
             self.style.SUCCESS(
-                f"\n✓ Successfully set up categories. Created {created_count} new categories.",
+                "\n✓ Successfully set up categories. "
+                f"Created {created_count} new categories.",
             ),
         )
 

@@ -203,12 +203,12 @@ class ItemListView(ListView):
                     f"Type: {type_dict.get(int(self.request.GET.get('item_type')))}",
                 ),
             )
-        if self.request.GET.get("status"):
+        if status := self.request.GET.get("status"):
             status_dict = dict(Item.STATUS_CHOICES)
             active_filters.append(
                 (
                     "status",
-                    f"Condition: {status_dict.get(int(self.request.GET.get('status')))}",
+                    f"Condition: {status_dict.get(int(status))}",
                 ),
             )
 
@@ -218,7 +218,7 @@ class ItemListView(ListView):
 
     def _get_all_descendant_category_ids(self, category):
         """
-        Recursively get all descendant category IDs including the parent category itself.
+        Recursively get all descendant category IDs including the parent category.
         This enables hierarchical filtering where selecting a parent category
         includes items from all its subcategories.
         """
