@@ -5,6 +5,7 @@ import ssl
 from pathlib import Path
 
 import environ
+
 # https://docs.djangoproject.com/en/dev/ref/settings/#languages
 from django.utils.translation import gettext_lazy as _
 
@@ -341,6 +342,8 @@ SOCIALACCOUNT_ADAPTER = "bubble.users.adapters.SocialAccountAdapter"
 SOCIALACCOUNT_FORMS = {"signup": "bubble.users.forms.UserSocialSignupForm"}
 
 SOCIALACCOUNT_ENABLED = env.bool("SOCIALACCOUNT_ENABLED", default=True)
+
+SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
 
 SOCIALACCOUNT_PROVIDERS = {}
 

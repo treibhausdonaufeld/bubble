@@ -24,8 +24,6 @@
           <h5 class="text-center mb-3">{% trans "Sign in with:" %}</h5>
           {% include "socialaccount/snippets/provider_list.html" with process="login" %}
         </div>
-        <hr />
-        <p class="text-center text-muted">{% trans "or" %}</p>
       {% endif %}
       {% if not SOCIALACCOUNT_ONLY %}
         <form method="post" action="{% url 'account_login' %}" class="login">
@@ -73,7 +71,7 @@
                class="text-decoration-none">{% trans "Forgot password?" %}</a>
           </div>
         </form>
-        {% if ACCOUNT_ALLOW_REGISTRATION %}
+        {% if ACCOUNT_ALLOW_REGISTRATION and not SOCIALACCOUNT_ONLY %}
           <hr class="my-4" />
           <div class="text-center">
             <p class="mb-0">{% trans "Don't have an account yet?" %}</p>
