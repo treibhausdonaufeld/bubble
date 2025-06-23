@@ -3,14 +3,14 @@
 {% load i18n %}
 
 {% block title %}
-  {% trans "Community Mitglieder" %}
+  {% trans "Community Members" %}
 {% endblock title %}
 {% block content %}
   <div class="container">
     <div class="row">
       <div class="col-12">
-        <h2>👥 {% trans "Community Mitglieder" %}</h2>
-        <p class="text-muted">{% trans "Entdecke die Mitglieder unserer Gemeinschaft" %}</p>
+        <h2>👥 {% trans "Community Members" %}</h2>
+        <p class="text-muted">{% trans "Discover the members of our community" %}</p>
       </div>
     </div>
     {% if users %}
@@ -25,20 +25,20 @@
                 </h5>
                 {% if user.profile.intern %}
                   <span class="badge bg-primary mb-2">
-                    <i class="fas fa-star"></i> Intern
+                    <i class="fas fa-star"></i> {% trans "Internal" %}
                   </span>
                 {% endif %}
                 <div class="card-text">
                   <small class="text-muted">
                     <i class="fas fa-calendar"></i>
-                    {% trans "Dabei seit" %} {{ user.date_joined|date:"M Y" }}
+                    {% trans "Member since" %} {{ user.date_joined|date:"M Y" }}
                   </small>
                 </div>
               </div>
               <div class="card-footer bg-transparent">
                 <a href="{% url 'users:detail' user.username %}"
                    class="btn btn-outline-primary btn-sm">
-                  <i class="fas fa-eye"></i> {% trans "Profil ansehen" %}
+                  <i class="fas fa-eye"></i> {% trans "View profile" %}
                 </a>
               </div>
             </div>
@@ -52,29 +52,29 @@
             {% if page_obj.has_previous %}
               <li class="page-item">
                 <a class="page-link" href="?page=1">
-                  <i class="fas fa-angle-double-left"></i> {% trans "Erste" %}
+                  <i class="fas fa-angle-double-left"></i> {% trans "First" %}
                 </a>
               </li>
               <li class="page-item">
                 <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
-                  <i class="fas fa-angle-left"></i> {% trans "Vorherige" %}
+                  <i class="fas fa-angle-left"></i> {% trans "Previous" %}
                 </a>
               </li>
             {% endif %}
             <li class="page-item active">
               <span class="page-link">
-                {% trans "Seite" %} {{ page_obj.number }} {% trans "von" %} {{ page_obj.paginator.num_pages }}
+                {% trans "Page" %} {{ page_obj.number }} {% trans "of" %} {{ page_obj.paginator.num_pages }}
               </span>
             </li>
             {% if page_obj.has_next %}
               <li class="page-item">
                 <a class="page-link" href="?page={{ page_obj.next_page_number }}">
-                  {% trans "Nächste" %} <i class="fas fa-angle-right"></i>
+                  {% trans "Next" %} <i class="fas fa-angle-right"></i>
                 </a>
               </li>
               <li class="page-item">
                 <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">
-                  {% trans "Letzte" %} <i class="fas fa-angle-double-right"></i>
+                  {% trans "Last" %} <i class="fas fa-angle-double-right"></i>
                 </a>
               </li>
             {% endif %}
@@ -84,8 +84,8 @@
     {% else %}
       <div class="text-center py-5">
         <i class="fas fa-users fa-4x text-muted mb-4"></i>
-        <h3>{% trans "Keine Mitglieder gefunden" %}</h3>
-        <p class="text-muted">{% trans "Es sind noch keine Mitglieder in der Community." %}</p>
+        <h3>{% trans "No members found" %}</h3>
+        <p class="text-muted">{% trans "There are no members in the community yet." %}</p>
       </div>
     {% endif %}
   </div>

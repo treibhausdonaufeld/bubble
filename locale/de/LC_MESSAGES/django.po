@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-23 12:28+0200\n"
+"POT-Creation-Date: 2025-06-23 13:44+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -67,14 +67,10 @@ msgstr "Artikel-Kategorien"
 #: bubble/core/templates/account/email_confirm.html:7
 #: bubble/core/templates/account/email_confirm.html:14
 #: bubble/core/templates/account/email_confirm.html:32
-#, fuzzy
-#| msgid "Confirmed"
 msgid "Confirm Email"
 msgstr "E-Mail bestätigen"
 
 #: bubble/core/templates/account/email_confirm.html:22
-#, fuzzy
-#| msgid "Email address"
 msgid "Confirm Email Address"
 msgstr "E-Mail-Adresse bestätigen"
 
@@ -107,10 +103,8 @@ msgstr "Anmelden"
 
 #: bubble/core/templates/account/email_confirm.html:54
 #: bubble/core/templates/account/verification_sent.html:42
-#, fuzzy
-#| msgid "Back to Items"
 msgid "Back to Home"
-msgstr "Zurück zu den Sachen"
+msgstr "Zurück zur Startseite"
 
 #: bubble/core/templates/account/login.html:9
 #: bubble/core/templates/account/login.html:16
@@ -256,8 +250,6 @@ msgid "Confirmation Email Sent"
 msgstr "Bestätigungs-E-Mail gesendet"
 
 #: bubble/core/templates/account/verification_sent.html:13
-#, fuzzy
-#| msgid "Email"
 msgid "Email Sent"
 msgstr "E-Mail gesendet"
 
@@ -413,20 +405,16 @@ msgid "About"
 msgstr "Über uns"
 
 #: bubble/core/templates/pages/about.html:12
-msgid "About Willgeben"
-msgstr "Über Willgeben"
+msgid "About bubble"
+msgstr "Über bubble"
 
 #: bubble/core/templates/pages/about.html:14
-#, fuzzy
-#| msgid ""
-#| "Your platform for sharing items and services in the Treibhaus Donaufeld "
-#| "community"
 msgid ""
-"Willgeben is a platform for sharing items and services within the Treibhaus "
-"Donaufeld community."
+"bubble is a platform for sharing items and services within the local "
+"community."
 msgstr ""
-"Ihre Plattform für das Teilen von Sachen und Dienstleistungen in der "
-"Treibhaus Donaufeld Gemeinschaft"
+"bubble ist eine Plattform für das Teilen von Sachen und Dienstleistungen in "
+"der lokalen Gemeinschaft."
 
 #: bubble/core/templates/users/user_detail.html:22
 #: bubble/templates/items/item_detail.html:24
@@ -442,62 +430,73 @@ msgstr "Abmelden"
 
 #: bubble/core/templates/users/user_list.html:6
 #: bubble/core/templates/users/user_list.html:12
-#, fuzzy
-#| msgid "Community"
-msgid "Community Mitglieder"
-msgstr "Gemeinschaft"
+msgid "Community Members"
+msgstr "Mitglieder"
 
 #: bubble/core/templates/users/user_list.html:13
-msgid "Entdecke die Mitglieder unserer Gemeinschaft"
-msgstr ""
+msgid "Discover the members of our community"
+msgstr "Entdecke die Mitglieder unserer Gemeinschaft"
+
+#: bubble/core/templates/users/user_list.html:28 bubble/items/forms.py:95
+msgid "Internal"
+msgstr "Intern"
 
 #: bubble/core/templates/users/user_list.html:34
-msgid "Dabei seit"
-msgstr ""
+msgid "Member since"
+msgstr "Mitglied seit"
 
 #: bubble/core/templates/users/user_list.html:41
-#, fuzzy
-#| msgid "Profile image frame"
-msgid "Profil ansehen"
-msgstr "Profilbild-Rahmen"
+msgid "View profile"
+msgstr "Profil anzeigen"
 
 #: bubble/core/templates/users/user_list.html:55
-msgid "Erste"
-msgstr ""
+#: bubble/templates/items/item_list.html:675
+#: bubble/templates/items/my_items.html:156
+msgid "First"
+msgstr "Erste"
 
 #: bubble/core/templates/users/user_list.html:60
-msgid "Vorherige"
-msgstr ""
+#: bubble/templates/items/item_detail.html:117
+#: bubble/templates/items/item_list.html:681
+#: bubble/templates/items/my_items.html:159
+msgid "Previous"
+msgstr "Vorherige"
 
 #: bubble/core/templates/users/user_list.html:66
-msgid "Seite"
-msgstr ""
+#: bubble/templates/items/item_list.html:687
+msgid "Page"
+msgstr "Seite"
 
 #: bubble/core/templates/users/user_list.html:66
-msgid "von"
-msgstr ""
+#: bubble/templates/items/item_list.html:687
+#: bubble/templates/items/my_items.html:163
+msgid "of"
+msgstr "von"
 
 #: bubble/core/templates/users/user_list.html:72
-msgid "Nächste"
-msgstr ""
+#: bubble/templates/items/item_detail.html:124
+#: bubble/templates/items/item_list.html:694
+#: bubble/templates/items/my_items.html:167
+msgid "Next"
+msgstr "Nächste"
 
 #: bubble/core/templates/users/user_list.html:77
-msgid "Letzte"
-msgstr ""
+#: bubble/templates/items/item_list.html:700
+#: bubble/templates/items/my_items.html:170
+msgid "Last"
+msgstr "Letzte"
 
 #: bubble/core/templates/users/user_list.html:87
-msgid "Keine Mitglieder gefunden"
-msgstr ""
+msgid "No members found"
+msgstr "Keine Mitglieder gefunden"
 
 #: bubble/core/templates/users/user_list.html:88
-msgid "Es sind noch keine Mitglieder in der Community."
-msgstr ""
+msgid "There are no members in the community yet."
+msgstr "Es gibt noch keine Mitglieder in der Gemeinschaft."
 
 #: bubble/items/forms.py:19
-#, fuzzy
-#| msgid "Subcategory"
 msgid "Selected category"
-msgstr "Unterkategorie"
+msgstr "Ausgewählte Kategorie"
 
 #: bubble/items/forms.py:36 bubble/items/forms.py:65
 msgid "Item name"
@@ -543,10 +542,6 @@ msgstr "Veröffentlicht"
 msgid "Check to display your contact information"
 msgstr "Ankreuzen, um Ihre Kontaktinformationen anzuzeigen"
 
-#: bubble/items/forms.py:95
-msgid "Internal"
-msgstr "Intern"
-
 #: bubble/items/forms.py:97
 msgid "Check if this item is for internal use only"
 msgstr "Ankreuzen, wenn dieser Artikel nur für internen Gebrauch ist"
@@ -584,10 +579,9 @@ msgid "Please select a category."
 msgstr ""
 
 #: bubble/items/forms.py:177
-#, fuzzy, python-format
-#| msgid "Item name must be at least 3 characters long."
+#, python-format
 msgid "Item name must be at least %(min_length)d characters long."
-msgstr "Artikelname muss mindestens 3 Zeichen lang sein."
+msgstr "Artikelname muss mindestens %(min_length)d Zeichen lang sein."
 
 #: bubble/items/forms.py:212
 msgid "Search items, tags, categories..."
@@ -692,7 +686,9 @@ msgstr "Warnung:"
 #: bubble/templates/items/item_confirm_delete.html:46
 msgid ""
 "Are you sure you want to delete this item? This action cannot be undone."
-msgstr "Sind Sie sicher, dass Sie diesen Artikel löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
+msgstr ""
+"Sind Sie sicher, dass Sie diesen Artikel löschen möchten? Diese Aktion kann "
+"nicht rückgängig gemacht werden."
 
 #: bubble/templates/items/item_confirm_delete.html:51
 #: bubble/templates/items/item_detail.html:72
@@ -763,18 +759,6 @@ msgstr "Erstellt:"
 msgid "Updated:"
 msgstr "Aktualisiert:"
 
-#: bubble/templates/items/item_detail.html:117
-#: bubble/templates/items/item_list.html:681
-#: bubble/templates/items/my_items.html:159
-msgid "Previous"
-msgstr "Vorherige"
-
-#: bubble/templates/items/item_detail.html:124
-#: bubble/templates/items/item_list.html:694
-#: bubble/templates/items/my_items.html:167
-msgid "Next"
-msgstr "Nächste"
-
 #: bubble/templates/items/item_detail.html:232
 #: bubble/templates/items/item_detail.html:277
 msgid "Contact"
@@ -820,10 +804,8 @@ msgstr "Kategorie"
 
 #: bubble/templates/items/item_form.html:54
 #: bubble/templates/items/item_form.html:210
-#, fuzzy
-#| msgid "Main Category"
 msgid "Choose main category"
-msgstr "Hauptkategorie"
+msgstr "Hauptkategorie auswählen"
 
 #: bubble/templates/items/item_form.html:63
 msgid "Selected:"
@@ -847,16 +829,12 @@ msgstr "Lädt..."
 
 #: bubble/templates/items/item_form.html:211
 #: bubble/templates/items/item_form.html:268
-#, fuzzy
-#| msgid "Subcategory"
 msgid "Choose subcategory"
-msgstr "Unterkategorie"
+msgstr "Unterkategorie auswählen"
 
 #: bubble/templates/items/item_form.html:228
-#, fuzzy
-#| msgid "All categories"
 msgid "Error loading categories"
-msgstr "Alle Kategorien"
+msgstr "Fehler beim Laden der Kategorien"
 
 #: bubble/templates/items/item_form.html:311
 msgid "Current selection"
@@ -876,9 +854,8 @@ msgid "Clear All"
 msgstr "Alle löschen"
 
 #: bubble/templates/items/item_list.html:472
-#, fuzzy
-#| msgid "Type"
-msgid "Typ"
+#: bubble/templates/items/my_items.html:55
+msgid "Type"
 msgstr "Typ"
 
 #: bubble/templates/items/item_list.html:479
@@ -890,8 +867,6 @@ msgid "Search items..."
 msgstr "Artikel suchen..."
 
 #: bubble/templates/items/item_list.html:565
-#, fuzzy
-#| msgid "All categories"
 msgid "All Categories"
 msgstr "Alle Kategorien"
 
@@ -912,14 +887,10 @@ msgid "Sort by"
 msgstr "Sortieren nach"
 
 #: bubble/templates/items/item_list.html:612
-#, fuzzy
-#| msgid "Filters"
 msgid "Filter"
 msgstr "Filter"
 
 #: bubble/templates/items/item_list.html:615
-#, fuzzy
-#| msgid "Reset Filters"
 msgid "Reset filter"
 msgstr "Filter zurücksetzen"
 
@@ -930,25 +901,6 @@ msgstr "Sachen"
 #: bubble/templates/items/item_list.html:651
 msgid "Sache erstellen"
 msgstr "Sache erstellen"
-
-#: bubble/templates/items/item_list.html:675
-#: bubble/templates/items/my_items.html:156
-msgid "First"
-msgstr "Erste"
-
-#: bubble/templates/items/item_list.html:687
-msgid "Page"
-msgstr "Seite"
-
-#: bubble/templates/items/item_list.html:687
-#: bubble/templates/items/my_items.html:163
-msgid "of"
-msgstr "von"
-
-#: bubble/templates/items/item_list.html:700
-#: bubble/templates/items/my_items.html:170
-msgid "Last"
-msgstr "Letzte"
 
 #: bubble/templates/items/item_list.html:710
 msgid "No items found"
@@ -991,26 +943,18 @@ msgstr "Ihre Artikel"
 msgid "Item"
 msgstr "Artikel"
 
-#: bubble/templates/items/my_items.html:55
-msgid "Type"
-msgstr "Typ"
-
 #: bubble/templates/items/my_items.html:58
 #: bubble/templates/items/my_items.html:113
 msgid "Active"
 msgstr "Aktiv"
 
 #: bubble/templates/items/my_items.html:59
-#, fuzzy
-#| msgid "Created:"
 msgid "Created"
-msgstr "Erstellt:"
+msgstr "Erstellt"
 
 #: bubble/templates/items/my_items.html:115
-#, fuzzy
-#| msgid "Inactive Items"
 msgid "Inactive"
-msgstr "Inaktive Artikel"
+msgstr "Inaktive"
 
 #: bubble/templates/items/my_items.html:179
 msgid "No items yet"
@@ -1037,25 +981,18 @@ msgstr "Artikel:"
 msgid "Back"
 msgstr "Zurück"
 
-#: bubble/templates/pages/home.html:6 bubble/templates/pages/home.html:15
-#, fuzzy
-#| msgid "Welcome to bubble"
+#: bubble/templates/pages/home.html:6
+#: bubble/templates/pages/home.html:15
 msgid "Welcome in the bubble"
 msgstr "Willkommen in der bubble"
 
 #: bubble/templates/pages/home.html:16
-#, fuzzy
-#| msgid ""
-#| "Your platform for sharing items and services in the Treibhaus Donaufeld "
-#| "community"
 msgid "Your platform for sharing items and services in your local community"
-msgstr ""
-"Ihre Plattform für das Teilen von Sachen und Dienstleistungen in der "
-"Treibhaus Donaufeld Gemeinschaft"
+msgstr "Die Plattform für das Teilen von Dingen und Dienstleistungen in der lokalen Gemeinschaft"
 
 #: bubble/templates/pages/home.html:31
 msgid "Browse and share physical items in our community"
-msgstr "Stöbern und teilen Sie physische Sachen in unserer Gemeinschaft"
+msgstr "Stöbern und teilen Sie physische Dinge in unserer Gemeinschaft"
 
 #: bubble/templates/pages/home.html:70
 msgid "Browse All Items"
@@ -1146,10 +1083,8 @@ msgid "Important dates"
 msgstr "Wichtige Daten"
 
 #: bubble/users/apps.py:9
-#, fuzzy
-#| msgid "All Users"
 msgid "Users"
-msgstr "Alle Benutzer"
+msgstr "Benutzer"
 
 #: bubble/users/forms.py:24 bubble/users/tests/test_forms.py:35
 msgid "This username has already been taken."
@@ -1186,57 +1121,3 @@ msgstr "Deutsch"
 #: config/settings/base.py:36
 msgid "English"
 msgstr "Englisch"
-
-#, fuzzy
-#~| msgid "Browse Services"
-#~ msgid "Services"
-#~ msgstr "Dienstleistungen durchsuchen"
-
-#~ msgid "Offer and find services in our community"
-#~ msgstr "Bieten und finden Sie Dienstleistungen in unserer Gemeinschaft"
-
-#~ msgid "Services coming soon!"
-#~ msgstr "Dienstleistungen kommen bald!"
-
-#~ msgid "Share skills, repairs, tutoring and more"
-#~ msgstr "Fähigkeiten teilen, Reparaturen, Nachhilfe und mehr"
-
-#~ msgid "Browse Services"
-#~ msgstr "Dienstleistungen durchsuchen"
-
-#~ msgid "Offer Service"
-#~ msgstr "Dienstleistung anbieten"
-
-#, fuzzy
-#~| msgid "Filter"
-#~ msgid "Filtern"
-#~ msgstr "Filtern"
-
-#~ msgid "Create Item"
-#~ msgstr "Artikel erstellen"
-
-#~ msgid "Item Tags"
-#~ msgstr "Artikel-Tags"
-
-#~ msgid "Leave empty for free items"
-#~ msgstr "Leer lassen für kostenlose Artikel"
-
-#~ msgid "Messages"
-#~ msgstr "Nachrichten"
-
-#~ msgid "Price should not be set for items that are given away or borrowed."
-#~ msgstr ""
-#~ "Preis sollte nicht für Artikel gesetzt werden, die verschenkt oder "
-#~ "verliehen werden."
-
-#~ msgid "Refresh"
-#~ msgstr "Aktualisieren"
-
-#~ msgid "Select relevant tags for your item"
-#~ msgstr "Wählen Sie relevante Tags für Ihren Artikel"
-
-#~ msgid "Sell"
-#~ msgstr "Verkaufen"
-
-#~ msgid "Send"
-#~ msgstr "Senden"
