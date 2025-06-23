@@ -38,7 +38,7 @@ module.exports = {
             loader: 'postcss-loader',
             options: {
               postcssOptions: {
-                plugins: ['postcss-preset-env', 'autoprefixer', 'pixrem'],
+                plugins: ['postcss-preset-env', 'autoprefixer'],
               },
             },
           },
