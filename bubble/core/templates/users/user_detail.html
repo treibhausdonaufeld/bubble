@@ -27,6 +27,20 @@
         </div>
       </div>
       <!-- End Action buttons -->
+      
+      <!-- Favorites Section -->
+      <div class="row mt-4">
+        <div class="col-sm-12">
+          <h3>{% trans "Favorites" %}</h3>
+          <p>
+            <a href="{% url 'favorites:user_list' username=object.username %}" class="btn btn-outline-primary">
+              {% trans "View all favorites" %}
+              <span class="badge bg-secondary ms-2">{{ object.favorites.count }}</span>
+            </a>
+          </p>
+        </div>
+      </div>
+      <!-- End Favorites Section -->
     {% endif %}
   </div>
 {% endblock content %}
