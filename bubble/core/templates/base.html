@@ -84,32 +84,43 @@
               <ul class="navbar-nav me-auto mb-2 mb-lg-0 flex-column flex-md-row desktop-only">
                 {% include 'includes/nav_main_items.html' %}
               </ul>
-              {# Language Switcher #}
-              <div class="d-flex ms-md-auto mt-3 mt-md-0 language-switcher">
-                {% get_current_language as LANGUAGE_CODE %}
-                <a href="#"
-                   onclick="document.getElementById('lang-de').submit(); return false;"
-                   class="nav-link px-2{% if LANGUAGE_CODE == 'de' %} fw-bold text-primary{% endif %}">DE</a>
-                <span class="nav-link px-0">|</span>
-                <a href="#"
-                   onclick="document.getElementById('lang-en').submit(); return false;"
-                   class="nav-link px-2{% if LANGUAGE_CODE == 'en' %} fw-bold text-primary{% endif %}">EN</a>
-                <form id="lang-de"
-                      action="{% url 'set_language' %}"
-                      method="post"
-                      class="d-none">
-                  {% csrf_token %}
-                  <input name="next" type="hidden" value="{{ request.get_full_path }}" />
-                  <input name="language" type="hidden" value="de" />
-                </form>
-                <form id="lang-en"
-                      action="{% url 'set_language' %}"
-                      method="post"
-                      class="d-none">
-                  {% csrf_token %}
-                  <input name="next" type="hidden" value="{{ request.get_full_path }}" />
-                  <input name="language" type="hidden" value="en" />
-                </form>
+              {# Favorites and Language Switcher #}
+              <div class="d-flex ms-md-auto mt-3 mt-md-0 align-items-center">
+                {% if user.is_authenticated %}
+                  <button class="btn btn-link nav-link favorite-star me-3"
+                          id="favorite-star"
+                          title="{% trans 'Add to favorites' %}"
+                          data-url="{{ request.build_absolute_uri }}"
+                          data-title="{{ page_title|default:'' }}">
+                    ☆
+                  </button>
+                {% endif %}
+                <div class="d-flex language-switcher">
+                  {% get_current_language as LANGUAGE_CODE %}
+                  <a href="#"
+                     onclick="document.getElementById('lang-de').submit(); return false;"
+                     class="nav-link px-2{% if LANGUAGE_CODE == 'de' %} fw-bold text-primary{% endif %}">DE</a>
+                  <span class="nav-link px-0">|</span>
+                  <a href="#"
+                     onclick="document.getElementById('lang-en').submit(); return false;"
+                     class="nav-link px-2{% if LANGUAGE_CODE == 'en' %} fw-bold text-primary{% endif %}">EN</a>
+                  <form id="lang-de"
+                        action="{% url 'set_language' %}"
+                        method="post"
+                        class="d-none">
+                    {% csrf_token %}
+                    <input name="next" type="hidden" value="{{ request.get_full_path }}" />
+                    <input name="language" type="hidden" value="de" />
+                  </form>
+                  <form id="lang-en"
+                        action="{% url 'set_language' %}"
+                        method="post"
+                        class="d-none">
+                    {% csrf_token %}
+                    <input name="next" type="hidden" value="{{ request.get_full_path }}" />
+                    <input name="language" type="hidden" value="en" />
+                  </form>
+                </div>
               </div>
             </div>
           </div>
@@ -136,6 +147,14 @@
     {% endblock body %}
     <!-- /container -->
     {% block modal %}
+      <!-- Favorites Modal -->
+      <div class="modal fade" id="favoritesModal" tabindex="-1" aria-labelledby="favoritesModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content" id="favoritesModalContent">
+            <!-- Content will be loaded dynamically -->
+          </div>
+        </div>
+      </div>
     {% endblock modal %}
     {% block inline_javascript %}
       {% comment %}

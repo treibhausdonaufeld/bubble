@@ -13,6 +13,7 @@ urlpatterns = [
     path("i18n/", include("django.conf.urls.i18n")),
     path("", include("bubble.core.urls", namespace="core")),
     path("items/", include("bubble.items.urls", namespace="items")),
+    path("favorites/", include("bubble.favorites.urls", namespace="favorites")),
     path(settings.ADMIN_URL, admin.site.urls),
     path("users/", include("bubble.users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),

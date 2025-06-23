@@ -1,6 +1,5 @@
 from django.db import models
 
-from bubble.items.models import Item
 from config.settings.base import AUTH_USER_MODEL
 
 
@@ -10,36 +9,19 @@ class Favorite(models.Model):
         on_delete=models.CASCADE,
         related_name="favorites",
     )
-    item = models.ForeignKey(
-        Item,
-        on_delete=models.CASCADE,
-        related_name="favorited_by",
-    )
+    title = models.CharField(max_length=255)
+    url = models.URLField(max_length=500)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ("user", "item")
+        unique_together = ("user", "url")
+        ordering = ["-created_at"]
 
     def __str__(self):
-        return f"{self.user.username} favorites {self.item.name}"
+        return f"{self.user.username} - {self.title}"
+
+    @classmethod
+    def get_user_favorites(cls, user):
+        return cls.objects.filter(user=user)
 
 
-# reservation of item on bubble, but "I want to reserve this item"
-class Interest(models.Model):
-    user = models.ForeignKey(
-        AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="interests",
-    )
-    item = models.ForeignKey(
-        Item,
-        on_delete=models.CASCADE,
-        related_name="interested_by",
-    )
-    comment = models.TextField(blank=True)
-    date_created = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ("user", "item")
-
-    def __str__(self):
-        return f"{self.user.username} interested in {self.item.name}"
