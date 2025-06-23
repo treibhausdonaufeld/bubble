@@ -66,7 +66,7 @@ COPY uv.lock pyproject.toml ./
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
-RUN --mount=type=cache,target=/home/dev-user/.cache/uv \
+RUN --mount=type=cache,target=$HOME/.cache/uv \
   uv sync
 
 ENV PATH="/home/dev-user/.venv/bin:$PATH"
