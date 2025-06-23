@@ -2,13 +2,15 @@
 
 {% load i18n %}
 
-{% block title %}Meine Artikel{% endblock %}
+{% block title %}
+  {% trans "My Items" %}
+{% endblock title %}
 {% block content %}
   <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2>Meine Artikel</h2>
+      <h2>{% trans "My Items" %}</h2>
       <a href="{% url 'items:create' %}" class="btn btn-success">
-        <i class="fas fa-plus"></i> Neuen Artikel hinzufügen
+        <i class="fas fa-plus"></i> {% trans "Add New Item" %}
       </a>
     </div>
     <!-- Stats Cards -->
@@ -17,7 +19,7 @@
         <div class="card text-center">
           <div class="card-body">
             <h5 class="card-title text-success">{{ active_items }}</h5>
-            <p class="card-text">Aktive Artikel</p>
+            <p class="card-text">{% trans "Active Items" %}</p>
           </div>
         </div>
       </div>
@@ -25,7 +27,7 @@
         <div class="card text-center">
           <div class="card-body">
             <h5 class="card-title text-warning">{{ inactive_items }}</h5>
-            <p class="card-text">Inaktive Artikel</p>
+            <p class="card-text">{% trans "Inactive Items" %}</p>
           </div>
         </div>
       </div>
@@ -33,7 +35,7 @@
         <div class="card text-center">
           <div class="card-body">
             <h5 class="card-title text-info">{{ page_obj.paginator.count }}</h5>
-            <p class="card-text">Artikel Gesamt</p>
+            <p class="card-text">{% trans "Total Items" %}</p>
           </div>
         </div>
       </div>
@@ -41,7 +43,7 @@
     {% if items %}
       <div class="card">
         <div class="card-header">
-          <h5 class="mb-0">Ihre Artikel</h5>
+          <h5 class="mb-0">{% trans "Your Items" %}</h5>
         </div>
         <div class="card-body p-0">
           <div class="table-responsive">
@@ -66,14 +68,9 @@
                         {% if item.images.first %}
                           <img src="{{ item.images.first.fname }}"
                                alt="{{ item.name }}"
-                               class="rounded me-2"
-                               style="width: 40px;
-                                      height: 40px;
-                                      object-fit: cover" />
+                               class="rounded me-2 item-thumb" />
                         {% else %}
-                          <div class="bg-light rounded me-2 d-flex align-items-center justify-content-center"
-                               style="width: 40px;
-                                      height: 40px">
+                          <div class="bg-light rounded me-2 d-flex align-items-center justify-content-center item-thumb">
                             <i class="fas fa-image text-muted"></i>
                           </div>
                         {% endif %}
@@ -104,18 +101,18 @@
                     </td>
                     <td>
                       {% if item.status == 0 %}
-                        <span class="badge bg-light text-dark">Neu</span>
+                        <span class="badge bg-light text-dark">{% trans "New" %}</span>
                       {% elif item.status == 1 %}
-                        <span class="badge bg-warning">Gebraucht</span>
+                        <span class="badge bg-warning">{% trans "Used" %}</span>
                       {% elif item.status == 2 %}
-                        <span class="badge bg-secondary">Alt</span>
+                        <span class="badge bg-secondary">{% trans "Old" %}</span>
                       {% endif %}
                     </td>
                     <td>
                       {% if item.active %}
-                        <span class="badge bg-success">Aktiv</span>
+                        <span class="badge bg-success">{% trans "Active" %}</span>
                       {% else %}
-                        <span class="badge bg-secondary">Inaktiv</span>
+                        <span class="badge bg-secondary">{% trans "Inactive" %}</span>
                       {% endif %}
                     </td>
                     <td>{{ item.date_created|date:"M d, Y" }}</td>
@@ -123,7 +120,7 @@
                       <div class="btn-group btn-group-sm" role="group">
                         <a href="{% url 'items:detail' item.pk %}"
                            class="btn btn-outline-primary"
-                           title="Anzeigen">
+                           title="{% trans 'View' %}">
                           <i class="fas fa-eye"></i>
                         </a>
                         <a href="{% url 'items:edit' item.pk %}"
@@ -156,21 +153,21 @@
           <ul class="pagination justify-content-center">
             {% if page_obj.has_previous %}
               <li class="page-item">
-                <a class="page-link" href="?page=1">Erste</a>
+                <a class="page-link" href="?page=1">{% trans "First" %}</a>
               </li>
               <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Vorherige</a>
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">{% trans "Previous" %}</a>
               </li>
             {% endif %}
             <li class="page-item active">
-              <span class="page-link">{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+              <span class="page-link">{{ page_obj.number }} {% trans "of" %} {{ page_obj.paginator.num_pages }}</span>
             </li>
             {% if page_obj.has_next %}
               <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Nächste</a>
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">{% trans "Next" %}</a>
               </li>
               <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Letzte</a>
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">{% trans "Last" %}</a>
               </li>
             {% endif %}
           </ul>
@@ -187,4 +184,12 @@
       </div>
     {% endif %}
   </div>
-{% endblock %}
+{% endblock content %}
+<!-- Reminder: Add the following CSS to your stylesheet -->
+<!--
+.item-thumb {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+}
+-->

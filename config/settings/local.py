@@ -1,9 +1,6 @@
 # ruff: noqa: E501
 from .base import *  # noqa: F403
-from .base import INSTALLED_APPS
-from .base import MIDDLEWARE
-from .base import WEBPACK_LOADER
-from .base import env
+from .base import INSTALLED_APPS, MIDDLEWARE, WEBPACK_LOADER, env
 
 # Make sure DEBUG is True
 DEBUG = True
@@ -21,7 +18,6 @@ SECRET_KEY = env(
     default="upQpahCzYPvj4nnOa6ysSU6zqtWGDhX2TdBEaYu35a0VGy6LKJfGvVMUX6vd3M6K",
 )
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
-# ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
 # CACHES
 # ------------------------------------------------------------------------------

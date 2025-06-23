@@ -8,7 +8,7 @@
   {% else %}
     Items
   {% endif %}
-{% endblock %}
+{% endblock title %}
 {% block css %}
   {{ block.super }}
   <style>
@@ -291,6 +291,14 @@
       pointer-events: none;
     }
 
+    .search-icon-clickable {
+      cursor: pointer;
+    }
+
+    .search-input-padding {
+      padding-left: 2.5rem;
+    }
+
     /* Sort and View Controls */
     .controls-bar {
       background: white;
@@ -414,7 +422,7 @@
       font-weight: 500;
     }
   </style>
-{% endblock %}
+{% endblock css %}
 {% block content %}
   <div class="container-fluid">
     <!-- Mobile Filter Toggle -->
@@ -447,7 +455,7 @@
                   {% for filter_type, filter_value in active_filters %}
                     <span class="filter-chip">
                       {{ filter_value }}
-                      <span class="remove" data-filter="{{ filter_type }}">&times;</span>
+                      <span class="remove" data-filter="{{ filter_type }}">×</span>
                     </span>
                   {% endfor %}
                   <div class="mt-2">
@@ -471,15 +479,13 @@
                   <i class="fas fa-search"></i> {% trans "Search" %}
                 </label>
                 <div class="search-container">
-                  <i class="fas fa-search search-icon"
-                     style="cursor: pointer"
+                  <i class="fas fa-search search-icon search-icon-clickable"
                      id="search-icon"></i>
                   <input type="text"
                          name="search"
-                         class="form-control search-input"
+                         class="form-control search-input search-input-padding"
                          placeholder="{% trans 'Search items...' %}"
-                         value="{{ filter_form.search.value|default_if_none:'' }}"
-                         style="padding-left: 2.5rem" />
+                         value="{{ filter_form.search.value|default_if_none:'' }}" />
                 </div>
               </div>
               <!-- Dynamic Categories Tree -->
@@ -997,4 +1003,4 @@
       }
     });
   </script>
-{% endblock %}
+{% endblock content %}
