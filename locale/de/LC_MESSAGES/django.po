@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-21 22:46+0200\n"
+"POT-Creation-Date: 2025-06-23 11:52+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,47 +16,47 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: bubble/bookings/models.py:8 bubble/payments/models.py:9
+#: bubble/bookings/models.py:10 bubble/payments/models.py:11
 msgid "Pending"
 msgstr "Ausstehend"
 
-#: bubble/bookings/models.py:8
+#: bubble/bookings/models.py:11
 msgid "Confirmed"
 msgstr "Bestätigt"
 
-#: bubble/bookings/models.py:8
+#: bubble/bookings/models.py:12
 msgid "Cancelled"
 msgstr "Abgebrochen"
 
-#: bubble/bookings/models.py:9 bubble/payments/models.py:9
+#: bubble/bookings/models.py:13 bubble/payments/models.py:12
 msgid "Completed"
 msgstr "Abgeschlossen"
 
-#: bubble/bookings/models.py:30
+#: bubble/bookings/models.py:36
 msgid "Monday"
 msgstr "Montag"
 
-#: bubble/bookings/models.py:30
+#: bubble/bookings/models.py:37
 msgid "Tuesday"
 msgstr "Dienstag"
 
-#: bubble/bookings/models.py:30
+#: bubble/bookings/models.py:38
 msgid "Wednesday"
 msgstr "Mittwoch"
 
-#: bubble/bookings/models.py:31
+#: bubble/bookings/models.py:39
 msgid "Thursday"
 msgstr "Donnerstag"
 
-#: bubble/bookings/models.py:31
+#: bubble/bookings/models.py:40
 msgid "Friday"
 msgstr "Freitag"
 
-#: bubble/bookings/models.py:31
+#: bubble/bookings/models.py:41
 msgid "Saturday"
 msgstr "Samstag"
 
-#: bubble/bookings/models.py:31
+#: bubble/bookings/models.py:42
 msgid "Sunday"
 msgstr "Sonntag"
 
@@ -64,16 +64,61 @@ msgstr "Sonntag"
 msgid "Item Categories"
 msgstr "Artikel-Kategorien"
 
+#: bubble/core/templates/account/email_confirm.html:7
+#: bubble/core/templates/account/email_confirm.html:14
+#: bubble/core/templates/account/email_confirm.html:32
+#, fuzzy
+#| msgid "Confirmed"
+msgid "Confirm Email"
+msgstr "E-Mail bestätigen"
+
+#: bubble/core/templates/account/email_confirm.html:22
+#, fuzzy
+#| msgid "Email address"
+msgid "Confirm Email Address"
+msgstr "E-Mail-Adresse bestätigen"
+
+#: bubble/core/templates/account/email_confirm.html:24
+#, python-format
+msgid ""
+"Please confirm that <strong>%(confirmation.email_address.email)s</strong> is "
+"an email address for user %(user_display)s."
+msgstr "Bitte bestätigen Sie, dass <strong>%(confirmation.email_address.email)s</strong> eine E-Mail-Adresse für den Benutzer %(user_display)s ist."
+
+#: bubble/core/templates/account/email_confirm.html:38
+msgid "Invalid Confirmation Link"
+msgstr "Ungültiger Bestätigungslink"
+
+#: bubble/core/templates/account/email_confirm.html:39
+msgid "This email confirmation link is invalid or has already been used."
+msgstr "Dieser E-Mail-Bestätigungslink ist ungültig oder wurde bereits verwendet."
+
+#: bubble/core/templates/account/email_confirm.html:43
+msgid "Manage Email Settings"
+msgstr "E-Mail-Einstellungen verwalten"
+
+#: bubble/core/templates/account/email_confirm.html:50
+#: bubble/core/templates/account/verification_sent.html:38
+msgid "Log in"
+msgstr "Anmelden"
+
+#: bubble/core/templates/account/email_confirm.html:54
+#: bubble/core/templates/account/verification_sent.html:42
+#, fuzzy
+#| msgid "Back to Items"
+msgid "Back to Home"
+msgstr "Zurück zu den Sachen"
+
 #: bubble/core/templates/account/login.html:9
 #: bubble/core/templates/account/login.html:16
-#: bubble/core/templates/account/login.html:69
-#: bubble/core/templates/account/password_reset.html:60
+#: bubble/core/templates/account/login.html:67
+#: bubble/core/templates/account/password_reset.html:52
 #: bubble/core/templates/account/signup.html:107
 #: bubble/core/templates/allauth/layouts/entrance.html:13
 #: bubble/core/templates/includes/nav_user_items.html:17
-#: bubble/templates/items/item_detail.html:243
-#: bubble/templates/items/item_detail.html:292
-#: bubble/templates/pages/home.html:161
+#: bubble/templates/items/item_detail.html:257
+#: bubble/templates/items/item_detail.html:302
+#: bubble/templates/pages/home.html:170
 msgid "Sign In"
 msgstr "Anmelden"
 
@@ -85,77 +130,72 @@ msgstr "Melden Sie sich an, um Sachen zu teilen und zu finden."
 msgid "Sign in with:"
 msgstr "Anmelden mit:"
 
-#: bubble/core/templates/account/login.html:28
-#: bubble/core/templates/account/signup.html:30
-msgid "or"
-msgstr "oder"
-
-#: bubble/core/templates/account/login.html:36
+#: bubble/core/templates/account/login.html:34
 #: bubble/core/templates/account/signup.html:37
 msgid "Username"
 msgstr "Benutzername"
 
-#: bubble/core/templates/account/login.html:42
+#: bubble/core/templates/account/login.html:40
 msgid "Your username"
 msgstr "Ihr Benutzername"
 
-#: bubble/core/templates/account/login.html:48
+#: bubble/core/templates/account/login.html:46
 #: bubble/core/templates/account/signup.html:63
 msgid "Password"
 msgstr "Passwort"
 
-#: bubble/core/templates/account/login.html:54
+#: bubble/core/templates/account/login.html:52
 msgid "Your password"
 msgstr "Ihr Passwort"
 
-#: bubble/core/templates/account/login.html:65
+#: bubble/core/templates/account/login.html:63
 msgid "Stay signed in"
 msgstr "Angemeldet bleiben"
 
-#: bubble/core/templates/account/login.html:73
+#: bubble/core/templates/account/login.html:71
 msgid "Forgot password?"
 msgstr "Passwort vergessen?"
 
-#: bubble/core/templates/account/login.html:79
+#: bubble/core/templates/account/login.html:77
 msgid "Don't have an account yet?"
 msgstr "Noch kein Konto?"
 
-#: bubble/core/templates/account/login.html:82
-#: bubble/core/templates/account/password_reset.html:64
+#: bubble/core/templates/account/login.html:80
+#: bubble/core/templates/account/password_reset.html:57
 #: bubble/core/templates/account/signup.html:9
 #: bubble/core/templates/account/signup.html:16
 #: bubble/core/templates/includes/nav_user_items.html:12
-#: bubble/templates/pages/home.html:158
+#: bubble/templates/pages/home.html:165
 msgid "Sign Up"
 msgstr "Registrieren"
 
-#: bubble/core/templates/account/password_reset.html:6
-#: bubble/core/templates/account/password_reset.html:13
+#: bubble/core/templates/account/password_reset.html:8
+#: bubble/core/templates/account/password_reset.html:15
 msgid "Reset Password"
 msgstr "Passwort zurücksetzen"
 
-#: bubble/core/templates/account/password_reset.html:18
+#: bubble/core/templates/account/password_reset.html:20
 msgid ""
 "Enter your email address and we will send you a link to reset your password."
 msgstr ""
 "Geben Sie Ihre E-Mail-Adresse ein und wir senden Ihnen einen Link zum "
 "Zurücksetzen Ihres Passworts."
 
-#: bubble/core/templates/account/password_reset.html:27
+#: bubble/core/templates/account/password_reset.html:29
 #: bubble/core/templates/account/signup.html:50
 msgid "Email address"
 msgstr "E-Mail-Adresse"
 
-#: bubble/core/templates/account/password_reset.html:33
+#: bubble/core/templates/account/password_reset.html:35
 #: bubble/core/templates/account/signup.html:56
 msgid "your@email.com"
 msgstr "ihre@email.com"
 
-#: bubble/core/templates/account/password_reset.html:50
+#: bubble/core/templates/account/password_reset.html:44
 msgid "Send reset email"
 msgstr "Zurücksetzungs-E-Mail senden"
 
-#: bubble/core/templates/account/password_reset.html:57
+#: bubble/core/templates/account/password_reset.html:49
 msgid "Remember your password?"
 msgstr "Passwort wieder eingefallen?"
 
@@ -168,6 +208,10 @@ msgstr ""
 #: bubble/core/templates/account/signup.html:26
 msgid "Sign up with:"
 msgstr "Registrieren mit:"
+
+#: bubble/core/templates/account/signup.html:30
+msgid "or"
+msgstr "oder"
 
 #: bubble/core/templates/account/signup.html:43
 msgid "Choose a username"
@@ -204,100 +248,146 @@ msgstr "Konto erstellen"
 msgid "Already have an account?"
 msgstr "Haben Sie bereits ein Konto?"
 
+#: bubble/core/templates/account/verification_sent.html:6
+msgid "Confirmation Email Sent"
+msgstr "Bestätigungs-E-Mail gesendet"
+
+#: bubble/core/templates/account/verification_sent.html:13
+#, fuzzy
+#| msgid "Email"
+msgid "Email Sent"
+msgstr "E-Mail gesendet"
+
+#: bubble/core/templates/account/verification_sent.html:19
+msgid "Confirmation Email Sent!"
+msgstr "Bestätigungs-E-Mail gesendet!"
+
+#: bubble/core/templates/account/verification_sent.html:21
+msgid ""
+"We have sent you an email to confirm your email address. Please check your "
+"inbox and click the confirmation link."
+msgstr "Wir haben Ihnen eine E-Mail zur Bestätigung Ihrer E-Mail-Adresse gesendet. Bitte überprüfen Sie Ihr Postfach und klicken Sie auf den Bestätigungslink."
+
+#: bubble/core/templates/account/verification_sent.html:26
+msgid "Important Notes:"
+msgstr "Wichtige Hinweise:"
+
+#: bubble/core/templates/account/verification_sent.html:29
+msgid "Also check your spam folder"
+msgstr "Überprüfen Sie auch Ihren Spam-Ordner"
+
+#: bubble/core/templates/account/verification_sent.html:30
+msgid "The confirmation link is valid for 3 days"
+msgstr "Der Bestätigungslink ist 3 Tage gültig"
+
+#: bubble/core/templates/account/verification_sent.html:31
+msgid "You cannot log in without confirming your email"
+msgstr "Ohne Bestätigung können Sie sich nicht anmelden"
+
+#: bubble/core/templates/account/verification_sent.html:47
+msgid "Didn't receive an email?"
+msgstr "Keine E-Mail erhalten?"
+
+#: bubble/core/templates/account/verification_sent.html:51
+msgid "Resend Email"
+msgstr "E-Mail erneut senden"
+
 #: bubble/core/templates/base.html:61
 #: bubble/core/templates/includes/nav_main_items.html:12
-#: bubble/core/templates/includes/nav_main_items.html:13
-#: bubble/core/templates/includes/nav_main_items.html:25
-#: bubble/templates/pages/home.html:24
+#: bubble/core/templates/includes/nav_main_items.html:27
+#: bubble/templates/pages/home.html:25
 msgid "Items"
 msgstr "Sachen"
 
-#: bubble/core/templates/base.html:71
+#: bubble/core/templates/base.html:70
 #: bubble/core/templates/includes/nav_main_items.html:18
-#: bubble/core/templates/includes/nav_main_items.html:19
-#: bubble/core/templates/includes/nav_main_items.html:33
+#: bubble/core/templates/includes/nav_main_items.html:38
 msgid "Community"
 msgstr "Gemeinschaft"
 
-#: bubble/core/templates/includes/item_card.html:15
-#: bubble/core/templates/includes/item_card_flexible.html:33
-#: bubble/core/templates/includes/nav_items_submenu.html:6
-#: bubble/core/templates/includes/nav_items_submenu.html:17
-#: bubble/items/models.py:9 bubble/templates/items/item_confirm_delete.html:52
-#: bubble/templates/items/item_detail.html:37
-#: bubble/templates/items/item_detail.html:158
-#: bubble/templates/items/my_items.html:84 bubble/templates/pages/home.html:35
+#: bubble/core/templates/includes/item_card.html:23
+#: bubble/core/templates/includes/item_card_flexible.html:37
+#: bubble/core/templates/includes/nav_items_submenu.html:14
+#: bubble/core/templates/includes/nav_items_submenu.html:35
+#: bubble/items/models.py:15 bubble/templates/items/item_confirm_delete.html:61
+#: bubble/templates/items/item_detail.html:50
+#: bubble/templates/items/item_detail.html:182
+#: bubble/templates/items/my_items.html:86 bubble/templates/pages/home.html:37
 msgid "For Sale"
 msgstr "Zu verkaufen"
 
-#: bubble/core/templates/includes/item_card.html:17
-#: bubble/core/templates/includes/item_card_flexible.html:35
-#: bubble/core/templates/includes/nav_items_submenu.html:7
-#: bubble/core/templates/includes/nav_items_submenu.html:20
-#: bubble/items/models.py:10 bubble/templates/items/item_confirm_delete.html:55
-#: bubble/templates/items/item_detail.html:42
-#: bubble/templates/items/item_detail.html:163
-#: bubble/templates/items/my_items.html:86 bubble/templates/pages/home.html:41
+#: bubble/core/templates/includes/item_card.html:25
+#: bubble/core/templates/includes/item_card_flexible.html:39
+#: bubble/core/templates/includes/nav_items_submenu.html:18
+#: bubble/core/templates/includes/nav_items_submenu.html:39
+#: bubble/items/models.py:16 bubble/templates/items/item_confirm_delete.html:64
+#: bubble/templates/items/item_detail.html:53
+#: bubble/templates/items/item_detail.html:185
+#: bubble/templates/items/my_items.html:88 bubble/templates/pages/home.html:45
 msgid "Give Away"
 msgstr "Verschenken"
 
-#: bubble/core/templates/includes/item_card.html:19
-#: bubble/core/templates/includes/item_card_flexible.html:37
-#: bubble/core/templates/includes/nav_items_submenu.html:5
-#: bubble/core/templates/includes/nav_items_submenu.html:14
-#: bubble/items/models.py:11 bubble/templates/items/item_confirm_delete.html:57
-#: bubble/templates/items/item_detail.html:45
-#: bubble/templates/items/item_detail.html:166
-#: bubble/templates/items/my_items.html:88 bubble/templates/pages/home.html:47
+#: bubble/core/templates/includes/item_card.html:27
+#: bubble/core/templates/includes/item_card_flexible.html:41
+#: bubble/core/templates/includes/nav_items_submenu.html:10
+#: bubble/core/templates/includes/nav_items_submenu.html:31
+#: bubble/items/models.py:17 bubble/templates/items/item_confirm_delete.html:66
+#: bubble/templates/items/item_detail.html:56
+#: bubble/templates/items/item_detail.html:188
+#: bubble/templates/items/my_items.html:90 bubble/templates/pages/home.html:53
 msgid "Borrow"
 msgstr "Ausleihen"
 
-#: bubble/core/templates/includes/item_card.html:21
-#: bubble/core/templates/includes/item_card_flexible.html:39
-#: bubble/core/templates/includes/nav_items_submenu.html:4
-#: bubble/core/templates/includes/nav_items_submenu.html:11
-#: bubble/items/models.py:12 bubble/templates/items/my_items.html:90
-#: bubble/templates/pages/home.html:53
+#: bubble/core/templates/includes/item_card.html:29
+#: bubble/core/templates/includes/item_card_flexible.html:43
+#: bubble/core/templates/includes/nav_items_submenu.html:6
+#: bubble/core/templates/includes/nav_items_submenu.html:27
+#: bubble/items/models.py:18 bubble/templates/items/my_items.html:92
+#: bubble/templates/pages/home.html:61
 msgid "Need"
 msgstr "Benötigt"
 
-#: bubble/core/templates/includes/item_card.html:39
-#: bubble/core/templates/includes/item_card_flexible.html:59
-#: bubble/items/models.py:7 bubble/templates/items/item_detail.html:53
-#: bubble/templates/items/item_detail.html:174
+#: bubble/core/templates/includes/item_card.html:40
+#: bubble/core/templates/includes/item_card_flexible.html:58
+#: bubble/items/models.py:9 bubble/templates/items/item_detail.html:63
+#: bubble/templates/items/item_detail.html:195
+#: bubble/templates/items/my_items.html:104
 msgid "New"
 msgstr "Neu"
 
-#: bubble/core/templates/includes/item_card.html:43
-#: bubble/core/templates/includes/item_card_flexible.html:63
-#: bubble/items/models.py:7 bubble/templates/items/item_detail.html:55
-#: bubble/templates/items/item_detail.html:176
+#: bubble/core/templates/includes/item_card.html:44
+#: bubble/core/templates/includes/item_card_flexible.html:62
+#: bubble/items/models.py:10 bubble/templates/items/item_detail.html:65
+#: bubble/templates/items/item_detail.html:197
+#: bubble/templates/items/my_items.html:106
 msgid "Used"
 msgstr "Gebraucht"
 
-#: bubble/core/templates/includes/item_card.html:47
-#: bubble/core/templates/includes/item_card_flexible.html:67
-#: bubble/items/models.py:7 bubble/templates/items/item_detail.html:57
-#: bubble/templates/items/item_detail.html:178
+#: bubble/core/templates/includes/item_card.html:48
+#: bubble/core/templates/includes/item_card_flexible.html:66
+#: bubble/items/models.py:11 bubble/templates/items/item_detail.html:67
+#: bubble/templates/items/item_detail.html:199
+#: bubble/templates/items/my_items.html:108
 msgid "Old"
 msgstr "Alt"
 
-#: bubble/core/templates/includes/item_card.html:68
+#: bubble/core/templates/includes/item_card.html:69
+#: bubble/templates/items/my_items.html:123
 msgid "View"
 msgstr "Ansehen"
 
-#: bubble/core/templates/includes/nav_community_submenu.html:4
-#: bubble/core/templates/includes/nav_community_submenu.html:8
+#: bubble/core/templates/includes/nav_community_submenu.html:5
+#: bubble/core/templates/includes/nav_community_submenu.html:13
 msgid "All Users"
 msgstr "Alle Benutzer"
 
-#: bubble/core/templates/includes/nav_community_submenu.html:5
-#: bubble/core/templates/includes/nav_community_submenu.html:11
+#: bubble/core/templates/includes/nav_community_submenu.html:9
+#: bubble/core/templates/includes/nav_community_submenu.html:17
 msgid "About Us"
 msgstr "Über uns"
 
-#: bubble/core/templates/includes/nav_items_submenu.html:8
-#: bubble/core/templates/includes/nav_items_submenu.html:23
+#: bubble/core/templates/includes/nav_items_submenu.html:22
+#: bubble/core/templates/includes/nav_items_submenu.html:43
 msgid "All"
 msgstr "Alle"
 
@@ -309,15 +399,15 @@ msgstr "Startseite"
 msgid "My Profile"
 msgstr "Mein Profil"
 
-#: bubble/core/templates/pages/about.html:5
+#: bubble/core/templates/pages/about.html:6
 msgid "About"
 msgstr "Über uns"
 
-#: bubble/core/templates/pages/about.html:11
+#: bubble/core/templates/pages/about.html:12
 msgid "About Willgeben"
 msgstr "Über Willgeben"
 
-#: bubble/core/templates/pages/about.html:12
+#: bubble/core/templates/pages/about.html:14
 #, fuzzy
 #| msgid ""
 #| "Your platform for sharing items and services in the Treibhaus Donaufeld "
@@ -330,533 +420,563 @@ msgstr ""
 "Treibhaus Donaufeld Gemeinschaft"
 
 #: bubble/core/templates/users/user_detail.html:22
-#: bubble/templates/items/item_detail.html:22
-#: bubble/templates/items/item_detail.html:143
-#: bubble/templates/items/my_items.html:122
+#: bubble/templates/items/item_detail.html:24
+#: bubble/templates/items/item_detail.html:156
+#: bubble/templates/items/my_items.html:128
 msgid "Edit"
 msgstr "Bearbeiten"
 
 #: bubble/core/templates/users/user_detail.html:25
-msgid "Email"
-msgstr "E-Mail"
-
-#: bubble/core/templates/users/user_detail.html:26
-#: bubble/templates/pages/home.html:143
+#: bubble/templates/pages/home.html:149
 msgid "Logout"
 msgstr "Abmelden"
 
-#: bubble/core/templates/users/user_list.html:4
-#: bubble/core/templates/users/user_list.html:10
+#: bubble/core/templates/users/user_list.html:6
+#: bubble/core/templates/users/user_list.html:12
 #, fuzzy
 #| msgid "Community"
 msgid "Community Mitglieder"
 msgstr "Gemeinschaft"
 
-#: bubble/core/templates/users/user_list.html:11
+#: bubble/core/templates/users/user_list.html:13
 msgid "Entdecke die Mitglieder unserer Gemeinschaft"
 msgstr ""
 
-#: bubble/core/templates/users/user_list.html:37
+#: bubble/core/templates/users/user_list.html:34
 msgid "Dabei seit"
 msgstr ""
 
-#: bubble/core/templates/users/user_list.html:44
+#: bubble/core/templates/users/user_list.html:41
 #, fuzzy
 #| msgid "Profile image frame"
 msgid "Profil ansehen"
 msgstr "Profilbild-Rahmen"
 
-#: bubble/core/templates/users/user_list.html:59
+#: bubble/core/templates/users/user_list.html:55
 msgid "Erste"
 msgstr ""
 
-#: bubble/core/templates/users/user_list.html:64
+#: bubble/core/templates/users/user_list.html:60
 msgid "Vorherige"
 msgstr ""
 
-#: bubble/core/templates/users/user_list.html:71
+#: bubble/core/templates/users/user_list.html:66
 msgid "Seite"
 msgstr ""
 
-#: bubble/core/templates/users/user_list.html:71
+#: bubble/core/templates/users/user_list.html:66
 msgid "von"
 msgstr ""
 
-#: bubble/core/templates/users/user_list.html:78
+#: bubble/core/templates/users/user_list.html:72
 msgid "Nächste"
 msgstr ""
 
-#: bubble/core/templates/users/user_list.html:83
+#: bubble/core/templates/users/user_list.html:77
 msgid "Letzte"
 msgstr ""
 
-#: bubble/core/templates/users/user_list.html:93
+#: bubble/core/templates/users/user_list.html:87
 msgid "Keine Mitglieder gefunden"
 msgstr ""
 
-#: bubble/core/templates/users/user_list.html:94
+#: bubble/core/templates/users/user_list.html:88
 msgid "Es sind noch keine Mitglieder in der Community."
 msgstr ""
 
-#: bubble/items/forms.py:18
+#: bubble/items/forms.py:19
 #, fuzzy
 #| msgid "Subcategory"
 msgid "Selected category"
 msgstr "Unterkategorie"
 
-#: bubble/items/forms.py:35 bubble/items/forms.py:64
+#: bubble/items/forms.py:36 bubble/items/forms.py:65
 msgid "Item name"
 msgstr "Artikelname"
 
-#: bubble/items/forms.py:41
+#: bubble/items/forms.py:42
 msgid "Describe your item..."
 msgstr "Beschreiben Sie Ihren Artikel..."
 
-#: bubble/items/forms.py:51
+#: bubble/items/forms.py:52
 msgid "Price in Euro"
 msgstr "Preis in Euro"
 
-#: bubble/items/forms.py:57 bubble/items/forms.py:70
+#: bubble/items/forms.py:58 bubble/items/forms.py:71
 msgid "Profile image frame"
 msgstr "Profilbild-Rahmen"
 
-#: bubble/items/forms.py:65 bubble/templates/items/item_detail.html:123
+#: bubble/items/forms.py:66 bubble/templates/items/item_detail.html:136
 msgid "Description"
 msgstr "Beschreibung"
 
-#: bubble/items/forms.py:66
+#: bubble/items/forms.py:67
 msgid "Item type"
 msgstr "Artikel-Typ"
 
-#: bubble/items/forms.py:67 bubble/templates/items/my_items.html:57
+#: bubble/items/forms.py:68 bubble/templates/items/my_items.html:57
 msgid "Condition"
 msgstr "Zustand"
 
-#: bubble/items/forms.py:68 bubble/templates/items/my_items.html:56
+#: bubble/items/forms.py:69 bubble/templates/items/my_items.html:56
 msgid "Price"
 msgstr "Preis"
 
-#: bubble/items/forms.py:69
+#: bubble/items/forms.py:70
 msgid "Show contact"
 msgstr "Kontakt anzeigen"
 
-#: bubble/items/forms.py:71
+#: bubble/items/forms.py:72
 msgid "Published"
 msgstr "Veröffentlicht"
 
-#: bubble/items/forms.py:74
+#: bubble/items/forms.py:75
 msgid "Check to display your contact information"
 msgstr "Ankreuzen, um Ihre Kontaktinformationen anzuzeigen"
 
-#: bubble/items/forms.py:94
+#: bubble/items/forms.py:95
 msgid "Internal"
 msgstr "Intern"
 
-#: bubble/items/forms.py:96
+#: bubble/items/forms.py:97
 msgid "Check if this item is for internal use only"
 msgstr "Ankreuzen, wenn dieser Artikel nur für internen Gebrauch ist"
 
-#: bubble/items/forms.py:101
+#: bubble/items/forms.py:102
 msgid "Treibhaus payment"
 msgstr "Treibhaus-Zahlung"
 
-#: bubble/items/forms.py:103
+#: bubble/items/forms.py:104
 msgid "Accept Treibhaus payment method"
 msgstr "Treibhaus-Zahlungsmethode akzeptieren"
 
-#: bubble/items/forms.py:120
+#: bubble/items/forms.py:121
 msgid "Preis"
 msgstr ""
 
-#: bubble/items/forms.py:123
+#: bubble/items/forms.py:124
 msgid "Preis pro Woche"
 msgstr ""
 
-#: bubble/items/forms.py:125
+#: bubble/items/forms.py:126
 msgid "Leer lassen für kostenloses Verleihen"
 msgstr ""
 
-#: bubble/items/forms.py:139
-msgid "Preis ist erforderlich für Verkaufsartikel."
+#: bubble/items/forms.py:142
+msgid "Price is required for items for sale."
+msgstr "Preis ist für verkaufte Artikel erforderlich."
+
+#: bubble/items/forms.py:148
+msgid "If the item is free, please select the 'Give away' type."
 msgstr ""
 
-#: bubble/items/forms.py:145
-msgid "Wenn der Artikel kostenlos ist, wählen Sie den Typ 'Verschenken'."
-msgstr ""
-
-#: bubble/items/forms.py:162
+#: bubble/items/forms.py:167
 msgid "Please select a category."
 msgstr ""
 
-#: bubble/items/forms.py:171
-msgid "Item name must be at least 3 characters long."
+#: bubble/items/forms.py:177
+#, fuzzy, python-format
+#| msgid "Item name must be at least 3 characters long."
+msgid "Item name must be at least %(min_length)d characters long."
 msgstr "Artikelname muss mindestens 3 Zeichen lang sein."
 
-#: bubble/items/forms.py:214
+#: bubble/items/forms.py:212
 msgid "Search items, tags, categories..."
 msgstr "Artikel, Tags, Kategorien suchen..."
 
-#: bubble/items/forms.py:223 bubble/items/forms.py:241
+#: bubble/items/forms.py:221 bubble/items/forms.py:239
 msgid "All categories"
 msgstr "Alle Kategorien"
 
-#: bubble/items/forms.py:232
+#: bubble/items/forms.py:230
 msgid "All subcategories"
 msgstr "Alle Unterkategorien"
 
-#: bubble/items/forms.py:246
+#: bubble/items/forms.py:244
 msgid "All types"
 msgstr "Alle Typen"
 
-#: bubble/items/forms.py:252
+#: bubble/items/forms.py:250
 msgid "All conditions"
 msgstr "Alle Zustände"
 
-#: bubble/items/forms.py:259 bubble/items/views.py:161
+#: bubble/items/forms.py:257 bubble/items/views.py:161
 msgid "Newest first"
 msgstr "Neueste zuerst"
 
-#: bubble/items/forms.py:260 bubble/items/views.py:162
+#: bubble/items/forms.py:258 bubble/items/views.py:162
 msgid "Oldest first"
 msgstr "Älteste zuerst"
 
-#: bubble/items/forms.py:261 bubble/items/views.py:163
+#: bubble/items/forms.py:259 bubble/items/views.py:163
 msgid "Price: Low to High"
 msgstr "Preis: Niedrig zu Hoch"
 
-#: bubble/items/forms.py:262 bubble/items/views.py:164
+#: bubble/items/forms.py:260 bubble/items/views.py:164
 msgid "Price: High to Low"
 msgstr "Preis: Hoch zu Niedrig"
 
-#: bubble/items/forms.py:263 bubble/items/views.py:165
+#: bubble/items/forms.py:261 bubble/items/views.py:165
 msgid "Name A-Z"
 msgstr "Name A-Z"
 
-#: bubble/items/forms.py:271
+#: bubble/items/forms.py:269
 msgid "Grid"
 msgstr "Raster"
 
-#: bubble/items/forms.py:271
+#: bubble/items/forms.py:269
 msgid "List"
 msgstr "Liste"
 
-#: bubble/items/views.py:286
+#: bubble/items/views.py:285
 msgid "Item created successfully!"
 msgstr "Artikel erfolgreich erstellt!"
 
-#: bubble/items/views.py:308
+#: bubble/items/views.py:307
 msgid "Item updated successfully!"
 msgstr "Artikel erfolgreich aktualisiert!"
 
-#: bubble/items/views.py:325
+#: bubble/items/views.py:324
 msgid "Item deleted successfully!"
 msgstr "Artikel erfolgreich gelöscht!"
 
-#: bubble/items/views.py:360
+#: bubble/items/views.py:359
 #, python-format
 msgid "Item '%(name)s' has been activated."
 msgstr "Artikel '%(name)s' wurde aktiviert."
 
-#: bubble/items/views.py:365
+#: bubble/items/views.py:364
 #, python-format
 msgid "Item '%(name)s' has been deactivated."
 msgstr "Artikel '%(name)s' wurde deaktiviert."
 
-#: bubble/messaging/forms.py:14
+#: bubble/messaging/forms.py:16
 msgid "Your message..."
 msgstr "Ihre Nachricht..."
 
-#: bubble/messaging/forms.py:19
+#: bubble/messaging/forms.py:22
 msgid "Message"
 msgstr "Nachricht"
 
-#: bubble/messaging/views.py:25
+#: bubble/messaging/views.py:29
 msgid "Your request has been sent!"
 msgstr "Ihre Anfrage wurde gesendet!"
 
-#: bubble/payments/models.py:9
+#: bubble/payments/models.py:13
 msgid "Failed"
 msgstr "Fehlgeschlagen"
 
-#: bubble/payments/models.py:10
+#: bubble/payments/models.py:14
 msgid "Refunded"
 msgstr "Erstattet"
 
-#: bubble/templates/items/item_confirm_delete.html:4
-#: bubble/templates/items/item_confirm_delete.html:14
-#: bubble/templates/items/item_confirm_delete.html:94
+#: bubble/templates/items/item_confirm_delete.html:18
+#: bubble/templates/items/item_confirm_delete.html:28
+#: bubble/templates/items/item_confirm_delete.html:99
 msgid "Delete Item"
 msgstr "Artikel löschen"
 
-#: bubble/templates/items/item_confirm_delete.html:32
+#: bubble/templates/items/item_confirm_delete.html:45
 msgid "Warning:"
 msgstr "Warnung:"
 
-#: bubble/templates/items/item_confirm_delete.html:33
+#: bubble/templates/items/item_confirm_delete.html:46
 msgid ""
 "Are you sure you want to delete this item? This action cannot be undone."
 msgstr ""
 
-#: bubble/templates/items/item_confirm_delete.html:39
-#: bubble/templates/items/item_detail.html:63
-#: bubble/templates/items/item_detail.html:184
+#: bubble/templates/items/item_confirm_delete.html:51
+#: bubble/templates/items/item_detail.html:72
+#: bubble/templates/items/item_detail.html:204
 msgid "Category:"
 msgstr "Kategorie:"
 
-#: bubble/templates/items/item_confirm_delete.html:48
+#: bubble/templates/items/item_confirm_delete.html:57
 msgid "Type:"
 msgstr "Typ:"
 
-#: bubble/templates/items/item_confirm_delete.html:64
+#: bubble/templates/items/item_confirm_delete.html:72
 msgid "Posted:"
 msgstr "Veröffentlicht:"
 
-#: bubble/templates/items/item_confirm_delete.html:74
-#: bubble/templates/items/item_detail.html:69
-#: bubble/templates/items/item_detail.html:190
+#: bubble/templates/items/item_confirm_delete.html:79
+#: bubble/templates/items/item_detail.html:77
+#: bubble/templates/items/item_detail.html:209
 msgid "Tags:"
 msgstr "Schlagwörter:"
 
-#: bubble/templates/items/item_confirm_delete.html:90
-#: bubble/templates/items/item_form.html:208
+#: bubble/templates/items/item_confirm_delete.html:95
+#: bubble/templates/items/item_form.html:147
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: bubble/templates/items/item_detail.html:19
-#: bubble/templates/items/item_detail.html:140
+#: bubble/templates/items/item_detail.html:21
+#: bubble/templates/items/item_detail.html:153
 #: bubble/templates/items/my_items.html:60
 msgid "Actions"
 msgstr "Aktionen"
 
-#: bubble/templates/items/item_detail.html:24
-#: bubble/templates/items/item_detail.html:145
-#: bubble/templates/items/my_items.html:127
+#: bubble/templates/items/item_detail.html:29
+#: bubble/templates/items/item_detail.html:161
+#: bubble/templates/items/my_items.html:133
 msgid "Deactivate"
 msgstr "Deaktivieren"
 
-#: bubble/templates/items/item_detail.html:24
-#: bubble/templates/items/item_detail.html:145
-#: bubble/templates/items/my_items.html:127
+#: bubble/templates/items/item_detail.html:31
+#: bubble/templates/items/item_detail.html:163
+#: bubble/templates/items/my_items.html:133
 msgid "Activate"
 msgstr "Aktivieren"
 
-#: bubble/templates/items/item_detail.html:27
-#: bubble/templates/items/item_detail.html:148
-#: bubble/templates/items/my_items.html:130
+#: bubble/templates/items/item_detail.html:40
+#: bubble/templates/items/item_detail.html:172
+#: bubble/templates/items/my_items.html:138
 msgid "Delete"
 msgstr "Löschen"
 
-#: bubble/templates/items/item_detail.html:43
-#: bubble/templates/items/item_detail.html:164
+#: bubble/templates/items/item_detail.html:54
+#: bubble/templates/items/item_detail.html:186
 msgid "Free"
 msgstr "Kostenlos"
 
-#: bubble/templates/items/item_detail.html:51
-#: bubble/templates/items/item_detail.html:172
+#: bubble/templates/items/item_detail.html:61
+#: bubble/templates/items/item_detail.html:193
 msgid "Condition:"
 msgstr "Zustand:"
 
-#: bubble/templates/items/item_detail.html:78
-#: bubble/templates/items/item_detail.html:199
+#: bubble/templates/items/item_detail.html:86
+#: bubble/templates/items/item_detail.html:218
 msgid "Created:"
 msgstr "Erstellt:"
 
-#: bubble/templates/items/item_detail.html:84
-#: bubble/templates/items/item_detail.html:205
+#: bubble/templates/items/item_detail.html:91
+#: bubble/templates/items/item_detail.html:223
 msgid "Updated:"
 msgstr "Aktualisiert:"
 
-#: bubble/templates/items/item_detail.html:106
-#: bubble/templates/items/item_list.html:662
+#: bubble/templates/items/item_detail.html:117
+#: bubble/templates/items/item_list.html:681
+#: bubble/templates/items/my_items.html:159
 msgid "Previous"
 msgstr "Vorherige"
 
-#: bubble/templates/items/item_detail.html:110
-#: bubble/templates/items/item_list.html:676
+#: bubble/templates/items/item_detail.html:124
+#: bubble/templates/items/item_list.html:694
+#: bubble/templates/items/my_items.html:167
 msgid "Next"
 msgstr "Nächste"
 
-#: bubble/templates/items/item_detail.html:215
-#: bubble/templates/items/item_detail.html:264
+#: bubble/templates/items/item_detail.html:232
+#: bubble/templates/items/item_detail.html:277
 msgid "Contact"
 msgstr "Kontakt"
 
-#: bubble/templates/items/item_detail.html:238
-#: bubble/templates/items/item_detail.html:287
+#: bubble/templates/items/item_detail.html:253
+#: bubble/templates/items/item_detail.html:298
 msgid "Contact information is not displayed"
 msgstr "Kontaktinformationen werden nicht angezeigt"
 
-#: bubble/templates/items/item_detail.html:243
-#: bubble/templates/items/item_detail.html:292
+#: bubble/templates/items/item_detail.html:257
+#: bubble/templates/items/item_detail.html:302
 msgid "to see all contact details"
 msgstr "um alle Kontaktdaten zu sehen"
 
-#: bubble/templates/items/item_detail.html:251
-#: bubble/templates/items/item_detail.html:300
-#: bubble/templates/messaging/send_message.html:4
-#: bubble/templates/messaging/send_message.html:12
-#: bubble/templates/messaging/send_message.html:32
+#: bubble/templates/items/item_detail.html:265
+#: bubble/templates/items/item_detail.html:310
+#: bubble/templates/messaging/send_message.html:6
+#: bubble/templates/messaging/send_message.html:14
+#: bubble/templates/messaging/send_message.html:27
 msgid "Send Request"
 msgstr "Anfrage senden"
 
-#: bubble/templates/items/item_detail.html:314
+#: bubble/templates/items/item_detail.html:321
 msgid "Back to Items"
 msgstr "Zurück zu den Sachen"
 
-#: bubble/templates/items/item_form.html:6
+#: bubble/templates/items/item_form.html:7
 #: bubble/templates/items/item_form.html:20
 msgid "Edit Article"
 msgstr "Artikel bearbeiten"
 
-#: bubble/templates/items/item_form.html:8
+#: bubble/templates/items/item_form.html:9
 #: bubble/templates/items/item_form.html:22
 msgid "Add New Article"
 msgstr "Neuen Artikel hinzufügen"
 
-#: bubble/templates/items/item_form.html:61
-#: bubble/templates/items/item_list.html:477
+#: bubble/templates/items/item_form.html:49
+#: bubble/templates/items/item_list.html:494
 #: bubble/templates/items/my_items.html:54
 msgid "Category"
 msgstr "Kategorie"
 
-#: bubble/templates/items/item_form.html:67
-#: bubble/templates/items/item_form.html:273
+#: bubble/templates/items/item_form.html:54
+#: bubble/templates/items/item_form.html:210
 #, fuzzy
 #| msgid "Main Category"
 msgid "Choose main category"
 msgstr "Hauptkategorie"
 
-#: bubble/templates/items/item_form.html:78
+#: bubble/templates/items/item_form.html:63
 msgid "Selected:"
 msgstr ""
 
-#: bubble/templates/items/item_form.html:142
+#: bubble/templates/items/item_form.html:107
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: bubble/templates/items/item_form.html:212
+#: bubble/templates/items/item_form.html:150
 msgid "Update Article"
 msgstr "Artikel aktualisieren"
 
-#: bubble/templates/items/item_form.html:214
+#: bubble/templates/items/item_form.html:152
 msgid "Create Article"
 msgstr "Artikel erstellen"
 
-#: bubble/templates/items/item_form.html:259
+#: bubble/templates/items/item_form.html:196
 msgid "Loading..."
 msgstr ""
 
-#: bubble/templates/items/item_form.html:274
-#: bubble/templates/items/item_form.html:328
+#: bubble/templates/items/item_form.html:211
+#: bubble/templates/items/item_form.html:268
 #, fuzzy
 #| msgid "Subcategory"
 msgid "Choose subcategory"
 msgstr "Unterkategorie"
 
-#: bubble/templates/items/item_form.html:291
+#: bubble/templates/items/item_form.html:228
 #, fuzzy
 #| msgid "All categories"
 msgid "Error loading categories"
 msgstr "Alle Kategorien"
 
-#: bubble/templates/items/item_form.html:371
+#: bubble/templates/items/item_form.html:311
 msgid "Current selection"
 msgstr ""
 
-#: bubble/templates/items/item_list.html:412
-#: bubble/templates/items/item_list.html:425
+#: bubble/templates/items/item_list.html:431
+#: bubble/templates/items/item_list.html:442
 msgid "Filters"
 msgstr "Filter"
 
-#: bubble/templates/items/item_list.html:438
+#: bubble/templates/items/item_list.html:454
 msgid "Active Filters"
 msgstr "Aktive Filter"
 
-#: bubble/templates/items/item_list.html:447
+#: bubble/templates/items/item_list.html:463
 msgid "Clear All"
 msgstr "Alle löschen"
 
-#: bubble/templates/items/item_list.html:458
+#: bubble/templates/items/item_list.html:472
 #, fuzzy
 #| msgid "Type"
 msgid "Typ"
 msgstr "Typ"
 
-#: bubble/templates/items/item_list.html:466
+#: bubble/templates/items/item_list.html:479
 msgid "Search"
 msgstr "Suchen"
 
-#: bubble/templates/items/item_list.html:470
+#: bubble/templates/items/item_list.html:487
 msgid "Search items..."
 msgstr "Artikel suchen..."
 
-#: bubble/templates/items/item_list.html:542
+#: bubble/templates/items/item_list.html:565
 #, fuzzy
 #| msgid "All categories"
 msgid "All Categories"
 msgstr "Alle Kategorien"
 
-#: bubble/templates/items/item_list.html:554
+#: bubble/templates/items/item_list.html:574
 msgid "Tags"
 msgstr "Tags"
 
-#: bubble/templates/items/item_list.html:559
+#: bubble/templates/items/item_list.html:580
 msgid "Search and select tags..."
 msgstr "Tags suchen und auswählen..."
 
-#: bubble/templates/items/item_list.html:576
+#: bubble/templates/items/item_list.html:598
 msgid "Zustand"
 msgstr ""
 
-#: bubble/templates/items/item_list.html:584
-msgid "Sortieren nach"
-msgstr ""
+#: bubble/templates/items/item_list.html:605
+msgid "Sort by"
+msgstr "Sortieren nach"
 
-#: bubble/templates/items/item_list.html:593
+#: bubble/templates/items/item_list.html:612
 #, fuzzy
-#| msgid "Filter"
-msgid "Filtern"
-msgstr "Filtern"
+#| msgid "Filters"
+msgid "Filter"
+msgstr "Filter"
 
-#: bubble/templates/items/item_list.html:596
-msgid "Filtern zurücksetzen"
-msgstr ""
+#: bubble/templates/items/item_list.html:615
+#, fuzzy
+#| msgid "Reset Filters"
+msgid "Reset filter"
+msgstr "Filter zurücksetzen"
 
-#: bubble/templates/items/item_list.html:611
+#: bubble/templates/items/item_list.html:629
 msgid "Sachen"
 msgstr ""
 
-#: bubble/templates/items/item_list.html:630
+#: bubble/templates/items/item_list.html:651
 msgid "Sache erstellen"
 msgstr ""
 
-#: bubble/templates/items/item_list.html:657
+#: bubble/templates/items/item_list.html:675
+#: bubble/templates/items/my_items.html:156
 msgid "First"
 msgstr "Erste"
 
-#: bubble/templates/items/item_list.html:669
+#: bubble/templates/items/item_list.html:687
 msgid "Page"
 msgstr "Seite"
 
-#: bubble/templates/items/item_list.html:669
+#: bubble/templates/items/item_list.html:687
+#: bubble/templates/items/my_items.html:163
 msgid "of"
 msgstr "von"
 
-#: bubble/templates/items/item_list.html:681
+#: bubble/templates/items/item_list.html:700
+#: bubble/templates/items/my_items.html:170
 msgid "Last"
 msgstr "Letzte"
 
-#: bubble/templates/items/item_list.html:691
+#: bubble/templates/items/item_list.html:710
 msgid "No items found"
 msgstr "Keine Artikel gefunden"
 
-#: bubble/templates/items/item_list.html:692
+#: bubble/templates/items/item_list.html:711
 msgid "Try adjusting your filters or search terms."
 msgstr "Versuchen Sie, Ihre Filter oder Suchbegriffe anzupassen."
 
-#: bubble/templates/items/item_list.html:695
+#: bubble/templates/items/item_list.html:714
 msgid "Add the first item"
 msgstr "Den ersten Artikel hinzufügen"
+
+#: bubble/templates/items/my_items.html:6
+#: bubble/templates/items/my_items.html:11 bubble/templates/pages/home.html:75
+msgid "My Items"
+msgstr "Meine Artikel"
+
+#: bubble/templates/items/my_items.html:13 bubble/templates/pages/home.html:72
+msgid "Add New Item"
+msgstr "Neuen Artikel hinzufügen"
+
+#: bubble/templates/items/my_items.html:22
+msgid "Active Items"
+msgstr "Aktive Artikel"
+
+#: bubble/templates/items/my_items.html:30
+msgid "Inactive Items"
+msgstr "Inaktive Artikel"
+
+#: bubble/templates/items/my_items.html:38
+msgid "Total Items"
+msgstr "Artikel Gesamt"
+
+#: bubble/templates/items/my_items.html:46
+msgid "Your Items"
+msgstr "Ihre Artikel"
 
 #: bubble/templates/items/my_items.html:53
 msgid "Item"
@@ -867,6 +987,7 @@ msgid "Type"
 msgstr "Typ"
 
 #: bubble/templates/items/my_items.html:58
+#: bubble/templates/items/my_items.html:113
 msgid "Active"
 msgstr "Aktiv"
 
@@ -876,16 +997,22 @@ msgstr "Aktiv"
 msgid "Created"
 msgstr "Erstellt:"
 
-#: bubble/templates/items/my_items.html:174
+#: bubble/templates/items/my_items.html:115
+#, fuzzy
+#| msgid "Inactive Items"
+msgid "Inactive"
+msgstr "Inaktive Artikel"
+
+#: bubble/templates/items/my_items.html:179
 msgid "No items yet"
 msgstr "Noch keine Artikel"
 
-#: bubble/templates/items/my_items.html:175
+#: bubble/templates/items/my_items.html:180
 msgid "You haven't created any items yet. Add your first item!"
 msgstr ""
 "Sie haben noch keine Artikel erstellt. Fügen Sie Ihren ersten Artikel hinzu!"
 
-#: bubble/templates/items/my_items.html:177
+#: bubble/templates/items/my_items.html:182
 msgid "Add your first item"
 msgstr "Ihren ersten Artikel hinzufügen"
 
@@ -893,19 +1020,19 @@ msgstr "Ihren ersten Artikel hinzufügen"
 msgid "No messages available yet."
 msgstr "Noch keine Nachrichten vorhanden."
 
-#: bubble/templates/messaging/send_message.html:13
+#: bubble/templates/messaging/send_message.html:15
 msgid "Article:"
 msgstr "Artikel:"
 
-#: bubble/templates/messaging/send_message.html:29
+#: bubble/templates/messaging/send_message.html:26
 msgid "Back"
 msgstr "Zurück"
 
-#: bubble/templates/pages/home.html:4 bubble/templates/pages/home.html:11
+#: bubble/templates/pages/home.html:6 bubble/templates/pages/home.html:13
 msgid "Welcome to bubble"
 msgstr "Willkommen bei bubble"
 
-#: bubble/templates/pages/home.html:12
+#: bubble/templates/pages/home.html:14
 msgid ""
 "Your platform for sharing items and services in the Treibhaus Donaufeld "
 "community"
@@ -913,109 +1040,101 @@ msgstr ""
 "Ihre Plattform für das Teilen von Sachen und Dienstleistungen in der "
 "Treibhaus Donaufeld Gemeinschaft"
 
-#: bubble/templates/pages/home.html:28
+#: bubble/templates/pages/home.html:29
 msgid "Browse and share physical items in our community"
 msgstr "Stöbern und teilen Sie physische Sachen in unserer Gemeinschaft"
 
-#: bubble/templates/pages/home.html:61
+#: bubble/templates/pages/home.html:68
 msgid "Browse All Items"
 msgstr "Alle Sachen durchsuchen"
 
-#: bubble/templates/pages/home.html:65
-msgid "Add New Item"
-msgstr "Neuen Artikel hinzufügen"
-
-#: bubble/templates/pages/home.html:68
-msgid "My Items"
-msgstr "Meine Artikel"
-
-#: bubble/templates/pages/home.html:82
+#: bubble/templates/pages/home.html:88
 #, fuzzy
 #| msgid "Browse Services"
 msgid "Services"
 msgstr "Dienstleistungen durchsuchen"
 
-#: bubble/templates/pages/home.html:86
+#: bubble/templates/pages/home.html:92
 msgid "Offer and find services in our community"
 msgstr "Bieten und finden Sie Dienstleistungen in unserer Gemeinschaft"
 
-#: bubble/templates/pages/home.html:91
+#: bubble/templates/pages/home.html:96
 msgid "Services coming soon!"
 msgstr "Dienstleistungen kommen bald!"
 
-#: bubble/templates/pages/home.html:92
+#: bubble/templates/pages/home.html:97
 msgid "Share skills, repairs, tutoring and more"
 msgstr "Fähigkeiten teilen, Reparaturen, Nachhilfe und mehr"
 
-#: bubble/templates/pages/home.html:100
+#: bubble/templates/pages/home.html:104
 msgid "Browse Services"
 msgstr "Dienstleistungen durchsuchen"
 
-#: bubble/templates/pages/home.html:103
+#: bubble/templates/pages/home.html:107
 msgid "Offer Service"
 msgstr "Dienstleistung anbieten"
 
-#: bubble/templates/pages/home.html:118
+#: bubble/templates/pages/home.html:121
 msgid "Your Account"
 msgstr "Ihr Konto"
 
-#: bubble/templates/pages/home.html:126
+#: bubble/templates/pages/home.html:129
 #, python-format
 msgid "Welcome back, %(username)s!"
 msgstr "Willkommen zurück, %(username)s!"
 
-#: bubble/templates/pages/home.html:129
+#: bubble/templates/pages/home.html:132
 msgid "Internal User"
 msgstr "Interner Benutzer"
 
-#: bubble/templates/pages/home.html:131
+#: bubble/templates/pages/home.html:134
 #, python-format
 msgid "Member since %(date)s"
 msgstr "Mitglied seit %(date)s"
 
-#: bubble/templates/pages/home.html:137
+#: bubble/templates/pages/home.html:141
 msgid "View Profile"
 msgstr "Profil anzeigen"
 
-#: bubble/templates/pages/home.html:140
+#: bubble/templates/pages/home.html:145
 msgid "Edit Profile"
 msgstr "Profil bearbeiten"
 
-#: bubble/templates/pages/home.html:152
+#: bubble/templates/pages/home.html:158
 msgid "Join our community!"
 msgstr "Treten Sie unserer Gemeinschaft bei!"
 
-#: bubble/templates/pages/home.html:153
+#: bubble/templates/pages/home.html:159
 msgid "Create an account to start sharing items and connecting with neighbors"
 msgstr ""
 "Erstellen Sie ein Konto, um mit dem Teilen von Sachen und dem Kontakt zu "
 "Nachbarn zu beginnen"
 
-#: bubble/templates/pages/home.html:180
+#: bubble/templates/pages/home.html:188
 msgid "Your active items"
 msgstr "Ihre aktiven Artikel"
 
-#: bubble/templates/pages/home.html:188
+#: bubble/templates/pages/home.html:196
 msgid "Browse"
 msgstr "Stöbern"
 
-#: bubble/templates/pages/home.html:189
+#: bubble/templates/pages/home.html:197
 msgid "Discover community items"
 msgstr "Gemeinschaftsartikel entdecken"
 
-#: bubble/templates/pages/home.html:197
+#: bubble/templates/pages/home.html:205
 msgid "Connect"
 msgstr "Verbinden"
 
-#: bubble/templates/pages/home.html:198
+#: bubble/templates/pages/home.html:206
 msgid "Get to know your neighbors"
 msgstr "Lernen Sie Ihre Nachbarn kennen"
 
-#: bubble/templates/pages/home.html:210
+#: bubble/templates/pages/home.html:217
 msgid "About Treibhaus Donaufeld"
 msgstr "Über Treibhaus Donaufeld"
 
-#: bubble/templates/pages/home.html:211
+#: bubble/templates/pages/home.html:219
 msgid ""
 "bubble is part of the Treibhaus Donaufeld community platform and promotes "
 "sustainable sharing and neighborly connections."
@@ -1023,19 +1142,19 @@ msgstr ""
 "bubble ist Teil der Treibhaus Donaufeld Gemeinschaftsplattform und fördert "
 "nachhaltiges Teilen und nachbarschaftliche Verbindungen."
 
-#: bubble/templates/pages/home.html:212
+#: bubble/templates/pages/home.html:221
 msgid "Learn more"
 msgstr "Mehr erfahren"
 
-#: bubble/users/admin.py:25
+#: bubble/users/admin.py:24
 msgid "Personal info"
 msgstr ""
 
-#: bubble/users/admin.py:27
+#: bubble/users/admin.py:26
 msgid "Permissions"
 msgstr ""
 
-#: bubble/users/admin.py:38
+#: bubble/users/admin.py:37
 msgid "Important dates"
 msgstr ""
 
@@ -1049,19 +1168,19 @@ msgstr "Alle Benutzer"
 msgid "This username has already been taken."
 msgstr ""
 
-#: bubble/users/forms.py:52
+#: bubble/users/forms.py:53
 msgid "Name"
 msgstr "Name"
 
-#: bubble/users/forms.py:57
+#: bubble/users/forms.py:58
 msgid "E-Mail"
 msgstr ""
 
-#: bubble/users/forms.py:64
+#: bubble/users/forms.py:65
 msgid "Adresse"
 msgstr ""
 
-#: bubble/users/forms.py:70
+#: bubble/users/forms.py:71
 msgid "Telefon"
 msgstr ""
 
@@ -1073,22 +1192,21 @@ msgstr ""
 msgid "Profil erfolgreich aktualisiert"
 msgstr ""
 
-#: config/settings/base.py:34
+#: config/settings/base.py:35
 msgid "Deutsch"
 msgstr ""
 
-#: config/settings/base.py:35
+#: config/settings/base.py:36
 msgid "English"
 msgstr ""
 
-#~ msgid "Active Items"
-#~ msgstr "Aktive Artikel"
+#, fuzzy
+#~| msgid "Filter"
+#~ msgid "Filtern"
+#~ msgstr "Filtern"
 
 #~ msgid "Create Item"
 #~ msgstr "Artikel erstellen"
-
-#~ msgid "Inactive Items"
-#~ msgstr "Inaktive Artikel"
 
 #~ msgid "Item Tags"
 #~ msgstr "Artikel-Tags"
@@ -1099,9 +1217,6 @@ msgstr ""
 #~ msgid "Messages"
 #~ msgstr "Nachrichten"
 
-#~ msgid "Price is required for items for sale."
-#~ msgstr "Preis ist für verkaufte Artikel erforderlich."
-
 #~ msgid "Price should not be set for items that are given away or borrowed."
 #~ msgstr ""
 #~ "Preis sollte nicht für Artikel gesetzt werden, die verschenkt oder "
@@ -1109,9 +1224,6 @@ msgstr ""
 
 #~ msgid "Refresh"
 #~ msgstr "Aktualisieren"
-
-#~ msgid "Reset Filters"
-#~ msgstr "Filter zurücksetzen"
 
 #~ msgid "Select relevant tags for your item"
 #~ msgstr "Wählen Sie relevante Tags für Ihren Artikel"
@@ -1121,12 +1233,3 @@ msgstr ""
 
 #~ msgid "Send"
 #~ msgstr "Senden"
-
-#~ msgid "Sort by"
-#~ msgstr "Sortieren nach"
-
-#~ msgid "Total Items"
-#~ msgstr "Artikel Gesamt"
-
-#~ msgid "Your Items"
-#~ msgstr "Ihre Artikel"
