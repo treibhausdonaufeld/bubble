@@ -33,7 +33,9 @@
       "Bash(just prune:*)",
       "Bash(git commit:*)",
       "Bash(rg:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(~/.local/bin/pre-commit:*)",
+      "Bash(gh pr create:*)"
     ],
     "deny": []
   }
