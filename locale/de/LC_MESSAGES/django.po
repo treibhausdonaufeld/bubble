@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-23 13:44+0200\n"
+"POT-Creation-Date: 2025-06-24 23:07+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -289,20 +289,25 @@ msgstr "Keine E-Mail erhalten?"
 msgid "Resend Email"
 msgstr "E-Mail erneut senden"
 
-#: bubble/core/templates/base.html:42 bubble/templates/pages/home.html:13
+#: bubble/core/templates/base.html:45 bubble/templates/pages/home.html:13
 msgid "Bubble Logo"
 msgstr "Bubble-Logo"
 
-#: bubble/core/templates/base.html:67
-#: bubble/core/templates/includes/nav_main_items.html:12
-#: bubble/core/templates/includes/nav_main_items.html:27
+#: bubble/core/templates/base.html:71 bubble/core/templates/base.html:119
+#: bubble/favorites/views.py:23
+msgid "Add to favorites"
+msgstr "Zu Favoriten hinzufügen"
+
+#: bubble/core/templates/base.html:94
+#: bubble/core/templates/includes/nav_main_items.html:7
+#: bubble/core/templates/includes/nav_main_items.html:22
 #: bubble/templates/pages/home.html:27
 msgid "Items"
 msgstr "Sachen"
 
-#: bubble/core/templates/base.html:76
-#: bubble/core/templates/includes/nav_main_items.html:18
-#: bubble/core/templates/includes/nav_main_items.html:38
+#: bubble/core/templates/base.html:103
+#: bubble/core/templates/includes/nav_main_items.html:13
+#: bubble/core/templates/includes/nav_main_items.html:33
 msgid "Community"
 msgstr "Gemeinschaft"
 
@@ -392,10 +397,6 @@ msgstr "Über uns"
 msgid "All"
 msgstr "Alle"
 
-#: bubble/core/templates/includes/nav_main_items.html:5
-msgid "Homepage"
-msgstr "Startseite"
-
 #: bubble/core/templates/includes/nav_user_items.html:6
 msgid "My Profile"
 msgstr "Mein Profil"
@@ -408,7 +409,7 @@ msgstr "Über uns"
 msgid "About bubble"
 msgstr "Über bubble"
 
-#: bubble/core/templates/pages/about.html:14
+#: bubble/core/templates/pages/about.html:13
 msgid ""
 "bubble is a platform for sharing items and services within the local "
 "community."
@@ -427,6 +428,16 @@ msgstr "Bearbeiten"
 #: bubble/templates/pages/home.html:118
 msgid "Logout"
 msgstr "Abmelden"
+
+#: bubble/core/templates/users/user_detail.html:33
+#: bubble/favorites/templates/favorites/user_favorites.html:6
+#: bubble/favorites/templates/favorites/user_favorites.html:13
+msgid "Favorites"
+msgstr "Favoriten"
+
+#: bubble/core/templates/users/user_detail.html:37
+msgid "View all favorites"
+msgstr "Alle Favoriten anzeigen"
 
 #: bubble/core/templates/users/user_list.html:6
 #: bubble/core/templates/users/user_list.html:12
@@ -450,12 +461,14 @@ msgid "View profile"
 msgstr "Profil anzeigen"
 
 #: bubble/core/templates/users/user_list.html:55
+#: bubble/favorites/templates/favorites/user_favorites.html:47
 #: bubble/templates/items/item_list.html:675
 #: bubble/templates/items/my_items.html:156
 msgid "First"
 msgstr "Erste"
 
 #: bubble/core/templates/users/user_list.html:60
+#: bubble/favorites/templates/favorites/user_favorites.html:50
 #: bubble/templates/items/item_detail.html:117
 #: bubble/templates/items/item_list.html:681
 #: bubble/templates/items/my_items.html:159
@@ -463,17 +476,20 @@ msgid "Previous"
 msgstr "Vorherige"
 
 #: bubble/core/templates/users/user_list.html:66
+#: bubble/favorites/templates/favorites/user_favorites.html:55
 #: bubble/templates/items/item_list.html:687
 msgid "Page"
 msgstr "Seite"
 
 #: bubble/core/templates/users/user_list.html:66
+#: bubble/favorites/templates/favorites/user_favorites.html:55
 #: bubble/templates/items/item_list.html:687
 #: bubble/templates/items/my_items.html:163
 msgid "of"
 msgstr "von"
 
 #: bubble/core/templates/users/user_list.html:72
+#: bubble/favorites/templates/favorites/user_favorites.html:60
 #: bubble/templates/items/item_detail.html:124
 #: bubble/templates/items/item_list.html:694
 #: bubble/templates/items/my_items.html:167
@@ -481,6 +497,7 @@ msgid "Next"
 msgstr "Nächste"
 
 #: bubble/core/templates/users/user_list.html:77
+#: bubble/favorites/templates/favorites/user_favorites.html:63
 #: bubble/templates/items/item_list.html:700
 #: bubble/templates/items/my_items.html:170
 msgid "Last"
@@ -493,6 +510,106 @@ msgstr "Keine Mitglieder gefunden"
 #: bubble/core/templates/users/user_list.html:88
 msgid "There are no members in the community yet."
 msgstr "Es gibt noch keine Mitglieder in der Gemeinschaft."
+
+#: bubble/favorites/templates/favorites/user_favorites.html:15
+msgid "My Favorites"
+msgstr "Meine Favoriten"
+
+#: bubble/favorites/templates/favorites/user_favorites.html:29
+msgid "Added on"
+msgstr "Hinzugefügt am"
+
+#: bubble/favorites/templates/favorites/user_favorites.html:35
+#: bubble/favorites/templates/favorites/user_favorites.html:36
+#: bubble/favorites/templates/favorites/user_favorites.html:104
+#: bubble/templates/items/item_detail.html:40
+#: bubble/templates/items/item_detail.html:172
+#: bubble/templates/items/my_items.html:138
+msgid "Delete"
+msgstr "Löschen"
+
+#: bubble/favorites/templates/favorites/user_favorites.html:43
+msgid "Page navigation"
+msgstr "Seitennavigation"
+
+#: bubble/favorites/templates/favorites/user_favorites.html:72
+msgid "You haven't added any favorites yet."
+msgstr "Sie haben noch keine Favoriten hinzugefügt."
+
+#: bubble/favorites/templates/favorites/user_favorites.html:74
+msgid "No favorites to display."
+msgstr "Keine Favoriten zum Anzeigen."
+
+#: bubble/favorites/templates/favorites/user_favorites.html:93
+msgid "Delete Favorite"
+msgstr "Favorit löschen"
+
+#: bubble/favorites/templates/favorites/user_favorites.html:97
+#: bubble/favorites/views.py:30
+msgid "Close"
+msgstr "Schließen"
+
+#: bubble/favorites/templates/favorites/user_favorites.html:103
+#: bubble/favorites/views.py:29
+#: bubble/templates/items/item_confirm_delete.html:95
+#: bubble/templates/items/item_form.html:147
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: bubble/favorites/templates/favorites/user_favorites.html:136
+msgid "Error deleting favorite. Please try again."
+msgstr "Fehler beim Löschen des Favoriten. Bitte versuchen Sie es erneut."
+
+#: bubble/favorites/templates/favorites/user_favorites.html:140
+msgid "Network error. Please try again."
+msgstr "Netzwerkfehler. Bitte versuchen Sie es erneut."
+
+#: bubble/favorites/templates/favorites/user_favorites.html:170
+msgid "Are you sure you want to delete this favorite?"
+msgstr "Sind Sie sicher, dass Sie diesen Favoriten löschen möchten?"
+
+#: bubble/favorites/views.py:24
+msgid "Remove from favorites"
+msgstr "Aus Favoriten entfernen"
+
+#: bubble/favorites/views.py:25 bubble/favorites/views.py:76
+#: bubble/favorites/views.py:101
+msgid "Added to favorites"
+msgstr "Zu Favoriten hinzugefügt"
+
+#: bubble/favorites/views.py:26
+msgid "Title"
+msgstr "Titel"
+
+#: bubble/favorites/views.py:27
+msgid "URL"
+msgstr "URL"
+
+#: bubble/favorites/views.py:28
+msgid "Save"
+msgstr "Speichern"
+
+#: bubble/favorites/views.py:39 bubble/favorites/views.py:55
+msgid "URL is required"
+msgstr ""
+
+#: bubble/favorites/views.py:66
+#, fuzzy
+#| msgid "Favorites"
+msgid "Favorite updated"
+msgstr "Favoriten"
+
+#: bubble/favorites/views.py:93
+#, fuzzy
+#| msgid "Remove from favorites"
+msgid "Removed from favorites"
+msgstr "Aus Favoriten entfernen"
+
+#: bubble/favorites/views.py:134
+#, fuzzy
+#| msgid "Item deleted successfully!"
+msgid "Favorite deleted successfully"
+msgstr "Artikel erfolgreich gelöscht!"
 
 #: bubble/items/forms.py:19
 msgid "Selected category"
@@ -514,7 +631,8 @@ msgstr "Preis in Euro"
 msgid "Profile image frame"
 msgstr "Profilbild-Rahmen"
 
-#: bubble/items/forms.py:66 bubble/templates/items/item_detail.html:136
+#: bubble/items/forms.py:66 bubble/tags/forms.py:13
+#: bubble/templates/items/item_detail.html:136
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -554,101 +672,97 @@ msgstr "Treibhaus-Zahlung"
 msgid "Accept Treibhaus payment method"
 msgstr "Treibhaus-Zahlungsmethode akzeptieren"
 
-#: bubble/items/forms.py:121
+#: bubble/items/forms.py:114
 msgid "Preis"
 msgstr ""
 
-#: bubble/items/forms.py:124
+#: bubble/items/forms.py:117
 msgid "Preis pro Woche"
 msgstr ""
 
-#: bubble/items/forms.py:126
+#: bubble/items/forms.py:119
 msgid "Leer lassen für kostenloses Verleihen"
 msgstr ""
 
-#: bubble/items/forms.py:142
+#: bubble/items/forms.py:135
 msgid "Price is required for items for sale."
 msgstr "Preis ist für verkaufte Artikel erforderlich."
 
-#: bubble/items/forms.py:148
-msgid "If the item is free, please select the 'Give away' type."
-msgstr ""
-
-#: bubble/items/forms.py:167
+#: bubble/items/forms.py:154
 msgid "Please select a category."
 msgstr ""
 
-#: bubble/items/forms.py:177
+#: bubble/items/forms.py:164
 #, python-format
 msgid "Item name must be at least %(min_length)d characters long."
 msgstr "Artikelname muss mindestens %(min_length)d Zeichen lang sein."
 
-#: bubble/items/forms.py:212
+#: bubble/items/forms.py:199
 msgid "Search items, tags, categories..."
 msgstr "Artikel, Tags, Kategorien suchen..."
 
-#: bubble/items/forms.py:221 bubble/items/forms.py:239
+#: bubble/items/forms.py:208 bubble/items/forms.py:226
 msgid "All categories"
 msgstr "Alle Kategorien"
 
-#: bubble/items/forms.py:230
+#: bubble/items/forms.py:217
 msgid "All subcategories"
 msgstr "Alle Unterkategorien"
 
-#: bubble/items/forms.py:244
+#: bubble/items/forms.py:231
 msgid "All types"
 msgstr "Alle Typen"
 
-#: bubble/items/forms.py:250
+#: bubble/items/forms.py:237
 msgid "All conditions"
 msgstr "Alle Zustände"
 
-#: bubble/items/forms.py:257 bubble/items/views.py:161
+#: bubble/items/forms.py:244 bubble/items/views.py:157
 msgid "Newest first"
 msgstr "Neueste zuerst"
 
-#: bubble/items/forms.py:258 bubble/items/views.py:162
+#: bubble/items/forms.py:245 bubble/items/views.py:158
 msgid "Oldest first"
 msgstr "Älteste zuerst"
 
-#: bubble/items/forms.py:259 bubble/items/views.py:163
+#: bubble/items/forms.py:246 bubble/items/views.py:159
 msgid "Price: Low to High"
 msgstr "Preis: Niedrig zu Hoch"
 
-#: bubble/items/forms.py:260 bubble/items/views.py:164
+#: bubble/items/forms.py:247 bubble/items/views.py:160
 msgid "Price: High to Low"
 msgstr "Preis: Hoch zu Niedrig"
 
-#: bubble/items/forms.py:261 bubble/items/views.py:165
+#: bubble/items/forms.py:248 bubble/items/views.py:161
 msgid "Name A-Z"
 msgstr "Name A-Z"
 
-#: bubble/items/forms.py:269
+#: bubble/items/forms.py:256
 msgid "Grid"
 msgstr "Raster"
 
-#: bubble/items/forms.py:269
+#: bubble/items/forms.py:256
 msgid "List"
 msgstr "Liste"
 
-#: bubble/items/views.py:285
+#: bubble/items/views.py:280
 msgid "Item created successfully!"
 msgstr "Artikel erfolgreich erstellt!"
 
-#: bubble/items/views.py:307
+#: bubble/items/views.py:302
 msgid "Item updated successfully!"
 msgstr "Artikel erfolgreich aktualisiert!"
 
-#: bubble/items/views.py:324
+#: bubble/items/views.py:319
 msgid "Item deleted successfully!"
 msgstr "Artikel erfolgreich gelöscht!"
 
-#: bubble/items/views.py:359
+#: bubble/items/views.py:353
 #, python-format
 msgid "Item '%(name)s' has been activated."
 msgstr "Artikel '%(name)s' wurde aktiviert."
 
-#: bubble/items/views.py:364
+#: bubble/items/views.py:358
 #, python-format
 msgid "Item '%(name)s' has been deactivated."
 msgstr "Artikel '%(name)s' wurde deaktiviert."
@@ -672,6 +786,16 @@ msgstr "Fehlgeschlagen"
 #: bubble/payments/models.py:14
 msgid "Refunded"
 msgstr "Erstattet"
+
+#: bubble/tags/forms.py:12 bubble/users/forms.py:53
+msgid "Name"
+msgstr "Name"
+
+#: bubble/tags/models.py:15
+#, fuzzy
+#| msgid "Items"
+msgid "Item Tags"
+msgstr "Sachen"
 
 #: bubble/templates/items/item_confirm_delete.html:18
 #: bubble/templates/items/item_confirm_delete.html:28
@@ -710,11 +834,6 @@ msgstr "Veröffentlicht:"
 msgid "Tags:"
 msgstr "Schlagwörter:"
 
-#: bubble/templates/items/item_confirm_delete.html:95
-#: bubble/templates/items/item_form.html:147
-msgid "Cancel"
-msgstr "Abbrechen"
-
 #: bubble/templates/items/item_detail.html:21
 #: bubble/templates/items/item_detail.html:153
 #: bubble/templates/items/my_items.html:60
@@ -732,12 +851,6 @@ msgstr "Deaktivieren"
 #: bubble/templates/items/my_items.html:133
 msgid "Activate"
 msgstr "Aktivieren"
-
-#: bubble/templates/items/item_detail.html:40
-#: bubble/templates/items/item_detail.html:172
-#: bubble/templates/items/my_items.html:138
-msgid "Delete"
-msgstr "Löschen"
 
 #: bubble/templates/items/item_detail.html:54
 #: bubble/templates/items/item_detail.html:186
@@ -828,7 +941,7 @@ msgid "Loading..."
 msgstr "Lädt..."
 
 #: bubble/templates/items/item_form.html:211
-#: bubble/templates/items/item_form.html:268
+#: bubble/templates/items/item_form.html:267
 msgid "Choose subcategory"
 msgstr "Unterkategorie auswählen"
 
@@ -836,7 +949,7 @@ msgstr "Unterkategorie auswählen"
 msgid "Error loading categories"
 msgstr "Fehler beim Laden der Kategorien"
 
-#: bubble/templates/items/item_form.html:311
+#: bubble/templates/items/item_form.html:308
 msgid "Current selection"
 msgstr "Aktuelle Auswahl"
 
@@ -981,14 +1094,15 @@ msgstr "Artikel:"
 msgid "Back"
 msgstr "Zurück"
 
-#: bubble/templates/pages/home.html:6
-#: bubble/templates/pages/home.html:15
+#: bubble/templates/pages/home.html:6 bubble/templates/pages/home.html:15
 msgid "Welcome in the bubble"
 msgstr "Willkommen in der bubble"
 
 #: bubble/templates/pages/home.html:16
 msgid "Your platform for sharing items and services in your local community"
-msgstr "Die Plattform für das Teilen von Dingen und Dienstleistungen in der lokalen Gemeinschaft"
+msgstr ""
+"Die Plattform für das Teilen von Dingen und Dienstleistungen in der lokalen "
+"Gemeinschaft"
 
 #: bubble/templates/pages/home.html:31
 msgid "Browse and share physical items in our community"
@@ -1090,10 +1204,6 @@ msgstr "Benutzer"
 msgid "This username has already been taken."
 msgstr "Dieser Benutzername ist bereits vergeben."
 
-#: bubble/users/forms.py:53
-msgid "Name"
-msgstr "Name"
-
 #: bubble/users/forms.py:58
 msgid "E-Mail"
 msgstr "E-Mail"
@@ -1122,76 +1232,5 @@ msgstr "Deutsch"
 msgid "English"
 msgstr "Englisch"
 
-#: bubble/favorites/templates/favorites/user_favorites.html:6
-#: bubble/favorites/templates/favorites/user_favorites.html:13
-msgid "Favorites"
-msgstr "Favoriten"
-
-#: bubble/favorites/templates/favorites/user_favorites.html:15
-msgid "My Favorites"
-msgstr "Meine Favoriten"
-
-#: bubble/favorites/templates/favorites/user_favorites.html:29
-msgid "Added on"
-msgstr "Hinzugefügt am"
-
-#: bubble/favorites/templates/favorites/user_favorites.html:43
-msgid "Page navigation"
-msgstr "Seitennavigation"
-
-#: bubble/favorites/templates/favorites/user_favorites.html:72
-msgid "You haven't added any favorites yet."
-msgstr "Sie haben noch keine Favoriten hinzugefügt."
-
-#: bubble/favorites/templates/favorites/user_favorites.html:74
-msgid "No favorites to display."
-msgstr "Keine Favoriten zum Anzeigen."
-
-#: bubble/favorites/templates/favorites/user_favorites.html:90
-msgid "Delete Favorite"
-msgstr "Favorit löschen"
-
-#: bubble/favorites/templates/favorites/user_favorites.html:91
-msgid "Close"
-msgstr "Schließen"
-
-
-#: bubble/favorites/templates/favorites/user_favorites.html:98
-#: bubble/favorites/templates/favorites/user_favorites.html:142
-msgid "Are you sure you want to delete this favorite?"
-msgstr "Sind Sie sicher, dass Sie diesen Favoriten löschen möchten?"
-
-#: bubble/favorites/templates/favorites/user_favorites.html:108
-msgid "Error deleting favorite. Please try again."
-msgstr "Fehler beim Löschen des Favoriten. Bitte versuchen Sie es erneut."
-
-#: bubble/favorites/templates/favorites/user_favorites.html:112
-msgid "Network error. Please try again."
-msgstr "Netzwerkfehler. Bitte versuchen Sie es erneut."
-
-#: bubble/core/templates/base.html:68
-#: bubble/core/templates/base.html:70
-msgid "Add to favorites"
-msgstr "Zu Favoriten hinzufügen"
-
-#: bubble/core/templates/base.html:106
-msgid "Remove from favorites"
-msgstr "Aus Favoriten entfernen"
-
-#: bubble/static/js/favorites.js:148
-#: bubble/static/js/favorites.js:192
-#: bubble/static/js/favorites.js:206
-msgid "Added to favorites"
-msgstr "Zu Favoriten hinzugefügt"
-
-#: bubble/static/js/favorites.js:152
-msgid "Title"
-msgstr "Titel"
-
-#: bubble/static/js/favorites.js:156
-msgid "URL"
-msgstr "URL"
-
-#: bubble/static/js/favorites.js:162
-msgid "Save"
-msgstr "Speichern"
+#~ msgid "Homepage"
+#~ msgstr "Startseite"

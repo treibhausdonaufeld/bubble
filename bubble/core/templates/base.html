@@ -26,6 +26,8 @@
     ================================================== -->
     {# Placed at the top of the document so pages load faster with defer #}
     {% block javascript %}
+      <!-- Django i18n JavaScript catalog -->
+      <script src="{% url 'javascript-catalog' %}"></script>
       <!-- Vendor dependencies bundled as one file -->
       {% render_bundle 'vendors' 'js' attrs='defer' %}
       <!-- place project specific Javascript in this file -->
