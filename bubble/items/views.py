@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.db import models
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
@@ -30,7 +31,13 @@ class ItemListView(ListView):
     paginate_by = 15
 
     def get_queryset(self):
-        queryset = Item.objects.filter(active=True).select_related("user", "category")
+        queryset = (
+            Item.objects.filter(active=True)
+            .select_related("user", "category")
+            .prefetch_related(
+                models.Prefetch("images", queryset=Image.objects.order_by("ordering")),
+            )
+        )
 
         # Apply GET parameter filters
         search = self.request.GET.get("search")
