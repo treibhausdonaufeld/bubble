@@ -19,6 +19,7 @@ from bubble.categories.models import ItemCategory
 
 from .forms import ItemFilterForm
 from .forms import ItemForm
+from .models import Image
 from .models import Item
 
 
@@ -277,8 +278,15 @@ class ItemCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.user = self.request.user
+        response = super().form_valid(form)
+
+        # Handle multiple image uploads
+        images = self.request.FILES.getlist("images")
+        for image in images:
+            Image.objects.create(item=self.object, fname=image)
+
         messages.success(self.request, _("Item created successfully!"))
-        return super().form_valid(form)
+        return response
 
     def get_success_url(self):
         return reverse("items:detail", kwargs={"pk": self.object.pk})
@@ -299,8 +307,15 @@ class ItemUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return kwargs
 
     def form_valid(self, form):
+        response = super().form_valid(form)
+
+        # Handle multiple image uploads
+        images = self.request.FILES.getlist("images")
+        for image in images:
+            Image.objects.create(item=self.object, fname=image)
+
         messages.success(self.request, _("Item updated successfully!"))
-        return super().form_valid(form)
+        return response
 
     def get_success_url(self):
         return reverse("items:detail", kwargs={"pk": self.object.pk})
@@ -373,3 +388,22 @@ def get_subcategories(request):
         data = [{"id": cat.id, "name": cat.name} for cat in root_categories]
 
     return JsonResponse({"subcategories": data})
+
+
+@login_required
+def delete_image(request, image_id):
+    """AJAX view to delete an image."""
+    if request.method == "POST":
+        image = get_object_or_404(Image, id=image_id)
+
+        # Check if the user owns the item
+        if image.item.user != request.user:
+            return JsonResponse({"success": False, "error": "Permission denied"})
+
+        # Delete the image file and database record
+        image.fname.delete(save=False)  # Delete the physical file
+        image.delete()  # Delete the database record
+
+        return JsonResponse({"success": True})
+
+    return JsonResponse({"success": False, "error": "Invalid request method"})
