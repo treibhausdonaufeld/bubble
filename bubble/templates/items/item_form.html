@@ -26,6 +26,75 @@
           <div class="card-body">
             <form method="post" enctype="multipart/form-data">
               {% csrf_token %}
+              <!-- Multiple Images Upload -->
+              <div class="mb-3">
+                <label for="id_images" class="form-label">{% trans "Images" %}</label>
+                <!-- Drag & Drop Zone -->
+                <div id="drop-zone"
+                     class="border border-2 border-dashed rounded p-4 text-center mb-3">
+                  <div class="drop-zone-content">
+                    <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3 upload-icon"></i>
+                    <p class="mb-2 text-muted">
+                      <strong>{% trans "Drop your images here" %}</strong> {% trans "or" %}
+                    </p>
+                    <input type="file"
+                           id="id_images"
+                           name="images"
+                           class="form-control hidden-file-input"
+                           accept="image/*"
+                           multiple />
+                    <button type="button" id="select-files-btn" class="btn btn-outline-primary">{% trans "Select Files" %}</button>
+                  </div>
+                  <!-- Fallback for users without JavaScript -->
+                  <noscript>
+                    <div class="alert alert-info">
+                      {% trans "JavaScript is disabled. You can still upload images using the file input below." %}
+                    </div>
+                    <input type="file"
+                           name="images"
+                           class="form-control"
+                           accept="image/*"
+                           multiple />
+                  </noscript>
+                </div>
+                <div class="form-text">
+                  {% trans "You can upload multiple images. Supported formats: JPG, PNG, GIF. Max 10MB per image." %}
+                  <div id="upload-stats" class="mt-1 small text-muted upload-stats">
+                    <span id="file-count">0</span> {% trans "files selected" %} •
+                    <span id="total-size">0</span> MB {% trans "total" %}
+                  </div>
+                </div>
+                <!-- Image Preview Area -->
+                <div id="image-preview-container" class="mt-3 preview-container">
+                  <h6 class="mb-3">{% trans "New Images to Upload" %}</h6>
+                  <div class="row" id="image-preview-grid"></div>
+                </div>
+                <!-- Existing Images (for edit mode) -->
+                {% if object and object.images.exists %}
+                  <div class="mt-4">
+                    <h6 class="mb-3">{% trans "Current Images" %}</h6>
+                    <div class="row">
+                      {% for image in object.images.all %}
+                        <div class="col-md-3 col-sm-6 mb-3">
+                          <div class="card shadow-sm">
+                            <div class="position-relative">
+                              <img src="{{ image.fname.url }}"
+                                   class="card-img-top"
+                                   alt="{{ image.fname_alt }}" />
+                              <div class="position-absolute top-0 end-0 p-1">
+                                <button type="button"
+                                        class="btn btn-sm btn-danger delete-image-btn shadow-sm"
+                                        data-image-id="{{ image.id }}"
+                                        title="{% trans 'Delete image' %}">❌</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      {% endfor %}
+                    </div>
+                  </div>
+                {% endif %}
+              </div>
               <!-- Basic Information -->
               <div class="row mb-3">
                 <div class="col-md-12">
@@ -311,13 +380,307 @@
             console.error('Error loading existing category:', error);
           });
       }
+
+      // Image upload preview functionality with drag & drop
+      const imageInput = document.getElementById('id_images');
+      const previewContainer = document.getElementById('image-preview-container');
+      const previewGrid = document.getElementById('image-preview-grid');
+      const dropZone = document.getElementById('drop-zone');
+      const selectFilesBtn = document.getElementById('select-files-btn');
+      // Initialize selectedFiles globally so it's accessible to all functions
+      let selectedFiles = [];
+
+      // File selection button
+      if (selectFilesBtn && imageInput) {
+        selectFilesBtn.addEventListener('click', function() {
+          imageInput.click();
+        });
+      }
+
+      // Drag and drop functionality
+      // Add drag and drop functionality only if dropZone exists
+      if (dropZone) {
+        dropZone.addEventListener('dragover', function(e) {
+          e.preventDefault();
+          dropZone.classList.add('drop-zone-active');
+        });
+
+        dropZone.addEventListener('dragleave', function(e) {
+          e.preventDefault();
+          dropZone.classList.remove('drop-zone-active');
+        });
+
+        dropZone.addEventListener('drop', function(e) {
+          e.preventDefault();
+          dropZone.classList.remove('drop-zone-active');
+
+          const files = e.dataTransfer.files;
+          handleFileSelection(files);
+        });
+      }
+
+      // File input change
+      if (imageInput) {
+        imageInput.addEventListener('change', function(e) {
+          handleFileSelection(e.target.files);
+        });
+      }
+
+      function handleFileSelection(files) {
+        const imageFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
+
+        // Validate file sizes (10MB max per file)
+        const maxSize = 10 * 1024 * 1024; // 10MB
+        const validFiles = imageFiles.filter(file => {
+          if (file.size > maxSize) {
+            alert(`{% trans "File" %} "${file.name}" {% trans "is too large. Maximum size is 10MB." %}`);
+            return false;
+          }
+          return true;
+        });
+
+        // Limit total number of files (e.g., 20 max)
+        const maxFiles = 20;
+        if (selectedFiles.length + validFiles.length > maxFiles) {
+          alert(`{% trans "Maximum" %} ${maxFiles} {% trans "images allowed." %}`);
+          return;
+        }
+
+        // Add new files to existing selection
+        selectedFiles = [...selectedFiles, ...validFiles];
+
+        // Update file input
+        const dt = new DataTransfer();
+        selectedFiles.forEach(file => dt.items.add(file));
+        imageInput.files = dt.files;
+
+        updatePreview();
+      }
+
+      function updatePreview() {
+        if (selectedFiles && selectedFiles.length > 0 && previewContainer && previewGrid) {
+          previewContainer.classList.add('show-container');
+          previewGrid.innerHTML = '';
+
+          // Update upload stats
+          const totalSize = selectedFiles.reduce((sum, file) => sum + file.size, 0);
+          const uploadStatsElement = document.getElementById('upload-stats');
+          const fileCountElement = document.getElementById('file-count');
+          const totalSizeElement = document.getElementById('total-size');
+
+          if (uploadStatsElement) uploadStatsElement.classList.add('show-stats');
+          if (fileCountElement) fileCountElement.textContent = selectedFiles.length;
+          if (totalSizeElement) totalSizeElement.textContent = (totalSize / 1024 / 1024).toFixed(1);
+
+          selectedFiles.forEach((file, index) => {
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+              const col = document.createElement('div');
+              col.className = 'col-md-3 col-sm-6 mb-3';
+              col.setAttribute('data-file-index', index);
+
+              col.innerHTML = `
+                <div class="card shadow-sm image-card">
+                  <div class="position-relative">
+                    <img src="${e.target.result}" class="card-img-top preview-image" alt="Preview ${index + 1}" />
+                    <div class="position-absolute top-0 end-0 p-2">
+                      <button type="button" class="btn btn-sm btn-danger remove-preview-btn" data-file-index="${index}" title="{% trans 'Remove image' %}">
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="card-body p-2">
+                    <small class="text-muted text-truncate d-block">${file.name}</small>
+                    <small class="text-muted">${(file.size / 1024 / 1024).toFixed(1)} MB</small>
+                  </div>
+                </div>
+              `;
+
+              previewGrid.appendChild(col);
+            };
+
+            reader.readAsDataURL(file);
+          });
+        } else if (previewContainer) {
+          previewContainer.classList.remove('show-container');
+          const uploadStatsElement = document.getElementById('upload-stats');
+          if (uploadStatsElement) uploadStatsElement.classList.remove('show-stats');
+        }
+      }
+
+      // Function to remove preview (for new uploads)
+      document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-preview-btn') || e.target.closest('.remove-preview-btn')) {
+          const btn = e.target.classList.contains('remove-preview-btn') ? e.target : e.target.closest('.remove-preview-btn');
+          const fileIndex = parseInt(btn.getAttribute('data-file-index'));
+
+          // Remove from selectedFiles array
+          selectedFiles.splice(fileIndex, 1);
+
+          // Update the file input with remaining files
+          const dt = new DataTransfer();
+          selectedFiles.forEach(file => dt.items.add(file));
+          imageInput.files = dt.files;
+
+          // Update preview
+          updatePreview();
+        }
+      });
+
+      // Function to delete existing images (for edit mode)
+      document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('delete-image-btn') || e.target.closest('.delete-image-btn')) {
+          const btn = e.target.classList.contains('delete-image-btn') ? e.target : e.target.closest('.delete-image-btn');
+          const imageId = btn.getAttribute('data-image-id');
+
+          if (confirm('{% trans "Are you sure you want to delete this image?" %}')) {
+            // Show loading state
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+            fetch(`/items/delete-image/${imageId}/`, {
+                method: 'POST',
+                headers: {
+                  'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                  'Content-Type': 'application/json',
+                },
+              })
+              .then(response => response.json())
+              .then(data => {
+                if (data.success) {
+                  // Remove the image card from the DOM with animation
+                  const imageCard = btn.closest('.col-md-3, .col-sm-6');
+                  imageCard.style.transition = 'opacity 0.3s ease';
+                  imageCard.style.opacity = '0';
+                  setTimeout(() => imageCard.remove(), 300);
+                } else {
+                  alert('{% trans "Error deleting image: " %}' + (data.error || '{% trans "Unknown error" %}'));
+                  // Restore button
+                  btn.disabled = false;
+                  btn.innerHTML = '<i class="fas fa-times"></i>';
+                }
+              })
+              .catch(error => {
+                console.error('Error:', error);
+                alert('{% trans "Error deleting image" %}');
+                // Restore button
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-times"></i>';
+              });
+          }
+        }
+      });
+
+      // Form submission enhancement
+      const form = document.querySelector('form');
+      if (form) {
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) {
+          const originalSubmitText = submitBtn.innerHTML;
+
+          form.addEventListener('submit', function(e) {
+            if (selectedFiles && selectedFiles.length > 0) {
+              submitBtn.disabled = true;
+              submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>{% trans "Uploading..." %}';
+
+              // Re-enable after a timeout as fallback (in case something goes wrong)
+              setTimeout(() => {
+                if (submitBtn) {
+                  submitBtn.disabled = false;
+                  submitBtn.innerHTML = originalSubmitText;
+                }
+              }, 30000); // 30 seconds timeout
+            }
+          });
+        }
+      }
     });
   </script>
 {% endblock content %}
-<!-- Reminder: Add the following CSS to your stylesheet -->
-<!--
-.tag-list-scroll {
-  max-height: 200px;
-  overflow-y: auto;
-}
--->
+<!-- Add these CSS styles to your main stylesheet for enhanced appearance -->
+<style>
+  /* Drag and drop zone styling */
+  #drop-zone {
+    cursor: pointer;
+    user-select: none;
+    border-color: #dee2e6;
+    transition: all 0.3s ease;
+  }
+
+  #drop-zone:hover,
+  .drop-zone-active {
+    border-color: #007bff !important;
+    background-color: #f8f9fa !important;
+  }
+
+  /* File input styling */
+  .hidden-file-input {
+    display: none;
+  }
+
+  /* Upload icon styling */
+  .upload-icon {
+    opacity: 0.5;
+  }
+
+  /* Upload stats styling */
+  .upload-stats {
+    display: none;
+  }
+
+  .upload-stats.show-stats {
+    display: block;
+  }
+
+  /* Preview container styling */
+  .preview-container {
+    display: none;
+  }
+
+  .preview-container.show-container {
+    display: block;
+  }
+
+  /* Preview image styling */
+  .preview-image {
+    height: 150px;
+    object-fit: cover;
+  }
+
+  /* Image preview and management */
+  .image-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .image-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  /* Remove button styling */
+  .btn-danger.btn-sm {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+  }
+
+  /* Tag list scroll styling */
+  .tag-list-scroll {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .col-md-3.col-sm-6 {
+      flex: 0 0 50%;
+      max-width: 50%;
+    }
+  }
+</style>
+<!-- Reminder: For production, move the above CSS to your main stylesheet -->
