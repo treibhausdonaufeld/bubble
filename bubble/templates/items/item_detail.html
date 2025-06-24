@@ -1,10 +1,142 @@
 {% extends "base.html" %}
 
-{% load i18n %}
+{% load i18n static %}
 
 {% block title %}
   {{ item.name }}
 {% endblock title %}
+{% block css %}
+  {{ block.super }}
+  <style>
+    /* Item images */
+    .item-image {
+      height: 400px;
+      object-fit: cover;
+    }
+
+    /* Thumbnail gallery */
+    .thumbnail-gallery {
+      display: flex;
+      overflow-x: auto;
+      gap: 8px;
+      margin-top: 10px;
+      padding-bottom: 10px;
+    }
+
+    .thumbnail {
+      width: 70px;
+      height: 70px;
+      object-fit: cover;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.2s ease;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .thumbnail:hover {
+      transform: scale(1.05);
+    }
+
+    .thumbnail.active {
+      border-color: #0d6efd;
+    }
+
+    /* Lightbox Styles */
+    .lightbox-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9);
+      z-index: 10000;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .lightbox-container {
+      position: relative;
+      max-width: 90%;
+      max-height: 80%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .lightbox-image {
+      max-width: 100%;
+      max-height: 80vh;
+      object-fit: contain;
+    }
+
+    .lightbox-controls {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      transform: translateY(-50%);
+      z-index: 10001;
+    }
+
+    .lightbox-nav {
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      padding: 15px;
+      cursor: pointer;
+      font-size: 24px;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 15px;
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+      font-size: 18px;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10002;
+    }
+
+    .lightbox-counter {
+      position: absolute;
+      bottom: 10px;
+      color: white;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 5px 15px;
+      border-radius: 15px;
+      font-size: 14px;
+    }
+
+    /* Cursor styles for navigation */
+    .cursor-zoom-in {
+      cursor: zoom-in;
+    }
+
+    .cursor-pointer {
+      cursor: pointer;
+    }
+  </style>
+{% endblock css %}
 {% block content %}
   <div class="container">
     <!-- Mobile Layout: Title, Images, Description, Contact -->
@@ -98,13 +230,15 @@
       <div class="col-md-8">
         <!-- Item Images -->
         {% if item_images %}
-          <div id="itemCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
+          <div id="itemCarousel" class="carousel slide mb-3" data-bs-ride="carousel">
             <div class="carousel-inner">
               {% for image in item_images %}
                 <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                  <img src="{{ image.fname }}"
-                       class="d-block w-100 item-image"
-                       alt="{{ item.name }}" />
+                  <img src="{{ image.fname.url }}"
+                       class="d-block w-100 item-image cursor-zoom-in"
+                       alt="{{ item.name }}"
+                       data-image-id="{{ forloop.counter0 }}"
+                       onclick="openLightbox({{ forloop.counter0 }})" />
                 </div>
               {% endfor %}
             </div>
@@ -125,6 +259,19 @@
               </button>
             {% endif %}
           </div>
+          <!-- Thumbnail Gallery -->
+          {% if item_images|length > 1 %}
+            <div class="thumbnail-gallery mb-4">
+              {% for image in item_images %}
+                <img src="{{ image.fname.url }}"
+                     class="thumbnail {% if forloop.first %}active{% endif %}"
+                     alt="{{ item.name }} thumbnail"
+                     data-slide-index="{{ forloop.counter0 }}"
+                     aria-current="{% if forloop.first %}true{% else %}false{% endif %}"
+                     aria-label="Slide {{ forloop.counter }}" />
+              {% endfor %}
+            </div>
+          {% endif %}
         {% else %}
           <div class="bg-light d-flex align-items-center justify-content-center mb-4 item-image">
             <i class="fas fa-image fa-5x text-muted"></i>
@@ -324,6 +471,147 @@
     </div>
   </div>
   <script>
+    // Define all variables and functions in global scope for accessibility from HTML
+    var currentImageIndex = 0;
+    var carouselInstance = null;
+    var images = [
+      {% for image in item_images %}
+      {
+        src: "{{ image.fname.url }}",
+        alt: "{{ item.name }} - Image {{ forloop.counter }}"
+      } {% if not forloop.last %}, {% endif %} {% endfor %}
+    ];
+
+    // Define the openLightbox function globally so it can be accessed from HTML onclick attributes
+    window.openLightbox = function(index) {
+      try {
+        currentImageIndex = index;
+
+        var lightboxOverlay = document.querySelector('.lightbox-overlay');
+        // If the lightbox doesn't exist yet, create it
+        if (!lightboxOverlay) {
+          createLightbox();
+          lightboxOverlay = document.querySelector('.lightbox-overlay');
+        }
+
+        if (images.length === 0) return;
+        updateLightboxImage();
+
+        lightboxOverlay.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      } catch (error) {
+        console.error("Error in openLightbox:", error);
+      }
+    };
+
+    function createLightbox() {
+      var lightbox = document.createElement('div');
+      lightbox.className = 'lightbox-overlay';
+      lightbox.innerHTML = `
+        <button class="lightbox-close">
+          <i class="fas fa-times"></i>
+        </button>
+        <div class="lightbox-container">
+          <div class="lightbox-controls">
+            <button class="lightbox-nav prev">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="lightbox-nav next">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+          <img class="lightbox-image" src="" alt="{{ item.name }}" />
+        </div>
+        <div class="lightbox-counter"></div>
+      `;
+      document.body.appendChild(lightbox);
+
+      // Add event listeners
+      var lightboxClose = document.querySelector('.lightbox-close');
+      var lightboxPrev = document.querySelector('.lightbox-nav.prev');
+      var lightboxNext = document.querySelector('.lightbox-nav.next');
+      var lightboxOverlay = document.querySelector('.lightbox-overlay');
+
+      lightboxClose.addEventListener('click', closeLightbox);
+      lightboxPrev.addEventListener('click', prevImage);
+      lightboxNext.addEventListener('click', nextImage);
+
+      // Close on overlay click (but not when clicking the image)
+      lightboxOverlay.addEventListener('click', function(event) {
+        if (event.target === lightboxOverlay) {
+          closeLightbox();
+        }
+      });
+
+      // Keyboard navigation
+      document.addEventListener('keydown', function(event) {
+        if (lightboxOverlay.style.display !== 'flex') return;
+
+        if (event.key === 'Escape') {
+          closeLightbox();
+        } else if (event.key === 'ArrowLeft') {
+          prevImage();
+        } else if (event.key === 'ArrowRight') {
+          nextImage();
+        }
+      });
+    }
+
+    // Close lightbox
+    function closeLightbox() {
+      var lightboxOverlay = document.querySelector('.lightbox-overlay');
+      if (lightboxOverlay) {
+        lightboxOverlay.style.display = 'none';
+        document.body.style.overflow = '';
+      }
+    }
+
+    // Navigate to previous image
+    function prevImage() {
+      currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
+      updateLightboxImage();
+      updateThumbnailsAndCarousel();
+    }
+
+    // Navigate to next image
+    function nextImage() {
+      currentImageIndex = (currentImageIndex + 1) % images.length;
+      updateLightboxImage();
+      updateThumbnailsAndCarousel();
+    }
+
+    // Update lightbox image and counter
+    function updateLightboxImage() {
+      if (images.length === 0) return;
+
+      var lightboxImage = document.querySelector('.lightbox-image');
+      var lightboxCounter = document.querySelector('.lightbox-counter');
+
+      if (lightboxImage && lightboxCounter) {
+        lightboxImage.src = images[currentImageIndex].src;
+        lightboxImage.alt = images[currentImageIndex].alt;
+        lightboxCounter.textContent = (currentImageIndex + 1) + ' / ' + images.length;
+      }
+    }
+
+    // Update thumbnails and carousel to match current image
+    function updateThumbnailsAndCarousel() {
+      // Update thumbnails
+      var thumbnails = document.querySelectorAll('.thumbnail');
+      thumbnails.forEach(function(thumb, i) {
+        if (i === currentImageIndex) {
+          thumb.classList.add('active');
+        } else {
+          thumb.classList.remove('active');
+        }
+      });
+
+      // Update carousel if it exists
+      if (carouselInstance) {
+        carouselInstance.to(currentImageIndex);
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
       const conversationMessages = document.getElementById('conversationMessages');
       const messageForm = document.getElementById('messageForm');
@@ -390,13 +678,155 @@
 
       // Auto-refresh every 30 seconds
       setInterval(loadConversation, 30000);
+
+      // Initialize the lightbox if it doesn't already exist
+      if (!document.querySelector('.lightbox-overlay')) {
+        createLightbox();
+      }
+
+      // Initialize carousel and thumbnails
+      const itemCarousel = document.getElementById('itemCarousel');
+      if (itemCarousel) {
+        // Initialize Bootstrap carousel
+        carouselInstance = new bootstrap.Carousel(itemCarousel, {
+          interval: false // Prevent auto sliding
+        });
+
+        // Add click events to thumbnails
+        const thumbnails = document.querySelectorAll('.thumbnail');
+        thumbnails.forEach((thumbnail, index) => {
+          thumbnail.addEventListener('click', function() {
+            currentImageIndex = index;
+            carouselInstance.to(index);
+            updateThumbnailsAndCarousel();
+          });
+        });
+
+        // Update thumbnail selection when carousel slides
+        itemCarousel.addEventListener('slid.bs.carousel', function(event) {
+          currentImageIndex = event.to;
+          updateThumbnailsAndCarousel();
+        });
+      }
+
+      // Initialize thumbnails and carousel
+      const itemCarousel = document.getElementById('itemCarousel');
+      if (itemCarousel) {
+        const thumbnails = document.querySelectorAll('.thumbnail');
+        carouselInstance = new bootstrap.Carousel(itemCarousel, {
+          interval: false // Prevent auto sliding
+        });
+
+        // Add click event to each thumbnail
+        thumbnails.forEach((thumbnail, index) => {
+          thumbnail.addEventListener('click', function() {
+            carouselInstance.to(index);
+            thumbnails.forEach((t) => t.classList.remove('active'));
+            thumbnail.classList.add('active');
+          });
+        });
+
+        // Update thumbnail selection when carousel slides
+        itemCarousel.addEventListener('slid.bs.carousel', function(event) {
+          const activeIndex = event.to;
+          thumbnails.forEach((t, i) => {
+            if (i === activeIndex) {
+              t.classList.add('active');
+            } else {
+              t.classList.remove('active');
+            }
+          });
+        });
+      }
+
+      // Image Gallery and Lightbox functionality
+      try {
+        const lightbox = document.createElement('div');
+        lightbox.className = 'lightbox-overlay';
+        lightbox.innerHTML = `
+          <button class="lightbox-close">
+            <i class="fas fa-times"></i>
+          </button>
+          <div class="lightbox-container">
+            <div class="lightbox-controls">
+              <button class="lightbox-nav prev">
+                <i class="fas fa-chevron-left"></i>
+              </button>
+              <button class="lightbox-nav next">
+                <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+            <img class="lightbox-image" src="" alt="{{ item.name }}" />
+          </div>
+          <div class="lightbox-counter"></div>
+        `;
+        document.body.appendChild(lightbox);
+      } catch (error) {
+        console.error("Error creating lightbox:", error);
+      }
+
+      try {
+        // Lightbox elements
+        const lightboxOverlay = document.querySelector('.lightbox-overlay');
+        const lightboxImage = document.querySelector('.lightbox-image');
+        const lightboxClose = document.querySelector('.lightbox-close');
+        const lightboxPrev = document.querySelector('.lightbox-nav.prev');
+        const lightboxNext = document.querySelector('.lightbox-nav.next');
+        const lightboxCounter = document.querySelector('.lightbox-counter');
+
+        // Image data
+        const images = [{
+          %
+          for image in item_images %
+        } {
+          src: "{{ image.fname.url }}",
+          alt: "{{ item.name }} - Image {{ forloop.counter }}"
+        } {
+          %
+          if not forloop.last %
+        }, {
+          %
+          endif %
+        } {
+          %
+          endfor %
+        }];
+      } catch (error) {
+        console.error("Error initializing images array:", error);
+      }
+
+      // Event listeners for lightbox
+      lightboxClose.addEventListener('click', closeLightbox);
+      lightboxPrev.addEventListener('click', prevImage);
+      lightboxNext.addEventListener('click', nextImage);
+
+      // Close on overlay click (but not when clicking the image)
+      lightboxOverlay.addEventListener('click', function(event) {
+        if (event.target === lightboxOverlay) {
+          closeLightbox();
+        }
+      });
+
+      // Keyboard navigation
+      document.addEventListener('keydown', function(event) {
+        if (lightboxOverlay.style.display !== 'flex') return;
+
+        if (event.key === 'Escape') {
+          closeLightbox();
+        } else if (event.key === 'ArrowLeft') {
+          prevImage();
+        } else if (event.key === 'ArrowRight') {
+          nextImage();
+        }
+      });
+
+      // Connect thumbnails to carousel and lightbox
+      document.querySelectorAll('.thumbnail').forEach((thumbnail, index) => {
+        thumbnail.addEventListener('click', function() {
+          currentImageIndex = index;
+          updateLightboxImage();
+        });
+      });
     });
   </script>
 {% endblock content %}
-<!-- Reminder: Add the following CSS to your stylesheet -->
-<!--
-.item-image {
-  height: 400px;
-  object-fit: cover;
-}
--->
