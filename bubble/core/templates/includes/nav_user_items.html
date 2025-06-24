@@ -2,7 +2,7 @@
 
 {% if request.user.is_authenticated %}
   <li class="nav-item">
-    <a class="nav-link{% if request.resolver_match.app_name == 'users' %} active{% endif %}"
+    <a class="nav-link{% if request.resolver_match.url_name == 'detail' and request.resolver_match.app_name == 'users' %} active{% endif %}"
        href="{% url 'users:detail' request.user.username %}">{% trans "My Profile" %}</a>
   </li>
 {% else %}

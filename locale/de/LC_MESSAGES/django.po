@@ -1121,3 +1121,77 @@ msgstr "Deutsch"
 #: config/settings/base.py:36
 msgid "English"
 msgstr "Englisch"
+
+#: bubble/favorites/templates/favorites/user_favorites.html:6
+#: bubble/favorites/templates/favorites/user_favorites.html:13
+msgid "Favorites"
+msgstr "Favoriten"
+
+#: bubble/favorites/templates/favorites/user_favorites.html:15
+msgid "My Favorites"
+msgstr "Meine Favoriten"
+
+#: bubble/favorites/templates/favorites/user_favorites.html:29
+msgid "Added on"
+msgstr "Hinzugefügt am"
+
+#: bubble/favorites/templates/favorites/user_favorites.html:43
+msgid "Page navigation"
+msgstr "Seitennavigation"
+
+#: bubble/favorites/templates/favorites/user_favorites.html:72
+msgid "You haven't added any favorites yet."
+msgstr "Sie haben noch keine Favoriten hinzugefügt."
+
+#: bubble/favorites/templates/favorites/user_favorites.html:74
+msgid "No favorites to display."
+msgstr "Keine Favoriten zum Anzeigen."
+
+#: bubble/favorites/templates/favorites/user_favorites.html:90
+msgid "Delete Favorite"
+msgstr "Favorit löschen"
+
+#: bubble/favorites/templates/favorites/user_favorites.html:91
+msgid "Close"
+msgstr "Schließen"
+
+
+#: bubble/favorites/templates/favorites/user_favorites.html:98
+#: bubble/favorites/templates/favorites/user_favorites.html:142
+msgid "Are you sure you want to delete this favorite?"
+msgstr "Sind Sie sicher, dass Sie diesen Favoriten löschen möchten?"
+
+#: bubble/favorites/templates/favorites/user_favorites.html:108
+msgid "Error deleting favorite. Please try again."
+msgstr "Fehler beim Löschen des Favoriten. Bitte versuchen Sie es erneut."
+
+#: bubble/favorites/templates/favorites/user_favorites.html:112
+msgid "Network error. Please try again."
+msgstr "Netzwerkfehler. Bitte versuchen Sie es erneut."
+
+#: bubble/core/templates/base.html:68
+#: bubble/core/templates/base.html:70
+msgid "Add to favorites"
+msgstr "Zu Favoriten hinzufügen"
+
+#: bubble/core/templates/base.html:106
+msgid "Remove from favorites"
+msgstr "Aus Favoriten entfernen"
+
+#: bubble/static/js/favorites.js:148
+#: bubble/static/js/favorites.js:192
+#: bubble/static/js/favorites.js:206
+msgid "Added to favorites"
+msgstr "Zu Favoriten hinzugefügt"
+
+#: bubble/static/js/favorites.js:152
+msgid "Title"
+msgstr "Titel"
+
+#: bubble/static/js/favorites.js:156
+msgid "URL"
+msgstr "URL"
+
+#: bubble/static/js/favorites.js:162
+msgid "Save"
+msgstr "Speichern"
