@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n static %}
 
 <style>
   .item-image-fixed-height {
@@ -8,15 +8,22 @@
 </style>
 <div class="card item-card h-100">
   <div class="item-image">
-    {% if item.images.first %}
-      <img src="{{ item.images.first.fname }}"
-           class="card-img-top item-image-fixed-height"
-           alt="{{ item.name }}" />
-    {% else %}
-      <div class="card-img-top bg-light d-flex align-items-center justify-content-center item-image-fixed-height">
-        <i class="fas fa-image fa-3x text-muted"></i>
-      </div>
-    {% endif %}
+    {% with first_image=item.get_first_image %}
+      {% if first_image %}
+        <img src="{{ first_image.fname.url }}"
+             class="card-img-top item-image-fixed-height"
+             alt="{{ item.name }}" />
+      {% elif item.images.all|length > 0 %}
+        {# Fallback for prefetched images #}
+        <img src="{{ item.images.all.0.fname.url }}"
+             class="card-img-top item-image-fixed-height"
+             alt="{{ item.name }}" />
+      {% else %}
+        <div class="card-img-top bg-light d-flex align-items-center justify-content-center item-image-fixed-height">
+          <i class="fas fa-image fa-3x text-muted"></i>
+        </div>
+      {% endif %}
+    {% endwith %}
     <!-- Item Type Badge -->
     <div class="item-type-badge">
       {% if item.item_type == 0 %}

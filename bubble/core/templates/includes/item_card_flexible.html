@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n static %}
 
 {#
   Flexible item card component
@@ -19,7 +19,7 @@
 <div class="card item-card h-100">
   <div class="item-image">
     {% if item.images.first %}
-      <img src="{{ item.images.first.fname }}"
+      <img src="{{ item.images.first.fname.url }}"
            class="card-img-top"
            alt="{{ item.name }}"
            style="height: {{ image_height|default:200 }}px;
