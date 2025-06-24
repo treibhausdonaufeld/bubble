@@ -30,16 +30,58 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 <button>{% trans "Save" %}</button>
 <a href="#" title="{% trans 'Add to favorites' %}">☆</a>
 
+{# Python Views #}
+from django.utils.translation import gettext_lazy as _
+message = _("Item created successfully!")
+
 {# JavaScript #}
-// Add to django.po file:
-msgid "Save"
-msgstr "Speichern"
+const message = gettext('Save');
+const title = gettext('Add to favorites');
 ```
+
+### JavaScript i18n Workflow (Automatic)
+
+**IMPORTANT**: Django's JavaScript i18n is fully configured. The JavaScript catalog is available at `/jsi18n/` and included in `base.html`.
+
+#### Adding New Translatable Strings in JavaScript:
+
+1. **Write JavaScript with gettext():**
+   ```javascript
+   // In any .js file, use gettext() directly:
+   const confirmMsg = gettext('Are you sure you want to delete this?');
+   button.textContent = gettext('Delete Item');
+   modal.innerHTML = `<h5>${gettext('Confirmation')}</h5>`;
+   ```
+
+2. **Update Translation Files:**
+   ```bash
+   # Django automatically scans JavaScript files for gettext() calls
+   just manage makemessages -l de
+   ```
+
+3. **Add German Translations:**
+   - Open `/locale/de/LC_MESSAGES/django.po`
+   - Find the new English strings (msgid)
+   - Add German translations (msgstr)
+   ```po
+   msgid "Are you sure you want to delete this?"
+   msgstr "Sind Sie sicher, dass Sie das löschen möchten?"
+   ```
+
+4. **Compile Translations:**
+   ```bash
+   just manage compilemessages
+   ```
+
+5. **Done!** JavaScript `gettext()` will now return German translations automatically.
+
+**No manual setup required** - the system works automatically for all JavaScript files in the project.
 
 ### Translation File Location
 - **File**: `/locale/de/LC_MESSAGES/django.po`
 - **Compile**: `just manage compilemessages` after changes
 - **Format**: Each entry needs msgid (English) and msgstr (German)
+- **JavaScript Catalog**: Automatically available at `/jsi18n/` endpoint
 
 ## Formatting Guidelines
 

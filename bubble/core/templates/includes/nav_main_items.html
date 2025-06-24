@@ -1,9 +1,5 @@
 {% load i18n %}
 
-<li class="nav-item">
-  <a class="nav-link{% if request.resolver_match.url_name == 'home' %} active{% endif %}"
-     href="{% url 'core:home' %}">🏠 {% trans "Homepage" %}</a>
-</li>
 {% if is_mobile %}
   <li class="nav-item dropdown">
     <a class="nav-link dropdown-toggle mobile-submenu-trigger{% if request.resolver_match.app_name == 'items' %} active{% endif %}"

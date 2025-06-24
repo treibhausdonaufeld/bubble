@@ -75,7 +75,7 @@ class ToggleFavoriteView(LoginRequiredMixin, View):
             return JsonResponse(
                 {
                     "status": "removed",
-                    "message": _("Removed from favorites"),
+                    "message": _("Remove from favorites"),
                     "is_favorited": False,
                 },
             )

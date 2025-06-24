@@ -68,11 +68,11 @@ class FavoritesManager {
         if (isFavorited) {
             btn.textContent = '★';
             btn.classList.add('favorited');
-            btn.title = this.translate('Remove from favorites');
+            btn.title = gettext('Remove from favorites');
         } else {
             btn.textContent = '☆';
             btn.classList.remove('favorited');
-            btn.title = this.translate('Add to favorites');
+            btn.title = gettext('Add to favorites');
         }
     }
 
@@ -135,24 +135,24 @@ class FavoritesManager {
     showAddModal(url, title) {
         const modalHtml = `
             <div class="modal-header">
-                <h5 class="modal-title">${this.translate('Add to Favorites')}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="${this.translate('Close')}"></button>
+                <h5 class="modal-title">${gettext('Add to favorites')}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="${gettext('Close')}"></button>
             </div>
             <div class="modal-body">
                 <form id="add-favorite-form">
                     <div class="mb-3">
-                        <label for="favorite-title" class="form-label">${this.translate('Title')}</label>
+                        <label for="favorite-title" class="form-label">${gettext('Title')}</label>
                         <input type="text" class="form-control" id="favorite-title" name="title" value="${this.escapeHtml(title)}" required>
                     </div>
                     <div class="mb-3">
-                        <label for="favorite-url" class="form-label">${this.translate('URL')}</label>
+                        <label for="favorite-url" class="form-label">${gettext('URL')}</label>
                         <input type="text" class="form-control" id="favorite-url" name="url" value="${this.escapeHtml(url)}" readonly>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${this.translate('Cancel')}</button>
-                <button type="button" class="btn btn-primary" id="save-favorite">${this.translate('Save')}</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${gettext('Cancel')}</button>
+                <button type="button" class="btn btn-primary" id="save-favorite">${gettext('Save')}</button>
             </div>
         `;
 
@@ -204,7 +204,7 @@ class FavoritesManager {
             const data = await response.json();
             const btns = this.getFavoriteButtons();
             btns.forEach(btn => this.updateStarAppearance(btn, true));
-            this.showToast(this.translate('Added to favorites'));
+            this.showToast(gettext('Added to favorites'));
         } catch (error) {
             console.error('Error updating favorite:', error);
             this.showToast('Error saving favorite', 'error');
@@ -248,9 +248,8 @@ class FavoritesManager {
     }
 
     translate(text) {
-        // This would ideally use Django's translation system
-        // For now, return the text as-is (English)
-        return text;
+        // Using Django's JavaScript i18n system
+        return gettext(text);
     }
 
     escapeHtml(text) {
