@@ -237,17 +237,14 @@ $red: #b94a48;
   transition: color 0.2s, transform 0.2s;
   text-decoration: none;
   padding: 0.25rem 0.5rem;
-  
   &:hover {
     color: #ffc107;
     transform: scale(1.1);
     text-decoration: none;
   }
-  
   &.favorited {
     color: #ffc107;
   }
-  
   &:disabled {
     cursor: wait;
     opacity: 0.6;

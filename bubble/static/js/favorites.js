@@ -117,13 +117,12 @@ class FavoritesManager {
         document.getElementById('save-favorite').addEventListener('click', () => {
             saved = true;
         });
-        
+
         modal._element.addEventListener('hidden.bs.modal', async () => {
             if (!saved) {
                 // User closed without saving, remove the favorite
                 await this.toggleFavorite(url, '');
-                const btn = document.getElementById('favorite-star');
-                btn.textContent = '☆';
+                const btn = document.getElementById('favorite-star');    btn.textContent = '☆';
             }
         });
     }
@@ -148,7 +147,6 @@ class FavoritesManager {
 
             const data = await response.json();
             const btn = document.getElementById('favorite-star');
-            
             if (data.is_favorited) {
                 btn.textContent = '★';
                 this.showToast(this.translate('Added to favorites'));
@@ -176,7 +174,6 @@ class FavoritesManager {
 
             const data = await response.json();
             const btn = document.getElementById('favorite-star');
-            
             if (data.is_favorited) {
                 btn.textContent = '★';
             } else {
