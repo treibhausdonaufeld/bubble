@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "Favorites" %} - {{ profile_user.username }}{% endblock %}
+{% block title %}{% trans "Favorites" %} - {{ profile_user.username }}{% endblock title %}
 
 {% block content %}
 <div class="container">
@@ -90,7 +90,7 @@
         </div>
     </div>
 </div>
-{% endblock %}
+{% endblock content %}
 
 {% block inline_javascript %}
 {{ block.super }}
@@ -139,4 +139,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-{% endblock %}
+{% endblock inline_javascript %}

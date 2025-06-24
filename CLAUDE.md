@@ -70,6 +70,9 @@ mypy bubble
 ruff check bubble
 ruff format bubble
 
+# Run pre-commit hooks (used in CI/CD)
+pre-commit run --all-files
+
 # Test coverage
 coverage run -m pytest
 coverage html
@@ -218,6 +221,18 @@ Extended user information linked to Django User.
 - **Owner verification** for item modifications
 - **Intern field visibility** based on user.profile.intern
 - **Form validation** for price requirements by item type
+
+## Code Quality & CI/CD
+
+### Pre-commit Hooks
+This project uses pre-commit hooks that run automatically on GitHub Actions. Key checks include:
+- **Trailing whitespace removal**
+- **End-of-file fixing**
+- **Ruff linting** (max line length: 88 characters)
+- **Ruff formatting**
+- **djLint template formatting** (requires explicit block names like `{% endblock content %}`)
+
+**IMPORTANT**: Always run `pre-commit run --all-files` before committing to catch formatting issues early.
 
 ## Future Services App Structure
 

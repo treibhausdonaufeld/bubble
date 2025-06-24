@@ -94,5 +94,7 @@ class DeleteFavoriteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
             self.object = self.get_object()
             self.object.delete()
-            return JsonResponse({"status": "success", "message": str(self.success_message)})
+            return JsonResponse(
+                {"status": "success", "message": str(self.success_message)}
+            )
         return super().delete(request, *args, **kwargs)
