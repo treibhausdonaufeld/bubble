@@ -40,7 +40,7 @@ class ToggleFavoriteView(LoginRequiredMixin, View):
                     "status": "removed",
                     "message": _("Removed from favorites"),
                     "is_favorited": False,
-                }
+                },
             )
 
         return JsonResponse(
@@ -48,7 +48,7 @@ class ToggleFavoriteView(LoginRequiredMixin, View):
                 "status": "added",
                 "message": _("Added to favorites"),
                 "is_favorited": True,
-            }
+            },
         )
 
 
@@ -95,6 +95,6 @@ class DeleteFavoriteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
             self.object = self.get_object()
             self.object.delete()
             return JsonResponse(
-                {"status": "success", "message": str(self.success_message)}
+                {"status": "success", "message": str(self.success_message)},
             )
         return super().delete(request, *args, **kwargs)

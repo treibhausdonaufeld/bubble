@@ -23,5 +23,3 @@ class Favorite(models.Model):
     @classmethod
     def get_user_favorites(cls, user):
         return cls.objects.filter(user=user)
-
-
