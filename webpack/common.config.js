@@ -45,6 +45,14 @@ module.exports = {
           'sass-loader',
         ],
       },
+      // Font Awesome font files
+      {
+        test: /\.(woff|woff2|eot|ttf|otf|svg)$/i,
+        type: 'asset/resource',
+        generator: {
+          filename: 'fonts/[name][ext]',
+        },
+      },
     ],
   },
   resolve: {

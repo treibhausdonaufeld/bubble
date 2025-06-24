@@ -83,9 +83,11 @@
                                    alt="{{ image.fname_alt }}" />
                               <div class="position-absolute top-0 end-0 p-1">
                                 <button type="button"
-                                        class="btn btn-sm btn-danger delete-image-btn shadow-sm"
-                                        data-image-id="{{ image.id }}"
-                                        title="{% trans 'Delete image' %}">❌</button>
+                                        class="btn btn-sm btn-danger remove-preview-btn"
+                                        data-file-index="${index}"
+                                        title="{% trans 'Remove image' %}">
+                                  <i class="fas fa-times"></i>
+                                </button>
                               </div>
                             </div>
                           </div>
