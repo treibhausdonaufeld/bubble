@@ -87,7 +87,8 @@ class DeleteFavoriteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
 
     def get_success_url(self):
         return reverse_lazy(
-            "favorites:user_list", kwargs={"username": self.request.user.username}
+            "favorites:user_list",
+            kwargs={"username": self.request.user.username},
         )
 
     def delete(self, request, *args, **kwargs):
