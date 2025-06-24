@@ -12,6 +12,35 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Language**: The website is in German, so all texts, labels, and user-facing content must be in German only.
 
+## Translation Requirements
+
+**CRITICAL**: ALWAYS use `{% trans %}` tags for ALL user-facing text in templates and views. Never hardcode text strings.
+
+### Template Translation Rules
+- **Every** user-facing string must be wrapped in `{% trans "English text" %}`
+- Load i18n at top of templates: `{% load i18n %}`
+- For JavaScript strings that need translation, add them to `locale/de/LC_MESSAGES/django.po`
+- After adding new translations, run: `just manage compilemessages`
+
+### Common Translation Patterns
+```django
+{# Templates #}
+{% load i18n %}
+<h1>{% trans "My Title" %}</h1>
+<button>{% trans "Save" %}</button>
+<a href="#" title="{% trans 'Add to favorites' %}">☆</a>
+
+{# JavaScript #}
+// Add to django.po file:
+msgid "Save"
+msgstr "Speichern"
+```
+
+### Translation File Location
+- **File**: `/locale/de/LC_MESSAGES/django.po`
+- **Compile**: `just manage compilemessages` after changes
+- **Format**: Each entry needs msgid (English) and msgstr (German)
+
 ## Formatting Guidelines
 
 ### User Mentions

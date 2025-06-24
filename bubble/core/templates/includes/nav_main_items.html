@@ -12,7 +12,7 @@
        data-title="📦 {% trans 'Items' %}">📦 {% trans "Items" %}</a>
   </li>
   <li class="nav-item dropdown">
-    <a class="nav-link dropdown-toggle mobile-submenu-trigger{% if request.resolver_match.app_name == 'users' %} active{% endif %}"
+    <a class="nav-link dropdown-toggle mobile-submenu-trigger{% if request.resolver_match.url_name == 'list' and request.resolver_match.app_name == 'users' %} active{% endif %}"
        href="#"
        data-submenu="community-submenu"
        data-title="👥 {% trans 'Community' %}">👥 {% trans "Community" %}</a>
@@ -30,7 +30,7 @@
     </ul>
   </li>
   <li class="nav-item dropdown">
-    <a class="nav-link dropdown-toggle{% if request.resolver_match.app_name == 'users' %} active{% endif %}"
+    <a class="nav-link dropdown-toggle{% if request.resolver_match.url_name == 'list' and request.resolver_match.app_name == 'users' %} active{% endif %}"
        href="#"
        id="usersDropdown"
        role="button"
