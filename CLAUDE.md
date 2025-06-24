@@ -234,6 +234,22 @@ This project uses pre-commit hooks that run automatically on GitHub Actions. Key
 
 **IMPORTANT**: Always run `pre-commit run --all-files` before committing to catch formatting issues early.
 
+### Linter Actions
+- **Save findings for passing linter actions next time**
+  - Understand common linter issues specific to this project
+  - Review specific ruff and pre-commit hook error patterns
+  - Create a checklist of frequent formatting and linting corrections
+
+## Git Workflow
+
+**CRITICAL**: Never push directly to main branch. Always create pull requests for code changes:
+
+1. Create feature branch: `git checkout -b feature/description`
+2. Make changes and commit
+3. Push branch: `git push -u origin feature/description`
+4. Create PR: `gh pr create --title "Title" --body "Description"`
+5. Wait for CI/CD checks to pass before merging
+
 ## Future Services App Structure
 
 ### Planned Architecture
