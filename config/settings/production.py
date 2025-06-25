@@ -202,10 +202,10 @@ SPECTACULAR_SETTINGS["SERVERS"] = [
 # ------------------------------------------------------------------------------
 
 # PWA stuff
-PWA_APP_NAME = "My App"
-PWA_APP_DESCRIPTION = "My app description"
-PWA_APP_THEME_COLOR = "#0A0302"
-PWA_APP_BACKGROUND_COLOR = "#ffffff"
+PWA_APP_NAME = "Thd Bubble"
+PWA_APP_DESCRIPTION = "Treibhaus Bubble sharing platform"
+PWA_APP_THEME_COLOR = "#00B4D8"
+PWA_APP_BACKGROUND_COLOR = "#7C3AED"
 PWA_APP_DISPLAY = "standalone"
 PWA_APP_SCOPE = "/"
 PWA_APP_ORIENTATION = "any"
@@ -225,7 +225,7 @@ PWA_APP_ICONS_APPLE = [
 ]
 PWA_APP_SPLASH_SCREEN = [
     {
-        "src": "/static/images/icons/splash-640x1136.png",
+        "src": "/static/images/bubble_screenshot_640.jpg",
         "media": "(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)",
     },
 ]
@@ -240,7 +240,7 @@ PWA_APP_SHORTCUTS = [
 ]
 PWA_APP_SCREENSHOTS = [
     {
-        "src": "/static/images/icons/splash-750x1334.png",
+        "src": "/static/images/bubble_screenshot_640.jpg",
         "sizes": "750x1334",
         "type": "image/png",
     },
