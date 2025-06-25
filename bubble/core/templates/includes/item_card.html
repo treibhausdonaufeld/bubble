@@ -10,12 +10,12 @@
   <div class="item-image">
     {% with first_image=item.get_first_image %}
       {% if first_image %}
-        <img src="{{ first_image.fname.url }}"
+        <img src="{{ first_image.original.url }}"
              class="card-img-top item-image-fixed-height"
              alt="{{ item.name }}" />
       {% elif item.images.all|length > 0 %}
         {# Fallback for prefetched images #}
-        <img src="{{ item.images.all.0.fname.url }}"
+        <img src="{{ item.images.all.0.original.url }}"
              class="card-img-top item-image-fixed-height"
              alt="{{ item.name }}" />
       {% else %}

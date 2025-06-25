@@ -290,7 +290,7 @@ class ItemCreateView(LoginRequiredMixin, CreateView):
         # Handle multiple image uploads
         images = self.request.FILES.getlist("images")
         for image in images:
-            Image.objects.create(item=self.object, fname=image)
+            Image.objects.create(item=self.object, original=image)
 
         messages.success(self.request, _("Item created successfully!"))
         return response
@@ -319,7 +319,7 @@ class ItemUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         # Handle multiple image uploads
         images = self.request.FILES.getlist("images")
         for image in images:
-            Image.objects.create(item=self.object, fname=image)
+            Image.objects.create(item=self.object, original=image)
 
         messages.success(self.request, _("Item updated successfully!"))
         return response
@@ -408,7 +408,7 @@ def delete_image(request, image_id):
             return JsonResponse({"success": False, "error": "Permission denied"})
 
         # Delete the image file and database record
-        image.fname.delete(save=False)  # Delete the physical file
+        image.original.delete(save=False)  # Delete the physical file
         image.delete()  # Delete the database record
 
         return JsonResponse({"success": True})

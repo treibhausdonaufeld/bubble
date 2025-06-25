@@ -19,7 +19,7 @@
 <div class="card item-card h-100">
   <div class="item-image">
     {% if item.images.first %}
-      <img src="{{ item.images.first.fname.url }}"
+      <img src="{{ item.images.first.original.url }}"
            class="card-img-top"
            alt="{{ item.name }}"
            style="height: {{ image_height|default:200 }}px;
