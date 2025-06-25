@@ -15,6 +15,18 @@ from bubble.users.models import User
 from .models import Favorite
 
 
+class CheckFavoriteStatusView(LoginRequiredMixin, View):
+    """AJAX view to check if current page is favorited"""
+
+    def get(self, request):
+        url = request.GET.get("url")
+        if not url:
+            return JsonResponse({"error": _("URL is required")}, status=400)
+
+        is_favorited = Favorite.objects.filter(user=request.user, url=url).exists()
+        return JsonResponse({"is_favorited": is_favorited})
+
+
 class ToggleFavoriteView(LoginRequiredMixin, View):
     """AJAX view to toggle favorite status"""
 
@@ -22,9 +34,34 @@ class ToggleFavoriteView(LoginRequiredMixin, View):
         data = json.loads(request.body)
         url = data.get("url")
         title = data.get("title", "")
+        update_title = data.get("update_title", False)
 
         if not url:
             return JsonResponse({"error": _("URL is required")}, status=400)
+
+        # If this is a title update request
+        if update_title:
+            try:
+                favorite = Favorite.objects.get(user=request.user, url=url)
+                favorite.title = title
+                favorite.save()
+                return JsonResponse(
+                    {
+                        "status": "updated",
+                        "message": _("Favorite updated"),
+                        "is_favorited": True,
+                    },
+                )
+            except Favorite.DoesNotExist:
+                # Create new if doesn't exist
+                Favorite.objects.create(user=request.user, url=url, title=title)
+                return JsonResponse(
+                    {
+                        "status": "added",
+                        "message": _("Added to favorites"),
+                        "is_favorited": True,
+                    },
+                )
 
         favorite, created = Favorite.objects.get_or_create(
             user=request.user,
@@ -38,7 +75,7 @@ class ToggleFavoriteView(LoginRequiredMixin, View):
             return JsonResponse(
                 {
                     "status": "removed",
-                    "message": _("Removed from favorites"),
+                    "message": _("Remove from favorites"),
                     "is_favorited": False,
                 },
             )

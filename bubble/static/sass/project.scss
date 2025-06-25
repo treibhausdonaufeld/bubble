@@ -225,6 +225,11 @@ $red: #b94a48;
   .language-switcher .nav-link:hover {
     transform: scale(1.1);
   }
+
+  // Center the language switcher nav item in mobile menu
+  .nav-item .d-flex.align-items-center.nav-link {
+    justify-content: center;
+  }
 }
 
 //////////////////

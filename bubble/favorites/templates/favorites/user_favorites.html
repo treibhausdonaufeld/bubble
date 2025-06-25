@@ -79,49 +79,103 @@
     </div>
   </div>
 {% endblock content %}
+{% block modal %}
+  {{ block.super }}
+  <!-- Delete Favorite Modal -->
+  <div class="modal fade"
+       id="deleteFavoriteModal"
+       tabindex="-1"
+       aria-labelledby="deleteFavoriteModalLabel"
+       aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteFavoriteModalLabel">{% trans "Delete Favorite" %}</h5>
+          <button type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="{% trans 'Close' %}"></button>
+        </div>
+        <div class="modal-body" id="deleteModalBody">
+          <!-- Content will be set dynamically -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+          <button type="button" class="btn btn-danger" id="confirmDeleteBtn">{% trans "Delete" %}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock modal %}
 {% block inline_javascript %}
   {{ block.super }}
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+      // Delete favorite function
+      async function deleteFavorite(url, listItem) {
+        try {
+          const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+              'X-CSRFToken': '{{ csrf_token }}',
+              'X-Requested-With': 'XMLHttpRequest'
+            }
+          });
+
+          if (response.ok) {
+            listItem.style.transition = 'opacity 0.3s';
+            listItem.style.opacity = '0';
+            setTimeout(() => {
+              listItem.remove();
+              // Check if list is empty
+              if (document.querySelectorAll('.list-group-item').length === 0) {
+                location.reload();
+              }
+            }, 300);
+          } else {
+            showErrorToast('{% trans "Error deleting favorite. Please try again." %}');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          showErrorToast('{% trans "Network error. Please try again." %}');
+        }
+      }
+
+      // Show error toast
+      function showErrorToast(message) {
+        const toast = document.createElement('div');
+        toast.className = 'alert alert-danger position-fixed top-0 end-0 m-3';
+        toast.style.zIndex = '9999';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+      }
+
       // Handle delete buttons
       document.querySelectorAll('.delete-favorite').forEach(button => {
         button.addEventListener('click', async function(e) {
           e.preventDefault();
 
-          if (!confirm('{% trans "Are you sure you want to delete this favorite?" %}')) {
-            return;
-          }
-
           const url = this.dataset.url;
           const favoriteId = this.dataset.favoriteId;
           const listItem = this.closest('.list-group-item');
 
-          try {
-            const response = await fetch(url, {
-              method: 'POST',
-              headers: {
-                'X-CSRFToken': '{{ csrf_token }}',
-                'X-Requested-With': 'XMLHttpRequest'
-              }
-            });
+          // Show delete confirmation modal
+          const deleteModal = new bootstrap.Modal(document.getElementById('deleteFavoriteModal'));
+          const modalBody = document.getElementById('deleteModalBody');
+          const deleteBtn = document.getElementById('confirmDeleteBtn');
 
-            if (response.ok) {
-              listItem.style.transition = 'opacity 0.3s';
-              listItem.style.opacity = '0';
-              setTimeout(() => {
-                listItem.remove();
-                // Check if list is empty
-                if (document.querySelectorAll('.list-group-item').length === 0) {
-                  location.reload();
-                }
-              }, 300);
-            } else {
-              alert('{% trans "Error deleting favorite. Please try again." %}');
-            }
-          } catch (error) {
-            console.error('Error:', error);
-            alert('{% trans "Network error. Please try again." %}');
-          }
+          // Set the favorite title in modal
+          const favoriteTitle = listItem.querySelector('h5 a').textContent;
+          modalBody.innerHTML = `{% trans "Are you sure you want to delete this favorite?" %}<br /><strong>${favoriteTitle}</strong>`;
+
+          // Store reference to list item for deletion
+          deleteBtn.onclick = async function() {
+            await deleteFavorite(url, listItem);
+            deleteModal.hide();
+          };
+
+          deleteModal.show();
         });
       });
     });
