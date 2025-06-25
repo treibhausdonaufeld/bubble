@@ -143,7 +143,10 @@ LOGGING = {
             "formatter": "verbose",
         },
     },
-    "root": {"level": "INFO", "handlers": ["console"]},
+    "root": {
+        "level": "INFO",
+        "handlers": ["console"],
+    },
     "loggers": {
         "django.db.backends": {
             "level": "ERROR",
@@ -151,7 +154,11 @@ LOGGING = {
             "propagate": False,
         },
         # Errors logged by the SDK itself
-        "sentry_sdk": {"level": "ERROR", "handlers": ["console"], "propagate": False},
+        "sentry_sdk": {
+            "level": "ERROR",
+            "handlers": ["console"],
+            "propagate": False,
+        },
         "django.security.DisallowedHost": {
             "level": "ERROR",
             "handlers": ["console"],
@@ -186,7 +193,55 @@ sentry_sdk.init(
 # -------------------------------------------------------------------------------
 # Tools that generate code samples can use SERVERS to point to the correct domain
 SPECTACULAR_SETTINGS["SERVERS"] = [
-    {"url": "https://share.treibhausdonaufeld.at", "description": "Production server"},
+    {
+        "url": "https://share.treibhausdonaufeld.at",
+        "description": "Production server",
+    },
 ]
 # Your stuff...
 # ------------------------------------------------------------------------------
+
+# PWA stuff
+PWA_APP_NAME = "My App"
+PWA_APP_DESCRIPTION = "My app description"
+PWA_APP_THEME_COLOR = "#0A0302"
+PWA_APP_BACKGROUND_COLOR = "#ffffff"
+PWA_APP_DISPLAY = "standalone"
+PWA_APP_SCOPE = "/"
+PWA_APP_ORIENTATION = "any"
+PWA_APP_START_URL = "/"
+PWA_APP_STATUS_BAR_COLOR = "default"
+PWA_APP_ICONS = [
+    {
+        "src": "/static/images/bubble_app_icon.png",
+        "sizes": "160x160",
+    },
+]
+PWA_APP_ICONS_APPLE = [
+    {
+        "src": "/static/images/bubble_app_icon.png",
+        "sizes": "160x160",
+    },
+]
+PWA_APP_SPLASH_SCREEN = [
+    {
+        "src": "/static/images/icons/splash-640x1136.png",
+        "media": "(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)",
+    },
+]
+PWA_APP_DIR = "ltr"
+PWA_APP_LANG = "de-AT"
+PWA_APP_SHORTCUTS = [
+    {
+        "name": "Shortcut",
+        "url": "/target",
+        "description": "Shortcut to a page in my application",
+    },
+]
+PWA_APP_SCREENSHOTS = [
+    {
+        "src": "/static/images/icons/splash-750x1334.png",
+        "sizes": "750x1334",
+        "type": "image/png",
+    },
+]
