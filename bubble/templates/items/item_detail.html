@@ -487,21 +487,6 @@
     window.handleThumbnailClick = function(index) {
       currentImageIndex = index;
 
-      // Make sure carousel is initialized before using it
-      // This ensures the carousel is available even if called before DOMContentLoaded
-      if (!carouselInstance) {
-        const itemCarousel = document.getElementById('itemCarousel');
-        if (itemCarousel && typeof bootstrap !== 'undefined') {
-          try {
-            carouselInstance = new bootstrap.Carousel(itemCarousel, {
-              interval: false
-            });
-          } catch (error) {
-            console.error("Error initializing carousel:", error);
-          }
-        }
-      }
-
       // Update carousel if it exists
       if (carouselInstance) {
         carouselInstance.to(index);
@@ -721,12 +706,13 @@
 
       // Initialize carousel and thumbnails
       const itemCarousel = document.getElementById('itemCarousel');
+
       if (itemCarousel && typeof bootstrap !== 'undefined') {
         try {
           // Initialize Bootstrap carousel only if not already initialized
           if (!carouselInstance) {
             carouselInstance = new bootstrap.Carousel(itemCarousel, {
-              interval: false // Prevent auto sliding
+              interval: 10000 // Prevent auto sliding
             });
             console.log("Carousel initialized successfully");
           }
