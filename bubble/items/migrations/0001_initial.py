@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
-                ("fname", models.ImageField(upload_to="items/images/")),
+                ("original", models.ImageField(upload_to="items/images/")),
                 ("fname_alt", models.CharField(blank=True, max_length=255, null=True)),
                 ("ordering", models.IntegerField(default=0)),
             ],
