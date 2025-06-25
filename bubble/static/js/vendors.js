@@ -1,2 +1,5 @@
 import '@popperjs/core';
-import 'bootstrap';
+import * as bootstrap from 'bootstrap';
+
+// Make Bootstrap globally available
+window.bootstrap = bootstrap;

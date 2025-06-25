@@ -35,7 +35,8 @@
       "Bash(rg:*)",
       "Bash(grep:*)",
       "Bash(~/.local/bin/pre-commit:*)",
-      "Bash(gh pr create:*)"
+      "Bash(gh pr create:*)",
+      "Bash(npm run build:*)"
     ],
     "deny": []
   }
