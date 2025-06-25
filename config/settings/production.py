@@ -24,7 +24,7 @@ ALLOWED_HOSTS = env.list(
     default=["bubble.treibhausdonaufeld.at"],
 )
 
-ALLOWED_CIDR_NETS = ["172.16.0.0/12"]
+ALLOWED_CIDR_NETS = ["172.16.0.0/12", "192.168.0.0/16"]
 
 # DATABASES
 # ------------------------------------------------------------------------------
