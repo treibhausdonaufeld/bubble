@@ -31,7 +31,7 @@
           <div class="card-body">
             <div class="text-center mb-4">
               {% if object.images.first %}
-                <img src="{{ object.images.first.fname }}"
+                <img src="{{ object.images.first.original }}"
                      alt="{{ object.name }}"
                      class="img-thumbnail item-image-delete" />
               {% else %}

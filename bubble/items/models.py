@@ -62,9 +62,12 @@ class Item(models.Model):
         return self.images.order_by("ordering").first()
 
 
+def upload_to_item_images(instance, filename):
+    return f"items/original/{instance.item.pk}/{filename}"
+
+
 class Image(models.Model):
-    fname = models.ImageField(upload_to="items/images/")
-    fname_alt = models.CharField(max_length=255, blank=True)
+    original = models.ImageField(upload_to=upload_to_item_images, max_length=255)
     item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="images")
     ordering = models.IntegerField(default=0)
 
@@ -72,4 +75,9 @@ class Image(models.Model):
         ordering = ["item", "ordering"]
 
     def __str__(self):
-        return f"Image for {self.item.name} ({self.fname})"
+        return f"Image for {self.item.name} ({self.filename})"
+
+    @property
+    def filename(self):
+        """Return the filename of the original image."""
+        return self.original.name.split("/")[-1]

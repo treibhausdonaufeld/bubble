@@ -301,9 +301,9 @@ class ItemFilterForm(forms.Form):
 class ImageUploadForm(forms.ModelForm):
     class Meta:
         model = Image
-        fields = ["fname"]
+        fields = ["original"]
         widgets = {
-            "fname": forms.FileInput(
+            "original": forms.FileInput(
                 attrs={"class": "form-control", "accept": "image/*"},
             ),
         }
