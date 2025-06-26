@@ -17,6 +17,7 @@ dependencies = [
     "django-crispy-forms",
     "django-environ",
     "django-model-utils",
+    "django-pwa>=2.0.1",
     "django-redis",
     "django-webpack-loader",
     "djangorestframework",
