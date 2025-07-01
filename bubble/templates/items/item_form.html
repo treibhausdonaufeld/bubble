@@ -9,6 +9,12 @@
     {% trans "Add New Article" %}
   {% endif %}
 {% endblock title %}
+{% block css %}
+  {{ block.super }}
+  <!-- Select2 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet" />
+{% endblock css %}
+
 {% block content %}
   <div class="container">
     <div class="row justify-content-center">
@@ -117,24 +123,8 @@
               <!-- Category and Type -->
               <div class="row mb-3">
                 <div class="col-md-6">
-                  <label class="form-label">{% trans "Category" %} *</label>
-                  <!-- Dynamic category selection area -->
-                  <div id="category-selection-area">
-                    <div class="category-level mb-2">
-                      <select class="form-select category-dropdown" data-level="0">
-                        <option value="">{% trans "Choose main category" %}</option>
-                      </select>
-                    </div>
-                  </div>
-                  <!-- Hidden field to store selected category -->
+                  <label for="{{ form.selected_category.id_for_label }}" class="form-label">{{ form.selected_category.label }} *</label>
                   {{ form.selected_category }}
-                  <!-- Category breadcrumb -->
-                  <div id="category-breadcrumb" class="mt-2 d-none">
-                    <small class="text-muted">
-                      <span class="fw-bold">{% trans "Selected:" %}</span>
-                      <span id="breadcrumb-text"></span>
-                    </small>
-                  </div>
                   {% if form.selected_category.errors %}<div class="text-danger">{{ form.selected_category.errors }}</div>{% endif %}
                 </div>
                 <div class="col-md-6">
@@ -214,7 +204,7 @@
               {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
               <!-- Form Actions -->
               <div class="d-flex justify-content-between">
-                <a href="{% if object %}{% url 'items:detail' object.pk %}{% else %}{% url 'items:list' %}{% endif %}"
+                <a href="{% if object %}{% url 'items:detail' object.pk %}{% else %}{% url 'items:list' content_type=content_type_slug %}{% endif %}"
                    class="btn btn-outline-secondary">{% trans "Cancel" %}</a>
                 <button type="submit" class="btn btn-primary">
                   {% if object %}
@@ -230,8 +220,17 @@
       </div>
     </div>
   </div>
+  <!-- Select2 JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+      // Initialize Select2 for category dropdown
+      $('.select2-category').select2({
+        placeholder: "{% trans 'Search and select a category...' %}",
+        allowClear: false,
+        width: '100%',
+        theme: 'default'
+      });
       // Show/hide price field based on item type
       const itemTypeField = document.getElementById('{{ form.item_type.id_for_label }}');
       const priceField = document.getElementById('{{ form.price.id_for_label }}');
@@ -251,137 +250,7 @@
       itemTypeField.addEventListener('change', togglePriceField);
       togglePriceField(); // Initial call
 
-      // Dynamic unlimited-depth category selection
-      const categorySelectionArea = document.getElementById('category-selection-area');
-      const selectedCategoryField = document.getElementById('{{ form.selected_category.id_for_label }}');
-      const categoryBreadcrumb = document.getElementById('category-breadcrumb');
-      const breadcrumbText = document.getElementById('breadcrumb-text');
-
-      let categoryHierarchy = []; // Track selected categories at each level
-
-      function loadCategoriesForLevel(level, parentId = null) {
-        const dropdown = categorySelectionArea.querySelector(`[data-level="${level}"]`);
-        if (!dropdown) return;
-
-        // Show loading state
-        dropdown.innerHTML = '<option value="">{% trans "Loading..." %}</option>';
-
-        // Determine API URL
-        const url = parentId ?
-          `{% url 'items:get_subcategories' %}?parent_id=${parentId}` :
-          `{% url 'items:get_subcategories' %}`;
-
-        fetch(url)
-          .then(response => response.json())
-          .then(data => {
-            const categories = data.subcategories || [];
-
-            // Clear dropdown
-            dropdown.innerHTML = level === 0 ?
-              '<option value="">{% trans "Choose main category" %}</option>' :
-              '<option value="">{% trans "Choose subcategory" %}</option>';
-
-            // Add categories
-            categories.forEach(category => {
-              const option = document.createElement('option');
-              option.value = category.id;
-              option.textContent = category.name;
-              dropdown.appendChild(option);
-            });
-
-            // If no categories, hide this level
-            if (categories.length === 0 && level > 0) {
-              dropdown.closest('.category-level').style.display = 'none';
-            }
-          })
-          .catch(error => {
-            console.error('Error loading categories:', error);
-            dropdown.innerHTML = '<option value="">{% trans "Error loading categories" %}</option>';
-          });
-      }
-
-      function onCategorySelected(level, categoryId, categoryName) {
-        // Update hierarchy tracking
-        categoryHierarchy = categoryHierarchy.slice(0, level + 1);
-        categoryHierarchy[level] = {
-          id: categoryId,
-          name: categoryName
-        };
-
-        // Remove deeper level dropdowns
-        const deeperLevels = categorySelectionArea.querySelectorAll(`[data-level]`);
-        deeperLevels.forEach(dropdown => {
-          if (parseInt(dropdown.dataset.level) > level) {
-            dropdown.closest('.category-level').remove();
-          }
-        });
-
-        if (categoryId) {
-          // Set selected category
-          selectedCategoryField.value = categoryId;
-
-          // Update breadcrumb
-          const breadcrumbPath = categoryHierarchy.map(cat => cat.name).join(' > ');
-          breadcrumbText.textContent = breadcrumbPath;
-
-          // Check if this category has subcategories
-          fetch(`{% url 'items:get_subcategories' %}?parent_id=${categoryId}`)
-            .then(response => response.json())
-            .then(data => {
-              if (data.subcategories && data.subcategories.length > 0) {
-                // Add next level dropdown
-                const nextLevel = level + 1;
-                const nextLevelDiv = document.createElement('div');
-                nextLevelDiv.className = 'category-level mb-2';
-                nextLevelDiv.innerHTML = `
-              <select class="form-select category-dropdown" data-level="${nextLevel}">
-                <option value="">{% trans "Choose subcategory" %}</option>
-              </select>
-            `;
-                categorySelectionArea.appendChild(nextLevelDiv);
-
-                // Load categories for next level
-                loadCategoriesForLevel(nextLevel, categoryId);
-
-                // Add event listener for next level
-                const nextDropdown = nextLevelDiv.querySelector('.category-dropdown');
-                nextDropdown.addEventListener('change', function() {
-                  const selectedOption = this.options[this.selectedIndex];
-                  onCategorySelected(nextLevel, this.value, selectedOption.text);
-                });
-              }
-            });
-        } else {
-          // Clear selection
-          selectedCategoryField.value = '';
-        }
-      }
-
-      // Initialize first level
-      loadCategoriesForLevel(0);
-
-      // Add event listener for first level
-      const firstDropdown = categorySelectionArea.querySelector('[data-level="0"]');
-      firstDropdown.addEventListener('change', function() {
-        const selectedOption = this.options[this.selectedIndex];
-        onCategorySelected(0, this.value, selectedOption.text);
-      });
-
-      // Load existing category for edit form
-      const existingCategoryId = selectedCategoryField.value;
-      if (existingCategoryId) {
-        // Fetch category hierarchy and rebuild dropdowns
-        fetch(`{% url 'items:get_subcategories' %}?get_hierarchy=${existingCategoryId}`)
-          .then(response => response.json())
-          .then(data => {
-            // This would need the backend to support get_hierarchy parameter
-            // For now, we'll just show the selected category
-            breadcrumbText.textContent = '{% trans "Current selection" %}';
-          })
-          .catch(error => {
-            console.error('Error loading existing category:', error);
-          });
-      }
+      // Category selection is now handled by a simple dropdown
 
       // Image upload preview functionality with drag & drop
       const imageInput = document.getElementById('id_images');

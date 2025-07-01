@@ -302,8 +302,8 @@ msgstr "Zu Favoriten hinzufügen"
 #: bubble/core/templates/includes/nav_main_items.html:8
 #: bubble/core/templates/includes/nav_main_items.html:23
 #: bubble/templates/pages/home.html:27
-msgid "Items"
-msgstr "Sachen"
+msgid "Things"
+msgstr "Zeug"
 
 #: bubble/core/templates/base.html:104
 #: bubble/core/templates/includes/nav_main_items.html:14
@@ -860,8 +860,8 @@ msgid "Send Request"
 msgstr "Anfrage senden"
 
 #: bubble/templates/items/item_detail.html:469
-msgid "Back to Items"
-msgstr "Zurück zu den Sachen"
+msgid "Back to Things"
+msgstr "Zurück zu den Zeug"
 
 #: bubble/templates/items/item_form.html:7
 #: bubble/templates/items/item_form.html:20
@@ -1049,12 +1049,14 @@ msgid "Reset filter"
 msgstr "Filter zurücksetzen"
 
 #: bubble/templates/items/item_list.html:629
-msgid "Sachen"
-msgstr "Sachen"
+
 
 #: bubble/templates/items/item_list.html:651
-msgid "Sache erstellen"
-msgstr "Sache erstellen"
+msgid "Things erstellen"
+msgstr "Zeug erstellen"
+
+msgid "Create Item"
+msgstr "Artikel erstellen"
 
 #: bubble/templates/items/item_list.html:710
 msgid "No items found"
@@ -1070,32 +1072,32 @@ msgstr "Den ersten Artikel hinzufügen"
 
 #: bubble/templates/items/my_items.html:6
 #: bubble/templates/items/my_items.html:11 bubble/templates/pages/home.html:77
-msgid "My Items"
-msgstr "Meine Artikel"
+msgid "My Things"
+msgstr "Meine Zeug"
 
 #: bubble/templates/items/my_items.html:13 bubble/templates/pages/home.html:74
 msgid "Add New Item"
 msgstr "Neuen Artikel hinzufügen"
 
 #: bubble/templates/items/my_items.html:22
-msgid "Active Items"
-msgstr "Aktive Artikel"
+msgid "Active Things"
+msgstr "Aktive Zeug"
 
 #: bubble/templates/items/my_items.html:30
-msgid "Inactive Items"
-msgstr "Inaktive Artikel"
+msgid "Inactive Things"
+msgstr "Inaktive Zeug"
 
 #: bubble/templates/items/my_items.html:38
-msgid "Total Items"
-msgstr "Artikel Gesamt"
+msgid "Total Things"
+msgstr "Zeug Gesamt"
 
 #: bubble/templates/items/my_items.html:46
-msgid "Your Items"
-msgstr "Ihre Artikel"
+msgid "Your Things"
+msgstr "Ihre Zeug"
 
 #: bubble/templates/items/my_items.html:53
-msgid "Item"
-msgstr "Artikel"
+msgid "Thing"
+msgstr "Zeug"
 
 #: bubble/templates/items/my_items.html:58
 #: bubble/templates/items/my_items.html:113
@@ -1154,8 +1156,8 @@ msgid "Browse and share physical items in our community"
 msgstr "Stöbern und teilen Sie physische Dinge in unserer Gemeinschaft"
 
 #: bubble/templates/pages/home.html:70
-msgid "Browse All Items"
-msgstr "Alle Sachen durchsuchen"
+msgid "Browse All Things"
+msgstr "Alle Zeug durchsuchen"
 
 #: bubble/templates/pages/home.html:90
 msgid "Your Account"
