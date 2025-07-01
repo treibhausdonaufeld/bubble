@@ -15,6 +15,30 @@ class ItemCategory(models.Model):
         null=True,
     )
 
+    # Fields for content type definition
+    url_slug = models.SlugField(
+        max_length=50,
+        blank=True,
+        help_text=_("URL path for this content type (e.g., 'sachen', 'events')"),
+    )
+
+    # Schema definition for custom fields
+    required_fields = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text=_("JSON schema for required fields specific to this category"),
+    )
+    optional_fields = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text=_("JSON schema for optional fields specific to this category"),
+    )
+    filter_fields = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text=_("JSON schema for fields that should appear in list filters"),
+    )
+
     class Meta:
         verbose_name_plural = _("Item Categories")
 
@@ -26,3 +50,32 @@ class ItemCategory(models.Model):
         if self.parent_category:
             return f"{self.parent_category.get_hierarchy()} > {self.name}"
         return self.name
+
+    @property
+    def is_root_category(self):
+        """Check if this is a root category (no parent)"""
+        return self.parent_category is None
+
+    def get_root_category(self):
+        """Get the root category of this category's hierarchy"""
+        if self.is_root_category:
+            return self
+        current = self
+        while current.parent_category is not None:
+            current = current.parent_category
+        return current
+
+    def get_descendants(self, include_self=False):
+        """Get all descendant categories"""
+        descendants = []
+        if include_self:
+            descendants.append(self)
+
+        # Recursively get all subcategories
+        def _get_subcategories(category):
+            for subcategory in category.subcategories.all():
+                descendants.append(subcategory)
+                _get_subcategories(subcategory)
+
+        _get_subcategories(self)
+        return descendants

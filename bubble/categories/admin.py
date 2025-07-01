@@ -6,9 +6,21 @@ from bubble.categories.models import ItemCategory
 
 @admin.register(ItemCategory)
 class ItemCategoryAdmin(admin.ModelAdmin):
-    list_display = ("name", "get_hierarchy_display", "parent_category", "description")
+    list_display = (
+        "name",
+        "get_hierarchy_display",
+        "parent_category",
+        "url_slug",
+        "description",
+    )
     list_filter = ("parent_category",)
-    search_fields = ("name", "description", "prompt_name", "prompt_description")
+    search_fields = (
+        "name",
+        "description",
+        "prompt_name",
+        "prompt_description",
+        "url_slug",
+    )
     ordering = ("parent_category__name", "name")
     autocomplete_fields = ("parent_category",)
 
@@ -17,6 +29,21 @@ class ItemCategoryAdmin(admin.ModelAdmin):
             None,
             {
                 "fields": ("name", "parent_category", "description"),
+            },
+        ),
+        (
+            "Content Type Configuration",
+            {
+                "fields": ("url_slug",),
+                "description": "Configure URL slug for root categories",
+            },
+        ),
+        (
+            "Dynamic Field Schema",
+            {
+                "fields": ("required_fields", "optional_fields", "filter_fields"),
+                "classes": ("collapse",),
+                "description": "JSON schema for category-specific fields",
             },
         ),
         (
