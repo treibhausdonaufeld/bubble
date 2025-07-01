@@ -7,7 +7,7 @@
 {% else %}
     {% trans "Create" %} {{ root_category.name|lower }}
 {% endif %}
-{% endblock %}
+{% endblock page_title %}
 
 {% block breadcrumb %}
 <nav aria-label="{% trans 'Breadcrumb' %}">
@@ -23,7 +23,7 @@
         </li>
     </ol>
 </nav>
-{% endblock %}
+{% endblock breadcrumb %}
 
 {% block form_title %}
 {% if object %}
@@ -31,7 +31,7 @@
 {% else %}
     {% trans "Create new" %} {{ root_category.name|lower }}
 {% endif %}
-{% endblock %}
+{% endblock form_title %}
 
 {% block custom_fields %}
 <!-- Dynamic fields section -->
@@ -56,4 +56,4 @@
     </div>
     {% endif %}
 {% endfor %}
-{% endblock %}
+{% endblock custom_fields %}

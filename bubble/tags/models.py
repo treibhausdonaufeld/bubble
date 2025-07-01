@@ -7,7 +7,7 @@ User = get_user_model()
 
 class ItemTag(models.Model):
     name = models.CharField(max_length=100)
-    description = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True)
 
     class Meta:
         verbose_name_plural = _("Item Tags")

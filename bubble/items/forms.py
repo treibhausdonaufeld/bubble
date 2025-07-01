@@ -183,17 +183,6 @@ class ItemForm(forms.ModelForm):
 
         return price
 
-    def clean(self):
-        cleaned_data = super().clean()
-        selected_category = cleaned_data.get("selected_category")
-
-        if not selected_category:
-            raise ValidationError(_("Please select a category."))
-
-        # Set the final category
-        cleaned_data["category"] = selected_category
-        return cleaned_data
-
     def clean_name(self):
         name = self.cleaned_data.get("name")
         if len(name) < self.MIN_ITEM_NAME_LENGTH:
@@ -223,7 +212,7 @@ class ItemForm(forms.ModelForm):
         for field_name, field_config in root_category.optional_fields.items():
             self._create_dynamic_field(field_name, field_config, required=False)
 
-    def _create_dynamic_field(self, field_name, field_config, required=False):
+    def _create_dynamic_field(self, field_name, field_config, *, required=False):
         """Create a form field based on configuration"""
         field_type = field_config.get("type", "text")
         label = field_config.get("label", field_name)
