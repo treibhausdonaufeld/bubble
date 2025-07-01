@@ -479,24 +479,22 @@ class ContentListView(ContentMixin, ItemListView):
 
     def get_template_names(self):
         # Allow content-type specific templates
-        templates = [
+        return [
             f"items/{self.content_type_slug}_list.html",
             "items/content_list.html",
             "items/item_list.html",  # fallback
         ]
-        return templates
 
 
 class ContentDetailView(ContentMixin, ItemDetailView):
     """Detail view for content type specific items"""
 
     def get_template_names(self):
-        templates = [
+        return [
             f"items/{self.content_type_slug}_detail.html",
             "items/content_detail.html",
             "items/item_detail.html",  # fallback
         ]
-        return templates
 
 
 class ContentCreateView(ContentMixin, ItemCreateView):
@@ -508,12 +506,11 @@ class ContentCreateView(ContentMixin, ItemCreateView):
         return kwargs
 
     def get_template_names(self):
-        templates = [
+        return [
             f"items/{self.content_type_slug}_form.html",
             "items/content_form.html",
             "items/item_form.html",  # fallback
         ]
-        return templates
 
 
 class ContentUpdateView(ContentMixin, ItemUpdateView):
@@ -525,12 +522,11 @@ class ContentUpdateView(ContentMixin, ItemUpdateView):
         return kwargs
 
     def get_template_names(self):
-        templates = [
+        return [
             f"items/{self.content_type_slug}_form.html",
             "items/content_form.html",
             "items/item_form.html",  # fallback
         ]
-        return templates
 
 
 class ContentDeleteView(ContentMixin, ItemDeleteView):
@@ -541,12 +537,11 @@ class MyContentView(ContentMixin, MyItemsView):
     """User's content management view for specific content type"""
 
     def get_template_names(self):
-        templates = [
+        return [
             f"items/my_{self.content_type_slug}.html",
             "items/my_content.html",
             "items/my_items.html",  # fallback
         ]
-        return templates
 
 
 @login_required

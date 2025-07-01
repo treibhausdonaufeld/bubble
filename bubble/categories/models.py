@@ -65,7 +65,7 @@ class ItemCategory(models.Model):
             current = current.parent_category
         return current
 
-    def get_descendants(self, include_self=False):
+    def get_descendants(self, *, include_self=False):
         """Get all descendant categories"""
         descendants = []
         if include_self:
