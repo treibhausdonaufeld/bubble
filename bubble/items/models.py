@@ -18,6 +18,13 @@ class ItemType(models.IntegerChoices):
     NEED = 3, _("Need")
 
 
+class ProcessingStatus(models.IntegerChoices):
+    DRAFT = 0, _("Draft")
+    PROCESSING = 1, _("Processing")
+    COMPLETED = 2, _("Completed")
+    FAILED = 3, _("Failed")
+
+
 class Item(models.Model):
     active = models.BooleanField(default=True)
     user = models.ForeignKey(
@@ -30,7 +37,7 @@ class Item(models.Model):
         on_delete=models.CASCADE,
         related_name="items",
     )
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, blank=True)
     description = models.TextField(blank=True)
     intern = models.BooleanField(default=False)
     display_contact = models.BooleanField(default=True)
@@ -41,6 +48,10 @@ class Item(models.Model):
     date_updated = models.DateTimeField(auto_now=True)
     profile_img_frame = models.ImageField(upload_to="items/", blank=True, null=True)
     profile_img_frame_alt = models.CharField(max_length=255, blank=True)
+    processing_status = models.IntegerField(
+        choices=ProcessingStatus,
+        default=ProcessingStatus.DRAFT,
+    )
 
     # Store category-specific custom fields
     custom_fields = models.JSONField(
@@ -52,6 +63,7 @@ class Item(models.Model):
     # Add class constants for easy access
     STATUS_CHOICES = StatusType.choices
     ITEM_TYPE_CHOICES = ItemType.choices
+    PROCESSING_STATUS_CHOICES = ProcessingStatus.choices
     STATUS_NEW = StatusType.NEW
     STATUS_USED = StatusType.USED
     STATUS_OLD = StatusType.OLD
@@ -59,9 +71,17 @@ class Item(models.Model):
     ITEM_TYPE_GIVE_AWAY = ItemType.GIVE_AWAY
     ITEM_TYPE_BORROW = ItemType.BORROW
     ITEM_TYPE_NEED = ItemType.NEED
+    PROCESSING_DRAFT = ProcessingStatus.DRAFT
+    PROCESSING_PROCESSING = ProcessingStatus.PROCESSING
+    PROCESSING_COMPLETED = ProcessingStatus.COMPLETED
+    PROCESSING_FAILED = ProcessingStatus.FAILED
 
     def __str__(self):
-        return self.name
+        return self.name or f"Item {self.pk}"
+
+    def is_ready_for_display(self):
+        """Check if item has minimum required fields to be displayed."""
+        return bool(self.name and self.category)
 
     def get_first_image(self):
         """Return the first image of the item based on ordering."""

@@ -17,11 +17,13 @@ from django.views.generic import ListView
 from django.views.generic import UpdateView
 
 from bubble.categories.models import ItemCategory
+from bubble.messaging.models import Message
 
 from .forms import ItemFilterForm
 from .forms import ItemForm
 from .models import Image
 from .models import Item
+from .models import ProcessingStatus
 
 
 class ItemListView(ListView):
@@ -282,8 +284,6 @@ class ItemDetailView(DetailView):
 
         # Check if there's an existing conversation for this item and user
         if self.request.user.is_authenticated:
-            from bubble.messaging.models import Message
-
             conversation_exists = Message.objects.filter(
                 item=self.object,
                 sender__in=[self.request.user, self.object.user],
@@ -392,8 +392,21 @@ class MyItemsView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["active_items"] = self.get_queryset().filter(active=True).count()
-        context["inactive_items"] = self.get_queryset().filter(active=False).count()
+        queryset = self.get_queryset()
+        context["active_items"] = queryset.filter(active=True).count()
+        context["inactive_items"] = queryset.filter(active=False).count()
+
+        # Add processing status counts
+        context["draft_items"] = queryset.filter(
+            processing_status=ProcessingStatus.DRAFT,
+        ).count()
+        context["processing_items"] = queryset.filter(
+            processing_status=ProcessingStatus.PROCESSING,
+        ).count()
+        context["failed_items"] = queryset.filter(
+            processing_status=ProcessingStatus.FAILED,
+        ).count()
+
         return context
 
 
