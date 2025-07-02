@@ -50,7 +50,17 @@ class ItemCreateStepOneView(LoginRequiredMixin, TemplateView):
             image_obj = Image.objects.create(item=item, original=image, ordering=i)
             image_objects.append(image_obj)
 
-        if images:
+        item.processing_status = ProcessingStatus.DRAFT
+        if "skip_ai" in request.POST:
+            item.save(update_fields=["processing_status"])
+
+            messages.info(
+                request,
+                _(
+                    "AI processing skipped. You can now edit the item details below.",
+                ),
+            )
+        elif images:
             # Start background processing
             item.processing_status = ProcessingStatus.PROCESSING
             item.save(update_fields=["processing_status"])
@@ -65,10 +75,8 @@ class ItemCreateStepOneView(LoginRequiredMixin, TemplateView):
                     "and description. You can continue editing below.",
                 ),
             )
-        else:
-            # No images, skip processing
-            item.processing_status = ProcessingStatus.COMPLETED
-            item.save(update_fields=["processing_status"])
+
+        item.save(update_fields=["processing_status"])
 
         # Redirect to step 2
         return redirect("items:create_step2", pk=item.pk)
@@ -176,12 +184,29 @@ def check_processing_status(request, pk):
 @login_required
 @require_http_methods(["POST"])
 def skip_image_upload(request):
-    """Allow user to skip image upload and go directly to step 2."""
+    """Allow user to upload images without AI processing and go directly to step 2."""
+    # Create item
     item = Item.objects.create(
         user=request.user,
         processing_status=ProcessingStatus.COMPLETED,
         active=False,
     )
+
+    # Handle image uploads if provided
+    images = request.FILES.getlist("images")
+    if images:
+        for i, image in enumerate(images):
+            Image.objects.create(item=item, original=image, ordering=i)
+
+        messages.info(
+            request,
+            _("Images uploaded successfully! AI processing was skipped."),
+        )
+    else:
+        messages.info(
+            request,
+            _("Item created without images. You can add images later."),
+        )
 
     return redirect("items:create_step2", pk=item.pk)
 
