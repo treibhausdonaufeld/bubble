@@ -113,21 +113,6 @@
                                     {% endif %}
                                 </div>
 
-                                <!-- Category Selection -->
-                                <div class="mb-3">
-                                    <label class="form-label">{% trans "Category" %} *</label>
-                                    <div id="category-selection">
-                                        <div class="alert alert-info">
-                                            {% trans "Please select a category for your item." %}
-                                        </div>
-                                        <!-- Category tree will be loaded here -->
-                                    </div>
-                                    {{ form.selected_category }}
-                                    {% if form.selected_category.errors %}
-                                        <div class="text-danger">{{ form.selected_category.errors }}</div>
-                                    {% endif %}
-                                </div>
-
                                 <!-- Item Type -->
                                 <div class="mb-3">
                                     <label for="id_item_type" class="form-label">{% trans "Type" %}</label>
@@ -168,25 +153,22 @@
                                     </div>
                                 </div>
 
-                                <div class="mb-3">
-                                    <div class="form-check">
-                                        {{ form.active }}
-                                        <label for="id_active" class="form-check-label">
-                                            {% trans "Make item visible immediately" %}
-                                        </label>
-                                    </div>
-                                </div>
-
                                 <!-- Submit buttons -->
                                 <div class="d-flex justify-content-between">
                                     <a href="{% url 'items:drafts' %}" class="btn btn-outline-secondary">
                                         <i class="fas fa-arrow-left me-2"></i>
-                                        {% trans "Save as Draft" %}
+                                        {% trans "Discard" %}
                                     </a>
-                                    <button type="submit" class="btn btn-success btn-lg">
-                                        <i class="fas fa-check me-2"></i>
-                                        {% trans "Create Item" %}
-                                    </button>
+                                    <div class="d-flex gap-2">
+                                        <button type="submit" name="draft" value="true" class="btn btn-outline-primary">
+                                            <i class="fas fa-save me-2"></i>
+                                            {% trans "Save as Draft" %}
+                                        </button>
+                                        <button type="submit" name="publish" class="btn btn-success">
+                                            <i class="fas fa-check me-2"></i>
+                                            {% trans "Publish Item" %}
+                                        </button>
+                                    </div>
                                 </div>
                             </form>
                         </div>
@@ -203,7 +185,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const isProcessing = {{ is_processing|yesno:"true,false" }};
 
     // Auto-refresh processing status
-    if (isProcessing) {
+    //if (isProcessing) {
+    if (false) { // Temporarily disabled for testing
         const statusCheckInterval = setInterval(async function() {
             try {
                 const response = await fetch(`{% url 'items:processing_status' pk=0 %}`.replace('0', itemId));
@@ -261,23 +244,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 2000); // Check every 2 seconds
     }
 
-    // Basic category selection (simplified version)
-    // In a real implementation, you'd load the category tree dynamically
-    const categorySelection = document.getElementById('category-selection');
-    categorySelection.innerHTML = `
-        <select class="form-select" onchange="updateSelectedCategory(this.value)">
-            <option value="">{% trans "Select a category..." %}</option>
-            <option value="1">{% trans "Electronics" %}</option>
-            <option value="2">{% trans "Furniture" %}</option>
-            <option value="3">{% trans "Clothing" %}</option>
-            <option value="4">{% trans "Books" %}</option>
-            <option value="5">{% trans "Sports" %}</option>
-        </select>
-    `;
-
-    window.updateSelectedCategory = function(categoryId) {
-        document.getElementById('id_selected_category').value = categoryId;
-    };
 });
 </script>
 {% endblock content %}
