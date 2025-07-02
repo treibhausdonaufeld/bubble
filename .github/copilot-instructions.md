@@ -8,3 +8,4 @@
 - Always ensure responses are relevant to the context of the code provided.
 - Avoid unnecessary detail and keep responses concise.
 - Revalidate before responding. Think step by step.
+- Make sure you keep up high coding quality standards, specifically you need to consider linting rules, which are defined in pyproject.toml.

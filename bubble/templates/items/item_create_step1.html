@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Create Item - Step 1" %}{% endblock title %}
+
+{% block content %}
+<style>
+    .progress-bar-outer {
+        width: 60%;
+        height: 8px;
+    }
+    .progress-bar-inner {
+        width: 50%;
+    }
+    #image-preview {
+        display: none;
+    }
+    .preview-img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+    }
+</style>
+<div class="container-fluid mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Progress indicator -->
+            <div class="mb-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="text-muted">{% trans "Step 1 of 2" %}</div>
+                    <div class="progress progress-bar-outer">
+                        <div class="progress-bar bg-primary progress-bar-inner" role="progressbar"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0">
+                        <i class="fas fa-images me-2"></i>
+                        {% trans "Upload Images" %}
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-4">
+                        {% trans "Upload images of your item. Our AI will analyze them and suggest a title and description for you!" %}
+                    </p>
+
+                    <form method="post" enctype="multipart/form-data" id="upload-form">
+                        {% csrf_token %}
+
+                        <div class="mb-4">
+                            <label for="images-input" class="form-label">
+                                <i class="fas fa-cloud-upload-alt me-2"></i>
+                                {% trans "Select Images" %}
+                            </label>
+                            <input type="file"
+                                   id="images-input"
+                                   name="images"
+                                   class="form-control"
+                                   accept="image/*"
+                                   multiple />
+                            <div class="form-text">
+                                {% trans "Select one or more images (JPG, PNG, GIF). Hold Ctrl/Cmd to select multiple files." %}
+                            </div>
+                        </div>
+
+                        <!-- Preview area -->
+                        <div id="image-preview" class="mb-4">
+                            <h6>{% trans "Selected Images:" %}</h6>
+                            <div id="preview-container" class="d-flex flex-wrap gap-2"></div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'items:skip_images' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-skip-forward me-2"></i>
+                                {% trans "Skip & Add Details Manually" %}
+                            </a>
+                            <button type="submit" class="btn btn-primary" id="upload-btn">
+                                <i class="fas fa-arrow-right me-2"></i>
+                                {% trans "Continue" %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const imageInput = document.getElementById('images-input');
+    const previewDiv = document.getElementById('image-preview');
+    const previewContainer = document.getElementById('preview-container');
+    const uploadBtn = document.getElementById('upload-btn');
+
+    imageInput.addEventListener('change', function(e) {
+        const files = Array.from(e.target.files);
+
+        if (files.length > 0) {
+            previewDiv.style.display = 'block';
+            previewContainer.innerHTML = '';
+
+            files.forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.className = 'img-thumbnail preview-img';
+                        previewContainer.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            uploadBtn.innerHTML = '<i class="fas fa-magic me-2"></i>{% trans "Upload & Process Images" %}';
+        } else {
+            previewDiv.style.display = 'none';
+            uploadBtn.innerHTML = '<i class="fas fa-arrow-right me-2"></i>{% trans "Continue" %}';
+        }
+    });
+
+    // Handle form submission
+    document.getElementById('upload-form').addEventListener('submit', function(e) {
+        uploadBtn.disabled = true;
+        uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>{% trans "Uploading..." %}';
+    });
+});
+</script>
+{% endblock content %}

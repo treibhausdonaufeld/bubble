@@ -148,7 +148,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#middleware
 MIDDLEWARE = [
-    "allow_cidr.middleware.AllowCIDRMiddleware",
+    # "allow_cidr.middleware.AllowCIDRMiddleware",  # Temporarily commented out
     "django.middleware.security.SecurityMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
