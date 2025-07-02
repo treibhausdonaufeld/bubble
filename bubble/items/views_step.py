@@ -1,3 +1,4 @@
+import asyncio
 import logging
 
 from django.contrib import messages
@@ -14,12 +15,13 @@ from django.views.decorators.http import require_http_methods
 from django.views.generic import TemplateView
 from django.views.generic import UpdateView
 
+from bubble.items.temporal.temporal_service import start_item_processing
+
 from .forms_step import ItemDetailsForm
 from .forms_step import ItemImageUploadForm
 from .models import Image
 from .models import Item
 from .models import ProcessingStatus
-from .tasks import process_item_images
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +68,7 @@ class ItemCreateStepOneView(LoginRequiredMixin, TemplateView):
             item.save(update_fields=["processing_status"])
 
             # Trigger async image processing
-            process_item_images.delay(item.pk)
+            asyncio.run(start_item_processing(item.pk, request.user.pk))
 
             messages.info(
                 request,
