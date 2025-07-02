@@ -23,20 +23,14 @@ class ItemCategory(models.Model):
     )
 
     # Schema definition for custom fields
-    required_fields = models.JSONField(
+    custom_fields = models.JSONField(
         default=dict,
         blank=True,
-        help_text=_("JSON schema for required fields specific to this category"),
-    )
-    optional_fields = models.JSONField(
-        default=dict,
-        blank=True,
-        help_text=_("JSON schema for optional fields specific to this category"),
-    )
-    filter_fields = models.JSONField(
-        default=dict,
-        blank=True,
-        help_text=_("JSON schema for fields that should appear in list filters"),
+        help_text=_(
+            "JSON schema for custom fields specific to this category. "
+            "Format: {'field_name': {'type': 'choice', 'label': 'Size', "
+            "'choices': ['S', 'M', 'L'], 'required': true}}",
+        ),
     )
 
     class Meta:

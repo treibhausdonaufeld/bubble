@@ -48,7 +48,7 @@ class ItemForm(forms.ModelForm):
                     "placeholder": _("Describe your item..."),
                 },
             ),
-            "item_type": forms.Select(attrs={"class": "form-select"}),
+            "item_type": forms.Select(attrs={"class": "form-select select2-field"}),
             "price": forms.NumberInput(
                 attrs={
                     "class": "form-control",
@@ -204,13 +204,10 @@ class ItemForm(forms.ModelForm):
         else:
             return
 
-        # Add required fields
-        for field_name, field_config in root_category.required_fields.items():
-            self._create_dynamic_field(field_name, field_config, required=True)
-
-        # Add optional fields
-        for field_name, field_config in root_category.optional_fields.items():
-            self._create_dynamic_field(field_name, field_config, required=False)
+        # Add custom fields
+        for field_name, field_config in root_category.custom_fields.items():
+            is_required = field_config.get("required", False)
+            self._create_dynamic_field(field_name, field_config, required=is_required)
 
     def _create_dynamic_field(self, field_name, field_config, *, required=False):
         """Create a form field based on configuration"""
@@ -220,7 +217,12 @@ class ItemForm(forms.ModelForm):
         # Get existing value from custom_fields if editing
         initial_value = None
         if self.instance.pk and self.instance.custom_fields:
-            initial_value = self.instance.custom_fields.get(field_name)
+            field_data = self.instance.custom_fields.get(field_name)
+            if isinstance(field_data, dict) and "value" in field_data:
+                initial_value = field_data["value"]
+            else:
+                # Handle old format for backward compatibility
+                initial_value = field_data
 
         # No longer skip status field since it's now handled as custom field
 
@@ -247,13 +249,29 @@ class ItemForm(forms.ModelForm):
                 widget=forms.NumberInput(attrs={"class": "form-control"}),
             )
         elif field_type == "choice":
-            choices = [(c, c) for c in field_config.get("choices", [])]
+            # Support both simple list and key-value pairs for choices
+            raw_choices = field_config.get("choices", [])
+            choices = []
+
+            for choice in raw_choices:
+                if isinstance(choice, dict):
+                    # Key-value format: {"key": "db_value", "value": "display_value"}
+                    key = choice.get("key", "")
+                    value = choice.get(
+                        "value",
+                        key,
+                    )  # Fall back to key if value not provided
+                    choices.append((key, value))
+                else:
+                    # Simple format: just use the value for both key and display
+                    choices.append((choice, choice))
+
             field = forms.ChoiceField(
                 label=label,
                 required=required,
                 choices=choices,
                 initial=initial_value,
-                widget=forms.Select(attrs={"class": "form-select"}),
+                widget=forms.Select(attrs={"class": "form-select select2-field"}),
             )
         elif field_type == "datetime":
             field = forms.DateTimeField(
@@ -289,19 +307,20 @@ class ItemForm(forms.ModelForm):
         # Set the final category
         cleaned_data["category"] = selected_category
 
-        # Collect custom field values
+        # Collect custom field values with labels
         custom_values = {}
         if selected_category:
             root_category = selected_category.get_root_category()
-            all_fields = {
-                **root_category.required_fields,
-                **root_category.optional_fields,
-            }
 
-            for field_name in all_fields:
+            for field_name, field_config in root_category.custom_fields.items():
                 custom_field_name = f"custom_{field_name}"
                 if custom_field_name in cleaned_data:
-                    custom_values[field_name] = cleaned_data[custom_field_name]
+                    value = cleaned_data[custom_field_name]
+                    # Store both value and label
+                    custom_values[field_name] = {
+                        "value": value,
+                        "label": field_config.get("label", field_name.title()),
+                    }
 
         cleaned_data["custom_field_values"] = custom_values
         return cleaned_data

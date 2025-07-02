@@ -426,6 +426,7 @@
 {% block content %}
   <div class="container-fluid">
     <!-- Mobile Filter Toggle -->
+     {% if content_type_slug == "zeug" %}
     <div class="d-md-none mb-3">
       <button class="btn btn-outline-primary" id="mobile-filter-toggle">
         <i class="fas fa-filter"></i> {% trans "Filters" %}
@@ -433,6 +434,7 @@
     </div>
     <div class="row">
       <!-- Enhanced Filters Sidebar -->
+
       <div class="col-md-3">
         <div class="filter-overlay" id="filter-overlay"></div>
         <div class="filter-sidebar" id="filter-sidebar">
@@ -619,6 +621,7 @@
           </div>
         </div>
       </div>
+      {% endif %}
       <!-- Main Content Area -->
       <div class="col-md-9">
         <!-- Controls Bar -->
@@ -626,7 +629,7 @@
           <div class="row align-items-center">
             <div class="col-md-6">
               <h4 class="mb-0">
-                {% trans "Sachen" %}
+                {% trans "Items" %}
                 <span class="badge bg-primary">{{ page_obj.paginator.count }}</span>
               </h4>
             </div>

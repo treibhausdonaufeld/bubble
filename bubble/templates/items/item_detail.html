@@ -153,10 +153,10 @@
                       data-bs-toggle="dropdown">{% trans "Actions" %}</button>
               <ul class="dropdown-menu">
                 <li>
-                  <a class="dropdown-item" href="{% url 'items:edit' item.pk %}">{% trans "Edit" %}</a>
+                  <a class="dropdown-item" href="{% url 'items:edit' content_type=content_type_slug pk=item.pk %}">{% trans "Edit" %}</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="{% url 'items:toggle_status' item.pk %}">
+                  <a class="dropdown-item" href="{% url 'items:toggle_status' content_type=content_type_slug pk=item.pk %}">
                     {% if item.active %}
                       {% trans "Deactivate" %}
                     {% else %}
@@ -169,7 +169,7 @@
                 </li>
                 <li>
                   <a class="dropdown-item text-danger"
-                     href="{% url 'items:delete' item.pk %}">{% trans "Delete" %}</a>
+                     href="{% url 'items:delete' content_type=content_type_slug pk=item.pk %}">{% trans "Delete" %}</a>
                 </li>
               </ul>
             </div>
@@ -203,6 +203,28 @@
           <div class="mb-3">
             <strong>{% trans "Category:" %}</strong> {{ item.category.name }}
           </div>
+          <!-- Custom Fields -->
+          {% if item.custom_fields %}
+            {% for field_name, field_data in item.custom_fields.items %}
+              {% if field_data %}
+                <div class="mb-3">
+                  {% if field_data.label %}
+                    <strong>{{ field_data.label }}:</strong>
+                  {% else %}
+                    <strong>{{ field_name|title }}:</strong>
+                  {% endif %}
+                  {% if field_data.value %}
+                    {% if field_data.value == "new" %}{% trans "New" %}
+                    {% elif field_data.value == "used" %}{% trans "Used" %}
+                    {% elif field_data.value == "old" %}{% trans "Old" %}
+                    {% else %}{{ field_data.value }}{% endif %}
+                  {% else %}
+                    {{ field_data }}
+                  {% endif %}
+                </div>
+              {% endif %}
+            {% endfor %}
+          {% endif %}
           <!-- Tags -->
           {% if item_tags %}
             <div class="mb-3">
@@ -301,10 +323,10 @@
                           data-bs-toggle="dropdown">{% trans "Actions" %}</button>
                   <ul class="dropdown-menu">
                     <li>
-                      <a class="dropdown-item" href="{% url 'items:edit' item.pk %}">{% trans "Edit" %}</a>
+                      <a class="dropdown-item" href="{% url 'items:edit' content_type=content_type_slug pk=item.pk %}">{% trans "Edit" %}</a>
                     </li>
                     <li>
-                      <a class="dropdown-item" href="{% url 'items:toggle_status' item.pk %}">
+                      <a class="dropdown-item" href="{% url 'items:toggle_status' content_type=content_type_slug pk=item.pk %}">
                         {% if item.active %}
                           {% trans "Deactivate" %}
                         {% else %}
@@ -317,7 +339,7 @@
                     </li>
                     <li>
                       <a class="dropdown-item text-danger"
-                         href="{% url 'items:delete' item.pk %}">{% trans "Delete" %}</a>
+                         href="{% url 'items:delete' content_type=content_type_slug pk=item.pk %}">{% trans "Delete" %}</a>
                     </li>
                   </ul>
                 </div>
@@ -351,6 +373,28 @@
               <div class="mb-3">
                 <strong>{% trans "Category:" %}</strong> {{ item.category.name }}
               </div>
+              <!-- Custom Fields -->
+              {% if item.custom_fields %}
+                {% for field_name, field_data in item.custom_fields.items %}
+                  {% if field_data %}
+                    <div class="mb-3">
+                      {% if field_data.label %}
+                        <strong>{{ field_data.label }}:</strong>
+                      {% else %}
+                        <strong>{{ field_name|title }}:</strong>
+                      {% endif %}
+                      {% if field_data.value %}
+                        {% if field_data.value == "new" %}{% trans "New" %}
+                        {% elif field_data.value == "used" %}{% trans "Used" %}
+                        {% elif field_data.value == "old" %}{% trans "Old" %}
+                        {% else %}{{ field_data.value }}{% endif %}
+                      {% else %}
+                        {{ field_data }}
+                      {% endif %}
+                    </div>
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
               <!-- Tags -->
               {% if item_tags %}
                 <div class="mb-3">
