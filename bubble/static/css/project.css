@@ -1,0 +1,48 @@
+/* Custom styles for the Bubble project */
+
+/* Create Item Button Styles */
+.btn-create-item {
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-create-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Mobile specific styles for create button */
+@media (max-width: 767.98px) {
+    .mobile-create-btn {
+        background-color: #28a745 !important;
+        border: none;
+        border-radius: 8px !important;
+        font-weight: 500;
+        box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
+    }
+
+    .mobile-create-btn:hover,
+    .mobile-create-btn:focus {
+        background-color: #218838 !important;
+        color: white !important;
+    }
+}
+
+/* Desktop create button */
+@media (min-width: 768px) {
+    .desktop-create-btn {
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
+    }
+
+    .desktop-create-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+    }
+}
+
+/* Ensure proper spacing in navigation */
+.navbar-nav .nav-item .btn {
+    margin: 0.25rem 0.5rem;
+}
