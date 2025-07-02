@@ -43,7 +43,8 @@
       "Bash(npm run dev:*)",
       "Bash(ruff check:*)",
       "Bash(timeout:*)",
-      "Bash(pre-commit run:*)"
+      "Bash(pre-commit run:*)",
+      "Bash(cp:*)"
     ],
     "deny": []
   }

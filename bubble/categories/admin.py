@@ -34,16 +34,8 @@ class ItemCategoryAdmin(admin.ModelAdmin):
         (
             "Content Type Configuration",
             {
-                "fields": ("url_slug",),
-                "description": "Configure URL slug for root categories",
-            },
-        ),
-        (
-            "Dynamic Field Schema",
-            {
-                "fields": ("required_fields", "optional_fields", "filter_fields"),
-                "classes": ("collapse",),
-                "description": "JSON schema for category-specific fields",
+                "fields": ("url_slug", "custom_fields"),
+                "description": "Configure URL slug and dynamic fields",
             },
         ),
         (

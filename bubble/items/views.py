@@ -302,6 +302,13 @@ class ItemCreateView(LoginRequiredMixin, CreateView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs["user"] = self.request.user
+
+        # Try to determine root_category from URL or other context
+        # This allows dynamic fields to work even in non-content-specific URLs
+        root_category = getattr(self, "root_category", None)
+        if root_category:
+            kwargs["root_category"] = root_category
+
         return kwargs
 
     def form_valid(self, form):
@@ -332,6 +339,13 @@ class ItemUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs["user"] = self.request.user
+
+        # Try to determine root_category from URL or other context
+        # This allows dynamic fields to work even in non-content-specific URLs
+        root_category = getattr(self, "root_category", None)
+        if root_category:
+            kwargs["root_category"] = root_category
+
         return kwargs
 
     def form_valid(self, form):
@@ -512,6 +526,15 @@ class ContentCreateView(ContentMixin, ItemCreateView):
             "items/item_form.html",  # fallback
         ]
 
+    def get_success_url(self):
+        return reverse(
+            "items:detail",
+            kwargs={
+                "content_type": self.content_type_slug,
+                "pk": self.object.pk,
+            },
+        )
+
 
 class ContentUpdateView(ContentMixin, ItemUpdateView):
     """Update view for content type specific items"""
@@ -528,9 +551,26 @@ class ContentUpdateView(ContentMixin, ItemUpdateView):
             "items/item_form.html",  # fallback
         ]
 
+    def get_success_url(self):
+        return reverse(
+            "items:detail",
+            kwargs={
+                "content_type": self.content_type_slug,
+                "pk": self.object.pk,
+            },
+        )
+
 
 class ContentDeleteView(ContentMixin, ItemDeleteView):
     """Delete view for content type specific items"""
+
+    def get_success_url(self):
+        return reverse(
+            "items:my_items",
+            kwargs={
+                "content_type": self.content_type_slug,
+            },
+        )
 
 
 class MyContentView(ContentMixin, MyItemsView):

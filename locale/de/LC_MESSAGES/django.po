@@ -865,12 +865,12 @@ msgstr "Zurück zu den Zeug"
 
 #: bubble/templates/items/item_form.html:7
 #: bubble/templates/items/item_form.html:20
-msgid "Edit Article"
+msgid "Edit Item"
 msgstr "Artikel bearbeiten"
 
 #: bubble/templates/items/item_form.html:9
 #: bubble/templates/items/item_form.html:22
-msgid "Add New Article"
+msgid "Add New Item"
 msgstr "Neuen Artikel hinzufügen"
 
 #: bubble/templates/items/item_form.html:31
@@ -934,12 +934,13 @@ msgid "Settings"
 msgstr "Einstellungen"
 
 #: bubble/templates/items/item_form.html:221
-msgid "Update Article"
+msgid "Update Item"
 msgstr "Artikel aktualisieren"
 
+
 #: bubble/templates/items/item_form.html:223
-msgid "Create Article"
-msgstr "Artikel erstellen"
+msgid "Rooms"
+msgstr "Räume"
 
 #: bubble/templates/items/item_form.html:267
 msgid "Loading..."
@@ -1075,9 +1076,8 @@ msgstr "Den ersten Artikel hinzufügen"
 msgid "My Things"
 msgstr "Meine Zeug"
 
-#: bubble/templates/items/my_items.html:13 bubble/templates/pages/home.html:74
-msgid "Add New Item"
-msgstr "Neuen Artikel hinzufügen"
+msgid "Items"
+msgstr "Artikel"
 
 #: bubble/templates/items/my_items.html:22
 msgid "Active Things"
@@ -1130,7 +1130,7 @@ msgid "No messages available yet."
 msgstr "Noch keine Nachrichten vorhanden."
 
 #: bubble/templates/messaging/send_message.html:15
-msgid "Article:"
+msgid "Item:"
 msgstr "Artikel:"
 
 #: bubble/templates/messaging/send_message.html:26

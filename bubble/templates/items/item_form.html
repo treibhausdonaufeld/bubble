@@ -1,18 +1,19 @@
 {% extends "base.html" %}
 
 {% load i18n %}
+{% load static %}
 
 {% block title %}
   {% if object %}
-    {% trans "Edit Article" %} - {{ object.name }}
+    {% trans "Edit Item" %} - {{ object.name }}
   {% else %}
-    {% trans "Add New Article" %}
+    {% trans "Add New Item" %}
   {% endif %}
 {% endblock title %}
 {% block css %}
   {{ block.super }}
   <!-- Select2 CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet" />
+  <link href="{% static 'css/vendor/select2.min.css' %}" rel="stylesheet" />
 {% endblock css %}
 
 {% block content %}
@@ -23,9 +24,9 @@
           <div class="card-header">
             <h3>
               {% if object %}
-                {% trans "Edit Article" %} - {{ object.name }}
+                {% trans "Edit Item" %} - {{ object.name }}
               {% else %}
-                {% trans "Add New Article" %}
+                {% trans "Add New Item" %}
               {% endif %}
             </h3>
           </div>
@@ -133,13 +134,8 @@
                   {% if form.item_type.errors %}<div class="text-danger">{{ form.item_type.errors }}</div>{% endif %}
                 </div>
               </div>
-              <!-- Status and Price -->
+              <!-- Price -->
               <div class="row mb-3">
-                <div class="col-md-6">
-                  <label for="{{ form.status.id_for_label }}" class="form-label">{{ form.status.label }} *</label>
-                  {{ form.status }}
-                  {% if form.status.errors %}<div class="text-danger">{{ form.status.errors }}</div>{% endif %}
-                </div>
                 <div class="col-md-6">
                   <label for="{{ form.price.id_for_label }}" class="form-label">{{ form.price.label }}</label>
                   {{ form.price }}
@@ -147,22 +143,20 @@
                   {% if form.price.help_text %}<div class="form-text">{{ form.price.help_text }}</div>{% endif %}
                 </div>
               </div>
-              <!-- Tags -->
-              <div class="mb-3">
-                <label class="form-label">{{ form.tags.label }}</label>
-                <div class="row tag-list-scroll">
-                  {% for checkbox in form.tags %}
-                    <div class="col-md-4 col-sm-6">
-                      <div class="form-check">
-                        {{ checkbox.tag }}
-                        <label class="form-check-label" for="{{ checkbox.id_for_label }}">{{ checkbox.choice_label }}</label>
-                      </div>
-                    </div>
-                  {% endfor %}
-                </div>
-                {% if form.tags.errors %}<div class="text-danger">{{ form.tags.errors }}</div>{% endif %}
-                {% if form.tags.help_text %}<div class="form-text">{{ form.tags.help_text }}</div>{% endif %}
-              </div>
+              <!-- Dynamic Category Fields -->
+              {% for field in form %}
+                {% if field.name|slice:"7" == "custom_" %}
+                  <div class="mb-3">
+                    <label for="{{ field.id_for_label }}" class="form-label">
+                      {{ field.label }}
+                      {% if field.field.required %} *{% endif %}
+                    </label>
+                    {{ field }}
+                    {% if field.errors %}<div class="text-danger">{{ field.errors }}</div>{% endif %}
+                    {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+                  </div>
+                {% endif %}
+              {% endfor %}
               <!-- Settings -->
               <div class="mb-3">
                 <label class="form-label">{% trans "Settings" %}</label>
@@ -204,13 +198,13 @@
               {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
               <!-- Form Actions -->
               <div class="d-flex justify-content-between">
-                <a href="{% if object %}{% url 'items:detail' object.pk %}{% else %}{% url 'items:list' content_type=content_type_slug %}{% endif %}"
+                <a href="{% if object %}{% url 'items:detail' content_type=content_type_slug pk=object.pk %}{% else %}{% url 'items:list' content_type=content_type_slug %}{% endif %}"
                    class="btn btn-outline-secondary">{% trans "Cancel" %}</a>
                 <button type="submit" class="btn btn-primary">
                   {% if object %}
-                    {% trans "Update Article" %}
+                    {% trans "Update Item" %}
                   {% else %}
-                    {% trans "Create Article" %}
+                    {% trans "Create Item" %}
                   {% endif %}
                 </button>
               </div>
@@ -220,35 +214,66 @@
       </div>
     </div>
   </div>
-  <!-- Select2 JavaScript -->
-  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // Initialize Select2 for category dropdown
-      $('.select2-category').select2({
-        placeholder: "{% trans 'Search and select a category...' %}",
-        allowClear: false,
-        width: '100%',
-        theme: 'default'
-      });
-      // Show/hide price field based on item type
-      const itemTypeField = document.getElementById('{{ form.item_type.id_for_label }}');
-      const priceField = document.getElementById('{{ form.price.id_for_label }}');
-      const priceContainer = priceField.closest('.col-md-6');
+  <!-- jQuery and Select2 JavaScript (local files) -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="{% static 'js/vendor/select2.min.js' %}"></script>
 
-      function togglePriceField() {
-        if (itemTypeField.value === '0') { // Sell
-          priceContainer.style.display = 'block';
-          priceField.setAttribute('required', 'required');
-        } else { // Give away or Borrow
-          priceContainer.style.display = 'none';
-          priceField.removeAttribute('required');
-          priceField.value = '';
-        }
+  <script>
+    $(document).ready(function() {
+      console.log('Document ready, jQuery version:', $.fn.jquery);
+      console.log('Select2 available:', typeof $.fn.select2 !== 'undefined');
+
+      if (typeof $.fn.select2 === 'undefined') {
+        console.error('Select2 not available');
+        return;
       }
 
-      itemTypeField.addEventListener('change', togglePriceField);
-      togglePriceField(); // Initial call
+      // Find all select fields
+      console.log('Category fields found:', $('.select2-category').length);
+      console.log('Other select fields found:', $('.select2-field').length);
+
+      try {
+        // Initialize Select2 for category dropdown
+        $('.select2-category').select2({
+          placeholder: "{% trans 'Search and select a category...' %}",
+          allowClear: false,
+          width: '100%',
+          theme: 'default'
+        });
+
+        // Initialize Select2 for all other select fields
+        $('.select2-field').select2({
+          allowClear: false,
+          width: '100%',
+          theme: 'default'
+        });
+
+        console.log('Select2 initialization complete');
+
+        // Show/hide price field based on item type (using jQuery for consistency)
+        const itemTypeField = $('#{{ form.item_type.id_for_label }}');
+        const priceField = $('#{{ form.price.id_for_label }}');
+        const priceContainer = priceField.closest('.col-md-6');
+
+        function togglePriceField() {
+          if (itemTypeField.val() === '0') { // Sell
+            priceContainer.show();
+            priceField.prop('required', true);
+          } else { // Give away or Borrow
+            priceContainer.hide();
+            priceField.prop('required', false);
+            priceField.val('');
+          }
+        }
+
+        // Use Select2 events for the item type field if it's a Select2 field
+        itemTypeField.on('change select2:select', togglePriceField);
+        togglePriceField(); // Initial call
+
+      } catch (error) {
+        console.error('Error initializing Select2:', error);
+      }
+    });
 
       // Category selection is now handled by a simple dropdown
 
