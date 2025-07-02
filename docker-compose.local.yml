@@ -2,6 +2,7 @@ volumes:
   bubble_local_postgres_data: {}
   bubble_local_postgres_data_backups: {}
   bubble_local_redis_data: {}
+  bubble_local_temporal_data: {}
 
 services:
   django: &django
@@ -14,6 +15,7 @@ services:
       - postgres
       - redis
       - mailpit
+      - temporal
     volumes:
       - .:/app:z
     env_file:
@@ -80,6 +82,51 @@ services:
     ports:
       - '5555:5555'
     command: /start-flower
+
+  # Temporal.io services
+  temporal-postgresql:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_PASSWORD: temporal
+      POSTGRES_USER: temporal
+      POSTGRES_DB: temporal
+    volumes:
+      - bubble_local_temporal_data:/var/lib/postgresql/data
+
+  temporal:
+    image: temporalio/auto-setup:latest
+    depends_on:
+      - temporal-postgresql
+    environment:
+      - DB=temporal
+      - DB_PORT=5432
+      - POSTGRES_USER=temporal
+      - POSTGRES_PWD=temporal
+      - POSTGRES_SEEDS=temporal-postgresql
+      - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development-sql.yaml
+    ports:
+      - "127.0.0.1:7233:7233"
+    volumes:
+      - ./compose/local/temporal:/etc/temporal/config/dynamicconfig
+
+  # temporal-admin-tools:
+  #   image: temporalio/admin-tools:latest
+  #   depends_on:
+  #     - temporal
+  #   environment:
+  #     - TEMPORAL_CLI_ADDRESS=temporal:7233
+  #   stdin_open: true
+  #   tty: true
+
+  temporal-ui:
+    image: temporalio/ui:latest
+    depends_on:
+      - temporal
+    environment:
+      - TEMPORAL_ADDRESS=temporal:7233
+      - TEMPORAL_CORS_ORIGINS=http://localhost:3000
+    ports:
+      - "127.0.0.1:8080:8080"
 
   node:
     build:
