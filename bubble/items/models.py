@@ -36,6 +36,8 @@ class Item(models.Model):
         ItemCategory,
         on_delete=models.CASCADE,
         related_name="items",
+        blank=True,
+        null=True,
     )
     name = models.CharField(max_length=255, blank=True)
     description = models.TextField(blank=True)
