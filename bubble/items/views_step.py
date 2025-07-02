@@ -109,14 +109,19 @@ class ItemCreateStepTwoView(LoginRequiredMixin, UserPassesTestMixin, UpdateView)
             form.add_error("name", _("Item name is required."))
             return self.form_invalid(form)
 
-        if not hasattr(item, "category") or not item.category:
-            form.add_error("selected_category", _("Please select a category."))
-            return self.form_invalid(form)
+        # Check which button was pressed
+        is_draft = "draft" in self.request.POST
 
-        # Mark item as active and completed
-        item.active = True
-        if item.processing_status == ProcessingStatus.DRAFT:
+        if is_draft:
+            item.processing_status = ProcessingStatus.DRAFT
+            success_message = _("Item saved as draft!")
+            redirect_url = reverse("items:create_step2", kwargs={"pk": item.pk})
+        else:
+            # Default behavior if no specific button is detected
+            item.active = True
             item.processing_status = ProcessingStatus.COMPLETED
+            success_message = _("Item published successfully!")
+            redirect_url = self.get_success_url()
 
         item.save()
 
@@ -131,8 +136,8 @@ class ItemCreateStepTwoView(LoginRequiredMixin, UserPassesTestMixin, UpdateView)
                 ordering=existing_image_count + i,
             )
 
-        messages.success(self.request, _("Item created successfully!"))
-        return HttpResponseRedirect(self.get_success_url())
+        messages.success(self.request, success_message)
+        return HttpResponseRedirect(redirect_url)
 
     def get_success_url(self):
         return reverse("items:detail", kwargs={"pk": self.object.pk})

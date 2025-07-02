@@ -42,7 +42,6 @@ class ItemDetailsForm(forms.ModelForm):
             "price",
             "display_contact",
             "profile_img_frame",
-            "active",
         ]
         widgets = {
             "name": forms.TextInput(
@@ -67,7 +66,6 @@ class ItemDetailsForm(forms.ModelForm):
             ),
             "display_contact": forms.CheckboxInput(attrs={"class": "form-check-input"}),
             "profile_img_frame": forms.FileInput(attrs={"class": "form-control"}),
-            "active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -80,7 +78,7 @@ class ItemDetailsForm(forms.ModelForm):
         # Update the queryset for the existing field
         self.fields["selected_category"] = forms.ModelChoiceField(
             queryset=queryset,
-            required=True,
+            required=False,
             widget=forms.HiddenInput(),
             label=_("Selected category"),
         )
