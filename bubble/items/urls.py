@@ -22,7 +22,6 @@ urlpatterns = [
         views_step.ItemCreateStepTwoView.as_view(),
         name="create_step2",
     ),
-    path("create/skip-images/", views_step.skip_image_upload, name="skip_images"),
     # Item CRUD operations (login required)
     path("<int:pk>/edit/", views.ItemUpdateView.as_view(), name="edit"),
     path("<int:pk>/delete/", views.ItemDeleteView.as_view(), name="delete"),
