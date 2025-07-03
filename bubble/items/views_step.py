@@ -3,25 +3,18 @@ import logging
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.mixins import UserPassesTestMixin
-from django.http import HttpResponseRedirect
-from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
-from django.shortcuts import redirect
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.http import HttpResponseRedirect, JsonResponse
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_http_methods
-from django.views.generic import TemplateView
-from django.views.generic import UpdateView
+from django.views.generic import TemplateView, UpdateView
 
 from bubble.items.temporal.temporal_service import start_item_processing
 
-from .forms_step import ItemDetailsForm
-from .forms_step import ItemImageUploadForm
-from .models import Image
-from .models import Item
-from .models import ProcessingStatus
+from .forms_step import ItemDetailsForm, ItemImageUploadForm
+from .models import Image, Item, ProcessingStatus
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +31,7 @@ class ItemCreateStepOneView(LoginRequiredMixin, TemplateView):
 
     def post(self, request, *args, **kwargs):
         # Create temporary item
-        item = Item.objects.create(
+        item: Item = Item.objects.create(
             user=request.user,
             processing_status=ProcessingStatus.DRAFT,
             active=False,  # Not active until completed
