@@ -164,20 +164,6 @@ async def start_item_processing(item_id: int, user_id: int) -> str:
     return handle.id
 
 
-async def start_batch_processing(item_ids: list[int], user_id: int) -> str:
-    """Start batch processing for multiple items.
-
-    Args:
-        item_ids: List of item IDs to process.
-        user_id: The ID of the user who owns the items.
-
-    Returns:
-        str: The workflow ID.
-    """
-    handle = await TemporalService.start_batch_processing(item_ids, user_id)
-    return handle.id
-
-
 async def get_processing_result(workflow_id: str) -> dict:
     """Get the result of a processing workflow.
 

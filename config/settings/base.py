@@ -324,16 +324,16 @@ CELERY_TASK_SEND_SENT_EVENT = True
 # Temporal.io
 # ------------------------------------------------------------------------------
 # https://docs.temporal.io/docs/server/configuration
-TEMPORAL_ADDRESS = env("TEMPORAL_ADDRESS", default="localhost:7233")
-TEMPORAL_NAMESPACE = env("TEMPORAL_NAMESPACE", default="default")
-TEMPORAL_TASK_QUEUE = env("TEMPORAL_TASK_QUEUE", default="processing")
+TEMPORAL_ADDRESS: str = env("TEMPORAL_ADDRESS", default="localhost:7233")
+TEMPORAL_NAMESPACE: str = env("TEMPORAL_NAMESPACE", default="default")
+TEMPORAL_TASK_QUEUE: str = env("TEMPORAL_TASK_QUEUE", default="bubble-task-queue")
 
 # Temporal worker configuration
-TEMPORAL_MAX_CONCURRENT_ACTIVITIES = env.int(
+TEMPORAL_MAX_CONCURRENT_ACTIVITIES: int = env.int(
     "TEMPORAL_MAX_CONCURRENT_ACTIVITIES",
     default=10,
 )
-TEMPORAL_MAX_CONCURRENT_WORKFLOWS = env.int(
+TEMPORAL_MAX_CONCURRENT_WORKFLOWS: int = env.int(
     "TEMPORAL_MAX_CONCURRENT_WORKFLOWS",
     default=5,
 )
