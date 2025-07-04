@@ -5,6 +5,7 @@ from django.utils.translation import gettext_lazy as _
 class ItemCategory(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
+    emoji = models.CharField(max_length=10, blank=True)
     prompt_name = models.TextField(blank=True)
     prompt_description = models.TextField(blank=True)
     parent_category = models.ForeignKey(
