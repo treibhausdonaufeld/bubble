@@ -23,6 +23,12 @@ class ItemCategory(models.Model):
         help_text=_("URL path for this content type (e.g., 'sachen', 'events')"),
     )
 
+    # Ordering field for menu display
+    ordering = models.IntegerField(
+        default=1,
+        help_text=_("Order of display in navigation menu (lower numbers appear first)"),
+    )
+
     # Schema definition for custom fields
     custom_fields = models.JSONField(
         default=dict,
@@ -36,6 +42,7 @@ class ItemCategory(models.Model):
 
     class Meta:
         verbose_name_plural = _("Item Categories")
+        ordering = ["ordering", "name"]
 
     def __str__(self):
         return self.name
