@@ -12,7 +12,7 @@ def navigation_context(request):
             url_slug__isnull=False,
         )
         .exclude(url_slug="")
-        .order_by("id")
+        .order_by("ordering", "name")
     )
 
     # Extract content_type_slug from URL path

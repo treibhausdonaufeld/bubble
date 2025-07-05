@@ -8,9 +8,11 @@ from bubble.categories.models import ItemCategory
 class ItemCategoryAdmin(admin.ModelAdmin):
     list_display = (
         "name",
+        "emoji",
         "get_hierarchy_display",
         "parent_category",
         "url_slug",
+        "ordering",
         "description",
     )
     list_filter = ("parent_category",)
@@ -21,14 +23,20 @@ class ItemCategoryAdmin(admin.ModelAdmin):
         "prompt_description",
         "url_slug",
     )
-    ordering = ("parent_category__name", "name")
+    ordering = ("ordering", "parent_category__name", "name")
     autocomplete_fields = ("parent_category",)
 
     fieldsets = (
         (
             None,
             {
-                "fields": ("name", "parent_category", "description"),
+                "fields": (
+                    "name",
+                    "emoji",
+                    "parent_category",
+                    "description",
+                    "ordering",
+                ),
             },
         ),
         (
