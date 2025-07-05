@@ -93,7 +93,7 @@
             <i class="fas fa-eye"></i> {% trans custom_link_text|default:"View" %}
           </a>
         {% else %}
-          <a href="{% url 'items:detail' item.pk %}"
+          <a href="{% if content_type_slug %}{% url 'items:detail' content_type=content_type_slug pk=item.pk %}{% else %}{% url 'items:detail' item.pk %}{% endif %}"
              class="btn btn-outline-primary btn-sm">
             <i class="fas fa-eye"></i> {% trans custom_link_text|default:"View" %}
           </a>

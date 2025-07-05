@@ -3,43 +3,43 @@
 {% if is_dropdown %}
   <li>
     <a class="dropdown-item{% if request.GET.item_type == '3' %} active{% endif %}"
-       href="{% url 'items:list' %}?item_type=3">🔍 {% trans "Need" %}</a>
+       href="{% url 'items:list' content_type='zeug' %}?item_type=3">🔍 {% trans "Need" %}</a>
   </li>
   <li>
     <a class="dropdown-item{% if request.GET.item_type == '2' %} active{% endif %}"
-       href="{% url 'items:list' %}?item_type=2">🤝 {% trans "Borrow" %}</a>
+       href="{% url 'items:list' content_type='zeug' %}?item_type=2">🤝 {% trans "Borrow" %}</a>
   </li>
   <li>
     <a class="dropdown-item{% if request.GET.item_type == '0' %} active{% endif %}"
-       href="{% url 'items:list' %}?item_type=0">💰 {% trans "For Sale" %}</a>
+       href="{% url 'items:list' content_type='zeug' %}?item_type=0">💰 {% trans "For Sale" %}</a>
   </li>
   <li>
     <a class="dropdown-item{% if request.GET.item_type == '1' %} active{% endif %}"
-       href="{% url 'items:list' %}?item_type=1">🎁 {% trans "Give Away" %}</a>
+       href="{% url 'items:list' content_type='zeug' %}?item_type=1">🎁 {% trans "Give Away" %}</a>
   </li>
   <li>
     <a class="dropdown-item{% if not request.GET.item_type %} active{% endif %}"
-       href="{% url 'items:list' %}">📋 {% trans "All" %}</a>
+       href="{% url 'items:list' content_type='zeug' %}">📋 {% trans "All" %}</a>
   </li>
 {% else %}
   <li class="nav-item">
     <a class="nav-link{% if request.GET.item_type == '3' %} active{% endif %}"
-       href="{% url 'items:list' %}?item_type=3">🔍 {% trans "Need" %}</a>
+       href="{% url 'items:list' content_type='zeug' %}?item_type=3">🔍 {% trans "Need" %}</a>
   </li>
   <li class="nav-item">
     <a class="nav-link{% if request.GET.item_type == '2' %} active{% endif %}"
-       href="{% url 'items:list' %}?item_type=2">🤝 {% trans "Borrow" %}</a>
+       href="{% url 'items:list' content_type='zeug' %}?item_type=2">🤝 {% trans "Borrow" %}</a>
   </li>
   <li class="nav-item">
     <a class="nav-link{% if request.GET.item_type == '0' %} active{% endif %}"
-       href="{% url 'items:list' %}?item_type=0">💰 {% trans "For Sale" %}</a>
+       href="{% url 'items:list' content_type='zeug' %}?item_type=0">💰 {% trans "For Sale" %}</a>
   </li>
   <li class="nav-item">
     <a class="nav-link{% if request.GET.item_type == '1' %} active{% endif %}"
-       href="{% url 'items:list' %}?item_type=1">🎁 {% trans "Give Away" %}</a>
+       href="{% url 'items:list' content_type='zeug' %}?item_type=1">🎁 {% trans "Give Away" %}</a>
   </li>
   <li class="nav-item">
     <a class="nav-link{% if not request.GET.item_type %} active{% endif %}"
-       href="{% url 'items:list' %}">📋 {% trans "All" %}</a>
+       href="{% url 'items:list' content_type='zeug' %}">📋 {% trans "All" %}</a>
   </li>
 {% endif %}

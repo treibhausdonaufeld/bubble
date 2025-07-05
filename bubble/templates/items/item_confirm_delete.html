@@ -89,7 +89,7 @@
             <form method="post">
               {% csrf_token %}
               <div class="d-flex justify-content-between">
-                <a href="{% url 'items:detail' object.pk %}"
+                <a href="{% url 'items:detail' content_type=content_type_slug pk=object.pk %}"
                    class="btn btn-outline-secondary">
                   <i class="fas fa-arrow-left"></i>
                   {% trans "Cancel" %}

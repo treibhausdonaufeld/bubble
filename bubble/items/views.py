@@ -218,6 +218,27 @@ class ItemListView(ListView):
 
         context["active_filters"] = active_filters
 
+        # Extract content type dynamically from URL path
+        # For URLs like /sachen/, /events/, /dienste/
+        path_parts = self.request.path.strip("/").split("/")
+        if path_parts and path_parts[0]:
+            content_type_slug = path_parts[0]
+            context["content_type_slug"] = content_type_slug
+
+            # Try to get the corresponding root category
+            try:
+                context["root_category"] = ItemCategory.objects.get(
+                    url_slug=content_type_slug,
+                    parent_category__isnull=True,
+                )
+            except ItemCategory.DoesNotExist:
+                # Fallback - create a mock object with capitalized name
+                class MockCategory:
+                    def __init__(self, slug):
+                        self.name = slug.capitalize()
+
+                context["root_category"] = MockCategory(content_type_slug)
+
         return context
 
     def _get_all_descendant_category_ids(self, category):
@@ -281,6 +302,13 @@ class ItemCreateView(LoginRequiredMixin, CreateView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs["user"] = self.request.user
+
+        # Try to determine root_category from URL or other context
+        # This allows dynamic fields to work even in non-content-specific URLs
+        root_category = getattr(self, "root_category", None)
+        if root_category:
+            kwargs["root_category"] = root_category
+
         return kwargs
 
     def form_valid(self, form):
@@ -311,6 +339,13 @@ class ItemUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs["user"] = self.request.user
+
+        # Try to determine root_category from URL or other context
+        # This allows dynamic fields to work even in non-content-specific URLs
+        root_category = getattr(self, "root_category", None)
+        if root_category:
+            kwargs["root_category"] = root_category
+
         return kwargs
 
     def form_valid(self, form):
@@ -414,3 +449,156 @@ def delete_image(request, image_id):
         return JsonResponse({"success": True})
 
     return JsonResponse({"success": False, "error": "Invalid request method"})
+
+
+# Content-aware views for dynamic URLs (e.g., /sachen/, /events/)
+class ContentMixin:
+    """Mixin to handle content type specific functionality"""
+
+    def dispatch(self, request, *args, **kwargs):
+        # Get content type from URL
+        self.content_type_slug = kwargs.get("content_type")
+
+        # Find root category by slug
+        try:
+            self.root_category = ItemCategory.objects.get(
+                url_slug=self.content_type_slug,
+                parent_category__isnull=True,
+            )
+        except ItemCategory.DoesNotExist:
+            # If not found, redirect to main items list
+            return redirect("items:list")
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        """Filter items by content type's category tree"""
+        queryset = super().get_queryset()
+
+        # Get all descendant categories of this content type
+        category_ids = [self.root_category.id]
+        category_ids.extend([cat.id for cat in self.root_category.get_descendants()])
+
+        return queryset.filter(category_id__in=category_ids)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["content_type_slug"] = self.content_type_slug
+        context["root_category"] = self.root_category
+        return context
+
+
+class ContentListView(ContentMixin, ItemListView):
+    """List view for content type specific items"""
+
+    def get_template_names(self):
+        # Allow content-type specific templates
+        return [
+            f"items/{self.content_type_slug}_list.html",
+            "items/content_list.html",
+            "items/item_list.html",  # fallback
+        ]
+
+
+class ContentDetailView(ContentMixin, ItemDetailView):
+    """Detail view for content type specific items"""
+
+    def get_template_names(self):
+        return [
+            f"items/{self.content_type_slug}_detail.html",
+            "items/content_detail.html",
+            "items/item_detail.html",  # fallback
+        ]
+
+
+class ContentCreateView(ContentMixin, ItemCreateView):
+    """Create view for content type specific items"""
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["root_category"] = self.root_category
+        return kwargs
+
+    def get_template_names(self):
+        return [
+            f"items/{self.content_type_slug}_form.html",
+            "items/content_form.html",
+            "items/item_form.html",  # fallback
+        ]
+
+    def get_success_url(self):
+        return reverse(
+            "items:detail",
+            kwargs={
+                "content_type": self.content_type_slug,
+                "pk": self.object.pk,
+            },
+        )
+
+
+class ContentUpdateView(ContentMixin, ItemUpdateView):
+    """Update view for content type specific items"""
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["root_category"] = self.root_category
+        return kwargs
+
+    def get_template_names(self):
+        return [
+            f"items/{self.content_type_slug}_form.html",
+            "items/content_form.html",
+            "items/item_form.html",  # fallback
+        ]
+
+    def get_success_url(self):
+        return reverse(
+            "items:detail",
+            kwargs={
+                "content_type": self.content_type_slug,
+                "pk": self.object.pk,
+            },
+        )
+
+
+class ContentDeleteView(ContentMixin, ItemDeleteView):
+    """Delete view for content type specific items"""
+
+    def get_success_url(self):
+        return reverse(
+            "items:my_items",
+            kwargs={
+                "content_type": self.content_type_slug,
+            },
+        )
+
+
+class MyContentView(ContentMixin, MyItemsView):
+    """User's content management view for specific content type"""
+
+    def get_template_names(self):
+        return [
+            f"items/my_{self.content_type_slug}.html",
+            "items/my_content.html",
+            "items/my_items.html",  # fallback
+        ]
+
+
+@login_required
+def toggle_content_status(request, pk, content_type):
+    """Toggle active status for content type specific items"""
+    item = get_object_or_404(Item, pk=pk, user=request.user)
+
+    # Verify item belongs to this content type
+    root_category = item.category.get_root_category()
+    if root_category.url_slug != content_type:
+        messages.error(request, _("Invalid content type"))
+        return redirect("items:my_items")
+
+    item.active = not item.active
+    item.save()
+
+    status = _("activated") if item.active else _("deactivated")
+    messages.success(request, _("Item {} successfully.").format(status))
+
+    return redirect(reverse("my_content", kwargs={"content_type": content_type}))
