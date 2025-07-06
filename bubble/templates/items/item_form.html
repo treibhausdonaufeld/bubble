@@ -278,10 +278,8 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="{% static 'js/vendor/select2.min.js' %}"></script>
 
-  <script>
-    $(document).ready(function() {
-
-        <!-- Auto-refresh processing status script -->
+<script>
+    <!-- Auto-refresh processing status script -->
   {% if object and object.processing_status == 1 %}
     $(document).ready(function() {
       const itemId = {{ object.pk|default:0 }};
@@ -304,6 +302,10 @@
     });
   {% endif %}
 
+</script>
+
+  <script>
+    $(document).ready(function() {
 
       console.log('Document ready, jQuery version:', $.fn.jquery);
       console.log('Select2 available:', typeof $.fn.select2 !== 'undefined');
