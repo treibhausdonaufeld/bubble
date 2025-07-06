@@ -16,7 +16,7 @@ from temporalio.worker import Worker
 from bubble.items.temporal.temporal_activities import (
     analyze_image,
     fetch_item_images,
-    send_processing_notification,
+    save_item_suggestions,
     summarize_image_suggestions,
 )
 from bubble.items.temporal.temporal_workflows import ItemProcessingWorkflow
@@ -43,7 +43,7 @@ async def run_worker():
             task_queue=TEMPORAL_TASK_QUEUE,
             activities=[
                 fetch_item_images,
-                send_processing_notification,
+                save_item_suggestions,
                 analyze_image,
                 summarize_image_suggestions,
             ],
