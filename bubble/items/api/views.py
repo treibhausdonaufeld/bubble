@@ -1,9 +1,14 @@
 """API views for items."""
 
 import mimetypes
+from io import BytesIO
+from pathlib import Path
 
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 from django.db.models import Q
 from django.http import HttpResponse
+from PIL import Image as PILImage
 from rest_framework import permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -141,4 +146,74 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
         except Image.DoesNotExist:
             return Response({"detail": "Image not found."}, status=404)
         else:
+            return response
+
+    @action(detail=True, methods=["get"], url_path="preview")
+    def get_preview_image(self, request, pk=None):
+        """Get a preview (scaled-down) version of the image."""
+        image = self.get_object()
+        if not image.original:
+            return Response({"detail": "Original image not available."}, status=404)
+
+        # Generate preview filename
+        preview_name = image.get_preview_path()
+
+        # Check if preview already exists
+        if default_storage.exists(preview_name):
+            # Serve existing preview
+            with default_storage.open(preview_name, "rb") as preview_file:
+                content_type, _ = mimetypes.guess_type(preview_name)
+                response = HttpResponse(
+                    preview_file.read(),
+                    content_type=content_type or "image/jpeg",
+                )
+                response["Content-Disposition"] = (
+                    f'inline; filename="{Path.name(preview_name)}"'
+                )
+                return response
+
+        # Generate new preview
+        with default_storage.open(image.original.name, "rb") as original_file:
+            # Open image with PIL
+            pil_image = PILImage.open(original_file)
+
+            # Convert to RGB if necessary (for PNG with transparency)
+            if pil_image.mode in ("RGBA", "P"):
+                pil_image = pil_image.convert("RGB")
+
+            # Calculate new dimensions (max 300px on longest side)
+            max_size = 1600
+            width, height = pil_image.size
+
+            if width > height:
+                new_width = max_size
+                new_height = int(height * max_size / width)
+            else:
+                new_height = max_size
+                new_width = int(width * max_size / height)
+
+            # Resize image
+            pil_image = pil_image.resize(
+                (new_width, new_height),
+                PILImage.Resampling.LANCZOS,
+            )
+
+            # Save to BytesIO
+            output = BytesIO()
+            pil_image.save(output, format="JPEG", quality=85, optimize=True)
+            output.seek(0)
+
+            # Save preview to storage
+            preview_file = ContentFile(output.getvalue())
+            default_storage.save(preview_name, preview_file)
+
+            # Return preview
+            output.seek(0)
+            response = HttpResponse(
+                output.getvalue(),
+                content_type="image/jpeg",
+            )
+            response["Content-Disposition"] = (
+                f'inline; filename="{Path.name(preview_name)}"'
+            )
             return response

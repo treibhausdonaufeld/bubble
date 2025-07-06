@@ -1,3 +1,7 @@
+import uuid
+from pathlib import Path
+
+from django.core.files.storage import default_storage
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -38,6 +42,12 @@ class Item(models.Model):
         related_name="items",
         blank=True,
         null=True,
+    )
+    uuid = models.UUIDField(
+        default=uuid.uuid4,
+        editable=False,
+        unique=True,
+        help_text=_("Unique identifier for the item"),
     )
     name = models.CharField(max_length=255, blank=True)
     description = models.TextField(blank=True)
@@ -91,7 +101,11 @@ class Item(models.Model):
 
 
 def upload_to_item_images(instance, filename):
-    return f"items/original/{instance.item.pk}/{filename}"
+    extension = Path.suffix(filename)
+    if not extension:
+        extension = ".jpg"
+    item_prefix = f"items/{str(instance.item.uuid)[0:4]}/{instance.item.uuid}"
+    return f"{item_prefix}/{uuid.uuid4()}/original{extension}"
 
 
 class Image(models.Model):
@@ -109,3 +123,17 @@ class Image(models.Model):
     def filename(self):
         """Return the filename of the original image."""
         return self.original.name.split("/")[-1]
+
+    def get_preview_path(self) -> str:
+        """Return the path where the preview image should be stored."""
+        if not self.original:
+            return None
+        original_name = self.original.name
+        dirname = Path.parent(original_name)
+        return f"{dirname}/preview.jpg"
+
+    def has_preview(self):
+        """Check if a preview image exists for this image."""
+        preview_path = self.get_preview_path()
+        return preview_path and default_storage.exists(preview_path)
+        return preview_path and default_storage.exists(preview_path)
