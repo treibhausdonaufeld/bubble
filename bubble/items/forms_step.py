@@ -38,7 +38,6 @@ class ItemDetailsForm(forms.ModelForm):
             "name",
             "description",
             "item_type",
-            "status",
             "price",
             "display_contact",
             "profile_img_frame",
@@ -55,7 +54,6 @@ class ItemDetailsForm(forms.ModelForm):
                 },
             ),
             "item_type": forms.Select(attrs={"class": "form-select"}),
-            "status": forms.Select(attrs={"class": "form-select"}),
             "price": forms.NumberInput(
                 attrs={
                     "class": "form-control",

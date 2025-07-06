@@ -461,7 +461,7 @@
                     </span>
                   {% endfor %}
                   <div class="mt-2">
-                    <a href="{% url 'items:list' content_type=content_type_slug %}"
+                    <a href="{% url 'items-browse:list' content_type=content_type_slug %}"
                        class="btn btn-sm btn-outline-secondary">{% trans "Clear All" %}</a>
                   </div>
                 </div>
@@ -613,7 +613,7 @@
                 <button type="submit" class="btn btn-primary w-100 mb-2">
                   <i class="fas fa-search"></i> {% trans "Filter" %}
                 </button>
-                <a href="{% url 'items:list' content_type=content_type_slug %}" class="btn btn-outline-secondary w-100">
+                <a href="{% url 'items-browse:list' content_type=content_type_slug %}" class="btn btn-outline-secondary w-100">
                   <i class="fas fa-undo"></i> {% trans "Reset filter" %}
                 </a>
               </div>
@@ -650,7 +650,7 @@
                 </div>
                 <!-- Add Item Button -->
                 {% if user.is_authenticated %}
-                  <a href="{% url 'items:create' content_type=content_type_slug %}" class="btn btn-success">
+                  <a href="{% url 'items-browse:create' content_type=content_type_slug %}" class="btn btn-success">
                     <i class="fas fa-plus"></i> {% trans "Create Item" %}
                   </a>
                 {% endif %}
@@ -713,7 +713,7 @@
             <h3>{% trans "No items found" %}</h3>
             <p class="text-muted mb-4">{% trans "Try adjusting your filters or search terms." %}</p>
             {% if user.is_authenticated %}
-              <a href="{% url 'items:create' content_type=content_type_slug %}" class="btn btn-primary btn-lg">
+              <a href="{% url 'items-browse:create' content_type=content_type_slug %}" class="btn btn-primary btn-lg">
                 <i class="fas fa-plus"></i> {% trans "Add the first item" %}
               </a>
             {% endif %}
