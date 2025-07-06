@@ -68,7 +68,7 @@ class ItemCreateStepOneView(LoginRequiredMixin, TemplateView):
                 item_id=item.pk,
                 user_id=request.user.pk,
                 token=str(token),
-                base_url=request.build_absolute_uri("/"),
+                base_url=request.build_absolute_uri("/")[:-1],  # Remove trailing slash
             )
             asyncio.run(start_item_processing(input_data))
 

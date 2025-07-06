@@ -27,3 +27,6 @@ TEMPORAL_MAX_CONCURRENT_WORKFLOWS: int = env.int(
     "TEMPORAL_MAX_CONCURRENT_WORKFLOWS",
     default=5,
 )
+
+# AI configuration
+ANTHROPIC_API_KEY = env("ANTHROPIC_API_KEY", default="")

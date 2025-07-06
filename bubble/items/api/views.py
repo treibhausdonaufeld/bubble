@@ -1,6 +1,9 @@
 """API views for items."""
 
+import mimetypes
+
 from django.db.models import Q
+from django.http import HttpResponse
 from rest_framework import permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -13,11 +16,11 @@ from bubble.items.api.serializers import (
 from bubble.items.models import Image, Item
 
 
-class ItemViewSet(viewsets.ReadOnlyModelViewSet):
+class ItemViewSet(viewsets.ModelViewSet):
     """
-    ViewSet for retrieving items.
+    ViewSet for retrieving, creating, updating, and deleting items.
     Only authenticated users can access items.
-    Users can only see their own items and public items.
+    Users can only see their own items and modify them.
     """
 
     permission_classes = [permissions.IsAuthenticated]
@@ -32,9 +35,8 @@ class ItemViewSet(viewsets.ReadOnlyModelViewSet):
         """Return items that the user can access."""
         user = self.request.user
 
-        # Users can see their own items and public items (not intern)
         queryset = (
-            Item.objects.filter(Q(user=user) | Q(intern=False))
+            Item.objects.filter(user=user)
             .select_related("user", "category")
             .prefetch_related("images")
         )
@@ -55,13 +57,17 @@ class ItemViewSet(viewsets.ReadOnlyModelViewSet):
             queryset = queryset.filter(processing_status=processing_status)
 
         # Filter by active status (default to active only)
-        active = self.request.query_params.get("active", "true")
+        active = self.request.query_params.get("active", "")
         if active.lower() == "true":
             queryset = queryset.filter(active=True)
         elif active.lower() == "false":
             queryset = queryset.filter(active=False)
 
         return queryset.order_by("-date_created")
+
+    def perform_create(self, serializer):
+        """Set the user when creating an item."""
+        serializer.save(user=self.request.user)
 
     @action(detail=False, methods=["get"])
     def my_items(self, request):
@@ -115,3 +121,24 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
             queryset = queryset.filter(item_id=item_id)
 
         return queryset
+
+    # add endpoint to get binary representation of the original image
+    @action(detail=True, methods=["get"], url_path="original")
+    def get_original_image(self, request, pk=None):
+        """Get the original image file."""
+
+        try:
+            image = self.get_object()
+            if not image.original:
+                return Response({"detail": "Original image not available."}, status=404)
+
+            content_type, _ = mimetypes.guess_type(image.original.name)
+            response = HttpResponse(
+                image.original.read(),
+                content_type=content_type or "application/octet-stream",
+            )
+            response["Content-Disposition"] = f'attachment; filename="{image.filename}"'
+        except Image.DoesNotExist:
+            return Response({"detail": "Image not found."}, status=404)
+        else:
+            return response

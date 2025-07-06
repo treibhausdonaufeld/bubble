@@ -36,7 +36,7 @@ class ItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Item
-        fields = ["__all__"]
+        fields = "__all__"
         read_only_fields = [
             "id",
             "user",
@@ -62,8 +62,7 @@ class ItemListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Item
-        fields = ["__all__"]
-        read_only_fields = fields
+        fields = "__all__"
 
     def get_first_image(self, obj):
         """Get the first image of the item."""

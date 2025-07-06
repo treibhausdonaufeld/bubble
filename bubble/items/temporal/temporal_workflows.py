@@ -15,11 +15,11 @@ from temporalio.common import RetryPolicy
 # Pass the activities through the sandbox
 with workflow.unsafe.imports_passed_through():
     from bubble.items.temporal.temporal_activities import (
-        ItemImagesResult,
+        ItemImageResult,
         ItemProcessingRequest,
         analyze_image,
         fetch_item_images,
-        send_processing_notification,
+        save_item_suggestions,
         summarize_image_suggestions,
     )
 
@@ -65,7 +65,7 @@ class ItemProcessingWorkflow:
         try:
             # Step 1: Fetch images
             workflow.logger.info("Fetching images for item %s", item_input_data.item_id)
-            images_data: list[ItemImagesResult] = await workflow.execute_activity(
+            images_data: list[ItemImageResult] = await workflow.execute_activity(
                 fetch_item_images,
                 args=[item_input_data],
                 start_to_close_timeout=timedelta(minutes=5),
@@ -91,7 +91,7 @@ class ItemProcessingWorkflow:
 
             image_suggestions = await asyncio.gather(*image_tasks)
 
-            await workflow.execute_activity(
+            item_result = await workflow.execute_activity(
                 summarize_image_suggestions,
                 args=[image_suggestions],
                 start_to_close_timeout=timedelta(seconds=30),
@@ -99,8 +99,8 @@ class ItemProcessingWorkflow:
             )
 
             await workflow.execute_activity(
-                send_processing_notification,
-                args=[item_input_data.item_id, item_input_data.user_id],
+                save_item_suggestions,
+                args=[item_result],
                 start_to_close_timeout=timedelta(seconds=30),
                 retry_policy=RetryPolicy(maximum_attempts=1),
             )
