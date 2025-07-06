@@ -186,7 +186,7 @@
               <!-- Category and Type -->
               <div class="row mb-3">
                 <div class="col-md-6">
-                  <label for="{{ form.selected_category.id_for_label }}" class="form-label">{{ form.selected_category.label }} *</label>
+                  <label for="{{ form.selected_category.id_for_label }}" class="form-label">{{ form.selected_category.label }}</label>
                   {{ form.selected_category }}
                   {% if form.selected_category.errors %}<div class="text-danger">{{ form.selected_category.errors }}</div>{% endif %}
                 </div>
@@ -261,11 +261,10 @@
                   </button>
                 {% else %}
                   <button type="submit" class="btn btn-primary">
-                    {% if object %}
-                      {% trans "Update Item" %}
-                    {% else %}
-                      {% trans "Create Item" %}
-                    {% endif %}
+                      {% trans "Save draft" %}
+                  </button>
+                  <button type="submit" name="publish" class="btn btn-success">
+                      {% trans "Publish" %}
                   </button>
                 {% endif %}
               </div>
@@ -281,6 +280,31 @@
 
   <script>
     $(document).ready(function() {
+
+        <!-- Auto-refresh processing status script -->
+  {% if object and object.processing_status == 1 %}
+    $(document).ready(function() {
+      const itemId = {{ object.pk|default:0 }};
+      if (itemId > 0) {
+        const statusCheckInterval = setInterval(async function() {
+          try {
+            const response = await fetch(`{% url 'items:processing_status' pk=0 %}`.replace('0', itemId));
+            const data = await response.json();
+
+            if (data.status === 'success') {
+              if (data.is_completed) {
+                window.location.reload();
+              }
+            }
+          } catch (error) {
+            console.error('Error checking processing status:', error);
+          }
+        }, 3000); // Check every 3 seconds
+      }
+    });
+  {% endif %}
+
+
       console.log('Document ready, jQuery version:', $.fn.jquery);
       console.log('Select2 available:', typeof $.fn.select2 !== 'undefined');
 
@@ -336,29 +360,6 @@
       }
   </script>
   <script>
-
-  <!-- Auto-refresh processing status script -->
-  {% if object and object.processing_status == 1 %}
-    $(document).ready(function() {
-      const itemId = {{ object.pk|default:0 }};
-      if (itemId > 0) {
-        const statusCheckInterval = setInterval(async function() {
-          try {
-            const response = await fetch(`{% url 'items:processing_status' pk=0 %}`.replace('0', itemId));
-            const data = await response.json();
-
-            if (data.status === 'success') {
-              if (data.is_completed) {
-                window.location.reload();
-              }
-            }
-          } catch (error) {
-            console.error('Error checking processing status:', error);
-          }
-        }, 3000); // Check every 3 seconds
-      }
-    });
-  {% endif %}
 
       // Category selection is now handled by a simple dropdown
 
