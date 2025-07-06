@@ -15,7 +15,7 @@ class ItemForm(forms.ModelForm):
             parent_category__isnull=False,  # Has a parent
             subcategories__isnull=True,  # Has no children
         ),
-        required=True,
+        required=False,
         widget=forms.Select(
             attrs={
                 "class": "form-select select2-category",
@@ -299,9 +299,6 @@ class ItemForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
         selected_category = cleaned_data.get("selected_category")
-
-        if not selected_category:
-            raise ValidationError(_("Please select a category."))
 
         # Set the final category
         cleaned_data["category"] = selected_category

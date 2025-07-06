@@ -356,7 +356,15 @@ class ItemUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return response
 
     def get_success_url(self):
-        return reverse("items:detail", kwargs={"pk": self.object.pk})
+        if "publish" in self.request.POST:
+            # If publish button was clicked, set item as active
+            self.object.active = True
+            self.object.save()
+            url = reverse("items:detail", kwargs={"pk": self.object.pk})
+        else:
+            url = reverse("items:edit", kwargs={"pk": self.object.pk})
+
+        return url
 
 
 class ItemDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
