@@ -3,8 +3,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 from bubble.categories.models import ItemCategory
-from bubble.items.models import Image
-from bubble.items.models import Item
+from bubble.items.models import Image, Item
 
 
 class ItemForm(forms.ModelForm):

@@ -168,7 +168,7 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
                     content_type=content_type or "image/jpeg",
                 )
                 response["Content-Disposition"] = (
-                    f'inline; filename="{Path.name(preview_name)}"'
+                    f'inline; filename="{Path(preview_name).name}"'
                 )
                 return response
 
@@ -214,6 +214,6 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
                 content_type="image/jpeg",
             )
             response["Content-Disposition"] = (
-                f'inline; filename="{Path.name(preview_name)}"'
+                f'inline; filename="{Path(preview_name).name}"'
             )
             return response

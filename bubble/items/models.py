@@ -101,7 +101,7 @@ class Item(models.Model):
 
 
 def upload_to_item_images(instance, filename):
-    extension = Path.suffix(filename)
+    extension = Path(filename).suffix
     if not extension:
         extension = ".jpg"
     item_prefix = f"items/{str(instance.item.uuid)[0:4]}/{instance.item.uuid}"
@@ -129,7 +129,7 @@ class Image(models.Model):
         if not self.original:
             return None
         original_name = self.original.name
-        dirname = Path.parent(original_name)
+        dirname = Path(original_name).parent
         return f"{dirname}/preview.jpg"
 
     def has_preview(self):

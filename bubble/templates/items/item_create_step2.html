@@ -185,8 +185,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const isProcessing = {{ is_processing|yesno:"true,false" }};
 
     // Auto-refresh processing status
-    //if (isProcessing) {
-    if (false) { // Temporarily disabled for testing
+    if (isProcessing) {
         const statusCheckInterval = setInterval(async function() {
             try {
                 const response = await fetch(`{% url 'items:processing_status' pk=0 %}`.replace('0', itemId));
@@ -194,54 +193,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 if (data.status === 'success') {
                     if (data.is_completed) {
-                        // Update form fields with AI suggestions
-                        if (data.name && !document.getElementById('id_name').value) {
-                            document.getElementById('id_name').value = data.name;
-                            document.getElementById('id_name').style.backgroundColor = '#e7f3ff';
-                        }
-                        if (data.description && !document.getElementById('id_description').value) {
-                            document.getElementById('id_description').value = data.description;
-                            document.getElementById('id_description').style.backgroundColor = '#e7f3ff';
-                        }
-
-                        // Hide processing alert
-                        const processingAlert = document.getElementById('processing-alert');
-                        if (processingAlert) {
-                            processingAlert.remove();
-                        }
-
-                        // Show success message
-                        const successAlert = document.createElement('div');
-                        successAlert.className = 'alert alert-success alert-dismissible fade show';
-                        successAlert.innerHTML = `
-                            <i class="fas fa-check-circle me-2"></i>
-                            <strong>{% trans "Processing Complete!" %}</strong>
-                            {% trans "AI suggestions have been added to the form. You can edit them as needed." %}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        `;
-                        document.querySelector('.container-fluid .row .col-lg-10').insertBefore(
-                            successAlert,
-                            document.querySelector('.row')
-                        );
-
-                        clearInterval(statusCheckInterval);
-                    } else if (data.has_failed) {
-                        // Handle processing failure
-                        const processingAlert = document.getElementById('processing-alert');
-                        if (processingAlert) {
-                            processingAlert.className = 'alert alert-warning';
-                            processingAlert.innerHTML = `
-                                <i class="fas fa-exclamation-triangle me-2"></i>
-                                {% trans "Image processing failed. Please fill in the details manually." %}
-                            `;
-                        }
-                        clearInterval(statusCheckInterval);
+                        window.location.reload();
                     }
                 }
             } catch (error) {
                 console.error('Error checking processing status:', error);
             }
-        }, 2000); // Check every 2 seconds
+        }, 3000); // Check every 3 seconds
     }
 
 });
