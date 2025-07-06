@@ -21,12 +21,13 @@ urlpatterns = [
     path("", include("pwa.urls")),
     # bubble app
     path("", include("bubble.core.urls", namespace="core")),
-    path("items/", include("bubble.items.urls", namespace="items")),
     path("favorites/", include("bubble.favorites.urls", namespace="favorites")),
     path(settings.ADMIN_URL, admin.site.urls),
     path("users/", include("bubble.users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
+    # Dynamic content type URLs (e.g., /sachen/, /dienste/, /events/)
+    path("<slug:content_type>/", include(("bubble.items.content_urls", "items"))),
     # ...
     # Media files
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),

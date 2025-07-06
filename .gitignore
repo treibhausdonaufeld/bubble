@@ -263,7 +263,9 @@ Session.vim
 .netrwhist
 
 # Auto-generated tag files
+# tags
 tags
+!bubble/tags
 
 # Redis dump file
 dump.rdb

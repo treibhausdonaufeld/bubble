@@ -36,12 +36,18 @@ class Item(models.Model):
     display_contact = models.BooleanField(default=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     th_payment = models.BooleanField(default=False, blank=True, null=True)
+    item_type = models.IntegerField(choices=ItemType, default=ItemType.FOR_SALE)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
-    status = models.IntegerField(blank=True, null=True, choices=StatusType)
-    item_type = models.IntegerField(choices=ItemType, default=ItemType.FOR_SALE)
     profile_img_frame = models.ImageField(upload_to="items/", blank=True, null=True)
     profile_img_frame_alt = models.CharField(max_length=255, blank=True)
+
+    # Store category-specific custom fields
+    custom_fields = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text=_("Additional fields specific to the item's category"),
+    )
 
     # Add class constants for easy access
     STATUS_CHOICES = StatusType.choices
