@@ -4,7 +4,7 @@
   {% for category in root_categories %}
     <li class="nav-item">
       <a class="nav-link{% if request.resolver_match.app_name == 'items' and content_type_slug == category.url_slug %} active{% endif %}"
-         href="{% url 'items:list' content_type=category.url_slug %}">{{ category.emoji }} {% trans category.name %}</a>
+         href="{% url 'items-browse:list' content_type=category.url_slug %}">{{ category.emoji }} {% trans category.name %}</a>
     </li>
   {% endfor %}
   <li class="nav-item">
@@ -15,7 +15,7 @@
   {% for category in root_categories %}
     <li class="nav-item">
       <a class="nav-link{% if request.resolver_match.app_name == 'items' and content_type_slug == category.url_slug %} active{% endif %}"
-         href="{% url 'items:list' content_type=category.url_slug %}">{{ category.emoji }} {% trans category.name %}</a>
+         href="{% url 'items-browse:list' content_type=category.url_slug %}">{{ category.emoji }} {% trans category.name %}</a>
     </li>
   {% endfor %}
   <li class="nav-item">
