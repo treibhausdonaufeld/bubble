@@ -6,13 +6,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('items', '0004_alter_image_options_remove_image_fname_and_more'),
+        ("items", "0004_alter_image_options_remove_image_fname_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='item',
-            name='custom_fields',
-            field=models.JSONField(blank=True, default=dict, help_text="Additional fields specific to the item's category"),
+            model_name="item",
+            name="custom_fields",
+            field=models.JSONField(
+                blank=True,
+                default=dict,
+                help_text="Additional fields specific to the item's category",
+            ),
         ),
     ]
