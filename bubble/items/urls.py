@@ -1,7 +1,6 @@
 from django.urls import path
 
-from . import views
-from . import views_step
+from . import views, views_step
 
 app_name = "items"
 

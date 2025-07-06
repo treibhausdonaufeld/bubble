@@ -153,10 +153,10 @@
                       data-bs-toggle="dropdown">{% trans "Actions" %}</button>
               <ul class="dropdown-menu">
                 <li>
-                  <a class="dropdown-item" href="{% url 'items:edit' content_type=content_type_slug pk=item.pk %}">{% trans "Edit" %}</a>
+                  <a class="dropdown-item" href="{% url 'items:edit' pk=item.pk %}">{% trans "Edit" %}</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="{% url 'items:toggle_status' content_type=content_type_slug pk=item.pk %}">
+                  <a class="dropdown-item" href="{% url 'items:toggle_status' pk=item.pk %}">
                     {% if item.active %}
                       {% trans "Deactivate" %}
                     {% else %}
@@ -169,7 +169,7 @@
                 </li>
                 <li>
                   <a class="dropdown-item text-danger"
-                     href="{% url 'items:delete' content_type=content_type_slug pk=item.pk %}">{% trans "Delete" %}</a>
+                     href="{% url 'items:delete' pk=item.pk %}">{% trans "Delete" %}</a>
                 </li>
               </ul>
             </div>
@@ -323,10 +323,10 @@
                           data-bs-toggle="dropdown">{% trans "Actions" %}</button>
                   <ul class="dropdown-menu">
                     <li>
-                      <a class="dropdown-item" href="{% url 'items:edit' content_type=content_type_slug pk=item.pk %}">{% trans "Edit" %}</a>
+                      <a class="dropdown-item" href="{% url 'items:edit' pk=item.pk %}">{% trans "Edit" %}</a>
                     </li>
                     <li>
-                      <a class="dropdown-item" href="{% url 'items:toggle_status' content_type=content_type_slug pk=item.pk %}">
+                      <a class="dropdown-item" href="{% url 'items:toggle_status' pk=item.pk %}">
                         {% if item.active %}
                           {% trans "Deactivate" %}
                         {% else %}
@@ -339,7 +339,7 @@
                     </li>
                     <li>
                       <a class="dropdown-item text-danger"
-                         href="{% url 'items:delete' content_type=content_type_slug pk=item.pk %}">{% trans "Delete" %}</a>
+                         href="{% url 'items:delete' pk=item.pk %}">{% trans "Delete" %}</a>
                     </li>
                   </ul>
                 </div>

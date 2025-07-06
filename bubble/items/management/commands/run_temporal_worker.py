@@ -7,8 +7,7 @@ import sys
 from typing import Any
 
 from django.conf import settings
-from django.core.management.base import BaseCommand
-from django.core.management.base import CommandError
+from django.core.management.base import BaseCommand, CommandError
 
 from bubble.items.temporal.temporal_worker import TemporalWorker
 
