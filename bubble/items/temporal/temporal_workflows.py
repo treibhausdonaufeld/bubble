@@ -12,14 +12,16 @@ from typing import Any
 from temporalio import workflow
 from temporalio.common import RetryPolicy
 
-from bubble.items.temporal.temporal_activities import (
-    ItemImagesResult,
-    ItemProcessingRequest,
-    analyze_image,
-    fetch_item_images,
-    send_processing_notification,
-    summarize_image_suggestions,
-)
+# Pass the activities through the sandbox
+with workflow.unsafe.imports_passed_through():
+    from bubble.items.temporal.temporal_activities import (
+        ItemImagesResult,
+        ItemProcessingRequest,
+        analyze_image,
+        fetch_item_images,
+        send_processing_notification,
+        summarize_image_suggestions,
+    )
 
 logger = logging.getLogger(__name__)
 

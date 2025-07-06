@@ -7,13 +7,18 @@ activities and workflows for item processing.
 import asyncio
 import logging
 import sys
+from concurrent.futures import ThreadPoolExecutor
 
 from django.conf import settings
 from temporalio.client import Client
 from temporalio.worker import Worker
 
-from bubble.items.temporal.temporal_activities import analyze_item_images
-from bubble.items.temporal.temporal_activities import send_processing_notification
+from bubble.items.temporal.temporal_activities import (
+    analyze_image,
+    fetch_item_images,
+    send_processing_notification,
+    summarize_image_suggestions,
+)
 from bubble.items.temporal.temporal_workflows import ItemProcessingWorkflow
 
 logger = logging.getLogger(__name__)
@@ -53,19 +58,23 @@ class TemporalWorker:
         logger.info("Connected to Temporal server at %s", self.temporal_address)
 
         # Create worker with activities and workflows
-        self.worker = Worker(
-            self.client,
-            task_queue=self.task_queue,
-            activities=[
-                analyze_item_images,
-                send_processing_notification,
-            ],
-            workflows=[
-                ItemProcessingWorkflow,
-            ],
-            max_concurrent_activities=self.max_concurrent_activities,
-            max_concurrent_workflow_tasks=self.max_concurrent_workflows,
-        )
+        with ThreadPoolExecutor(max_workers=self.max_concurrent_activities) as executor:
+            self.worker = Worker(
+                self.client,
+                task_queue=self.task_queue,
+                activities=[
+                    fetch_item_images,
+                    send_processing_notification,
+                    analyze_image,
+                    summarize_image_suggestions,
+                ],
+                workflows=[
+                    ItemProcessingWorkflow,
+                ],
+                max_concurrent_activities=self.max_concurrent_activities,
+                max_concurrent_workflow_tasks=self.max_concurrent_workflows,
+                activity_executor=executor,
+            )
 
         logger.info("Worker created for task queue '%s'", self.task_queue)
 

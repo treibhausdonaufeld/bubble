@@ -10,7 +10,9 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_http_methods
 from django.views.generic import TemplateView, UpdateView
+from rest_framework.authtoken.models import Token
 
+from bubble.items.temporal.temporal_activities import ItemProcessingRequest
 from bubble.items.temporal.temporal_service import start_item_processing
 
 from .forms_step import ItemDetailsForm, ItemImageUploadForm
@@ -61,7 +63,14 @@ class ItemCreateStepOneView(LoginRequiredMixin, TemplateView):
             item.save(update_fields=["processing_status"])
 
             # Trigger async image processing
-            asyncio.run(start_item_processing(item.pk, request.user.pk))
+            token = Token.objects.get_or_create(user=request.user)[0]
+            input_data = ItemProcessingRequest(
+                item_id=item.pk,
+                user_id=request.user.pk,
+                token=str(token),
+                base_url=request.build_absolute_uri("/"),
+            )
+            asyncio.run(start_item_processing(input_data))
 
             messages.info(
                 request,
