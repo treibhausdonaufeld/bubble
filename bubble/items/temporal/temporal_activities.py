@@ -9,7 +9,7 @@ import secrets
 from dataclasses import dataclass
 from typing import Any
 
-import httpx
+import requests
 from temporalio import activity
 
 logger = logging.getLogger(__name__)
@@ -55,22 +55,22 @@ class ProcessingError:
 
 
 @activity.defn
-async def fetch_item_images(
+def fetch_item_images(
     input_data: ItemProcessingRequest,
 ) -> list[ItemImagesResult]:
     logger.info("Start to fetch images for item %s", input_data.item_id)
 
+    image_url = f"{input_data.base_url}/api/images/?item={input_data.item_id}"
+    logger.info("Image API URL: %s", image_url)
+
     # fetch image data from rest api with authentication token
     headers = {"Authorization": f"Token {input_data.token}"}
-    async with httpx.AsyncClient() as client:
-        response = await client.get(
-            f"{input_data.base_url}/api/images/?item={input_data.item_id}",
-            headers=headers,
-            timeout=30,
-        )
-        response.raise_for_status()
+    response = requests.get(image_url, headers=headers, timeout=30)
+    response.raise_for_status()
 
-        images_data = response.json()
+    images_data = response.json()
+
+    logger.info("Image data: %s", images_data)
 
     if not images_data:
         logger.warning("No images found for item %s", input_data.item_id)
@@ -83,12 +83,12 @@ async def fetch_item_images(
             token=input_data.token,
             base_url=input_data.base_url,
         )
-        for image in images_data
+        for image in images_data["results"]
     ]
 
 
 @activity.defn
-async def analyze_image(
+def analyze_image(
     image_input: ItemImagesResult,
 ) -> ItemImagesResult:
     """Analyze a single image and generate AI suggestions."""
@@ -98,7 +98,7 @@ async def analyze_image(
 
 
 @activity.defn
-async def summarize_image_suggestions(
+def summarize_image_suggestions(
     image_input: list[ItemImagesResult],
 ) -> ItemResult:
     """Summarize suggestions from multiple images into a single description."""
@@ -124,7 +124,7 @@ async def summarize_image_suggestions(
 
 
 @activity.defn
-async def send_processing_notification(item_id: int, user_id: int) -> bool:
+def send_processing_notification(item_id: int, user_id: int) -> bool:
     """Send notification when processing is complete.
 
     Args:

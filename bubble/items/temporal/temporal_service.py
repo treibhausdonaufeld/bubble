@@ -148,7 +148,7 @@ class TemporalService:
 # Convenience functions for common operations
 
 
-async def start_item_processing(item_id: int, user_id: int) -> str:
+async def start_item_processing(input_data: ItemProcessingRequest) -> str:
     """Start image processing for an item.
 
     Args:
@@ -158,7 +158,7 @@ async def start_item_processing(item_id: int, user_id: int) -> str:
     Returns:
         str: The workflow ID.
     """
-    handle = await TemporalService.start_item_processing(item_id, user_id)
+    handle = await TemporalService.start_item_processing(input_data)
     return handle.id
 
 

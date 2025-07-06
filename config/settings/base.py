@@ -9,6 +9,8 @@ import environ
 # https://docs.djangoproject.com/en/dev/ref/settings/#languages
 from django.utils.translation import gettext_lazy as _
 
+from .temporal import *  # noqa: F403
+
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 # bubble/
 APPS_DIR = BASE_DIR / "bubble"
@@ -320,23 +322,6 @@ CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 CELERY_WORKER_SEND_TASK_EVENTS = True
 # https://docs.celeryq.dev/en/stable/userguide/configuration.html#std-setting-task_send_sent_event
 CELERY_TASK_SEND_SENT_EVENT = True
-
-# Temporal.io
-# ------------------------------------------------------------------------------
-# https://docs.temporal.io/docs/server/configuration
-TEMPORAL_ADDRESS: str = env("TEMPORAL_ADDRESS", default="localhost:7233")
-TEMPORAL_NAMESPACE: str = env("TEMPORAL_NAMESPACE", default="default")
-TEMPORAL_TASK_QUEUE: str = env("TEMPORAL_TASK_QUEUE", default="bubble-task-queue")
-
-# Temporal worker configuration
-TEMPORAL_MAX_CONCURRENT_ACTIVITIES: int = env.int(
-    "TEMPORAL_MAX_CONCURRENT_ACTIVITIES",
-    default=10,
-)
-TEMPORAL_MAX_CONCURRENT_WORKFLOWS: int = env.int(
-    "TEMPORAL_MAX_CONCURRENT_WORKFLOWS",
-    default=5,
-)
 
 # django-allauth
 # ------------------------------------------------------------------------------
