@@ -10,13 +10,20 @@ from bubble.items.models import Item
 class ItemForm(forms.ModelForm):
     MIN_ITEM_NAME_LENGTH = 3
 
-    # Dynamic cascading category dropdown
-    # Only one field needed - will be populated dynamically with JavaScript
+    # Category dropdown showing only leaf categories (lowest level)
     selected_category = forms.ModelChoiceField(
-        queryset=ItemCategory.objects.all(),
+        queryset=ItemCategory.objects.filter(
+            parent_category__isnull=False,  # Has a parent
+            subcategories__isnull=True,  # Has no children
+        ),
         required=True,
-        widget=forms.HiddenInput(),
-        label=_("Selected category"),
+        widget=forms.Select(
+            attrs={
+                "class": "form-select select2-category",
+                "data-placeholder": _("Search and select a category..."),
+            },
+        ),
+        label=_("Category"),
     )
 
     class Meta:
@@ -25,7 +32,6 @@ class ItemForm(forms.ModelForm):
             "name",
             "description",
             "item_type",
-            "status",
             "price",
             "display_contact",
             "profile_img_frame",
@@ -42,8 +48,7 @@ class ItemForm(forms.ModelForm):
                     "placeholder": _("Describe your item..."),
                 },
             ),
-            "item_type": forms.Select(attrs={"class": "form-select"}),
-            "status": forms.Select(attrs={"class": "form-select"}),
+            "item_type": forms.Select(attrs={"class": "form-select select2-field"}),
             "price": forms.NumberInput(
                 attrs={
                     "class": "form-control",
@@ -65,7 +70,6 @@ class ItemForm(forms.ModelForm):
             "name": _("Item name"),
             "description": _("Description"),
             "item_type": _("Item type"),
-            "status": _("Condition"),
             "price": _("Price"),
             "display_contact": _("Show contact"),
             "profile_img_frame": _("Profile image frame"),
@@ -77,7 +81,24 @@ class ItemForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user", None)
+        self.root_category = kwargs.pop("root_category", None)
         super().__init__(*args, **kwargs)
+
+        # Show full hierarchy in the dropdown labels
+        self.fields["selected_category"].label_from_instance = (
+            lambda obj: obj.get_hierarchy()
+        )
+
+        # If root_category is provided, filter categories to only show descendants
+        if self.root_category:
+            descendant_ids = [self.root_category.id]
+            descendant_ids.extend(
+                [cat.id for cat in self.root_category.get_descendants()],
+            )
+            self.fields["selected_category"].queryset = ItemCategory.objects.filter(
+                id__in=descendant_ids,
+                subcategories__isnull=True,  # Only leaf categories
+            )
 
         # If editing an existing item, set the selected category
         if (
@@ -86,6 +107,22 @@ class ItemForm(forms.ModelForm):
             and self.instance.category
         ):
             self.fields["selected_category"].initial = self.instance.category
+
+        # Add dynamic fields based on category schema
+        # For create form: use root_category, for edit form: use item's category
+        if self.root_category or (
+            hasattr(self.instance, "category") and self.instance.category
+        ):
+            self._add_dynamic_fields()
+
+        # Add JavaScript data attributes for dynamic field generation
+        if self.root_category:
+            self.fields["selected_category"].widget.attrs.update(
+                {
+                    "data-root-category": self.root_category.id,
+                    "data-url-slug": self.root_category.url_slug,
+                },
+            )
 
         # Add intern-only fields if user is intern
         if self.user and hasattr(self.user, "profile") and self.user.profile.intern:
@@ -146,6 +183,120 @@ class ItemForm(forms.ModelForm):
 
         return price
 
+    def clean_name(self):
+        name = self.cleaned_data.get("name")
+        if len(name) < self.MIN_ITEM_NAME_LENGTH:
+            raise ValidationError(
+                _("Item name must be at least %(min_length)d characters long.")
+                % {"min_length": self.MIN_ITEM_NAME_LENGTH},
+            )
+        return name
+
+    def _add_dynamic_fields(self):
+        """Add dynamic fields based on category's field schema"""
+        # Determine which category to use for schema
+        if hasattr(self.instance, "category") and self.instance.category:
+            # Editing existing item - use item's category
+            root_category = self.instance.category.get_root_category()
+        elif self.root_category:
+            # Creating new item - use provided root category
+            root_category = self.root_category
+        else:
+            return
+
+        # Add custom fields
+        for field_name, field_config in root_category.custom_fields.items():
+            is_required = field_config.get("required", False)
+            self._create_dynamic_field(field_name, field_config, required=is_required)
+
+    def _create_dynamic_field(self, field_name, field_config, *, required=False):
+        """Create a form field based on configuration"""
+        field_type = field_config.get("type", "text")
+        label = field_config.get("label", field_name)
+
+        # Get existing value from custom_fields if editing
+        initial_value = None
+        if self.instance.pk and self.instance.custom_fields:
+            field_data = self.instance.custom_fields.get(field_name)
+            if isinstance(field_data, dict) and "value" in field_data:
+                initial_value = field_data["value"]
+            else:
+                # Handle old format for backward compatibility
+                initial_value = field_data
+
+        # No longer skip status field since it's now handled as custom field
+
+        # Create appropriate field based on type
+        if field_type == "text":
+            field = forms.CharField(
+                label=label,
+                required=required,
+                initial=initial_value,
+                widget=forms.TextInput(attrs={"class": "form-control"}),
+            )
+        elif field_type == "textarea":
+            field = forms.CharField(
+                label=label,
+                required=required,
+                initial=initial_value,
+                widget=forms.Textarea(attrs={"class": "form-control", "rows": 3}),
+            )
+        elif field_type == "number":
+            field = forms.IntegerField(
+                label=label,
+                required=required,
+                initial=initial_value,
+                widget=forms.NumberInput(attrs={"class": "form-control"}),
+            )
+        elif field_type == "choice":
+            # Support both simple list and key-value pairs for choices
+            raw_choices = field_config.get("choices", [])
+            choices = []
+
+            for choice in raw_choices:
+                if isinstance(choice, dict):
+                    # Key-value format: {"key": "db_value", "value": "display_value"}
+                    key = choice.get("key", "")
+                    value = choice.get(
+                        "value",
+                        key,
+                    )  # Fall back to key if value not provided
+                    choices.append((key, value))
+                else:
+                    # Simple format: just use the value for both key and display
+                    choices.append((choice, choice))
+
+            field = forms.ChoiceField(
+                label=label,
+                required=required,
+                choices=choices,
+                initial=initial_value,
+                widget=forms.Select(attrs={"class": "form-select select2-field"}),
+            )
+        elif field_type == "datetime":
+            field = forms.DateTimeField(
+                label=label,
+                required=required,
+                initial=initial_value,
+                widget=forms.DateTimeInput(
+                    attrs={
+                        "class": "form-control",
+                        "type": "datetime-local",
+                    },
+                ),
+            )
+        else:
+            # Default to text field
+            field = forms.CharField(
+                label=label,
+                required=required,
+                initial=initial_value,
+                widget=forms.TextInput(attrs={"class": "form-control"}),
+            )
+
+        # Add field to form
+        self.fields[f"custom_{field_name}"] = field
+
     def clean(self):
         cleaned_data = super().clean()
         selected_category = cleaned_data.get("selected_category")
@@ -155,16 +306,24 @@ class ItemForm(forms.ModelForm):
 
         # Set the final category
         cleaned_data["category"] = selected_category
-        return cleaned_data
 
-    def clean_name(self):
-        name = self.cleaned_data.get("name")
-        if len(name) < self.MIN_ITEM_NAME_LENGTH:
-            raise ValidationError(
-                _("Item name must be at least %(min_length)d characters long.")
-                % {"min_length": self.MIN_ITEM_NAME_LENGTH},
-            )
-        return name
+        # Collect custom field values with labels
+        custom_values = {}
+        if selected_category:
+            root_category = selected_category.get_root_category()
+
+            for field_name, field_config in root_category.custom_fields.items():
+                custom_field_name = f"custom_{field_name}"
+                if custom_field_name in cleaned_data:
+                    value = cleaned_data[custom_field_name]
+                    # Store both value and label
+                    custom_values[field_name] = {
+                        "value": value,
+                        "label": field_config.get("label", field_name.title()),
+                    }
+
+        cleaned_data["custom_field_values"] = custom_values
+        return cleaned_data
 
     def save(self, *, commit: bool = True):
         instance = super().save(commit=False)
@@ -176,6 +335,14 @@ class ItemForm(forms.ModelForm):
         category = self.cleaned_data.get("category")
         if category:
             instance.category = category
+
+        # Set custom field values
+        custom_values = self.cleaned_data.get("custom_field_values", {})
+        if custom_values:
+            # Merge with existing custom_fields to preserve other data
+            if not instance.custom_fields:
+                instance.custom_fields = {}
+            instance.custom_fields.update(custom_values)
 
         # Set default values for intern-only fields if user is not intern
         if not (
@@ -229,12 +396,6 @@ class ItemFilterForm(forms.Form):
 
     item_type = forms.ChoiceField(
         choices=[("", _("All types")), *Item.ITEM_TYPE_CHOICES],
-        required=False,
-        widget=forms.Select(attrs={"class": "form-select"}),
-    )
-
-    status = forms.ChoiceField(
-        choices=[("", _("All conditions")), *Item.STATUS_CHOICES],
         required=False,
         widget=forms.Select(attrs={"class": "form-select"}),
     )

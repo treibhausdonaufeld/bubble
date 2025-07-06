@@ -1,40 +1,26 @@
 {% load i18n %}
 
 {% if is_mobile %}
-  <li class="nav-item dropdown">
-    <a class="nav-link dropdown-toggle mobile-submenu-trigger{% if request.resolver_match.app_name == 'items' %} active{% endif %}"
-       href="#"
-       data-submenu="items-submenu"
-       data-title="📦 {% trans 'Items' %}">📦 {% trans "Items" %}</a>
-  </li>
-  <li class="nav-item dropdown">
-    <a class="nav-link dropdown-toggle mobile-submenu-trigger{% if request.resolver_match.url_name == 'list' and request.resolver_match.app_name == 'users' %} active{% endif %}"
-       href="#"
-       data-submenu="community-submenu"
-       data-title="👥 {% trans 'Community' %}">👥 {% trans "Community" %}</a>
+  {% for category in root_categories %}
+    <li class="nav-item">
+      <a class="nav-link{% if request.resolver_match.app_name == 'items' and content_type_slug == category.url_slug %} active{% endif %}"
+         href="{% url 'items:list' content_type=category.url_slug %}">{{ category.emoji }} {% trans category.name %}</a>
+    </li>
+  {% endfor %}
+  <li class="nav-item">
+    <a class="nav-link{% if request.resolver_match.url_name == 'list' and request.resolver_match.app_name == 'users' %} active{% endif %}"
+       href="{% url 'users:list' %}">👥 {% trans "Community" %}</a>
   </li>
 {% else %}
-  <li class="nav-item dropdown">
-    <a class="nav-link dropdown-toggle{% if request.resolver_match.app_name == 'items' %} active{% endif %}"
-       href="#"
-       id="itemsDropdown"
-       role="button"
-       data-bs-toggle="dropdown"
-       aria-expanded="false">📦 {% trans "Items" %}</a>
-    <ul class="dropdown-menu" aria-labelledby="itemsDropdown">
-      {% include 'includes/nav_items_submenu.html' with is_dropdown=True %}
-    </ul>
-  </li>
-  <li class="nav-item dropdown">
-    <a class="nav-link dropdown-toggle{% if request.resolver_match.url_name == 'list' and request.resolver_match.app_name == 'users' %} active{% endif %}"
-       href="#"
-       id="usersDropdown"
-       role="button"
-       data-bs-toggle="dropdown"
-       aria-expanded="false">👥 {% trans "Community" %}</a>
-    <ul class="dropdown-menu" aria-labelledby="usersDropdown">
-      {% include 'includes/nav_community_submenu.html' with is_dropdown=True %}
-    </ul>
+  {% for category in root_categories %}
+    <li class="nav-item">
+      <a class="nav-link{% if request.resolver_match.app_name == 'items' and content_type_slug == category.url_slug %} active{% endif %}"
+         href="{% url 'items:list' content_type=category.url_slug %}">{{ category.emoji }} {% trans category.name %}</a>
+    </li>
+  {% endfor %}
+  <li class="nav-item">
+    <a class="nav-link{% if request.resolver_match.url_name == 'list' and request.resolver_match.app_name == 'users' %} active{% endif %}"
+       href="{% url 'users:list' %}">👥 {% trans "Community" %}</a>
   </li>
 {% endif %}
 {% include 'includes/nav_user_items.html' %}

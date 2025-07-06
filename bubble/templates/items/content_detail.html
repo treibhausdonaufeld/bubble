@@ -1,0 +1,27 @@
+{% extends "items/item_detail.html" %}
+{% load i18n %}
+
+{% block custom_fields_display %}
+<!-- Display custom fields -->
+{% if item.custom_fields %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">{% trans "Additional Information" %}</h5>
+        </div>
+        <div class="card-body">
+            {% for field_name, value in item.custom_fields.items %}
+                {% if value %}
+                <div class="row mb-2">
+                    <div class="col-sm-4">
+                        <strong>{{ field_name|title }}:</strong>
+                    </div>
+                    <div class="col-sm-8">
+                        {{ value }}
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}
+{% endblock custom_fields_display %}
