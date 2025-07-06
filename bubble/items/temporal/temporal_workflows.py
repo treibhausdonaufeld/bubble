@@ -4,6 +4,7 @@ Workflows in Temporal orchestrate activities and handle the business logic.
 They must be deterministic and use only Temporal APIs for side effects.
 """
 
+import asyncio
 import logging
 from datetime import timedelta
 from typing import Any
@@ -11,8 +12,14 @@ from typing import Any
 from temporalio import workflow
 from temporalio.common import RetryPolicy
 
-from bubble.items.temporal.temporal_activities import analyze_item_images
-from bubble.items.temporal.temporal_activities import send_processing_notification
+from bubble.items.temporal.temporal_activities import (
+    ItemImagesResult,
+    ItemProcessingRequest,
+    analyze_image,
+    fetch_item_images,
+    send_processing_notification,
+    summarize_image_suggestions,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +37,7 @@ class ItemProcessingWorkflow:
     """
 
     @workflow.run
-    async def run(self, item_id: int, user_id: int) -> dict[str, Any]:
+    async def run(self, item_input_data: ItemProcessingRequest) -> dict[str, Any]:
         """Run the image processing workflow.
 
         Args:
@@ -40,7 +47,10 @@ class ItemProcessingWorkflow:
         Returns:
             dict: Processing result with status and suggestions.
         """
-        workflow.logger.info("Starting image processing workflow for item %s", item_id)
+        workflow.logger.info(
+            "Starting image processing workflow for item %s",
+            item_input_data.item_id,
+        )
 
         # Configure retry policy for activities
         retry_policy = RetryPolicy(
@@ -51,45 +61,68 @@ class ItemProcessingWorkflow:
         )
 
         try:
-            # Step 1: Analyze images
-            workflow.logger.info("Analyzing images for item %s", item_id)
-            suggestions = await workflow.execute_activity(
-                analyze_item_images,
-                args=[item_id],
+            # Step 1: Fetch images
+            workflow.logger.info("Fetching images for item %s", item_input_data.item_id)
+            images_data: list[ItemImagesResult] = await workflow.execute_activity(
+                fetch_item_images,
+                args=[item_input_data],
                 start_to_close_timeout=timedelta(minutes=5),
                 retry_policy=retry_policy,
             )
+            # create an own processing activity for each image
+            workflow.logger.info(
+                "Fetched %d images for item %s",
+                len(images_data),
+                item_input_data.item_id,
+            )
 
-            # Step 3: Send notification (best effort, don't fail workflow if this fails)
+            # Process all images in parallel
+            image_tasks = [
+                workflow.execute_activity(
+                    analyze_image,
+                    args=[image_data],
+                    start_to_close_timeout=timedelta(minutes=5),
+                    retry_policy=retry_policy,
+                )
+                for image_data in images_data
+            ]
+
+            image_suggestions = await asyncio.gather(*image_tasks)
+
+            await workflow.execute_activity(
+                summarize_image_suggestions,
+                args=[image_suggestions],
+                start_to_close_timeout=timedelta(seconds=30),
+                retry_policy=RetryPolicy(maximum_attempts=1),
+            )
+
             await workflow.execute_activity(
                 send_processing_notification,
-                args=[item_id, user_id, suggestions],
+                args=[item_input_data.item_id, item_input_data.user_id],
                 start_to_close_timeout=timedelta(seconds=30),
                 retry_policy=RetryPolicy(maximum_attempts=1),
             )
 
             workflow.logger.info(
                 "Successfully completed processing for item %s",
-                item_id,
+                item_input_data.item_id,
             )
 
         except Exception as exc:  # noqa: BLE001
-            workflow.logger.error("Processing failed for item %s: %s", item_id, exc)
+            workflow.logger.error(
+                "Processing failed for item %s: %s",
+                item_input_data.item_id,
+                exc,
+            )
 
             return {
                 "status": "error",
-                "item_id": item_id,
+                "item_id": item_input_data.item_id,
                 "error": str(exc),
                 "error_type": type(exc).__name__,
             }
         else:
             return {
                 "status": "success",
-                "item_id": item_id,
-                "suggested_data": {
-                    "title": suggestions.title,
-                    "description": suggestions.description,
-                    "confidence": suggestions.confidence,
-                    "processing_time": suggestions.processing_time,
-                },
+                "item_id": item_input_data.item_id,
             }

@@ -6,23 +6,43 @@ They should be deterministic and idempotent when possible.
 
 import logging
 import secrets
-import time
 from dataclasses import dataclass
 from typing import Any
 
+import httpx
 from temporalio import activity
 
 logger = logging.getLogger(__name__)
 
 
 @dataclass
-class ImageProcessingResult:
+class ItemProcessingRequest:
+    """Request data for item processing activity."""
+
+    item_id: int
+    user_id: int
+    token: str
+    base_url: str
+
+
+@dataclass
+class ItemImagesResult:
     """Result of image processing activity."""
 
-    title: str
-    description: str
-    confidence: float
-    processing_time: float
+    item_id: int
+    image_id: int
+    token: str
+    base_url: str
+    description: str | None = None
+
+
+@dataclass
+class ItemResult:
+    """Result of item description summarization."""
+
+    title: str | None = None
+    description: str | None = None
+    category: str | None = None
 
 
 @dataclass
@@ -35,55 +55,76 @@ class ProcessingError:
 
 
 @activity.defn
-async def analyze_item_images(item_id: int) -> ImageProcessingResult:
-    """Analyze uploaded images and generate suggestions.
+async def fetch_item_images(
+    input_data: ItemProcessingRequest,
+) -> list[ItemImagesResult]:
+    logger.info("Start to fetch images for item %s", input_data.item_id)
 
-    This activity simulates AI-powered image analysis.
-    In production, this would call actual ML/AI services.
-
-    Args:
-        item_id: The ID of the item to analyze.
-
-    Returns:
-        ImageProcessingResult: Analysis results with suggestions.
-
-    Raises:
-        ValueError: If item not found or invalid.
-        RuntimeError: If processing fails.
-    """
-    logger.info("Starting image analysis for item %s", item_id)
-
-    try:
-        # TODO: get image data an process it
-
-        # Simulate processing time (2-5 seconds)
-        processing_time = 2 + (secrets.randbelow(300) / 100)  # 2.0-4.99 seconds
-        time.sleep(processing_time)  # noqa: ASYNC251
-
-        # Generate suggestions based on images
-        suggestions = _generate_ai_suggestions(item_id, 1)
-
-        result = ImageProcessingResult(
-            title=suggestions["title"],
-            description=suggestions["description"],
-            confidence=suggestions["confidence"],
-            processing_time=processing_time,
+    # fetch image data from rest api with authentication token
+    headers = {"Authorization": f"Token {input_data.token}"}
+    async with httpx.AsyncClient() as client:
+        response = await client.get(
+            f"{input_data.base_url}/api/images/?item={input_data.item_id}",
+            headers=headers,
+            timeout=30,
         )
-    except Exception as exc:
-        logger.exception("Error analyzing images for item %s", item_id)
-        error_msg = "Image analysis failed"
-        raise RuntimeError(error_msg) from exc
-    else:
-        logger.info("Completed image analysis for item %s", item_id)
-        return result
+        response.raise_for_status()
+
+        images_data = response.json()
+
+    if not images_data:
+        logger.warning("No images found for item %s", input_data.item_id)
+        return []
+
+    return [
+        ItemImagesResult(
+            item_id=input_data.item_id,
+            image_id=image["id"],
+            token=input_data.token,
+            base_url=input_data.base_url,
+        )
+        for image in images_data
+    ]
 
 
 @activity.defn
-async def send_processing_notification(
-    item_id: int,
-    user_id: int,
-    suggestions: ImageProcessingResult,
-) -> bool:
+async def analyze_image(
+    image_input: ItemImagesResult,
+) -> ItemImagesResult:
+    """Analyze a single image and generate AI suggestions."""
+
+    image_input.description = "Dummy description for image analysis"
+    return image_input
+
+
+@activity.defn
+async def summarize_image_suggestions(
+    image_input: list[ItemImagesResult],
+) -> ItemResult:
+    """Summarize suggestions from multiple images into a single description."""
+
+    # Generate dummy AI suggestions based on the number of images
+    item_id = image_input[0].item_id
+    image_count = len(image_input)
+    suggestions = _generate_ai_suggestions(item_id, image_count)
+
+    logger.info(
+        "Generated suggestions for item %s: %s",
+        item_id,
+        suggestions,
+    )
+
+    result: ItemResult = ItemResult(
+        title=suggestions["title"],
+        description=suggestions["description"],
+        category="General",  # Placeholder category
+    )
+
+    return result
+
+
+@activity.defn
+async def send_processing_notification(item_id: int, user_id: int) -> bool:
     """Send notification when processing is complete.
 
     Args:
@@ -105,12 +146,6 @@ async def send_processing_notification(
     notification_data = {
         "item_id": item_id,
         "user_id": user_id,
-        "suggestions": {
-            "title": suggestions.title,
-            "description": suggestions.description,
-            "confidence": suggestions.confidence,
-        },
-        "processing_time": suggestions.processing_time,
     }
 
     logger.info("Would send notification: %s", notification_data)

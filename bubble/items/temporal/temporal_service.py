@@ -9,10 +9,10 @@ from typing import Any
 from uuid import uuid4
 
 from django.conf import settings
-from temporalio.client import Client
-from temporalio.client import WorkflowHandle
+from temporalio.client import Client, WorkflowHandle
 from temporalio.common import RetryPolicy
 
+from bubble.items.temporal.temporal_activities import ItemProcessingRequest
 from bubble.items.temporal.temporal_workflows import ItemProcessingWorkflow
 
 logger = logging.getLogger(__name__)
@@ -40,9 +40,7 @@ class TemporalService:
     @classmethod
     async def start_item_processing(
         cls,
-        item_id: int,
-        user_id: int,
-        task_queue: str = "",
+        input_data: ItemProcessingRequest,
     ) -> WorkflowHandle[ItemProcessingWorkflow, dict[str, Any]]:
         """Start image processing workflow for an item.
 
@@ -54,22 +52,22 @@ class TemporalService:
         Returns:
             WorkflowHandle: Handle to the started workflow.
         """
-        task_queue = task_queue or settings.TEMPORAL_TASK_QUEUE
+        task_queue: str = settings.TEMPORAL_TASK_QUEUE
         client = await cls.get_client()
 
-        workflow_id = f"process-item-{item_id}-{uuid4().hex[:8]}"
+        workflow_id = f"process-item-{input_data.item_id}-{uuid4().hex[:8]}"
 
-        logger.info("Starting item processing workflow for item %s", item_id)
+        logger.info("Starting item processing workflow for item %s", input_data.item_id)
 
         handle = await client.start_workflow(
             ItemProcessingWorkflow.run,
-            args=[item_id, user_id],
+            args=[input_data],
             id=workflow_id,
             task_queue=task_queue,
             retry_policy=RetryPolicy(maximum_attempts=1),  # Workflow-level retry
         )
 
-        logger.info("Started workflow %s for item %s", workflow_id, item_id)
+        logger.info("Started workflow %s for item %s", workflow_id, input_data.item_id)
         return handle
 
     @classmethod
