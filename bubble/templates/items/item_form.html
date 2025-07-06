@@ -20,6 +20,26 @@
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-md-8">
+        <!-- Processing status alert -->
+        {% if object and object.processing_status == 1 %}
+        <div class="alert alert-info alert-dismissible fade show" role="alert" id="processing-alert">
+          <div class="d-flex align-items-center">
+            <div class="spinner-border spinner-border-sm me-3" role="status">
+              <span class="visually-hidden">{% trans "Loading..." %}</span>
+            </div>
+            <div>
+              <strong>{% trans "AI Processing in Progress" %}</strong><br />
+              <small>{% trans "We're analyzing your images to suggest a title and description. This will appear automatically when ready." %}</small>
+            </div>
+          </div>
+        </div>
+        {% elif object and object.processing_status == 3 %}
+        <div class="alert alert-warning" role="alert">
+          <i class="fas fa-exclamation-triangle me-2"></i>
+          {% trans "Image processing failed. Please fill in the details manually." %}
+        </div>
+        {% endif %}
+
         <div class="card">
           <div class="card-header">
             <h3>
@@ -31,67 +51,40 @@
             </h3>
           </div>
           <div class="card-body">
-            <form method="post" enctype="multipart/form-data">
+            <form method="post" enctype="multipart/form-data" id="item-form">
               {% csrf_token %}
               <!-- Multiple Images Upload -->
               <div class="mb-3">
-                <label for="id_images" class="form-label">{% trans "Images" %}</label>
-                <!-- Drag & Drop Zone -->
-                <div id="drop-zone"
-                     class="border border-2 border-dashed rounded p-4 text-center mb-3">
-                  <div class="drop-zone-content">
-                    <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3 upload-icon"></i>
-                    <p class="mb-2 text-muted">
-                      <strong>{% trans "Drop your images here" %}</strong> {% trans "or" %}
-                    </p>
-                    <input type="file"
-                           id="id_images"
-                           name="images"
-                           class="form-control hidden-file-input"
-                           accept="image/*"
-                           multiple />
-                    <button type="button" id="select-files-btn" class="btn btn-outline-primary">{% trans "Select Files" %}</button>
-                  </div>
-                  <!-- Fallback for users without JavaScript -->
-                  <noscript>
-                    <div class="alert alert-info">
-                      {% trans "JavaScript is disabled. You can still upload images using the file input below." %}
-                    </div>
-                    <input type="file"
-                           name="images"
-                           class="form-control"
-                           accept="image/*"
-                           multiple />
-                  </noscript>
-                </div>
-                <div class="form-text">
-                  {% trans "You can upload multiple images. Supported formats: JPG, PNG, GIF. Max 10MB per image." %}
-                  <div id="upload-stats" class="mt-1 small text-muted upload-stats">
-                    <span id="file-count">0</span> {% trans "files selected" %} •
-                    <span id="total-size">0</span> MB {% trans "total" %}
-                  </div>
-                </div>
-                <!-- Image Preview Area -->
-                <div id="image-preview-container" class="mt-3 preview-container">
-                  <h6 class="mb-3">{% trans "New Images to Upload" %}</h6>
-                  <div class="row" id="image-preview-grid"></div>
-                </div>
-                <!-- Existing Images (for edit mode) -->
+                <!-- Existing Images (for edit mode) - now acts as drop zone -->
                 {% if object and object.images.exists %}
-                  <div class="mt-4">
-                    <h6 class="mb-3">{% trans "Current Images" %}</h6>
+                  <div id="drop-zone" class="border border-2 border-dashed rounded p-3 mb-3 existing-images-drop-zone">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                      <h6 class="mb-0">{% trans "Current Images" %}</h6>
+                      <div class="d-flex align-items-center gap-2">
+                        <small class="text-muted">{% trans "Drop new images here or" %}</small>
+                        <input type="file"
+                               id="id_images"
+                               name="images"
+                               class="form-control hidden-file-input"
+                               accept="image/*"
+                               multiple />
+                        <button type="button" id="select-files-btn" class="btn btn-outline-primary btn-sm">
+                          <i class="fas fa-plus me-1"></i>{% trans "Add" %}
+                        </button>
+                      </div>
+                    </div>
                     <div class="row">
                       {% for image in object.images.all %}
                         <div class="col-md-3 col-sm-6 mb-3">
                           <div class="card shadow-sm">
                             <div class="position-relative">
                               <img src="{{ image.original.url }}"
-                                   class="card-img-top"
+                                   class="card-img-top existing-image"
                                    alt="{{ image.filename }}" />
                               <div class="position-absolute top-0 end-0 p-1">
                                 <button type="button"
-                                        class="btn btn-sm btn-danger remove-preview-btn"
-                                        data-file-index="${index}"
+                                        class="btn btn-sm btn-danger remove-existing-btn"
+                                        data-image-id="{{ image.pk }}"
                                         title="{% trans 'Remove image' %}">
                                   <i class="fas fa-times"></i>
                                 </button>
@@ -102,21 +95,90 @@
                       {% endfor %}
                     </div>
                   </div>
+                {% else %}
+                  <!-- Compact Drop Zone for new items -->
+                  <div id="drop-zone" class="border border-2 border-dashed rounded p-3 text-center mb-3 compact-drop-zone">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div class="d-flex align-items-center">
+                        <i class="fas fa-cloud-upload-alt fa-2x text-muted me-3"></i>
+                        <div class="text-start">
+                          <p class="mb-1 text-muted">
+                            <strong>{% trans "Drop your images here" %}</strong> {% trans "or" %}
+                          </p>
+                          <small class="text-muted">{% trans "JPG, PNG, GIF • Max 10MB each" %}</small>
+                        </div>
+                      </div>
+                      <div>
+                        <input type="file"
+                               id="id_images"
+                               name="images"
+                               class="form-control hidden-file-input"
+                               accept="image/*"
+                               multiple />
+                        <button type="button" id="select-files-btn" class="btn btn-outline-primary btn-sm">
+                          <i class="fas fa-plus me-1"></i>{% trans "Select Files" %}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 {% endif %}
+
+                <!-- Upload Stats -->
+                <div id="upload-stats" class="small text-muted upload-stats mb-2">
+                  <span id="file-count">0</span> {% trans "new files selected" %} •
+                  <span id="total-size">0</span> MB {% trans "total" %}
+                </div>
+
+                <!-- Image Preview Area for new uploads -->
+                <div id="image-preview-container" class="preview-container">
+                  <div class="row" id="image-preview-grid"></div>
+                </div>
+
+                <!-- Fallback for users without JavaScript -->
+                <noscript>
+                  <div class="alert alert-info">
+                    {% trans "JavaScript is disabled. You can still upload images using the file input below." %}
+                  </div>
+                  <input type="file"
+                         name="images"
+                         class="form-control"
+                         accept="image/*"
+                         multiple />
+                </noscript>
               </div>
               <!-- Basic Information -->
               <div class="row mb-3">
                 <div class="col-md-12">
-                  <label for="{{ form.name.id_for_label }}" class="form-label">{{ form.name.label }} *</label>
-                  {{ form.name }}
+                  <label for="{{ form.name.id_for_label }}" class="form-label">
+                    {{ form.name.label }} *
+                    {% if object and object.processing_status == 1 %}
+                    <small class="text-muted">({% trans "AI suggestion will appear here" %})</small>
+                    {% endif %}
+                  </label>
+                  {% if object and object.processing_status == 1 %}
+                    <input type="text" class="form-control" value="{{ form.name.value|default:'' }}" disabled />
+                    {{ form.name.as_hidden }}
+                  {% else %}
+                    {{ form.name }}
+                  {% endif %}
                   {% if form.name.errors %}<div class="text-danger">{{ form.name.errors }}</div>{% endif %}
                   {% if form.name.help_text %}<div class="form-text">{{ form.name.help_text }}</div>{% endif %}
                 </div>
               </div>
               <div class="row mb-3">
                 <div class="col-md-12">
-                  <label for="{{ form.description.id_for_label }}" class="form-label">{{ form.description.label }} *</label>
-                  {{ form.description }}
+                  <label for="{{ form.description.id_for_label }}" class="form-label">
+                    {{ form.description.label }} *
+                    {% if object and object.processing_status == 1 %}
+                    <small class="text-muted">({% trans "AI suggestion will appear here" %})</small>
+                    {% endif %}
+                  </label>
+                  {% if object and object.processing_status == 1 %}
+                    <textarea class="form-control" rows="4" disabled>{{ form.description.value|default:'' }}</textarea>
+                    {{ form.description.as_hidden }}
+                  {% else %}
+                    {{ form.description }}
+                  {% endif %}
                   {% if form.description.errors %}<div class="text-danger">{{ form.description.errors }}</div>{% endif %}
                   {% if form.description.help_text %}<div class="form-text">{{ form.description.help_text }}</div>{% endif %}
                 </div>
@@ -186,27 +248,26 @@
                   </div>
                 {% endif %}
               </div>
-              <!-- Profile Image Frame -->
-              {% if form.profile_img_frame %}
-                <div class="mb-3">
-                  <label for="{{ form.profile_img_frame.id_for_label }}" class="form-label">{{ form.profile_img_frame.label }}</label>
-                  {{ form.profile_img_frame }}
-                  {% if form.profile_img_frame.errors %}<div class="text-danger">{{ form.profile_img_frame.errors }}</div>{% endif %}
-                </div>
-              {% endif %}
               <!-- Form Errors -->
               {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
               <!-- Form Actions -->
               <div class="d-flex justify-content-between">
                 <a href="{% if object %}{% url 'items:detail' pk=object.pk %}{% else %}{% url 'items-browse:list' content_type=content_type_slug %}{% endif %}"
                    class="btn btn-outline-secondary">{% trans "Cancel" %}</a>
-                <button type="submit" class="btn btn-primary">
-                  {% if object %}
-                    {% trans "Update Item" %}
-                  {% else %}
-                    {% trans "Create Item" %}
-                  {% endif %}
-                </button>
+                {% if object and object.processing_status == 1 %}
+                  <button type="button" class="btn btn-primary" disabled>
+                    <i class="fas fa-spinner fa-spin me-2"></i>
+                    {% trans "Processing..." %}
+                  </button>
+                {% else %}
+                  <button type="submit" class="btn btn-primary">
+                    {% if object %}
+                      {% trans "Update Item" %}
+                    {% else %}
+                      {% trans "Create Item" %}
+                    {% endif %}
+                  </button>
+                {% endif %}
               </div>
             </form>
           </div>
@@ -273,7 +334,31 @@
       } catch (error) {
         console.error('Error initializing Select2:', error);
       }
+  </script>
+  <script>
+
+  <!-- Auto-refresh processing status script -->
+  {% if object and object.processing_status == 1 %}
+    $(document).ready(function() {
+      const itemId = {{ object.pk|default:0 }};
+      if (itemId > 0) {
+        const statusCheckInterval = setInterval(async function() {
+          try {
+            const response = await fetch(`{% url 'items:processing_status' pk=0 %}`.replace('0', itemId));
+            const data = await response.json();
+
+            if (data.status === 'success') {
+              if (data.is_completed) {
+                window.location.reload();
+              }
+            }
+          } catch (error) {
+            console.error('Error checking processing status:', error);
+          }
+        }, 3000); // Check every 3 seconds
+      }
     });
+  {% endif %}
 
       // Category selection is now handled by a simple dropdown
 
@@ -426,8 +511,8 @@
 
       // Function to delete existing images (for edit mode)
       document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('delete-image-btn') || e.target.closest('.delete-image-btn')) {
-          const btn = e.target.classList.contains('delete-image-btn') ? e.target : e.target.closest('.delete-image-btn');
+        if (e.target.classList.contains('remove-existing-btn') || e.target.closest('.remove-existing-btn')) {
+          const btn = e.target.classList.contains('remove-existing-btn') ? e.target : e.target.closest('.remove-existing-btn');
           const imageId = btn.getAttribute('data-image-id');
 
           if (confirm('{% trans "Are you sure you want to delete this image?" %}')) {
@@ -510,6 +595,26 @@
     background-color: #f8f9fa !important;
   }
 
+  /* Compact drop zone for new items */
+  .compact-drop-zone {
+    background-color: #fafafa;
+  }
+
+  /* Existing images drop zone */
+  .existing-images-drop-zone {
+    background-color: #f8f9fa;
+  }
+
+  .existing-images-drop-zone:hover {
+    background-color: #e9ecef !important;
+  }
+
+  /* Existing image styling */
+  .existing-image {
+    height: 120px;
+    object-fit: cover;
+  }
+
   /* File input styling */
   .hidden-file-input {
     display: none;
@@ -540,7 +645,7 @@
 
   /* Preview image styling */
   .preview-image {
-    height: 150px;
+    height: 120px;
     object-fit: cover;
   }
 
@@ -556,13 +661,20 @@
 
   /* Remove button styling */
   .btn-danger.btn-sm {
-    width: 30px;
-    height: 30px;
+    width: 28px;
+    height: 28px;
     padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
+    font-size: 0.75rem;
+  }
+
+  /* Small add button styling */
+  .btn-outline-primary.btn-sm {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.5rem;
   }
 
   /* Tag list scroll styling */
@@ -576,6 +688,11 @@
     .col-md-3.col-sm-6 {
       flex: 0 0 50%;
       max-width: 50%;
+    }
+
+    .existing-image,
+    .preview-image {
+      height: 100px;
     }
   }
 </style>

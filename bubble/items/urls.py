@@ -11,16 +11,6 @@ urlpatterns = [
     path("<int:pk>/", views.ItemDetailView.as_view(), name="detail"),
     # Two-step item creation
     path("create/", views_step.ItemCreateStepOneView.as_view(), name="create"),
-    path(
-        "create/step1/",
-        views_step.ItemCreateStepOneView.as_view(),
-        name="create_step1",
-    ),
-    path(
-        "create/step2/<int:pk>/",
-        views_step.ItemCreateStepTwoView.as_view(),
-        name="create_step2",
-    ),
     # Item CRUD operations (login required)
     path("<int:pk>/edit/", views.ItemUpdateView.as_view(), name="edit"),
     path("<int:pk>/delete/", views.ItemDeleteView.as_view(), name="delete"),
