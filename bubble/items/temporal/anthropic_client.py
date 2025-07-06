@@ -25,4 +25,3 @@ def call_model(
     )
 
     return "".join([m.text for m in message.content])
-    return "".join([m.text for m in message.content])
