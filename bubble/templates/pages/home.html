@@ -61,7 +61,7 @@
                 <i class="fas fa-list"></i> {% trans "Browse All Items" %}
               </a>
               {% if user.is_authenticated %}
-                <a href="{% url 'items-browse:create' content_type='zeug' %}" class="btn btn-primary">
+                <a href="{% url 'items:create' %}" class="btn btn-primary">
                   <i class="fas fa-plus"></i> {% trans "Add New Item" %}
                 </a>
                 <a href="{% url 'items:my_items' %}" class="btn btn-outline-secondary">
