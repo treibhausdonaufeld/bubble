@@ -9,7 +9,7 @@
   <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h2>{% trans "My Items" %}</h2>
-      <a href="{% url 'items-browse:create' content_type='zeug' %}" class="btn btn-success">
+      <a href="{% url 'items:create' %}" class="btn btn-success">
         <i class="fas fa-plus"></i> {% trans "Add New Item" %}
       </a>
     </div>
@@ -65,18 +65,21 @@
                   <tr {% if not item.active %}class="table-secondary"{% endif %}>
                     <td>
                       <div class="d-flex align-items-center">
-                        {% if item.images.first %}
-                          <img src="{{ item.images.first.original.url }}"
-                               alt="{{ item.name }}"
-                               class="rounded me-2 item-thumb" />
-                        {% else %}
-                          <div class="bg-light rounded me-2 d-flex align-items-center justify-content-center item-thumb">
-                            <i class="fas fa-image text-muted"></i>
-                          </div>
-                        {% endif %}
+                        <a href="{% url 'items:edit' item.pk %}" class="text-decoration-none">
+                          {% if item.images.first %}
+                            <img src="{{ item.images.first.original.url }}"
+                                 alt="{{ item.name }}"
+                                 class="rounded me-2 item-thumb cursor-pointer" />
+                          {% else %}
+                            <div class="bg-light rounded me-2 d-flex align-items-center justify-content-center item-thumb cursor-pointer">
+                            </div>
+                          {% endif %}
+                        </a>
                         <div>
-                          <div class="fw-bold">{{ item.name }}</div>
-                          <small class="text-muted">{{ item.description|truncatewords:8 }}</small>
+                          <a href="{% url 'items:edit' item.pk %}" class="text-decoration-none text-dark">
+                            <div class="fw-bold">{{ item.name }}</div>
+                            <small class="text-muted">{{ item.description|truncatewords:8 }}</small>
+                          </a>
                         </div>
                       </div>
                     </td>
