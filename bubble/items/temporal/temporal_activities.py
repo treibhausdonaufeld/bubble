@@ -89,7 +89,7 @@ def analyze_image(
     """Analyze a single image and generate AI suggestions."""
 
     # fetch image from api
-    image_url = f"{image_input.base_url}/api/images/{image_input.image_id}/original/"
+    image_url = f"{image_input.base_url}/api/images/{image_input.image_id}/preview/"
     logger.info("Fetching image from URL: %s", image_url)
 
     headers = {"Authorization": f"Token {image_input.token}"}
@@ -206,7 +206,7 @@ def save_item_suggestions(item_result: ItemImageResult) -> bool:
     # Put the item data to the API
     item_data = {
         "processing_status": 2,  # completed
-        "title": item_result.title,
+        "name": item_result.title,
         "description": item_result.description
         + "\n\nKategorie: "
         + item_result.category,
