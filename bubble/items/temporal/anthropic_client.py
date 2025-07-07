@@ -1,11 +1,11 @@
 import anthropic
 
-from config.settings.temporal import ANTHROPIC_API_KEY
+from config.settings.temporal import ANTHROPIC_API_KEY, ANTHROPIC_MODEL
 
 
 def call_model(
     prompt: str,
-    model: str = "claude-3-5-sonnet-20241022",
+    model: str = ANTHROPIC_MODEL,
     max_tokens=500,
     extra_prompt: dict | None = None,
 ) -> str:
