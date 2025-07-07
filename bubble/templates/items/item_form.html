@@ -78,7 +78,7 @@
                         <div class="col-md-3 col-sm-6 mb-3">
                           <div class="card shadow-sm">
                             <div class="position-relative">
-                              <img src="{{ image.original.url }}"
+                              <img src="{% url 'api:image-get-preview-image' image.id %}"
                                    class="card-img-top existing-image"
                                    alt="{{ image.filename }}" />
                               <div class="position-absolute top-0 end-0 p-1">

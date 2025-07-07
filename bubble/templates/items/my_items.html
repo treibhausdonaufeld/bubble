@@ -67,7 +67,7 @@
                       <div class="d-flex align-items-center">
                         <a href="{% url 'items:edit' item.pk %}" class="text-decoration-none">
                           {% if item.images.first %}
-                            <img src="{{ item.images.first.original.url }}"
+                            <img src="{% url 'api:image-get-thumbnail-image' item.images.first.id %}"
                                  alt="{{ item.name }}"
                                  class="rounded me-2 item-thumb cursor-pointer" />
                           {% else %}

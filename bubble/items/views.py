@@ -554,7 +554,6 @@ class ContentCreateView(ContentMixin, ItemCreateView):
         return reverse(
             "items:detail",
             kwargs={
-                "content_type": self.content_type_slug,
                 "pk": self.object.pk,
             },
         )
