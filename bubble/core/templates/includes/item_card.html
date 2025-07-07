@@ -10,12 +10,12 @@
   <div class="item-image">
     {% with first_image=item.get_first_image %}
       {% if first_image %}
-        <img src="{{ first_image.original.url }}"
+        <img src="{% url 'api:image-get-thumbnail-image' pk=first_image.id %}"
              class="card-img-top item-image-fixed-height"
              alt="{{ item.name }}" />
       {% elif item.images.all|length > 0 %}
         {# Fallback for prefetched images #}
-        <img src="{{ item.images.all.0.original.url }}"
+        <img src="{% url 'api:image-get-thumbnail-image' pk=item.images.all.0.id %}"
              class="card-img-top item-image-fixed-height"
              alt="{{ item.name }}" />
       {% else %}

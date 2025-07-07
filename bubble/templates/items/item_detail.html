@@ -256,7 +256,7 @@
             <div class="carousel-inner">
               {% for image in item_images %}
                 <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                  <img src="{{ image.original.url }}"
+                  <img src="{% url 'api:image-get-preview-image' image.id %}"
                        class="d-block w-100 item-image cursor-zoom-in"
                        alt="{{ item.name }}"
                        data-image-id="{{ forloop.counter0 }}"
@@ -285,7 +285,7 @@
           {% if item_images|length > 1 %}
             <div class="thumbnail-gallery mb-4">
               {% for image in item_images %}
-                <img src="{{ image.original.url }}"
+                <img src="{% url 'api:image-get-preview-image' image.id %}"
                      class="thumbnail {% if forloop.first %}active{% endif %}"
                      alt="{{ item.name }} thumbnail"
                      data-slide-index="{{ forloop.counter0 }}"
@@ -522,7 +522,7 @@
     var images = [
       {% for image in item_images %}
       {
-        src: "{{ image.original.url }}",
+        src: "{% url 'api:image-get-preview-image' image.id %}",
         alt: "{{ item.name }} - Image {{ forloop.counter }}"
       } {% if not forloop.last %}, {% endif %} {% endfor %}
     ];

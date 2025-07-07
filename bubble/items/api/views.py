@@ -148,31 +148,48 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
         else:
             return response
 
-    @action(detail=True, methods=["get"], url_path="preview")
-    def get_preview_image(self, request, pk=None):
-        """Get a preview (scaled-down) version of the image."""
-        image = self.get_object()
+    def _generate_resized_image(self, image, max_size, quality=85, suffix="preview"):
+        """
+        Generate a resized version of an image.
+
+        Args:
+            image: Image model instance
+            max_size: Maximum size for the longest side
+            quality: JPEG quality (1-100)
+            suffix: Suffix for the filename (e.g., 'preview', 'thumbnail')
+
+        Returns:
+            HttpResponse with the resized image
+        """
         if not image.original:
             return Response({"detail": "Original image not available."}, status=404)
 
-        # Generate preview filename
-        preview_name = image.get_preview_path()
+        # Get storage path from model method
+        if suffix == "preview":
+            resized_path = image.get_preview_path()
+        elif suffix == "thumbnail":
+            resized_path = image.get_thumbnail_path()
+        else:
+            return Response({"detail": "Invalid suffix."}, status=400)
 
-        # Check if preview already exists
-        if default_storage.exists(preview_name):
-            # Serve existing preview
-            with default_storage.open(preview_name, "rb") as preview_file:
-                content_type, _ = mimetypes.guess_type(preview_name)
+        if not resized_path:
+            return Response({"detail": "Unable to generate storage path."}, status=500)
+
+        # Check if resized version already exists
+        if default_storage.exists(resized_path):
+            # Serve existing resized image
+            with default_storage.open(resized_path, "rb") as resized_file:
+                content_type, _ = mimetypes.guess_type(resized_path)
                 response = HttpResponse(
-                    preview_file.read(),
+                    resized_file.read(),
                     content_type=content_type or "image/jpeg",
                 )
                 response["Content-Disposition"] = (
-                    f'inline; filename="{Path(preview_name).name}"'
+                    f'inline; filename="{Path(resized_path).name}"'
                 )
                 return response
 
-        # Generate new preview
+        # Generate new resized image
         with default_storage.open(image.original.name, "rb") as original_file:
             # Open image with PIL
             pil_image = PILImage.open(original_file)
@@ -181,8 +198,7 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
             if pil_image.mode in ("RGBA", "P"):
                 pil_image = pil_image.convert("RGB")
 
-            # Calculate new dimensions (max 300px on longest side)
-            max_size = 1600
+            # Calculate new dimensions (max_size on longest side)
             width, height = pil_image.size
 
             if width > height:
@@ -200,20 +216,42 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
 
             # Save to BytesIO
             output = BytesIO()
-            pil_image.save(output, format="JPEG", quality=85, optimize=True)
+            pil_image.save(output, format="JPEG", quality=quality, optimize=True)
             output.seek(0)
 
-            # Save preview to storage
-            preview_file = ContentFile(output.getvalue())
-            default_storage.save(preview_name, preview_file)
+            # Save resized image to storage
+            resized_file = ContentFile(output.getvalue())
+            default_storage.save(resized_path, resized_file)
 
-            # Return preview
+            # Return resized image
             output.seek(0)
             response = HttpResponse(
                 output.getvalue(),
                 content_type="image/jpeg",
             )
             response["Content-Disposition"] = (
-                f'inline; filename="{Path(preview_name).name}"'
+                f'inline; filename="{Path(resized_path).name}"'
             )
             return response
+
+    @action(detail=True, methods=["get"], url_path="preview")
+    def get_preview_image(self, request, pk=None):
+        """Get a preview (scaled-down) version of the image."""
+        image = self.get_object()
+        return self._generate_resized_image(
+            image,
+            max_size=1600,
+            quality=85,
+            suffix="preview",
+        )
+
+    @action(detail=True, methods=["get"], url_path="thumbnail")
+    def get_thumbnail_image(self, request, pk=None):
+        """Get a thumbnail (small) version of the image."""
+        image = self.get_object()
+        return self._generate_resized_image(
+            image,
+            max_size=300,
+            quality=80,
+            suffix="thumbnail",
+        )

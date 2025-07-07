@@ -1,7 +1,6 @@
 import uuid
 from pathlib import Path
 
-from django.core.files.storage import default_storage
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -100,11 +99,9 @@ class Item(models.Model):
         return self.images.order_by("ordering").first()
 
 
-def upload_to_item_images(instance, filename):
-    extension = Path(filename).suffix
-    if not extension:
-        extension = ".jpg"
-    item_prefix = f"items/{str(instance.item.uuid)[0:4]}/{instance.item.uuid}"
+def upload_to_item_images(instance: "Image", filename: str):
+    extension: str = Path(filename).suffix or ".jpg"
+    item_prefix: str = f"items/{str(instance.item.uuid)[0:4]}/{instance.item.uuid}"
     return f"{item_prefix}/{uuid.uuid4()}/original{extension}"
 
 
@@ -124,16 +121,19 @@ class Image(models.Model):
         """Return the filename of the original image."""
         return self.original.name.split("/")[-1]
 
-    def get_preview_path(self) -> str:
+    def _get_temp_path(self, suffix: str) -> str | None:
+        """Return the path where the image should be stored."""
+        folder = f"temp/{suffix}/{str(self.item.uuid)[0:4]}/{self.pk}"
+        return f"{folder}/{suffix}.jpg"
+
+    def get_preview_path(self) -> str | None:
         """Return the path where the preview image should be stored."""
         if not self.original:
             return None
-        original_name = self.original.name
-        dirname = Path(original_name).parent
-        return f"{dirname}/preview.jpg"
+        return self._get_temp_path("preview")
 
-    def has_preview(self):
-        """Check if a preview image exists for this image."""
-        preview_path = self.get_preview_path()
-        return preview_path and default_storage.exists(preview_path)
-        return preview_path and default_storage.exists(preview_path)
+    def get_thumbnail_path(self) -> str | None:
+        """Return the path where the thumbnail image should be stored."""
+        if not self.original:
+            return None
+        return self._get_temp_path("thumbnail")
