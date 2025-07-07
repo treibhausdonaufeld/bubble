@@ -1,6 +1,6 @@
 from django.urls import path
 
-from . import views, views_step
+from . import views
 
 app_name = "items"
 
@@ -10,17 +10,14 @@ urlpatterns = [
     # Item detail
     path("<int:pk>/", views.ItemDetailView.as_view(), name="detail"),
     # Two-step item creation
-    path("create/", views_step.ItemCreateStepOneView.as_view(), name="create"),
+    path("create/", views.ItemCreateImagesView.as_view(), name="create"),
     # Item CRUD operations (login required)
     path("<int:pk>/edit/", views.ItemUpdateView.as_view(), name="edit"),
     path("<int:pk>/delete/", views.ItemDeleteView.as_view(), name="delete"),
-    # Draft item management
-    path("drafts/", views_step.DraftItemsView.as_view(), name="drafts"),
-    path("drafts/<int:pk>/delete/", views_step.delete_draft_item, name="delete_draft"),
     # Processing status check
     path(
         "processing-status/<int:pk>/",
-        views_step.check_processing_status,
+        views.check_processing_status,
         name="processing_status",
     ),
     # User's item management
