@@ -2,8 +2,13 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 
+class ItemCategoryManager(models.Manager):
+    def get_by_natural_key(self, name):
+        return self.get(name=name)
+
+
 class ItemCategory(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True)
     emoji = models.CharField(max_length=10, blank=True)
     prompt_name = models.TextField(blank=True)
@@ -40,12 +45,17 @@ class ItemCategory(models.Model):
         ),
     )
 
+    objects = ItemCategoryManager()
+
     class Meta:
         verbose_name_plural = _("Item Categories")
         ordering = ["ordering", "name"]
 
     def __str__(self):
         return self.name
+
+    def natural_key(self):
+        return (self.name,)
 
     def get_hierarchy(self):
         """Returns the full category hierarchy path"""

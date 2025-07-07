@@ -1,84 +1,290 @@
-- model: categories.ItemCategory
-  pk: 1
+- model: categories.itemcategory
   fields:
-    name: "Antiquitäten / Kunst"
-- model: categories.ItemCategory
-  pk: 1
+    name: Dinge
+    description: ''
+    emoji: "\U0001F9FA"
+    prompt_name: ''
+    prompt_description: ''
+    parent_category: null
+    url_slug: things
+    ordering: 1
+    custom_fields: {}
+
+# Subcategories for Dinge
+- model: categories.itemcategory
   fields:
-    name: "Antiquitäten / Kunst"
-- model: categories.ItemCategory
-  pk: 1
+    name: Antiquitäten / Kunst
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 1
+    custom_fields: {}
+- model: categories.itemcategory
   fields:
-    name: "Antiquitäten / Kunst"
-- model: categories.ItemCategory
-  pk: 2
+    name: Baby / Kind
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 2
+    custom_fields: {}
+- model: categories.itemcategory
   fields:
-    name: "Baby / Kind"
-- model: categories.ItemCategory
-  pk: 3
+    name: Beauty / Gesundheit / Wellness
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 3
+    custom_fields: {}
+- model: categories.itemcategory
   fields:
-    name: "Beauty / Gesundheit / Wellness"
-- model: categories.ItemCategory
-  pk: 4
+    name: Boote / Yachten / Jetskis
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 4
+    custom_fields: {}
+- model: categories.itemcategory
   fields:
-    name: "Boote / Yachten / Jetskis"
-- model: categories.ItemCategory
-  pk: 5
+    name: Bücher / Filme / Musik
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 5
+    custom_fields: {}
+- model: categories.itemcategory
   fields:
-    name: "Bücher / Filme / Musik"
-- model: categories.ItemCategory
-  pk: 6
+    name: Computer / Software
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 6
+    custom_fields: {}
+- model: categories.itemcategory
   fields:
-    name: "Computer / Software"
-- model: categories.ItemCategory
-  pk: 7
+    name: Dienstleistungen
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 7
+    custom_fields: {}
+- model: categories.itemcategory
   fields:
-    name: "Dienstleistungen"
-- model: categories.ItemCategory
-  pk: 8
+    name: Freizeit / Instrumente / Kulinarik
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 8
+    custom_fields: {}
+- model: categories.itemcategory
   fields:
-    name: "Freizeit / Instrumente / Kulinarik"
-- model: categories.ItemCategory
-  pk: 9
+    name: Games / Konsolen
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 9
+    custom_fields: {}
+- model: categories.itemcategory
   fields:
-    name: "Games / Konsolen"
-- model: categories.ItemCategory
-  pk: 10
+    name: Haus / Garten / Werkstatt
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 10
+    custom_fields: {}
+- model: categories.itemcategory
   fields:
-    name: "Haus / Garten / Werkstatt"
-- model: categories.ItemCategory
-  pk: 11
+    name: Kameras / TV / Multimedia
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 11
+    custom_fields: {}
+- model: categories.itemcategory
   fields:
-    name: "Kameras / TV / Multimedia"
-- model: categories.ItemCategory
-  pk: 12
+    name: KFZ-Zubehör / Motorradteile
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 12
+    custom_fields: {}
+- model: categories.itemcategory
   fields:
-    name: "KFZ-Zubehör / Motorradteile"
-- model: categories.ItemCategory
-  pk: 13
+    name: Mode / Accessoires
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 13
+    custom_fields: {}
+- model: categories.itemcategory
   fields:
-    name: "Mode / Accessoires"
-- model: categories.ItemCategory
-  pk: 14
+    name: Smartphones / Telefonie
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 14
+    custom_fields: {}
+- model: categories.itemcategory
   fields:
-    name: "Smartphones / Telefonie"
-- model: categories.ItemCategory
-  pk: 15
+    name: Spielen / Spielzeug
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 15
+    custom_fields: {}
+- model: categories.itemcategory
   fields:
-    name: "Spielen / Spielzeug"
-- model: categories.ItemCategory
-  pk: 16
+    name: Sport / Sportgeräte
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 16
+    custom_fields: {}
+- model: categories.itemcategory
   fields:
-    name: "Sport / Sportgeräte"
-- model: categories.ItemCategory
-  pk: 17
+    name: Tiere / Tierbedarf
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 17
+    custom_fields: {}
+- model: categories.itemcategory
   fields:
-    name: "Tiere / Tierbedarf"
-- model: categories.ItemCategory
-  pk: 18
+    name: Uhren / Schmuck
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 18
+    custom_fields: {}
+- model: categories.itemcategory
   fields:
-    name: "Uhren / Schmuck"
-- model: categories.ItemCategory
-  pk: 19
+    name: Wohnen / Haushalt / Gastronomie
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 19
+    custom_fields: {}
+
+# Räume
+- model: categories.itemcategory
   fields:
-    name: "Wohnen / Haushalt / Gastronomie"
+    name: Räume
+    description: ''
+    emoji: "\U0001F6CB️"
+    prompt_name: ''
+    prompt_description: ''
+    parent_category: null
+    url_slug: rooms
+    ordering: 3
+    custom_fields: {}
+- model: categories.itemcategory
+  fields:
+    name: Spielen
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Räume
+    url_slug: ''
+    ordering: 1
+    custom_fields: {}
+- model: categories.itemcategory
+  fields:
+    name: Schlafen
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Räume
+    url_slug: ''
+    ordering: 1
+    custom_fields: {}
+- model: categories.itemcategory
+  fields:
+    name: Waschen
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Räume
+    url_slug: ''
+    ordering: 1
+    custom_fields: {}
