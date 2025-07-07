@@ -30,3 +30,4 @@ TEMPORAL_MAX_CONCURRENT_WORKFLOWS: int = env.int(
 
 # AI configuration
 ANTHROPIC_API_KEY = env("ANTHROPIC_API_KEY", default="")
+ANTHROPIC_MODEL = env("ANTHROPIC_MODEL", default="claude-3-5-sonnet-20241022")
