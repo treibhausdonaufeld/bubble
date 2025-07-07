@@ -1,0 +1,84 @@
+- model: categories.ItemCategory
+  pk: 1
+  fields:
+    name: "Antiquitäten / Kunst"
+- model: categories.ItemCategory
+  pk: 1
+  fields:
+    name: "Antiquitäten / Kunst"
+- model: categories.ItemCategory
+  pk: 1
+  fields:
+    name: "Antiquitäten / Kunst"
+- model: categories.ItemCategory
+  pk: 2
+  fields:
+    name: "Baby / Kind"
+- model: categories.ItemCategory
+  pk: 3
+  fields:
+    name: "Beauty / Gesundheit / Wellness"
+- model: categories.ItemCategory
+  pk: 4
+  fields:
+    name: "Boote / Yachten / Jetskis"
+- model: categories.ItemCategory
+  pk: 5
+  fields:
+    name: "Bücher / Filme / Musik"
+- model: categories.ItemCategory
+  pk: 6
+  fields:
+    name: "Computer / Software"
+- model: categories.ItemCategory
+  pk: 7
+  fields:
+    name: "Dienstleistungen"
+- model: categories.ItemCategory
+  pk: 8
+  fields:
+    name: "Freizeit / Instrumente / Kulinarik"
+- model: categories.ItemCategory
+  pk: 9
+  fields:
+    name: "Games / Konsolen"
+- model: categories.ItemCategory
+  pk: 10
+  fields:
+    name: "Haus / Garten / Werkstatt"
+- model: categories.ItemCategory
+  pk: 11
+  fields:
+    name: "Kameras / TV / Multimedia"
+- model: categories.ItemCategory
+  pk: 12
+  fields:
+    name: "KFZ-Zubehör / Motorradteile"
+- model: categories.ItemCategory
+  pk: 13
+  fields:
+    name: "Mode / Accessoires"
+- model: categories.ItemCategory
+  pk: 14
+  fields:
+    name: "Smartphones / Telefonie"
+- model: categories.ItemCategory
+  pk: 15
+  fields:
+    name: "Spielen / Spielzeug"
+- model: categories.ItemCategory
+  pk: 16
+  fields:
+    name: "Sport / Sportgeräte"
+- model: categories.ItemCategory
+  pk: 17
+  fields:
+    name: "Tiere / Tierbedarf"
+- model: categories.ItemCategory
+  pk: 18
+  fields:
+    name: "Uhren / Schmuck"
+- model: categories.ItemCategory
+  pk: 19
+  fields:
+    name: "Wohnen / Haushalt / Gastronomie"

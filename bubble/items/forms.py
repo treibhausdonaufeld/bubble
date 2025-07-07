@@ -11,15 +11,13 @@ class ItemForm(forms.ModelForm):
 
     # Category dropdown showing only leaf categories (lowest level)
     selected_category = forms.ModelChoiceField(
-        queryset=ItemCategory.objects.filter(
-            parent_category__isnull=False,  # Has a parent
-            subcategories__isnull=True,  # Has no children
-        ),
+        queryset=ItemCategory.objects.none(),  # Empty queryset for AJAX loading
         required=False,
         widget=forms.Select(
             attrs={
                 "class": "form-select select2-category",
                 "data-placeholder": _("Search and select a category..."),
+                "data-ajax-url": "/items/api/categories/",
             },
         ),
         label=_("Category"),
@@ -83,29 +81,21 @@ class ItemForm(forms.ModelForm):
         self.root_category = kwargs.pop("root_category", None)
         super().__init__(*args, **kwargs)
 
-        # Show full hierarchy in the dropdown labels
-        self.fields["selected_category"].label_from_instance = (
-            lambda obj: obj.get_hierarchy()
-        )
-
-        # If root_category is provided, filter categories to only show descendants
-        if self.root_category:
-            descendant_ids = [self.root_category.id]
-            descendant_ids.extend(
-                [cat.id for cat in self.root_category.get_descendants()],
-            )
-            self.fields["selected_category"].queryset = ItemCategory.objects.filter(
-                id__in=descendant_ids,
-                subcategories__isnull=True,  # Only leaf categories
-            )
-
+        # For AJAX-based category field, we need to set the queryset properly
         # If editing an existing item, set the selected category
         if (
             self.instance.pk
             and hasattr(self.instance, "category")
             and self.instance.category
         ):
+            # Include the current category in the queryset so it shows up as selected
+            self.fields["selected_category"].queryset = ItemCategory.objects.filter(
+                id=self.instance.category.id,
+            )
             self.fields["selected_category"].initial = self.instance.category
+        else:
+            # For new items, keep empty queryset for AJAX loading
+            self.fields["selected_category"].queryset = ItemCategory.objects.none()
 
         # Add dynamic fields based on category schema
         # For create form: use root_category, for edit form: use item's category

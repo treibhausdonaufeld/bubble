@@ -320,12 +320,42 @@
       console.log('Other select fields found:', $('.select2-field').length);
 
       try {
-        // Initialize Select2 for category dropdown
+        // Initialize Select2 for category dropdown with AJAX
         $('.select2-category').select2({
           placeholder: "{% trans 'Search and select a category...' %}",
-          allowClear: false,
+          allowClear: true,
           width: '100%',
-          theme: 'default'
+          theme: 'default',
+          ajax: {
+            url: "{% url 'items:get_categories_for_select2' %}",
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+              return {
+                q: params.term || '', // search term, empty if no search
+                page: params.page || 1
+              };
+            },
+            processResults: function (data, params) {
+              return {
+                results: data.results,
+                pagination: {
+                  more: data.pagination.more
+                }
+              };
+            },
+            cache: true
+          },
+          minimumInputLength: 0, // Allow loading without search term
+          templateResult: function(category) {
+            if (category.loading) {
+              return category.text;
+            }
+            return category.text;
+          },
+          templateSelection: function(category) {
+            return category.text || category.category_name;
+          }
         });
 
         // Initialize Select2 for all other select fields
@@ -360,12 +390,11 @@
       } catch (error) {
         console.error('Error initializing Select2:', error);
       }
+    }); // End of $(document).ready()
   </script>
   <script>
-
-      // Category selection is now handled by a simple dropdown
-
-      // Image upload preview functionality with drag & drop
+    // Image upload preview functionality with drag & drop
+    document.addEventListener('DOMContentLoaded', function() {
       const imageInput = document.getElementById('id_images');
       const previewContainer = document.getElementById('image-preview-container');
       const previewGrid = document.getElementById('image-preview-grid');
@@ -579,7 +608,7 @@
           });
         }
       }
-    });
+    }); // End of DOMContentLoaded
   </script>
 {% endblock content %}
 <!-- Add these CSS styles to your main stylesheet for enhanced appearance -->
