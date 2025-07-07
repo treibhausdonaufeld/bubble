@@ -464,3 +464,23 @@ class ImageUploadForm(forms.ModelForm):
                 attrs={"class": "form-control", "accept": "image/*"},
             ),
         }
+
+
+class ItemImageUploadForm(forms.Form):
+    """Form for uploading images in step 1 of item creation."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # We'll handle multiple files in the template/JavaScript
+        self.fields["images"] = forms.FileField(
+            label=_("Upload Images"),
+            help_text=_("Select one or more images for your item"),
+            required=False,
+            widget=forms.FileInput(
+                attrs={
+                    "accept": "image/*",
+                    "class": "form-control",
+                    "id": "images-input",
+                },
+            ),
+        )

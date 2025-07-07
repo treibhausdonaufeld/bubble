@@ -97,6 +97,7 @@ services:
       POSTGRES_DB: temporal
     volumes:
       - bubble_local_temporal_data:/var/lib/postgresql/data
+    restart: always
 
   temporal:
     image: temporalio/auto-setup:latest
@@ -115,6 +116,7 @@ services:
       - "127.0.0.1:7233:7233"
     volumes:
       - ./compose/local/temporal:/etc/temporal/config/dynamicconfig
+    restart: always
 
   temporal-admin-tools:
     image: temporalio/admin-tools:latest

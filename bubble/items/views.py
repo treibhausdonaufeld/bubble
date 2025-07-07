@@ -1,3 +1,5 @@
+import asyncio
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -7,18 +9,23 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext_lazy as _
+from django.views.decorators.http import require_http_methods
 from django.views.generic import (
     CreateView,
     DeleteView,
     DetailView,
     ListView,
+    TemplateView,
     UpdateView,
 )
+from rest_framework.authtoken.models import Token
 
 from bubble.categories.models import ItemCategory
+from bubble.items.temporal.temporal_activities import ItemProcessingRequest
+from bubble.items.temporal.temporal_service import start_item_processing
 from bubble.messaging.models import Message
 
-from .forms import ItemFilterForm, ItemForm
+from .forms import ItemFilterForm, ItemForm, ItemImageUploadForm
 from .models import Image, Item, ProcessingStatus
 
 
@@ -619,3 +626,98 @@ def toggle_content_status(request, pk, content_type):
     messages.success(request, _("Item {} successfully.").format(status))
 
     return redirect(reverse("my_content", kwargs={"content_type": content_type}))
+
+
+class ItemCreateImagesView(LoginRequiredMixin, TemplateView):
+    """Upload images and create temporary item."""
+
+    template_name = "items/item_create_images.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"] = ItemImageUploadForm()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        # Create temporary item
+        item: Item = Item.objects.create(
+            user=request.user,
+            processing_status=ProcessingStatus.DRAFT,
+            active=False,  # Not active until completed
+        )
+
+        # Handle image uploads
+        images = request.FILES.getlist("images")
+        image_objects = []
+
+        for i, image in enumerate(images):
+            image_obj = Image.objects.create(item=item, original=image, ordering=i)
+            image_objects.append(image_obj)
+
+        item.processing_status = ProcessingStatus.DRAFT
+        if "skip_ai" in request.POST:
+            item.save(update_fields=["processing_status"])
+
+            messages.info(
+                request,
+                _(
+                    "AI processing skipped. You can now edit the item details below.",
+                ),
+            )
+        elif images:
+            # Start background processing
+            item.processing_status = ProcessingStatus.PROCESSING
+            item.save(update_fields=["processing_status"])
+
+            # Trigger async image processing
+            token = Token.objects.get_or_create(user=request.user)[0]
+            input_data = ItemProcessingRequest(
+                item_id=item.pk,
+                user_id=request.user.pk,
+                token=str(token),
+                base_url=request.build_absolute_uri("/")[:-1],  # Remove trailing slash
+            )
+            asyncio.run(start_item_processing(input_data))
+
+            messages.info(
+                request,
+                _(
+                    "Images uploaded! We're analyzing them to suggest a title "
+                    "and description. You can continue editing below.",
+                ),
+            )
+
+        item.save(update_fields=["processing_status"])
+
+        # Redirect to step 2
+        return redirect("items:edit", pk=item.pk)
+
+
+@login_required
+@require_http_methods(["GET"])
+def check_processing_status(request, pk):
+    """AJAX endpoint to check item processing status."""
+    try:
+        item = get_object_or_404(Item, pk=pk, user=request.user)
+
+        return JsonResponse(
+            {
+                "status": "success",
+                "processing_status": item.processing_status,
+                "processing_status_display": dict(ProcessingStatus.choices).get(
+                    item.processing_status,
+                    "",
+                ),
+                "name": item.name,
+                "description": item.description,
+                "is_processing": item.processing_status == ProcessingStatus.PROCESSING,
+                "is_completed": item.processing_status == ProcessingStatus.COMPLETED,
+                "has_failed": item.processing_status == ProcessingStatus.FAILED,
+            },
+        )
+
+    except Item.DoesNotExist:
+        return JsonResponse(
+            {"status": "error", "message": "Item not found"},
+            status=404,
+        )
