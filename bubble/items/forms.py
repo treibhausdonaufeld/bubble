@@ -59,9 +59,9 @@ class ItemForm(forms.ModelForm):
             "active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
         }
         labels = {
-            "name": _("Item name"),
+            "name": _("Name"),
             "description": _("Description"),
-            "item_type": _("Item type"),
+            "item_type": _("Type"),
             "price": _("Price"),
             "display_contact": _("Show contact"),
             "active": _("Published"),
