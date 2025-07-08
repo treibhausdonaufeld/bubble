@@ -19,6 +19,7 @@ from django.views.generic import (
     UpdateView,
 )
 from rest_framework.authtoken.models import Token
+from temporalio import exceptions
 
 from bubble.categories.models import ItemCategory
 from bubble.items.temporal.temporal_activities import ItemProcessingRequest
@@ -569,10 +570,12 @@ class ItemCreateImagesView(LoginRequiredMixin, TemplateView):
                 token=str(token),
                 base_url=request.build_absolute_uri("/")[:-1],  # Remove trailing slash
             )
-            workflow_id = asyncio.run(TemporalService.start_item_processing(input_data))
+            workflow_handle = asyncio.run(
+                TemporalService.start_item_processing(input_data)
+            )
 
             # Store the workflow ID for potential cancellation
-            item.workflow_id = workflow_id
+            item.workflow_id = workflow_handle.id
             item.save(update_fields=["processing_status", "workflow_id"])
 
             messages.info(
@@ -635,11 +638,12 @@ def cancel_processing(request, pk):
                 status=400,
             )
 
+        # Update item status to completed
+        item.processing_status = ProcessingStatus.COMPLETED
+        item.save(update_fields=["processing_status"])
+
         # If no workflow_id, just mark as completed (graceful fallback)
         if not item.workflow_id:
-            item.processing_status = ProcessingStatus.COMPLETED
-            item.save(update_fields=["processing_status"])
-
             return JsonResponse(
                 {
                     "status": "success",
@@ -651,11 +655,6 @@ def cancel_processing(request, pk):
         success = asyncio.run(TemporalService.cancel_workflow(item.workflow_id))
 
         if success:
-            # Update item status to completed and clear workflow_id
-            item.processing_status = ProcessingStatus.COMPLETED
-            item.workflow_id = None
-            item.save(update_fields=["processing_status", "workflow_id"])
-
             return JsonResponse(
                 {
                     "status": "success",
@@ -667,7 +666,11 @@ def cancel_processing(request, pk):
             {"status": "error", "message": "Failed to cancel workflow"},
             status=500,
         )
-
+    except exceptions.TemporalError as exc:
+        return JsonResponse(
+            {"status": "error", "message": str(exc)},
+            status=404,
+        )
     except Item.DoesNotExist:
         return JsonResponse(
             {"status": "error", "message": "Item not found"},
@@ -707,10 +710,10 @@ def retrigger_processing(request, pk):
             token=str(token),
             base_url=request.build_absolute_uri("/")[:-1],  # Remove trailing slash
         )
-        workflow_id = asyncio.run(TemporalService.start_item_processing(input_data))
+        workflow_handle = asyncio.run(TemporalService.start_item_processing(input_data))
 
         # Store the workflow ID for potential cancellation
-        item.workflow_id = workflow_id
+        item.workflow_id = workflow_handle.id
         item.save(update_fields=["processing_status", "workflow_id"])
 
         return JsonResponse(
@@ -718,7 +721,7 @@ def retrigger_processing(request, pk):
                 "status": "success",
                 "message": "AI processing restarted successfully",
                 "processing_status": item.processing_status,
-                "workflow_id": workflow_id,
+                "workflow_id": item.workflow_id,
             }
         )
 

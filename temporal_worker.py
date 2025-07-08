@@ -19,7 +19,6 @@ from bubble.items.temporal.temporal_activities import (
     save_item_suggestions,
     summarize_image_suggestions,
 )
-from bubble.items.temporal.temporal_cleanup import handle_processing_failure
 from bubble.items.temporal.temporal_workflows import ItemProcessingWorkflow
 from config.settings.temporal import (
     TEMPORAL_ADDRESS,
@@ -48,7 +47,6 @@ async def run_worker():
                 save_item_suggestions,
                 analyze_image,
                 summarize_image_suggestions,
-                handle_processing_failure,
             ],
             workflows=[
                 ItemProcessingWorkflow,

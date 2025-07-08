@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-08 13:30+0200\n"
+"POT-Creation-Date: 2025-07-08 21:49+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -67,7 +67,9 @@ msgstr "URL-Pfad für diesen Inhaltstyp (z.B. 'sachen', 'events')"
 
 #: bubble/categories/models.py:34
 msgid "Order of display in navigation menu (lower numbers appear first)"
-msgstr "Reihenfolge der Anzeige im Navigationsmenü (niedrigere Zahlen erscheinen zuerst)"
+msgstr ""
+"Reihenfolge der Anzeige im Navigationsmenü (niedrigere Zahlen erscheinen "
+"zuerst)"
 
 #: bubble/categories/models.py:42
 msgid ""
@@ -75,9 +77,9 @@ msgid ""
 "{'field_name': {'type': 'choice', 'label': 'Size', 'choices': ['S', 'M', "
 "'L'], 'required': true}}"
 msgstr ""
-"JSON-Schema für benutzerdefinierte Felder spezifisch für diese Kategorie. Format: "
-"{'field_name': {'type': 'choice', 'label': 'Größe', 'choices': ['S', 'M', "
-"'L'], 'required': true}}"
+"JSON-Schema für benutzerdefinierte Felder spezifisch für diese Kategorie. "
+"Format: {'field_name': {'type': 'choice', 'label': 'Größe', 'choices': ['S', "
+"'M', 'L'], 'required': true}}"
 
 #: bubble/categories/models.py:51
 msgid "Item Categories"
@@ -226,7 +228,7 @@ msgid "Sign up with:"
 msgstr "Registrieren mit:"
 
 #: bubble/core/templates/account/signup.html:30
-#: bubble/templates/items/item_form.html:106
+#: bubble/templates/items/item_form.html:129
 msgid "or"
 msgstr "oder"
 
@@ -599,7 +601,9 @@ msgstr "Schließen"
 
 #: bubble/favorites/templates/favorites/user_favorites.html:103
 #: bubble/templates/items/item_confirm_delete.html:95
-#: bubble/templates/items/item_form.html:256
+#: bubble/templates/items/item_form.html:39
+#: bubble/templates/items/item_form.html:279
+#: bubble/templates/items/item_form.html:314
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -659,7 +663,7 @@ msgstr "Medien"
 msgid "Timestamps"
 msgstr "Zeitstempel"
 
-#: bubble/items/forms.py:21 bubble/templates/items/item_form.html:327
+#: bubble/items/forms.py:21 bubble/templates/items/item_form.html:617
 msgid "Search and select a category..."
 msgstr "Kategorie suchen und auswählen..."
 
@@ -724,7 +728,8 @@ msgstr "Artikelname muss mindestens %(min_length)d Zeichen lang sein."
 
 #: bubble/items/forms.py:136
 msgid "Please select a specific category (not a general category)."
-msgstr "Bitte wählen Sie eine spezifische Kategorie (keine allgemeine Kategorie)."
+msgstr ""
+"Bitte wählen Sie eine spezifische Kategorie (keine allgemeine Kategorie)."
 
 #: bubble/items/forms.py:312
 msgid "Search items, tags, categories..."
@@ -742,23 +747,23 @@ msgstr "Alle Unterkategorien"
 msgid "All types"
 msgstr "Alle Typen"
 
-#: bubble/items/forms.py:351 bubble/items/views.py:170
+#: bubble/items/forms.py:351 bubble/items/views.py:171
 msgid "Newest first"
 msgstr "Neueste zuerst"
 
-#: bubble/items/forms.py:352 bubble/items/views.py:171
+#: bubble/items/forms.py:352 bubble/items/views.py:172
 msgid "Oldest first"
 msgstr "Älteste zuerst"
 
-#: bubble/items/forms.py:353 bubble/items/views.py:172
+#: bubble/items/forms.py:353 bubble/items/views.py:173
 msgid "Price: Low to High"
 msgstr "Preis: Niedrig zu Hoch"
 
-#: bubble/items/forms.py:354 bubble/items/views.py:173
+#: bubble/items/forms.py:354 bubble/items/views.py:174
 msgid "Price: High to Low"
 msgstr "Preis: Hoch zu Niedrig"
 
-#: bubble/items/forms.py:355 bubble/items/views.py:174
+#: bubble/items/forms.py:355 bubble/items/views.py:175
 msgid "Name A-Z"
 msgstr "Name A-Z"
 
@@ -810,43 +815,44 @@ msgstr "Kontaktinformationen öffentlich anzeigen"
 msgid "Enable payment via internal payment system"
 msgstr "Zahlung über internes Zahlungssystem aktivieren"
 
-#: bubble/items/models.py:85
+#: bubble/items/models.py:90
 msgid "Additional fields specific to the item's category"
 msgstr "Zusätzliche Felder spezifisch für die Kategorie des Artikels"
 
-#: bubble/items/views.py:326
+#: bubble/items/views.py:327
 msgid "Item created successfully!"
 msgstr "Artikel erfolgreich erstellt!"
 
-#: bubble/items/views.py:362
+#: bubble/items/views.py:363
 msgid "Item updated successfully!"
 msgstr "Artikel erfolgreich aktualisiert!"
 
-#: bubble/items/views.py:387
+#: bubble/items/views.py:388
 msgid "Item deleted successfully!"
 msgstr "Artikel erfolgreich gelöscht!"
 
-#: bubble/items/views.py:434
+#: bubble/items/views.py:435
 #, python-format
 msgid "Item '%(name)s' has been activated."
 msgstr "Artikel '%(name)s' wurde aktiviert."
 
-#: bubble/items/views.py:439
+#: bubble/items/views.py:440
 #, python-format
 msgid "Item '%(name)s' has been deactivated."
 msgstr "Artikel '%(name)s' wurde deaktiviert."
 
-#: bubble/items/views.py:557
+#: bubble/items/views.py:558
 msgid "AI processing skipped. You can now edit the item details below."
-msgstr "KI-Verarbeitung übersprungen. Sie können die Artikeldetails unten bearbeiten."
+msgstr ""
+"KI-Verarbeitung übersprungen. Sie können die Artikeldetails unten bearbeiten."
 
-#: bubble/items/views.py:578
+#: bubble/items/views.py:584
 msgid ""
 "Images uploaded! We're analyzing them to suggest a title and description. "
 "You can continue editing below."
 msgstr ""
-"Bilder hochgeladen! Wir analysieren sie, um einen Titel und eine Beschreibung "
-"vorzuschlagen. Sie können die Bearbeitung unten fortsetzen."
+"Bilder hochgeladen! Wir analysieren sie, um einen Titel und eine "
+"Beschreibung vorzuschlagen. Sie können die Bearbeitung unten fortsetzen."
 
 #: bubble/messaging/forms.py:16
 msgid "Your message..."
@@ -977,7 +983,7 @@ msgid "Upload & Process Images"
 msgstr "Bilder hochladen & verarbeiten"
 
 #: bubble/templates/items/item_create_images.html:119
-#: bubble/templates/items/item_form.html:615
+#: bubble/templates/items/item_form.html:909
 msgid "Uploading..."
 msgstr "Hochladen..."
 
@@ -1049,74 +1055,81 @@ msgid "Back to Items"
 msgstr "Zurück zur Startseite"
 
 #: bubble/templates/items/item_form.html:8
-#: bubble/templates/items/item_form.html:47
+#: bubble/templates/items/item_form.html:51
 msgid "Edit Item"
 msgstr "Artikel bearbeiten"
 
 #: bubble/templates/items/item_form.html:10
-#: bubble/templates/items/item_form.html:49
+#: bubble/templates/items/item_form.html:53
 #: bubble/templates/items/my_items.html:13 bubble/templates/pages/home.html:65
 msgid "Add New Item"
 msgstr "Neuen Artikel hinzufügen"
 
-#: bubble/templates/items/item_form.html:28
+#: bubble/templates/items/item_form.html:29
 msgid "Loading..."
 msgstr "Lädt..."
 
-#: bubble/templates/items/item_form.html:31
+#: bubble/templates/items/item_form.html:32
 msgid "AI Processing in Progress"
 msgstr "KI-Verarbeitung läuft"
 
-#: bubble/templates/items/item_form.html:32
+#: bubble/templates/items/item_form.html:33
 msgid ""
 "We're analyzing your images to suggest a title and description. This will "
 "appear automatically when ready."
 msgstr ""
-"Wir analysieren Ihre Bilder, um einen Titel und eine Beschreibung vorzuschlagen. "
-"Diese erscheinen automatisch, wenn sie bereit sind."
-
-#: bubble/templates/items/item_form.html:39
-msgid "Image processing failed. Please fill in the details manually."
-msgstr "Bildverarbeitung fehlgeschlagen. Bitte füllen Sie die Details manuell aus."
+"Wir analysieren Ihre Bilder, um einen Titel und eine Beschreibung "
+"vorzuschlagen. Diese erscheinen automatisch, wenn sie bereit sind."
 
 #: bubble/templates/items/item_form.html:62
+msgid "AI Actions"
+msgstr "KI-Aktionen"
+
+#: bubble/templates/items/item_form.html:68
+#: bubble/templates/items/item_form.html:491
+#, fuzzy
+#| msgid "AI Processing in Progress"
+msgid "Run AI Processing Again"
+msgstr "KI-Verarbeitung neu starten"
+
+#: bubble/templates/items/item_form.html:85
 msgid "Current Images"
 msgstr "Aktuelle Bilder"
 
-#: bubble/templates/items/item_form.html:64
+#: bubble/templates/items/item_form.html:87
 msgid "Drop new images here or"
 msgstr "Neue Bilder hier ablegen oder"
 
-#: bubble/templates/items/item_form.html:72
+#: bubble/templates/items/item_form.html:95
 msgid "Add"
 msgstr "Hinzufügen"
 
-#: bubble/templates/items/item_form.html:88
-#: bubble/templates/items/item_form.html:518
+#: bubble/templates/items/item_form.html:111
+#: bubble/templates/items/item_form.html:808
 msgid "Remove image"
 msgstr "Bild entfernen"
 
-#: bubble/templates/items/item_form.html:106
+#: bubble/templates/items/item_form.html:129
 msgid "Drop your images here"
 msgstr "Bilder hier ablegen"
 
-#: bubble/templates/items/item_form.html:108
+#: bubble/templates/items/item_form.html:131
 msgid "JPG, PNG, GIF • Max 10MB each"
 msgstr "JPG, PNG, GIF • Max. 10MB je Datei"
 
-#: bubble/templates/items/item_form.html:119
+#: bubble/templates/items/item_form.html:142
 msgid "Select Files"
 msgstr "Dateien auswählen"
 
-#: bubble/templates/items/item_form.html:128
+#: bubble/templates/items/item_form.html:151
 msgid "new files selected"
 msgstr "neue Dateien ausgewählt"
 
-#: bubble/templates/items/item_form.html:129
+#: bubble/templates/items/item_form.html:152
 msgid "total"
 msgstr "gesamt"
 
-#: bubble/templates/items/item_form.html:140
+#: bubble/templates/items/item_form.html:163
 msgid ""
 "JavaScript is disabled. You can still upload images using the file input "
 "below."
@@ -1124,56 +1137,131 @@ msgstr ""
 "JavaScript ist deaktiviert. Sie können Bilder weiterhin über die "
 "Dateieingabe unten hochladen."
 
-#: bubble/templates/items/item_form.html:155
-#: bubble/templates/items/item_form.html:173
+#: bubble/templates/items/item_form.html:178
+#: bubble/templates/items/item_form.html:196
 msgid "AI suggestion will appear here"
 msgstr "KI-Vorschlag erscheint hier"
 
-#: bubble/templates/items/item_form.html:224
+#: bubble/templates/items/item_form.html:247
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: bubble/templates/items/item_form.html:260
+#: bubble/templates/items/item_form.html:283
 msgid "Processing..."
 msgstr "Verarbeitung..."
 
-#: bubble/templates/items/item_form.html:264
+#: bubble/templates/items/item_form.html:287
 msgid "Save draft"
 msgstr "Entwurf speichern"
 
-#: bubble/templates/items/item_form.html:267
+#: bubble/templates/items/item_form.html:290
 msgid "Publish"
 msgstr "Veröffentlichen"
 
-#: bubble/templates/items/item_form.html:466
+#: bubble/templates/items/item_form.html:307
+msgid "Confirm Action"
+msgstr "Aktion bestätigen"
+
+#: bubble/templates/items/item_form.html:315
+msgid "Confirm"
+msgstr "Bestätigen"
+
+#: bubble/templates/items/item_form.html:326
+msgid "Information"
+msgstr "Information"
+
+#: bubble/templates/items/item_form.html:333
+#: bubble/templates/items/item_form.html:353
+msgid "OK"
+msgstr "OK"
+
+#: bubble/templates/items/item_form.html:345
+msgid "Error"
+msgstr "Fehler"
+
+#: bubble/templates/items/item_form.html:406
+#: bubble/templates/items/item_form.html:486
+msgid "Item ID not found"
+msgstr "Artikel-ID nicht gefunden"
+
+#: bubble/templates/items/item_form.html:411
+msgid "Cancel AI Processing"
+msgstr "KI-Verarbeitung abbrechen"
+
+#: bubble/templates/items/item_form.html:412
+msgid ""
+"Are you sure you want to cancel the AI processing? You can still edit the "
+"item manually."
+msgstr ""
+"Sind Sie sicher, dass Sie die KI-Verarbeitung abbrechen möchten? Sie können "
+"den Artikel weiterhin manuell bearbeiten."
+
+#: bubble/templates/items/item_form.html:418
+msgid "Cancelling..."
+msgstr "Wird abgebrochen..."
+
+#: bubble/templates/items/item_form.html:465
+#: bubble/templates/items/item_form.html:553
+msgid "Error:"
+msgstr "Fehler:"
+
+#: bubble/templates/items/item_form.html:473
+msgid "An error occurred while cancelling processing. Please try again."
+msgstr ""
+"Beim Abbrechen der Verarbeitung ist ein Fehler aufgetreten. Bitte versuchen "
+"Sie es erneut."
+
+#: bubble/templates/items/item_form.html:492
+msgid ""
+"Are you sure you want to run AI processing again? This will overwrite any "
+"manual changes to the title and description."
+msgstr ""
+"Sind Sie sicher, dass Sie die KI-Verarbeitung erneut ausführen möchten? Dies "
+"überschreibt alle manuellen Änderungen am Titel und der Beschreibung."
+
+#: bubble/templates/items/item_form.html:498
+msgid "Starting..."
+msgstr "Wird gestartet..."
+
+#: bubble/templates/items/item_form.html:561
+msgid "An error occurred while starting AI processing. Please try again."
+msgstr ""
+"Beim Starten der KI-Verarbeitung ist ein Fehler aufgetreten. Bitte versuchen "
+"Sie es erneut."
+
+#: bubble/templates/items/item_form.html:756
 msgid "File"
 msgstr "Datei"
 
-#: bubble/templates/items/item_form.html:466
+#: bubble/templates/items/item_form.html:756
 msgid "is too large. Maximum size is 10MB."
 msgstr "ist zu groß. Maximale Größe ist 10MB."
 
-#: bubble/templates/items/item_form.html:475
+#: bubble/templates/items/item_form.html:765
 msgid "Maximum"
 msgstr "Maximal"
 
-#: bubble/templates/items/item_form.html:475
+#: bubble/templates/items/item_form.html:765
 msgid "images allowed."
 msgstr "Bilder erlaubt."
 
-#: bubble/templates/items/item_form.html:567
+#: bubble/templates/items/item_form.html:858
+msgid "Delete Image"
+msgstr "Bild löschen"
+
+#: bubble/templates/items/item_form.html:859
 msgid "Are you sure you want to delete this image?"
 msgstr "Sind Sie sicher, dass Sie dieses Bild löschen möchten?"
 
-#: bubble/templates/items/item_form.html:588
+#: bubble/templates/items/item_form.html:881
 msgid "Error deleting image: "
 msgstr "Fehler beim Löschen des Bildes: "
 
-#: bubble/templates/items/item_form.html:588
+#: bubble/templates/items/item_form.html:881
 msgid "Unknown error"
 msgstr "Unbekannter Fehler"
 
-#: bubble/templates/items/item_form.html:596
+#: bubble/templates/items/item_form.html:889
 msgid "Error deleting image"
 msgstr "Fehler beim Löschen des Bildes"
 
@@ -1417,140 +1505,3 @@ msgstr "Deutsch"
 #: config/settings/base.py:38
 msgid "English"
 msgstr "Englisch"
-
-#~ msgid "All"
-#~ msgstr "Alle"
-
-#~ msgid "Selected category"
-#~ msgstr "Ausgewählte Kategorie"
-
-#~ msgid "Profile image frame"
-#~ msgstr "Profilbild-Rahmen"
-
-#~ msgid "Preis"
-#~ msgstr "Preis"
-
-#~ msgid "Preis pro Woche"
-#~ msgstr "Preis pro Woche"
-
-#~ msgid "Leer lassen für kostenloses Verleihen"
-#~ msgstr "Leer lassen für kostenloses Verleihen"
-
-#~ msgid "Price is required for items for sale."
-#~ msgstr "Preis ist für verkaufte Artikel erforderlich."
-
-#~ msgid "Please select a category."
-#~ msgstr "Bitte wählen Sie eine Kategorie aus."
-
-#~ msgid "All conditions"
-#~ msgstr "Alle Zustände"
-
-#~ msgid "Back to Things"
-#~ msgstr "Zurück zu den Zeug"
-
-#~ msgid ""
-#~ "You can upload multiple images. Supported formats: JPG, PNG, GIF. Max "
-#~ "10MB per image."
-#~ msgstr ""
-#~ "Sie können mehrere Bilder hochladen. Unterstützte Formate: JPG, PNG, GIF. "
-#~ "Max. 10MB pro Bild."
-
-#~ msgid "New Images to Upload"
-#~ msgstr "Neue Bilder zum Hochladen"
-
-#~ msgid "Choose main category"
-#~ msgstr "Hauptkategorie auswählen"
-
-#~ msgid "Update Item"
-#~ msgstr "Artikel aktualisieren"
-
-#~ msgid "Rooms"
-#~ msgstr "Räume"
-
-#~ msgid "Choose subcategory"
-#~ msgstr "Unterkategorie auswählen"
-
-#~ msgid "Error loading categories"
-#~ msgstr "Fehler beim Laden der Kategorien"
-
-#~ msgid "Current selection"
-#~ msgstr "Aktuelle Auswahl"
-
-#~ msgid "Tags"
-#~ msgstr "Tags"
-
-#~ msgid "Things erstellen"
-#~ msgstr "Zeug erstellen"
-
-#~ msgid "My Things"
-#~ msgstr "Meine Zeug"
-
-#~ msgid "Active Things"
-#~ msgstr "Aktive Zeug"
-
-#~ msgid "Inactive Things"
-#~ msgstr "Inaktive Zeug"
-
-#~ msgid "Total Things"
-#~ msgstr "Zeug Gesamt"
-
-#~ msgid "Your Things"
-#~ msgstr "Ihre Zeug"
-
-#~ msgid "Thing"
-#~ msgstr "Zeug"
-
-#~ msgid "Learn more"
-#~ msgstr "Mehr erfahren"
-
-#~ msgid "Title"
-#~ msgstr "Titel"
-
-#~ msgid "URL"
-#~ msgstr "URL"
-
-#~ msgid "Save"
-#~ msgstr "Speichern"
-
-#~ msgid "Removed from favorites"
-#~ msgstr "Aus Favoriten entfernt"
-
-#: bubble/templates/items/item_form.html:37
-msgid "Cancel"
-msgstr "Abbrechen"
-
-#: bubble/templates/items/item_form.html:292
-msgid "Item ID not found"
-msgstr "Artikel-ID nicht gefunden"
-
-#: bubble/templates/items/item_form.html:297
-msgid "Are you sure you want to cancel the AI processing? You can still edit the item manually."
-msgstr "Sind Sie sicher, dass Sie die KI-Verarbeitung abbrechen möchten? Sie können den Artikel weiterhin manuell bearbeiten."
-
-#: bubble/templates/items/item_form.html:305
-msgid "Cancelling..."
-msgstr "Wird abgebrochen..."
-
-#: bubble/templates/items/item_form.html:334
-msgid "Error:"
-msgstr "Fehler:"
-
-#: bubble/templates/items/item_form.html:342
-msgid "An error occurred while cancelling processing. Please try again."
-msgstr "Beim Abbrechen der Verarbeitung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
-
-#: bubble/templates/items/item_form.html:384
-msgid "Are you sure you want to run AI processing again? This will overwrite any manual changes to the title and description."
-msgstr "Sind Sie sicher, dass Sie die KI-Verarbeitung erneut ausführen möchten? Dies überschreibt alle manuellen Änderungen am Titel und der Beschreibung."
-
-#: bubble/templates/items/item_form.html:390
-msgid "Starting..."
-msgstr "Wird gestartet..."
-
-#: bubble/templates/items/item_form.html:441
-msgid "An error occurred while starting AI processing. Please try again."
-msgstr "Beim Starten der KI-Verarbeitung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
-
-#: bubble/items/views.py:642
-msgid "Processing marked as completed"
-msgstr "Verarbeitung als abgeschlossen markiert"
