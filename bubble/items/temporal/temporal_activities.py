@@ -7,6 +7,7 @@ They should be deterministic and idempotent when possible.
 import base64
 import json
 import logging
+import re
 from dataclasses import dataclass
 
 import requests
@@ -15,6 +16,18 @@ from temporalio import activity
 from .anthropic_client import call_model
 
 logger = logging.getLogger(__name__)
+
+
+PROMPT_RETURN_FORMAT = (
+    "Antworte ausschließlich mit validem JSON in folgendem Format: "
+    "{\n"
+    '  "title": "Kurzer prägnanter Titel für den Gegenstand",\n'
+    '  "description": "Detaillierte Beschreibung des Gegenstands '
+    'und seines Zustands",\n'
+    '  "category": "Hauptkategorie des Gegenstands"\n'
+    '  "price": "Vorgeschlagener Verkaufspreis in Euro"\n'
+    "}"
+)
 
 
 @dataclass
@@ -38,6 +51,7 @@ class ItemImageResult:
     title: str | None = None
     description: str | None = None
     category: str | None = None
+    price: str | None = None
 
 
 @dataclass
@@ -47,6 +61,26 @@ class ProcessingError:
     error_type: str
     message: str
     retry_count: int
+
+
+def fetch_categories(base_url: str, token: str) -> list[str]:
+    """Fetch item categories from the API."""
+    categories_url = f"{base_url}/api/categories/"
+    headers = {"Authorization": f"Token {token}"}
+
+    categories = []
+
+    while categories_url:
+        response = requests.get(categories_url, headers=headers, timeout=30)
+        response.raise_for_status()
+
+        categories_data = response.json()
+        categories.extend([cat["name"] for cat in categories_data["results"]])
+
+        # Get next page URL if it exists
+        categories_url = categories_data.get("next")
+
+    return categories
 
 
 @activity.defn
@@ -106,17 +140,18 @@ def analyze_image(
     content_type = response.headers.get("content-type", "image/jpeg")
     logger.info("Image content type: %s", content_type)
 
+    categories_string = ", ".join(
+        fetch_categories(image_input.base_url, image_input.token)
+    )
+
     prompt_instruction = (
         "Analysiere dieses Bild und gib eine strukturierte Antwort im JSON-Format. "
         "Fokussiere auf: Art des Gegenstands, Zustand, bemerkenswerte Eigenschaften. "
-        "Antworte ausschließlich mit validem JSON in folgendem Format:\n"
-        "{\n"
-        '  "title": "Kurzer prägnanter Titel für den Gegenstand",\n'
-        '  "description": "Detaillierte Beschreibung des Gegenstands '
-        'und seines Zustands",\n'
-        '  "category": "Hauptkategorie des Gegenstands"\n'
-        "}"
-    )
+        "Gib einen Preisvorschlage für den Verkauf des Artikels. "
+        f"Die Kategorie soll aus dieser Liste gewählt werden: {categories_string}"
+    ) + PROMPT_RETURN_FORMAT
+
+    logger.info("Prompt instruction: %s", prompt_instruction)
 
     response_text = call_model(
         prompt=prompt_instruction,
@@ -137,6 +172,7 @@ def analyze_image(
         image_input.title = parsed_response.get("title")
         image_input.description = parsed_response.get("description")
         image_input.category = parsed_response.get("category")
+        image_input.price = parsed_response.get("price")
 
         logger.info(
             "AI analysis completed for image %s: %s",
@@ -162,15 +198,8 @@ def summarize_image_suggestions(
     if len(image_results) > 1:
         prompt_instruction = (
             "Fasse all diese beschreibungen zusammen und gib genau einen "
-            "vorschlag für titel, beschreibung und kategorie für das objekt. "
-            "Antworte ausschließlich mit validem JSON in folgendem Format:\n"
-            "{\n"
-            '  "title": "Kurzer prägnanter Titel für den Gegenstand",\n'
-            '  "description": "Detaillierte Beschreibung des Gegenstands '
-            'und seines Zustands",\n'
-            '  "category": "Hauptkategorie des Gegenstands"\n'
-            "}"
-        )
+            "vorschlag für die felder im JSON-Format zurück. "
+        ) + PROMPT_RETURN_FORMAT
         response_text = call_model(
             prompt=prompt_instruction,
             extra_prompt={
@@ -180,6 +209,7 @@ def summarize_image_suggestions(
                         f"Title: {result.title}\n"
                         f"Description: {result.description}\n"
                         f"Category: {result.category}"
+                        f"Price: {result.price}"
                         for result in image_results
                     ],
                 ),
@@ -189,6 +219,7 @@ def summarize_image_suggestions(
         result.title = parsed_response.get("title")
         result.description = parsed_response.get("description")
         result.category = parsed_response.get("category")
+        result.price = parsed_response.get("price")
 
     return result
 
@@ -203,13 +234,18 @@ def save_item_suggestions(item_result: ItemImageResult) -> bool:
     # fetch image data from rest api with authentication token
     headers = {"Authorization": f"Token {item_result.token}"}
 
+    # extract only the numeric data from item_result.price with a regex
+    price_match = re.search(r"\d+(\.\d{1,2})?", item_result.price or "0.00")
+    if price_match:
+        item_result.price = price_match.group(0)
+
     # Put the item data to the API
     item_data = {
         "processing_status": 2,  # completed
         "name": item_result.title,
-        "description": item_result.description
-        + "\n\nKategorie: "
-        + item_result.category,
+        "description": item_result.description,
+        "category": item_result.category,
+        "price": item_result.price,
     }
     response = requests.put(item_url, headers=headers, json=item_data, timeout=30)
 

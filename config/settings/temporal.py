@@ -17,6 +17,13 @@ if READ_DOT_ENV_FILE:
 TEMPORAL_ADDRESS: str = env("TEMPORAL_ADDRESS", default="localhost:7233")
 TEMPORAL_NAMESPACE: str = env("TEMPORAL_NAMESPACE", default="default")
 TEMPORAL_TASK_QUEUE: str = env("TEMPORAL_TASK_QUEUE", default="bubble-task-queue")
+TEMPORAL_LOG_LEVEL: str = env("TEMPORAL_LOG_LEVEL", default="INFO")
+if TEMPORAL_LOG_LEVEL not in ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]:
+    error_msg = (
+        f"Invalid TEMPORAL_LOG_LEVEL: {TEMPORAL_LOG_LEVEL}. "
+        "Must be one of: DEBUG, INFO, WARNING, ERROR, CRITICAL"
+    )
+    raise ValueError(error_msg)
 
 # Temporal worker configuration
 TEMPORAL_MAX_CONCURRENT_ACTIVITIES: int = env.int(

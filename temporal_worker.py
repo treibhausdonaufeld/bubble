@@ -22,13 +22,14 @@ from bubble.items.temporal.temporal_activities import (
 from bubble.items.temporal.temporal_workflows import ItemProcessingWorkflow
 from config.settings.temporal import (
     TEMPORAL_ADDRESS,
+    TEMPORAL_LOG_LEVEL,
     TEMPORAL_MAX_CONCURRENT_ACTIVITIES,
     TEMPORAL_NAMESPACE,
     TEMPORAL_TASK_QUEUE,
 )
 
 logging.basicConfig(
-    level="INFO",
+    level=TEMPORAL_LOG_LEVEL,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
 

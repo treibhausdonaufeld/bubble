@@ -30,7 +30,13 @@ class ItemSerializer(serializers.ModelSerializer):
     """Serializer for Item model."""
 
     images = ImageSerializer(many=True, read_only=True)
-    category = ItemCategorySerializer(read_only=True)
+    category = serializers.SlugRelatedField(
+        slug_field="name",
+        queryset=ItemCategory.objects.all(),
+        allow_null=True,
+        required=False,
+    )
+    category_display = ItemCategorySerializer(source="category", read_only=True)
     user = serializers.StringRelatedField(read_only=True)
     first_image = serializers.SerializerMethodField()
 
@@ -44,6 +50,7 @@ class ItemSerializer(serializers.ModelSerializer):
             "date_updated",
             "images",
             "first_image",
+            "category_display",
         ]
 
     def get_first_image(self, obj):
@@ -57,12 +64,19 @@ class ItemSerializer(serializers.ModelSerializer):
 class ItemListSerializer(serializers.ModelSerializer):
     """Lightweight serializer for item lists."""
 
-    category = ItemCategorySerializer(read_only=True)
+    category = serializers.SlugRelatedField(
+        slug_field="name",
+        queryset=ItemCategory.objects.all(),
+        allow_null=True,
+        required=False,
+    )
+    category_display = ItemCategorySerializer(source="category", read_only=True)
     first_image = serializers.SerializerMethodField()
 
     class Meta:
         model = Item
         fields = "__all__"
+        read_only_fields = ["category_display"]
 
     def get_first_image(self, obj):
         """Get the first image of the item."""
