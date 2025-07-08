@@ -11,13 +11,12 @@ class ItemForm(forms.ModelForm):
 
     # Category dropdown showing only leaf categories (lowest level)
     selected_category = forms.ModelChoiceField(
-        queryset=ItemCategory.objects.none(),  # Empty queryset for AJAX loading
+        queryset=ItemCategory.objects.all(),  # Empty queryset for AJAX loading
         required=False,
         widget=forms.Select(
             attrs={
                 "class": "form-select select2-category",
                 "data-placeholder": _("Search and select a category..."),
-                # "data-ajax-url": "",  # Will be set in __init__
             },
         ),
         label=_("Category"),
@@ -28,10 +27,10 @@ class ItemForm(forms.ModelForm):
         fields = [
             "name",
             "description",
+            "selected_category",
             "item_type",
             "price",
             "display_contact",
-            "profile_img_frame",
             "active",
         ]
         widgets = {
@@ -54,12 +53,6 @@ class ItemForm(forms.ModelForm):
                     "placeholder": _("Price in Euro"),
                 },
             ),
-            "profile_img_frame": forms.TextInput(
-                attrs={
-                    "class": "form-control",
-                    "placeholder": _("Profile image frame"),
-                },
-            ),
             "display_contact": forms.CheckboxInput(attrs={"class": "form-check-input"}),
             "active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
         }
@@ -69,7 +62,6 @@ class ItemForm(forms.ModelForm):
             "item_type": _("Item type"),
             "price": _("Price"),
             "display_contact": _("Show contact"),
-            "profile_img_frame": _("Profile image frame"),
             "active": _("Published"),
         }
         help_texts = {
@@ -80,22 +72,6 @@ class ItemForm(forms.ModelForm):
         self.user = kwargs.pop("user", None)
         self.root_category = kwargs.pop("root_category", None)
         super().__init__(*args, **kwargs)
-
-        # For AJAX-based category field, we need to set the queryset properly
-        # If editing an existing item, set the selected category
-        if (
-            self.instance.pk
-            and hasattr(self.instance, "category")
-            and self.instance.category
-        ):
-            # Include the current category in the queryset so it shows up as selected
-            self.fields["selected_category"].queryset = ItemCategory.objects.filter(
-                id=self.instance.category.id,
-            )
-            self.fields["selected_category"].initial = self.instance.category
-        else:
-            # For new items, keep empty queryset for AJAX loading
-            self.fields["selected_category"].queryset = ItemCategory.objects.none()
 
         # Add dynamic fields based on category schema
         # For create form: use root_category, for edit form: use item's category
@@ -131,25 +107,6 @@ class ItemForm(forms.ModelForm):
             )
             # Update Meta.fields to include intern fields
             self.Meta.fields = [*self.Meta.fields, "intern", "th_payment"]
-
-        # Make price required for sell and borrow items
-        if hasattr(self, "instance") and self.instance.pk:
-            # For existing items, check the item type
-            if self.instance.item_type == Item.ITEM_TYPE_FOR_SALE:  # Sell
-                self.fields["price"].required = True
-                self.fields["price"].label = _("Preis")
-            elif self.instance.item_type == Item.ITEM_TYPE_RENT:  # Borrow
-                self.fields["price"].required = False
-                self.fields["price"].label = _("Preis pro Woche")
-                self.fields["price"].help_text = _(
-                    "Leer lassen für kostenloses Verleihen",
-                )
-            else:  # Give away
-                self.fields["price"].required = False
-                self.fields["price"].widget = forms.HiddenInput()
-        else:
-            # For new items, will be handled by JavaScript or default to required
-            self.fields["price"].required = False
 
     def clean_name(self):
         name: str | None = self.cleaned_data.get("name")
