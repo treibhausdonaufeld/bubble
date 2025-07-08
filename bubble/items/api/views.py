@@ -6,7 +6,6 @@ from pathlib import Path
 
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
-from django.db.models import Q
 from django.http import HttpResponse
 from PIL import Image as PILImage
 from rest_framework import permissions, viewsets
@@ -134,18 +133,26 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
     """
 
     serializer_class = ImageSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
     def get_queryset(self):
         """Return images that the user can access."""
         user = self.request.user
 
         # Users can see images of their own items and public items
-        queryset = (
-            Image.objects.filter(Q(item__user=user) | Q(item__internal=False))
-            .select_related("item")
-            .order_by("item", "ordering")
-        )
+        queryset = Image.objects.filter(item__internal=False, item__active=True)
+
+        if user.is_authenticated:
+            # If authenticated, also include images of items they own
+            queryset = queryset | Image.objects.filter(item__user=user)
+
+            if user.profile.internal:
+                # If user is internal, include all images
+                queryset = queryset | Image.objects.filter(
+                    item__internal=True, item__active=True
+                )
+
+        queryset = queryset.select_related("item").order_by("item", "ordering")
 
         # Filter by item if specified
         item_id = self.request.query_params.get("item")

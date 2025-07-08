@@ -272,7 +272,7 @@ class ItemDetailView(DetailView):
 
     def get_queryset(self):
         return (
-            Item.objects.filter(active=True)
+            Item.objects.filter(Q(active=True) | Q(user=self.request.user))
             .select_related("user", "category")
             .prefetch_related("images")
         )

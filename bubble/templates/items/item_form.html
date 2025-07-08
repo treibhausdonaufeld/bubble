@@ -498,8 +498,7 @@
               {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
               <!-- Form Actions -->
               <div class="d-flex justify-content-between">
-                <a href="{% if object %}{% url 'items:detail' pk=object.pk %}{% else %}{% url 'items-category:list' content_type=content_type_slug %}{% endif %}"
-                   class="btn btn-outline-secondary">{% trans "Cancel" %}</a>
+                <button type="button" onclick="history.back()" class="btn btn-outline-secondary">{% trans "Cancel" %}</button>
                 {% if object and object.processing_status == 1 %}
                   <button type="button" class="btn btn-primary" disabled>
                     <i class="fas fa-spinner fa-spin me-2"></i>
