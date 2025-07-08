@@ -36,7 +36,7 @@ class Item(models.Model):
     )
     category = models.ForeignKey(
         ItemCategory,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         related_name="items",
         blank=True,
         null=True,
@@ -49,8 +49,14 @@ class Item(models.Model):
     )
     name = models.CharField(max_length=255, blank=True)
     description = models.TextField(blank=True)
-    intern = models.BooleanField(default=False)
-    display_contact = models.BooleanField(default=True)
+    intern = models.BooleanField(
+        default=False,
+        help_text=_("Internal item, not for public display"),
+    )
+    display_contact = models.BooleanField(
+        default=False,
+        help_text=_("Display contact information public"),
+    )
     price = models.DecimalField(
         max_digits=10,
         decimal_places=2,
@@ -58,7 +64,10 @@ class Item(models.Model):
         null=True,
         default=Decimal("0.00"),
     )
-    th_payment = models.BooleanField(default=False, blank=True, null=True)
+    th_payment = models.BooleanField(
+        default=False,
+        help_text=_("Payment via internal payment system"),
+    )
     item_type = models.IntegerField(choices=ItemType, default=ItemType.FOR_SALE)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)

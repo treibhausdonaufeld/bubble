@@ -77,6 +77,10 @@ class ItemCategory(models.Model):
             current = current.parent_category
         return current
 
+    def is_leaf_category(self):
+        """Check if this category has no subcategories (is a leaf category)"""
+        return not self.subcategories.exists()
+
     def get_descendants(self, *, include_self=False):
         """Get all descendant categories"""
         descendants = []

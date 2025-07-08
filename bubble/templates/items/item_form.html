@@ -321,7 +321,9 @@
 
       try {
         // Initialize Select2 for category dropdown with AJAX
-        $('.select2-category').select2({
+        const categoryField = $('.select2-category');
+
+        categoryField.select2({
           placeholder: "{% trans 'Search and select a category...' %}",
           allowClear: true,
           width: '100%',
@@ -357,6 +359,21 @@
             return category.text || category.category_name;
           }
         });
+
+        // Check if there's an initial value for editing
+        {% if object and object.category %}
+        const initialCategory = {
+          id: '{{ object.category.pk }}',
+          text: '{{ object.category.get_hierarchy|escapejs }}'
+        };
+
+        // Create and select the initial option
+        const initialOption = new Option(initialCategory.text, initialCategory.id, true, true);
+        categoryField.append(initialOption);
+        categoryField.trigger('change');
+
+        console.log('Set initial category:', initialCategory);
+        {% endif %}
 
         // Initialize Select2 for all other select fields
         $('.select2-field').select2({

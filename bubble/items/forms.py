@@ -1,3 +1,5 @@
+from typing import Any
+
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
@@ -73,6 +75,14 @@ class ItemForm(forms.ModelForm):
         self.root_category = kwargs.pop("root_category", None)
         super().__init__(*args, **kwargs)
 
+        # Set initial value for selected_category when editing an item
+        if (
+            self.instance.pk
+            and hasattr(self.instance, "category")
+            and self.instance.category
+        ):
+            self.fields["selected_category"].initial = self.instance.category
+
         # Add dynamic fields based on category schema
         # For create form: use root_category, for edit form: use item's category
         if self.root_category or (
@@ -116,6 +126,17 @@ class ItemForm(forms.ModelForm):
                 % {"min_length": self.MIN_ITEM_NAME_LENGTH},
             )
         return name
+
+    def clean_selected_category(self) -> ItemCategory | None:
+        """Validate that the selected category exists and is a leaf category."""
+        selected_category = self.cleaned_data.get("selected_category")
+
+        if selected_category and not selected_category.is_leaf_category():
+            raise ValidationError(
+                _("Please select a specific category (not a general category)."),
+            )
+
+        return selected_category
 
     def _add_dynamic_fields(self):
         """Add dynamic fields based on category's field schema"""
@@ -222,8 +243,11 @@ class ItemForm(forms.ModelForm):
         # Add field to form
         self.fields[f"custom_{field_name}"] = field
 
-    def clean(self):
+    def clean(self) -> dict[str, Any]:
         cleaned_data = super().clean()
+        if cleaned_data is None:
+            cleaned_data = {}
+
         selected_category = cleaned_data.get("selected_category")
 
         # Set the final category
@@ -346,9 +370,11 @@ class ItemFilterForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         # Set up parent category choices
-        self.fields["parent_category"].queryset = ItemCategory.objects.filter(
-            parent_category=None,
-        )
+        parent_field = self.fields["parent_category"]
+        if isinstance(parent_field, forms.ModelChoiceField):
+            parent_field.queryset = ItemCategory.objects.filter(
+                parent_category=None,
+            )
 
         # If there's a selected category, set up the hierarchy
         if self.data.get("category"):
@@ -363,20 +389,23 @@ class ItemFilterForm(forms.Form):
                     current = current.parent_category
 
                 # Set parent category
-                self.fields["parent_category"].initial = current.id
+                if isinstance(parent_field, forms.ModelChoiceField):
+                    parent_field.initial = current.pk
 
                 # If selected category has a parent, set up subcategory field
-                if selected_category.parent_category:
-                    self.fields["subcategory"].queryset = ItemCategory.objects.filter(
-                        parent_category=selected_category.parent_category,
-                    )
-                    self.fields["subcategory"].initial = selected_category.id
-                elif current != selected_category:
-                    # Selected category is a subcategory of root
-                    self.fields["subcategory"].queryset = ItemCategory.objects.filter(
-                        parent_category=current,
-                    )
-                    self.fields["subcategory"].initial = selected_category.id
+                subcategory_field = self.fields["subcategory"]
+                if isinstance(subcategory_field, forms.ModelChoiceField):
+                    if selected_category.parent_category:
+                        subcategory_field.queryset = ItemCategory.objects.filter(
+                            parent_category=selected_category.parent_category,
+                        )
+                        subcategory_field.initial = selected_category.pk
+                    elif current != selected_category:
+                        # Selected category is a subcategory of root
+                        subcategory_field.queryset = ItemCategory.objects.filter(
+                            parent_category=current,
+                        )
+                        subcategory_field.initial = selected_category.pk
             except ItemCategory.DoesNotExist:
                 pass
 
