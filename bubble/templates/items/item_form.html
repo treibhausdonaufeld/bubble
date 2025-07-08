@@ -327,7 +327,7 @@
           width: '100%',
           theme: 'default',
           ajax: {
-            url: "{% url 'items:get_categories_for_select2' %}",
+            url: "{% url 'api:category-select2' %}",
             dataType: 'json',
             delay: 250,
             data: function (params) {
