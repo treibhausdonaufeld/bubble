@@ -37,7 +37,7 @@ class ItemViewSet(viewsets.ModelViewSet):
         return ItemSerializer
 
     def get_queryset(self):
-        """Return items that the user can access."""
+        """Return items that the user can access and that he owns."""
         user = self.request.user
 
         queryset = (
@@ -97,6 +97,33 @@ class ItemViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+    @action(detail=True, methods=["post"])
+    def reorder_images(self, request, pk=None):
+        """Reorder images for an item."""
+        item = self.get_object()
+
+        # Check if the user owns the item
+        if item.user != request.user:
+            return Response({"error": "Permission denied"}, status=403)
+
+        image_order = request.data.get("image_order", [])
+
+        if not isinstance(image_order, list):
+            return Response({"error": "image_order must be a list"}, status=400)
+
+        # Validate that all image IDs belong to this item
+        item_image_ids = {str(img.id) for img in item.images.all()}
+        provided_image_ids = {str(img_id) for img_id in image_order}
+
+        if not provided_image_ids.issubset(item_image_ids):
+            return Response({"error": "Invalid image IDs provided"}, status=400)
+
+        # Update the ordering of each image
+        for index, image_id in enumerate(image_order):
+            Image.objects.filter(id=image_id, item=item).update(ordering=index)
+
+        return Response({"success": True})
 
 
 class ImageViewSet(viewsets.ReadOnlyModelViewSet):
