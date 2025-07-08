@@ -18,6 +18,4 @@ urlpatterns = [
     path("<int:pk>/toggle-status/", views.toggle_content_status, name="toggle_status"),
     # Image management
     path("delete-image/<int:image_id>/", views.delete_image, name="delete_image"),
-    # AJAX endpoints
-    path("api/subcategories/", views.get_subcategories, name="get_subcategories"),
 ]

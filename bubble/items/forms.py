@@ -17,7 +17,7 @@ class ItemForm(forms.ModelForm):
             attrs={
                 "class": "form-select select2-category",
                 "data-placeholder": _("Search and select a category..."),
-                "data-ajax-url": "/items/api/categories/",
+                # "data-ajax-url": "",  # Will be set in __init__
             },
         ),
         label=_("Category"),
@@ -138,7 +138,7 @@ class ItemForm(forms.ModelForm):
             if self.instance.item_type == Item.ITEM_TYPE_FOR_SALE:  # Sell
                 self.fields["price"].required = True
                 self.fields["price"].label = _("Preis")
-            elif self.instance.item_type == Item.ITEM_TYPE_BORROW:  # Borrow
+            elif self.instance.item_type == Item.ITEM_TYPE_RENT:  # Borrow
                 self.fields["price"].required = False
                 self.fields["price"].label = _("Preis pro Woche")
                 self.fields["price"].help_text = _(
@@ -151,30 +151,9 @@ class ItemForm(forms.ModelForm):
             # For new items, will be handled by JavaScript or default to required
             self.fields["price"].required = False
 
-    def clean_price(self):
-        price = self.cleaned_data.get("price")
-        item_type = self.cleaned_data.get("item_type")
-
-        if (
-            item_type == Item.ITEM_TYPE_FOR_SALE and not price
-        ):  # Sell item without price
-            raise ValidationError(_("Price is required for items for sale."))
-
-        if item_type == Item.ITEM_TYPE_GIVE_AWAY:  # Give away items
-            # For give away items, always set price to 0
-            return 0.00
-
-        if (
-            item_type == Item.ITEM_TYPE_BORROW and not price
-        ):  # Borrow item without price
-            # For borrow items, empty price means free borrowing
-            return 0.00
-
-        return price
-
     def clean_name(self):
-        name = self.cleaned_data.get("name")
-        if len(name) < self.MIN_ITEM_NAME_LENGTH:
+        name: str | None = self.cleaned_data.get("name")
+        if name and len(name) < self.MIN_ITEM_NAME_LENGTH:
             raise ValidationError(
                 _("Item name must be at least %(min_length)d characters long.")
                 % {"min_length": self.MIN_ITEM_NAME_LENGTH},

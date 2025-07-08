@@ -442,20 +442,6 @@ def toggle_item_status(request, pk):
     return redirect("items:my_items")
 
 
-def get_subcategories(request):
-    """AJAX view to get subcategories for a parent category"""
-    parent_id = request.GET.get("parent_id")
-    if parent_id:
-        subcategories = ItemCategory.objects.filter(parent_category_id=parent_id)
-        data = [{"id": cat.id, "name": cat.name} for cat in subcategories]
-    else:
-        # Return root categories
-        root_categories = ItemCategory.objects.filter(parent_category=None)
-        data = [{"id": cat.id, "name": cat.name} for cat in root_categories]
-
-    return JsonResponse({"subcategories": data})
-
-
 @login_required
 def delete_image(request, image_id):
     """AJAX view to delete an image."""
@@ -720,43 +706,3 @@ def check_processing_status(request, pk):
             {"status": "error", "message": "Item not found"},
             status=404,
         )
-
-
-def get_categories_for_select2(request):
-    """AJAX view to get categories for Select2 dropdown"""
-    search_term = request.GET.get("q", "").strip()
-
-    # Get all leaf categories (categories without subcategories)
-    queryset = ItemCategory.objects.filter(
-        parent_category__isnull=False,  # Has a parent
-        subcategories__isnull=True,  # Has no children
-    ).order_by("name")
-
-    # Filter by search term if provided
-    if search_term:
-        queryset = queryset.filter(name__icontains=search_term)
-
-    # Limit results to prevent too many options
-    queryset = queryset[:50]
-
-    # Format data for Select2
-    results = []
-    for category in queryset:
-        # Build full hierarchy path for display
-        hierarchy_path = []
-        current = category
-        while current:
-            hierarchy_path.insert(0, current.name)
-            current = current.parent_category
-
-        full_path = " > ".join(hierarchy_path)
-
-        results.append(
-            {
-                "id": category.id,
-                "text": full_path,
-                "category_name": category.name,
-            },
-        )
-
-    return JsonResponse({"results": results, "pagination": {"more": False}})
