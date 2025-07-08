@@ -38,7 +38,7 @@ class ItemListView(ListView):
 
     def get_queryset(self):
         queryset = (
-            Item.objects.filter(active=True)
+            Item.objects.for_user(self.request.user)
             .select_related("user", "category")
             .prefetch_related(
                 models.Prefetch("images", queryset=Image.objects.order_by("ordering")),
@@ -106,7 +106,7 @@ class ItemListView(ListView):
         context["filter_form"] = ItemFilterForm(self.request.GET)
 
         # Get categories that have active items for current filter
-        base_item_queryset = Item.objects.filter(active=True)
+        base_item_queryset = Item.objects.for_user(self.request.user)
 
         # Apply item_type filter from GET params
         item_type = self.request.GET.get("item_type")
@@ -272,7 +272,7 @@ class ItemDetailView(DetailView):
 
     def get_queryset(self):
         return (
-            Item.objects.filter(Q(active=True) | Q(user=self.request.user))
+            Item.objects.for_user(self.request.user)
             .select_related("user", "category")
             .prefetch_related("images")
         )
