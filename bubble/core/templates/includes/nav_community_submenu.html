@@ -1,17 +1,21 @@
 {% load i18n %}
 
 {% if is_dropdown %}
-  <li>
-    <a class="dropdown-item" href="{% url 'users:list' %}">🧑‍🤝‍🧑 {% trans "All Users" %}</a>
-  </li>
+  {% if user.is_authenticated %}
+    <li>
+      <a class="dropdown-item" href="{% url 'users:list' %}">🧑‍🤝‍🧑 {% trans "All Users" %}</a>
+    </li>
+  {% endif %}
   <li>
     <a class="dropdown-item{% if request.resolver_match.url_name == 'about' and request.resolver_match.app_name == 'core' %} active{% endif %}"
        href="{% url 'core:about' %}">ℹ️ {% trans "About Us" %}</a>
   </li>
 {% else %}
-  <li class="nav-item">
-    <a class="nav-link" href="{% url 'users:list' %}">🧑‍🤝‍🧑 {% trans "All Users" %}</a>
-  </li>
+  {% if user.is_authenticated %}
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'users:list' %}">🧑‍🤝‍🧑 {% trans "All Users" %}</a>
+    </li>
+  {% endif %}
   <li class="nav-item">
     <a class="nav-link{% if request.resolver_match.url_name == 'about' and request.resolver_match.app_name == 'core' %} active{% endif %}"
        href="{% url 'core:about' %}">ℹ️ {% trans "About Us" %}</a>
