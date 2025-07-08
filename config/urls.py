@@ -28,7 +28,7 @@ urlpatterns = [
     path("items/", include(("bubble.items.urls", "items"))),
     path(
         "<slug:content_type>/",
-        include(("bubble.items.content_urls", "items-browse")),
+        include(("bubble.items.content_urls", "items-category")),
     ),
     # ...
     # Media files

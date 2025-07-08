@@ -23,7 +23,7 @@
             <!-- Item Type Navigation -->
             <div class="row g-2 mb-3">
               <div class="col-4">
-                <a href="{% url 'items-browse:list' content_type='zeug' %}?item_type=0"
+                <a href="{% url 'items-category:list' content_type='zeug' %}?item_type=0"
                    class="btn btn-success btn-sm w-100">
                   <i class="fas fa-tag"></i>
                   <br />
@@ -31,7 +31,7 @@
                 </a>
               </div>
               <div class="col-4">
-                <a href="{% url 'items-browse:list' content_type='zeug' %}?item_type=1"
+                <a href="{% url 'items-category:list' content_type='zeug' %}?item_type=1"
                    class="btn btn-info btn-sm w-100">
                   <i class="fas fa-gift"></i>
                   <br />
@@ -39,7 +39,7 @@
                 </a>
               </div>
               <div class="col-4">
-                <a href="{% url 'items-browse:list' content_type='zeug' %}?item_type=2"
+                <a href="{% url 'items-category:list' content_type='zeug' %}?item_type=2"
                    class="btn btn-warning btn-sm w-100">
                   <i class="fas fa-handshake"></i>
                   <br />
@@ -47,7 +47,7 @@
                 </a>
               </div>
               <div class="col-4">
-                <a href="{% url 'items-browse:list' content_type='zeug' %}?item_type=3"
+                <a href="{% url 'items-category:list' content_type='zeug' %}?item_type=3"
                    class="btn btn-secondary btn-sm w-100">
                   <i class="fas fa-search"></i>
                   <br />
@@ -57,7 +57,7 @@
             </div>
             <!-- Item Actions -->
             <div class="d-grid gap-2">
-              <a href="{% url 'items-browse:list' content_type='zeug' %}" class="btn btn-outline-primary">
+              <a href="{% url 'items-category:list' content_type='zeug' %}" class="btn btn-outline-primary">
                 <i class="fas fa-list"></i> {% trans "Browse All Items" %}
               </a>
               {% if user.is_authenticated %}
