@@ -52,7 +52,7 @@ class ItemAdmin(admin.ModelAdmin):
         (
             _("Internal Options"),
             {
-                "fields": ("intern", "th_payment"),
+                "fields": ("internal", "payment_enabled"),
                 "classes": ("collapse",),
             },
         ),

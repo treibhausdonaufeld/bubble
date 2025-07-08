@@ -233,18 +233,18 @@
                   <label class="form-check-label" for="{{ form.active.id_for_label }}">{{ form.active.label }}</label>
                 </div>
                 <!-- Intern-only fields -->
-                {% if form.intern %}
+                {% if form.internal %}
                   <div class="form-check">
-                    {{ form.intern }}
-                    <label class="form-check-label" for="{{ form.intern.id_for_label }}">{{ form.intern.label }}</label>
-                    {% if form.intern.help_text %}<div class="form-text">{{ form.intern.help_text }}</div>{% endif %}
+                    {{ form.internal }}
+                    <label class="form-check-label" for="{{ form.internal.id_for_label }}">{{ form.internal.label }}</label>
+                    {% if form.internal.help_text %}<div class="form-text">{{ form.internal.help_text }}</div>{% endif %}
                   </div>
                 {% endif %}
-                {% if form.th_payment %}
+                {% if form.payment_enabled %}
                   <div class="form-check">
-                    {{ form.th_payment }}
-                    <label class="form-check-label" for="{{ form.th_payment.id_for_label }}">{{ form.th_payment.label }}</label>
-                    {% if form.th_payment.help_text %}<div class="form-text">{{ form.th_payment.help_text }}</div>{% endif %}
+                    {{ form.payment_enabled }}
+                    <label class="form-check-label" for="{{ form.payment_enabled.id_for_label }}">{{ form.payment_enabled.label }}</label>
+                    {% if form.payment_enabled.help_text %}<div class="form-text">{{ form.payment_enabled.help_text }}</div>{% endif %}
                   </div>
                 {% endif %}
               </div>

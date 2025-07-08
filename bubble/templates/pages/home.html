@@ -88,7 +88,7 @@
                 <div class="col-md-8">
                   <h5>{% blocktrans with username=user.username %}Welcome back, {{ username }}!{% endblocktrans %}</h5>
                   <p class="text-muted mb-0">
-                    {% if user.profile.intern %}
+                    {% if user.profile.internal %}
                       <span class="badge bg-warning">{% trans "Internal User" %}</span>
                     {% endif %}
                     {% blocktrans with date=user.date_joined|date:"F Y" %}Member since {{ date }}{% endblocktrans %}

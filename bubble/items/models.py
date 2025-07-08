@@ -49,13 +49,13 @@ class Item(models.Model):
     )
     name = models.CharField(max_length=255, blank=True)
     description = models.TextField(blank=True)
-    intern = models.BooleanField(
+    internal = models.BooleanField(
         default=False,
         help_text=_("Internal item, not for public display"),
     )
     display_contact = models.BooleanField(
         default=False,
-        help_text=_("Display contact information public"),
+        help_text=_("Display your contact information public"),
     )
     price = models.DecimalField(
         max_digits=10,
@@ -64,9 +64,9 @@ class Item(models.Model):
         null=True,
         default=Decimal("0.00"),
     )
-    th_payment = models.BooleanField(
+    payment_enabled = models.BooleanField(
         default=False,
-        help_text=_("Payment via internal payment system"),
+        help_text=_("Enable payment via internal payment system"),
     )
     item_type = models.IntegerField(choices=ItemType, default=ItemType.FOR_SALE)
     date_created = models.DateTimeField(auto_now_add=True)

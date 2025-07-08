@@ -99,24 +99,24 @@ class ItemForm(forms.ModelForm):
                 },
             )
 
-        # Add intern-only fields if user is intern
-        if self.user and hasattr(self.user, "profile") and self.user.profile.intern:
-            self.fields["intern"] = forms.BooleanField(
+        # Add internal-only fields if user is internal
+        if self.user and hasattr(self.user, "profile") and self.user.profile.internal:
+            self.fields["internal"] = forms.BooleanField(
                 required=False,
                 initial=False,
                 label=_("Internal"),
                 widget=forms.CheckboxInput(attrs={"class": "form-check-input"}),
                 help_text=_("Check if this item is for internal use only"),
             )
-            self.fields["th_payment"] = forms.BooleanField(
+            self.fields["payment_enabled"] = forms.BooleanField(
                 required=False,
                 initial=False,
                 label=_("Treibhaus payment"),
                 widget=forms.CheckboxInput(attrs={"class": "form-check-input"}),
                 help_text=_("Accept Treibhaus payment method"),
             )
-            # Update Meta.fields to include intern fields
-            self.Meta.fields = [*self.Meta.fields, "intern", "th_payment"]
+            # Update Meta.fields to include internal fields
+            self.Meta.fields = [*self.Meta.fields, "internal", "payment_enabled"]
 
     def clean_name(self):
         name: str | None = self.cleaned_data.get("name")
@@ -290,12 +290,12 @@ class ItemForm(forms.ModelForm):
                 instance.custom_fields = {}
             instance.custom_fields.update(custom_values)
 
-        # Set default values for intern-only fields if user is not intern
+        # Set default values for internal-only fields if user is not internal
         if not (
-            self.user and hasattr(self.user, "profile") and self.user.profile.intern
+            self.user and hasattr(self.user, "profile") and self.user.profile.internal
         ):
-            instance.intern = False
-            instance.th_payment = False
+            instance.internal = False
+            instance.payment_enabled = False
 
         if commit:
             instance.save()
