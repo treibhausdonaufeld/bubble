@@ -181,7 +181,7 @@
         <i class="fas fa-inbox fa-5x text-muted mb-3"></i>
         <h3>{% trans "No items yet" %}</h3>
         <p class="text-muted">{% trans "You haven't created any items yet. Add your first item!" %}</p>
-        <a href="{% url 'items-browse:create' content_type='zeug' %}" class="btn btn-primary btn-lg">
+        <a href="{% url 'items:create' %}" class="btn btn-primary btn-lg">
           <i class="fas fa-plus"></i> {% trans "Add your first item" %}
         </a>
       </div>
