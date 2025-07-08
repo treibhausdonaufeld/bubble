@@ -1514,3 +1514,43 @@ msgstr "Englisch"
 
 #~ msgid "Removed from favorites"
 #~ msgstr "Aus Favoriten entfernt"
+
+#: bubble/templates/items/item_form.html:37
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: bubble/templates/items/item_form.html:292
+msgid "Item ID not found"
+msgstr "Artikel-ID nicht gefunden"
+
+#: bubble/templates/items/item_form.html:297
+msgid "Are you sure you want to cancel the AI processing? You can still edit the item manually."
+msgstr "Sind Sie sicher, dass Sie die KI-Verarbeitung abbrechen möchten? Sie können den Artikel weiterhin manuell bearbeiten."
+
+#: bubble/templates/items/item_form.html:305
+msgid "Cancelling..."
+msgstr "Wird abgebrochen..."
+
+#: bubble/templates/items/item_form.html:334
+msgid "Error:"
+msgstr "Fehler:"
+
+#: bubble/templates/items/item_form.html:342
+msgid "An error occurred while cancelling processing. Please try again."
+msgstr "Beim Abbrechen der Verarbeitung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
+
+#: bubble/templates/items/item_form.html:384
+msgid "Are you sure you want to run AI processing again? This will overwrite any manual changes to the title and description."
+msgstr "Sind Sie sicher, dass Sie die KI-Verarbeitung erneut ausführen möchten? Dies überschreibt alle manuellen Änderungen am Titel und der Beschreibung."
+
+#: bubble/templates/items/item_form.html:390
+msgid "Starting..."
+msgstr "Wird gestartet..."
+
+#: bubble/templates/items/item_form.html:441
+msgid "An error occurred while starting AI processing. Please try again."
+msgstr "Beim Starten der KI-Verarbeitung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
+
+#: bubble/items/views.py:642
+msgid "Processing marked as completed"
+msgstr "Verarbeitung als abgeschlossen markiert"

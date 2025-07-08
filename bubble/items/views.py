@@ -22,7 +22,7 @@ from rest_framework.authtoken.models import Token
 
 from bubble.categories.models import ItemCategory
 from bubble.items.temporal.temporal_activities import ItemProcessingRequest
-from bubble.items.temporal.temporal_service import start_item_processing
+from bubble.items.temporal.temporal_service import TemporalService
 from bubble.messaging.models import Message
 
 from .forms import ItemFilterForm, ItemForm, ItemImageUploadForm
@@ -560,7 +560,6 @@ class ItemCreateImagesView(LoginRequiredMixin, TemplateView):
         elif images:
             # Start background processing
             item.processing_status = ProcessingStatus.PROCESSING
-            item.save(update_fields=["processing_status"])
 
             # Trigger async image processing
             token = Token.objects.get_or_create(user=request.user)[0]
@@ -570,7 +569,11 @@ class ItemCreateImagesView(LoginRequiredMixin, TemplateView):
                 token=str(token),
                 base_url=request.build_absolute_uri("/")[:-1],  # Remove trailing slash
             )
-            asyncio.run(start_item_processing(input_data))
+            workflow_id = asyncio.run(TemporalService.start_item_processing(input_data))
+
+            # Store the workflow ID for potential cancellation
+            item.workflow_id = workflow_id
+            item.save(update_fields=["processing_status", "workflow_id"])
 
             messages.info(
                 request,
@@ -606,7 +609,117 @@ def check_processing_status(request, pk):
                 "is_processing": item.processing_status == ProcessingStatus.PROCESSING,
                 "is_completed": item.processing_status == ProcessingStatus.COMPLETED,
                 "has_failed": item.processing_status == ProcessingStatus.FAILED,
+                "workflow_id": item.workflow_id,
+                "can_cancel": (item.processing_status == ProcessingStatus.PROCESSING),
             },
+        )
+
+    except Item.DoesNotExist:
+        return JsonResponse(
+            {"status": "error", "message": "Item not found"},
+            status=404,
+        )
+
+
+@login_required
+@require_http_methods(["POST"])
+def cancel_processing(request, pk):
+    """AJAX endpoint to cancel item processing."""
+    try:
+        item = get_object_or_404(Item, pk=pk, user=request.user)
+
+        # Check if item is currently being processed
+        if item.processing_status != ProcessingStatus.PROCESSING:
+            return JsonResponse(
+                {"status": "error", "message": "Item is not currently being processed"},
+                status=400,
+            )
+
+        # If no workflow_id, just mark as completed (graceful fallback)
+        if not item.workflow_id:
+            item.processing_status = ProcessingStatus.COMPLETED
+            item.save(update_fields=["processing_status"])
+
+            return JsonResponse(
+                {
+                    "status": "success",
+                    "message": "Processing marked as completed",
+                    "processing_status": item.processing_status,
+                }
+            )
+
+        success = asyncio.run(TemporalService.cancel_workflow(item.workflow_id))
+
+        if success:
+            # Update item status to completed and clear workflow_id
+            item.processing_status = ProcessingStatus.COMPLETED
+            item.workflow_id = None
+            item.save(update_fields=["processing_status", "workflow_id"])
+
+            return JsonResponse(
+                {
+                    "status": "success",
+                    "message": "Processing cancelled successfully",
+                    "processing_status": item.processing_status,
+                }
+            )
+        return JsonResponse(
+            {"status": "error", "message": "Failed to cancel workflow"},
+            status=500,
+        )
+
+    except Item.DoesNotExist:
+        return JsonResponse(
+            {"status": "error", "message": "Item not found"},
+            status=404,
+        )
+
+
+@login_required
+@require_http_methods(["POST"])
+def retrigger_processing(request, pk):
+    """AJAX endpoint to retrigger AI processing for an existing item."""
+    try:
+        item = get_object_or_404(Item, pk=pk, user=request.user)
+
+        # Check if item is in a state that allows retriggering
+        if item.processing_status == ProcessingStatus.PROCESSING:
+            return JsonResponse(
+                {"status": "error", "message": "Item is already being processed"},
+                status=400,
+            )
+
+        # Check if item has images to process
+        if not item.images.exists():
+            return JsonResponse(
+                {"status": "error", "message": "No images found to process"},
+                status=400,
+            )
+
+        # Start background processing
+        item.processing_status = ProcessingStatus.PROCESSING
+
+        # Trigger async image processing
+        token = Token.objects.get_or_create(user=request.user)[0]
+        input_data = ItemProcessingRequest(
+            item_id=item.pk,
+            user_id=request.user.pk,
+            token=str(token),
+            base_url=request.build_absolute_uri("/")[:-1],  # Remove trailing slash
+        )
+        workflow_id = asyncio.run(TemporalService.start_item_processing(input_data))
+
+        # Store the workflow ID for potential cancellation
+        item.workflow_id = workflow_id
+        item.save(update_fields=["processing_status", "workflow_id"])
+
+        return JsonResponse(
+            {
+                "status": "success",
+                "message": "AI processing restarted successfully",
+                "processing_status": item.processing_status,
+                "workflow_id": workflow_id,
+            }
         )
 
     except Item.DoesNotExist:

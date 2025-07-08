@@ -160,27 +160,3 @@ async def start_item_processing(input_data: ItemProcessingRequest) -> str:
     """
     handle = await TemporalService.start_item_processing(input_data)
     return handle.id
-
-
-async def get_processing_result(workflow_id: str) -> dict:
-    """Get the result of a processing workflow.
-
-    Args:
-        workflow_id: The ID of the workflow.
-
-    Returns:
-        dict: The processing result.
-    """
-    return await TemporalService.get_workflow_result(workflow_id)
-
-
-async def cancel_processing(workflow_id: str) -> bool:
-    """Cancel a processing workflow.
-
-    Args:
-        workflow_id: The ID of the workflow to cancel.
-
-    Returns:
-        bool: True if cancellation was successful.
-    """
-    return await TemporalService.cancel_workflow(workflow_id)

@@ -23,13 +23,21 @@
         <!-- Processing status alert -->
         {% if object and object.processing_status == 1 %}
         <div class="alert alert-info alert-dismissible fade show" role="alert" id="processing-alert">
-          <div class="d-flex align-items-center">
-            <div class="spinner-border spinner-border-sm me-3" role="status">
-              <span class="visually-hidden">{% trans "Loading..." %}</span>
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+              <div class="spinner-border spinner-border-sm me-3" role="status">
+                <span class="visually-hidden">{% trans "Loading..." %}</span>
+              </div>
+              <div>
+                <strong>{% trans "AI Processing in Progress" %}</strong><br />
+                <small>{% trans "We're analyzing your images to suggest a title and description. This will appear automatically when ready." %}</small>
+              </div>
             </div>
-            <div>
-              <strong>{% trans "AI Processing in Progress" %}</strong><br />
-              <small>{% trans "We're analyzing your images to suggest a title and description. This will appear automatically when ready." %}</small>
+            <div class="ms-3">
+              <button type="button" class="btn btn-outline-secondary btn-sm" id="cancel-processing-btn" onclick="cancelProcessing()">
+                <i class="fas fa-times me-1"></i>
+                {% trans "Cancel" %}
+              </button>
             </div>
           </div>
         </div>
@@ -37,6 +45,24 @@
         <div class="alert alert-warning" role="alert">
           <i class="fas fa-exclamation-triangle me-2"></i>
           {% trans "Image processing failed. Please fill in the details manually." %}
+        </div>
+        {% elif object and object.processing_status == 2 %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert" id="completed-alert">
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+              <i class="fas fa-check-circle me-3"></i>
+              <div>
+                <strong>{% trans "AI Processing Completed" %}</strong><br />
+                <small>{% trans "AI suggestions have been applied. You can run AI processing again if you've added new images." %}</small>
+              </div>
+            </div>
+            <div class="ms-3">
+              <button type="button" class="btn btn-outline-primary btn-sm" id="retrigger-processing-btn" onclick="retriggerProcessing()">
+                <i class="fas fa-robot me-1"></i>
+                {% trans "Run AI Processing Again" %}
+              </button>
+            </div>
+          </div>
         </div>
         {% endif %}
 
@@ -279,6 +305,168 @@
   <script src="{% static 'js/vendor/select2.min.js' %}"></script>
 
 <script>
+    // Function to cancel AI processing
+  function cancelProcessing() {
+    const itemId = {{ object.pk|default:0 }};
+    if (itemId <= 0) {
+      alert('{% trans "Item ID not found" %}');
+      return;
+    }
+
+    if (!confirm('{% trans "Are you sure you want to cancel the AI processing? You can still edit the item manually." %}')) {
+      return;
+    }
+
+    // Disable the cancel button and show loading
+    const cancelBtn = document.getElementById('cancel-processing-btn');
+    const originalText = cancelBtn.innerHTML;
+    cancelBtn.disabled = true;
+    cancelBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>{% trans "Cancelling..." %}';
+
+    // Send cancel request
+    fetch(`{% url 'items:cancel_processing' pk=0 %}`.replace('0', itemId), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+      },
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'success') {
+        // Hide the processing alert
+        const processingAlert = document.getElementById('processing-alert');
+        if (processingAlert) {
+          processingAlert.style.display = 'none';
+        }
+
+        // If processing status is COMPLETED, show the completed alert
+        if (data.processing_status === 2) { // ProcessingStatus.COMPLETED
+          const completedAlert = document.getElementById('completed-alert');
+          if (completedAlert) {
+            completedAlert.style.display = 'block';
+          }
+        }
+
+        // Show success message
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-success alert-dismissible fade show';
+        alertDiv.innerHTML = `
+          <i class="fas fa-check-circle me-2"></i>
+          ${data.message}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+
+        // Insert the success message before the card
+        const card = document.querySelector('.card');
+        card.parentNode.insertBefore(alertDiv, card);
+
+        // Auto-dismiss after 5 seconds
+        setTimeout(() => {
+          if (alertDiv.parentNode) {
+            alertDiv.remove();
+          }
+        }, 5000);
+      } else {
+        alert('{% trans "Error:" %} ' + data.message);
+        // Re-enable the button
+        cancelBtn.disabled = false;
+        cancelBtn.innerHTML = originalText;
+      }
+    })
+    .catch(error => {
+      console.error('Error cancelling processing:', error);
+      alert('{% trans "An error occurred while cancelling processing. Please try again." %}');
+      // Re-enable the button
+      cancelBtn.disabled = false;
+      cancelBtn.innerHTML = originalText;
+    });
+  }
+
+  // Function to retrigger AI processing
+  function retriggerProcessing() {
+    const itemId = {{ object.pk|default:0 }};
+    if (itemId <= 0) {
+      alert('{% trans "Item ID not found" %}');
+      return;
+    }
+
+    if (!confirm('{% trans "Are you sure you want to run AI processing again? This will overwrite any manual changes to the title and description." %}')) {
+      return;
+    }
+
+    // Disable the retrigger button and show loading
+    const retriggerBtn = document.getElementById('retrigger-processing-btn');
+    const originalText = retriggerBtn.innerHTML;
+    retriggerBtn.disabled = true;
+    retriggerBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>{% trans "Starting..." %}';
+
+    // Send retrigger request
+    fetch(`{% url 'items:retrigger_processing' pk=0 %}`.replace('0', itemId), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+      },
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'success') {
+        // Hide the completed alert
+        const completedAlert = document.getElementById('completed-alert');
+        if (completedAlert) {
+          completedAlert.style.display = 'none';
+        }
+
+        // Show the processing alert
+        const processingAlert = document.getElementById('processing-alert');
+        if (processingAlert) {
+          processingAlert.style.display = 'block';
+        }
+
+        // Show success message
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-success alert-dismissible fade show';
+        alertDiv.innerHTML = `
+          <i class="fas fa-check-circle me-2"></i>
+          ${data.message}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+
+        // Insert the success message before the card
+        const card = document.querySelector('.card');
+        card.parentNode.insertBefore(alertDiv, card);
+
+        // Auto-dismiss after 5 seconds
+        setTimeout(() => {
+          if (alertDiv.parentNode) {
+            alertDiv.remove();
+          }
+        }, 5000);
+
+        // Optionally reload the page to show the updated processing state
+        // or start polling for status updates
+        setTimeout(() => {
+          location.reload();
+        }, 2000);
+      } else {
+        alert('{% trans "Error:" %} ' + data.message);
+        // Re-enable the button
+        retriggerBtn.disabled = false;
+        retriggerBtn.innerHTML = originalText;
+      }
+    })
+    .catch(error => {
+      console.error('Error retriggering processing:', error);
+      alert('{% trans "An error occurred while starting AI processing. Please try again." %}');
+      // Re-enable the button
+      retriggerBtn.disabled = false;
+      retriggerBtn.innerHTML = originalText;
+    });
+  }
+</script>
+
+  <script>
     <!-- Auto-refresh processing status script -->
   {% if object and object.processing_status == 1 %}
     $(document).ready(function() {
