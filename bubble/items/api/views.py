@@ -88,9 +88,9 @@ class ItemViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["get"])
     def public_items(self, request):
-        """Get only public items (not intern)."""
+        """Get only public items (not internal)."""
         queryset = (
-            Item.objects.filter(intern=False, active=True)
+            Item.objects.filter(internal=False, active=True)
             .select_related("user", "category")
             .prefetch_related("images")
         )

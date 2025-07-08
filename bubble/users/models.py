@@ -40,7 +40,7 @@ class Profile(models.Model):
     address = models.TextField(blank=True)
     phone = models.CharField(max_length=15, blank=True)
     email_reminder = models.BooleanField(default=True)
-    intern = models.BooleanField(default=False)
+    internal = models.BooleanField(default=False)
     bio = models.TextField(blank=True)
     profile_image = models.ImageField(upload_to="users/", blank=True, null=True)
     profile_image_alt = models.CharField(max_length=255, blank=True)
