@@ -77,6 +77,11 @@ class Item(models.Model):
         choices=ProcessingStatus,
         default=ProcessingStatus.DRAFT,
     )
+    workflow_id = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="Temporal workflow ID for AI processing",
+    )
 
     # Store category-specific custom fields
     custom_fields = models.JSONField(

@@ -20,6 +20,18 @@ urlpatterns = [
         views.check_processing_status,
         name="processing_status",
     ),
+    # Cancel processing
+    path(
+        "cancel-processing/<int:pk>/",
+        views.cancel_processing,
+        name="cancel_processing",
+    ),
+    # Retrigger processing
+    path(
+        "retrigger-processing/<int:pk>/",
+        views.retrigger_processing,
+        name="retrigger_processing",
+    ),
     # User's item management
     path("my-items/", views.MyItemsView.as_view(), name="my_items"),
     path("<int:pk>/toggle-status/", views.toggle_item_status, name="toggle_status"),

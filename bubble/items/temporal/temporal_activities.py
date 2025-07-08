@@ -242,6 +242,7 @@ def save_item_suggestions(item_result: ItemImageResult) -> bool:
     # Put the item data to the API
     item_data = {
         "processing_status": 2,  # completed
+        "workflow_id": None,  # clear workflow_id when processing completes
         "name": item_result.title,
         "description": item_result.description,
         "category": item_result.category,
