@@ -2,6 +2,7 @@ volumes:
   bubble_local_postgres_data: {}
   bubble_local_postgres_data_backups: {}
   bubble_local_redis_data: {}
+  bubble_local_temporal_data: {}
 
 services:
   django: &django
@@ -9,11 +10,11 @@ services:
       context: .
       dockerfile: ./compose/local/django/Dockerfile
     image: bubble_local_django
-    container_name: bubble_local_django
     depends_on:
       - postgres
       - redis
       - mailpit
+      - temporal
     volumes:
       - .:/app:z
     env_file:
@@ -21,6 +22,9 @@ services:
       - ./.envs/.local/.postgres
     ports:
       - '8000:8000'
+    environment:
+      - TEMPORAL_ADDRESS=temporal:7233
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
     command: /start
 
   postgres:
@@ -28,7 +32,6 @@ services:
       context: .
       dockerfile: ./compose/production/postgres/Dockerfile
     image: bubble_production_postgres
-    container_name: bubble_local_postgres
     volumes:
       - bubble_local_postgres_data:/var/lib/postgresql/data
       - bubble_local_postgres_data_backups:/backups
@@ -37,53 +40,105 @@ services:
 
   mailpit:
     image: docker.io/axllent/mailpit:latest
-    container_name: bubble_local_mailpit
     ports:
       - '8025:8025'
 
   redis:
-    image: docker.io/redis:6
-    container_name: bubble_local_redis
-
-    volumes:
-      - bubble_local_redis_data:/data
-
-  celeryworker:
-    <<: *django
-    image: bubble_local_celeryworker
-    container_name: bubble_local_celeryworker
-    depends_on:
-      - redis
-      - postgres
-      - mailpit
-    ports: []
-    command: /start-celeryworker
-
-  celerybeat:
-    <<: *django
-    image: bubble_local_celerybeat
-    container_name: bubble_local_celerybeat
-    depends_on:
-      - redis
-      - postgres
-      - mailpit
-    ports: []
-    command: /start-celerybeat
-
-  flower:
-    <<: *django
-    image: bubble_local_flower
-    container_name: bubble_local_flower
+    image: ghcr.io/dragonflydb/dragonfly:v1.26.1
+    restart: always
     ports:
-      - '5555:5555'
-    command: /start-flower
+      - "127.0.0.1:6377:6379"
+    environment:
+      # required to work with django-channels
+      # https://github.com/dragonflydb/dragonfly/issues/182#issuecomment-1241624150
+      DFLY_default_lua_flags: "allow-undeclared-keys disable-atomicity"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # celeryworker:
+  #   <<: *django
+  #   image: bubble_local_celeryworker
+  #   depends_on:
+  #     - redis
+  #     - postgres
+  #     - mailpit
+  #   ports: []
+  #   command: /start-celeryworker
+
+  # celerybeat:
+  #   <<: *django
+  #   image: bubble_local_celerybeat
+  #   depends_on:
+  #     - redis
+  #     - postgres
+  #     - mailpit
+  #   ports: []
+  #   command: /start-celerybeat
+
+  # flower:
+  #   <<: *django
+  #   image: bubble_local_flower
+  #   ports:
+  #     - '5555:5555'
+  #   command: /start-flower
+
+  # Temporal.io services
+  temporal-postgresql:
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: temporal
+      POSTGRES_USER: temporal
+      POSTGRES_DB: temporal
+    volumes:
+      - bubble_local_temporal_data:/var/lib/postgresql/data
+    restart: always
+
+  temporal:
+    image: temporalio/auto-setup:latest
+    depends_on:
+      - temporal-postgresql
+    environment:
+      - DB=postgres12
+      - DB_PORT=5432
+      - POSTGRES_USER=temporal
+      - POSTGRES_PWD=temporal
+      - POSTGRES_SEEDS=temporal-postgresql
+      - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development-sql.yaml
+      - TEMPORAL_ADDRESS=temporal:7233
+      - TEMPORAL_CLI_ADDRESS=temporal:7233
+    ports:
+      - "127.0.0.1:7233:7233"
+    volumes:
+      - ./compose/local/temporal:/etc/temporal/config/dynamicconfig
+    restart: always
+
+  temporal-admin-tools:
+    image: temporalio/admin-tools:latest
+    depends_on:
+      - temporal
+    environment:
+      - TEMPORAL_CLI_ADDRESS=temporal:7233
+    stdin_open: true
+    tty: true
+
+  temporal-ui:
+    image: temporalio/ui:latest
+    depends_on:
+      - temporal
+    environment:
+      - TEMPORAL_ADDRESS=temporal:7233
+      - TEMPORAL_CORS_ORIGINS=http://localhost:3000,http://django:8000
+    ports:
+      - "127.0.0.1:8080:8080"
 
   node:
     build:
       context: .
       dockerfile: ./compose/local/node/Dockerfile
     image: bubble_local_node
-    container_name: bubble_local_node
     depends_on:
       - django
     environment:
@@ -95,3 +150,12 @@ services:
     command: npm run dev
     ports:
       - '3000:3000'
+
+  temporal-worker:
+    <<: *django
+    depends_on:
+      - temporal
+      - postgres
+      - redis
+    ports: []
+    command: ./temporal_worker.py

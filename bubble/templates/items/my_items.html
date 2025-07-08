@@ -9,7 +9,7 @@
   <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h2>{% trans "My Items" %}</h2>
-      <a href="{% url 'items:create' content_type='zeug' %}" class="btn btn-success">
+      <a href="{% url 'items:create' %}" class="btn btn-success">
         <i class="fas fa-plus"></i> {% trans "Add New Item" %}
       </a>
     </div>
@@ -65,18 +65,21 @@
                   <tr {% if not item.active %}class="table-secondary"{% endif %}>
                     <td>
                       <div class="d-flex align-items-center">
-                        {% if item.images.first %}
-                          <img src="{{ item.images.first.original.url }}"
-                               alt="{{ item.name }}"
-                               class="rounded me-2 item-thumb" />
-                        {% else %}
-                          <div class="bg-light rounded me-2 d-flex align-items-center justify-content-center item-thumb">
-                            <i class="fas fa-image text-muted"></i>
-                          </div>
-                        {% endif %}
+                        <a href="{% url 'items:edit' item.pk %}" class="text-decoration-none">
+                          {% if item.images.first %}
+                            <img src="{% url 'api:image-get-thumbnail-image' item.images.first.id %}"
+                                 alt="{{ item.name }}"
+                                 class="rounded me-2 item-thumb cursor-pointer" />
+                          {% else %}
+                            <div class="bg-light rounded me-2 d-flex align-items-center justify-content-center item-thumb cursor-pointer">
+                            </div>
+                          {% endif %}
+                        </a>
                         <div>
-                          <div class="fw-bold">{{ item.name }}</div>
-                          <small class="text-muted">{{ item.description|truncatewords:8 }}</small>
+                          <a href="{% url 'items:edit' item.pk %}" class="text-decoration-none text-dark">
+                            <div class="fw-bold">{{ item.name }}</div>
+                            <small class="text-muted">{{ item.description|truncatewords:8 }}</small>
+                          </a>
                         </div>
                       </div>
                     </td>
@@ -178,18 +181,10 @@
         <i class="fas fa-inbox fa-5x text-muted mb-3"></i>
         <h3>{% trans "No items yet" %}</h3>
         <p class="text-muted">{% trans "You haven't created any items yet. Add your first item!" %}</p>
-        <a href="{% url 'items:create' content_type='zeug' %}" class="btn btn-primary btn-lg">
+        <a href="{% url 'items:create' %}" class="btn btn-primary btn-lg">
           <i class="fas fa-plus"></i> {% trans "Add your first item" %}
         </a>
       </div>
     {% endif %}
   </div>
 {% endblock content %}
-<!-- Reminder: Add the following CSS to your stylesheet -->
-<!--
-.item-thumb {
-  width: 40px;
-  height: 40px;
-  object-fit: cover;
-}
--->

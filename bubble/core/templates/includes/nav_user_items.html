@@ -1,9 +1,33 @@
 {% load i18n %}
 
 {% if request.user.is_authenticated %}
-  <li class="nav-item">
-    <a class="nav-link{% if request.resolver_match.url_name == 'detail' and request.resolver_match.app_name == 'users' %} active{% endif %}"
-       href="{% url 'users:detail' request.user.username %}">{% trans "My Profile" %}</a>
+  <li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle{% if request.resolver_match.url_name in 'my_items,create,create_step1,create_step2,drafts' and request.resolver_match.app_name == 'items' %} active{% endif %}"
+       href="#"
+       id="userItemsDropdown"
+       role="button"
+       data-bs-toggle="dropdown"
+       aria-expanded="false">
+      <i class="fas fa-user me-1"></i>{% trans "My Items" %}
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="userItemsDropdown">
+      <li>
+        <a class="dropdown-item" href="{% url 'items:create' %}">
+          <i class="fas fa-plus me-2"></i>{% trans "Create Item" %}
+        </a>
+      </li>
+      <li>
+        <a class="dropdown-item" href="{% url 'items:my_items' %}">
+          <i class="fas fa-list me-2"></i>{% trans "My Items" %}
+        </a>
+      </li>
+      <li><hr class="dropdown-divider" /></li>
+      <li>
+        <a class="dropdown-item" href="{% url 'users:detail' request.user.username %}">
+          <i class="fas fa-user me-2"></i>{% trans "My Profile" %}
+        </a>
+      </li>
+    </ul>
   </li>
 {% else %}
   {% if ACCOUNT_ALLOW_REGISTRATION and not SOCIALACCOUNT_ONLY %}
