@@ -1,4 +1,5 @@
 import uuid
+from decimal import Decimal
 from pathlib import Path
 
 from django.db import models
@@ -16,9 +17,7 @@ class StatusType(models.IntegerChoices):
 
 class ItemType(models.IntegerChoices):
     FOR_SALE = 0, _("For Sale")
-    GIVE_AWAY = 1, _("Give Away")
-    BORROW = 2, _("Borrow")
-    NEED = 3, _("Need")
+    RENT = 1, _("Rent")
 
 
 class ProcessingStatus(models.IntegerChoices):
@@ -52,7 +51,13 @@ class Item(models.Model):
     description = models.TextField(blank=True)
     intern = models.BooleanField(default=False)
     display_contact = models.BooleanField(default=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        default=Decimal("0.00"),
+    )
     th_payment = models.BooleanField(default=False, blank=True, null=True)
     item_type = models.IntegerField(choices=ItemType, default=ItemType.FOR_SALE)
     date_created = models.DateTimeField(auto_now_add=True)
@@ -79,9 +84,7 @@ class Item(models.Model):
     STATUS_USED = StatusType.USED
     STATUS_OLD = StatusType.OLD
     ITEM_TYPE_FOR_SALE = ItemType.FOR_SALE
-    ITEM_TYPE_GIVE_AWAY = ItemType.GIVE_AWAY
-    ITEM_TYPE_BORROW = ItemType.BORROW
-    ITEM_TYPE_NEED = ItemType.NEED
+    ITEM_TYPE_RENT = ItemType.RENT
     PROCESSING_DRAFT = ProcessingStatus.DRAFT
     PROCESSING_PROCESSING = ProcessingStatus.PROCESSING
     PROCESSING_COMPLETED = ProcessingStatus.COMPLETED
