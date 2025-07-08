@@ -27,6 +27,19 @@ class ProcessingStatus(models.IntegerChoices):
     FAILED = 3, _("Failed")
 
 
+class ItemManager(models.Manager):
+    def for_user(self, user) -> models.QuerySet:
+        """Return a queryset filtered by user permissions."""
+        q = models.Q(active=True, internal=False)
+        if user.is_authenticated:
+            # allow also own items of this user
+            q |= models.Q(user=user)
+            if hasattr(user, "profile") and user.profile.internal:
+                # allow all active items for internal users
+                q |= models.Q(active=True)
+        return self.filter(q)
+
+
 class Item(models.Model):
     active = models.BooleanField(default=True)
     user = models.ForeignKey(
@@ -89,6 +102,9 @@ class Item(models.Model):
         blank=True,
         help_text=_("Additional fields specific to the item's category"),
     )
+
+    # Custom manager
+    objects = ItemManager()
 
     # Add class constants for easy access
     STATUS_CHOICES = StatusType.choices

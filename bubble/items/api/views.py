@@ -140,19 +140,11 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
         user = self.request.user
 
         # Users can see images of their own items and public items
-        queryset = Image.objects.filter(item__internal=False, item__active=True)
-
-        if user.is_authenticated:
-            # If authenticated, also include images of items they own
-            queryset = queryset | Image.objects.filter(item__user=user)
-
-            if user.profile.internal:
-                # If user is internal, include all images
-                queryset = queryset | Image.objects.filter(
-                    item__internal=True, item__active=True
-                )
-
-        queryset = queryset.select_related("item").order_by("item", "ordering")
+        queryset = (
+            Image.objects.filter(item__in=Item.objects.for_user(user))
+            .select_related("item")
+            .order_by("item", "ordering")
+        )
 
         # Filter by item if specified
         item_id = self.request.query_params.get("item")
