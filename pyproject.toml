@@ -176,6 +176,7 @@ ignore = [
           # https://github.com/astral-sh/ruff/issues/7871
   "PLR0915",  # Too many statements in function
   "C901",  # Function is too complex
+  "COM812",  # Use of `assert` in a test function
 ]
 # The fixes in extend-unsafe-fixes will require
 # provide the `--unsafe-fixes` flag when fixing.
