@@ -18,9 +18,9 @@ DATABASE_URL=postgres://postgres:U1MnSYNB3M8JgEUSfXqII3ykYSNc1LXbhYiWG12lf9wTicI
 
 # Authentik OAuth (local development placeholders)
 # ------------------------------------------------------------------------------
-AUTHENTIK_CLIENT_ID=local-dev-client-id
-AUTHENTIK_SECRET=local-dev-secret
-AUTHENTIK_SERVER_URL=http://localhost:9000
+# AUTHENTIK_CLIENT_ID=local-dev-client-id
+# AUTHENTIK_SECRET=local-dev-secret
+# AUTHENTIK_SERVER_URL=http://localhost:9000
 
 ACCOUNT_ALLOW_REGISTRATION=True
 SOCIALACCOUNT_ONLY=False
