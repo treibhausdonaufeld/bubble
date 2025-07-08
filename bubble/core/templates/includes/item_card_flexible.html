@@ -19,7 +19,7 @@
 <div class="card item-card h-100">
   <div class="item-image">
     {% if item.images.first %}
-      <img src="{{ item.images.first.original.url }}"
+      <img src="{% url 'api:image-get-thumbnail-image' item.images.first.id %}"
            class="card-img-top"
            alt="{{ item.name }}"
            style="height: {{ image_height|default:200 }}px;
@@ -93,7 +93,7 @@
             <i class="fas fa-eye"></i> {% trans custom_link_text|default:"View" %}
           </a>
         {% else %}
-          <a href="{% if content_type_slug %}{% url 'items:detail' content_type=content_type_slug pk=item.pk %}{% else %}{% url 'items:detail' item.pk %}{% endif %}"
+          <a href="{% if content_type_slug %}{% url 'items:detail' pk=item.pk %}{% else %}{% url 'items:detail' item.pk %}{% endif %}"
              class="btn btn-outline-primary btn-sm">
             <i class="fas fa-eye"></i> {% trans custom_link_text|default:"View" %}
           </a>

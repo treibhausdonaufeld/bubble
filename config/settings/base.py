@@ -9,6 +9,8 @@ import environ
 # https://docs.djangoproject.com/en/dev/ref/settings/#languages
 from django.utils.translation import gettext_lazy as _
 
+from .temporal import *  # noqa: F403
+
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 # bubble/
 APPS_DIR = BASE_DIR / "bubble"
@@ -148,7 +150,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#middleware
 MIDDLEWARE = [
-    "allow_cidr.middleware.AllowCIDRMiddleware",
+    # "allow_cidr.middleware.AllowCIDRMiddleware",  # Temporarily commented out
     "django.middleware.security.SecurityMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -320,8 +322,7 @@ CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 CELERY_WORKER_SEND_TASK_EVENTS = True
 # https://docs.celeryq.dev/en/stable/userguide/configuration.html#std-setting-task_send_sent_event
 CELERY_TASK_SEND_SENT_EVENT = True
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#worker-hijack-root-logger
-CELERY_WORKER_HIJACK_ROOT_LOGGER = False
+
 # django-allauth
 # ------------------------------------------------------------------------------
 ACCOUNT_ALLOW_REGISTRATION = env.bool("ACCOUNT_ALLOW_REGISTRATION", True)
@@ -390,6 +391,8 @@ REST_FRAMEWORK = {
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 20,
 }
 
 # django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup

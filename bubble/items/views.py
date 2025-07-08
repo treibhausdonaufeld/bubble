@@ -1,27 +1,33 @@
+import asyncio
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db import models
 from django.db.models import Q
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
-from django.shortcuts import redirect
-from django.urls import reverse
-from django.urls import reverse_lazy
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import CreateView
-from django.views.generic import DeleteView
-from django.views.generic import DetailView
-from django.views.generic import ListView
-from django.views.generic import UpdateView
+from django.views.decorators.http import require_http_methods
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    TemplateView,
+    UpdateView,
+)
+from rest_framework.authtoken.models import Token
+from temporalio import exceptions
 
 from bubble.categories.models import ItemCategory
+from bubble.items.temporal.temporal_activities import ItemProcessingRequest
+from bubble.items.temporal.temporal_service import TemporalService
+from bubble.messaging.models import Message
 
-from .forms import ItemFilterForm
-from .forms import ItemForm
-from .models import Image
-from .models import Item
+from .forms import ItemFilterForm, ItemForm, ItemImageUploadForm
+from .models import Image, Item, ProcessingStatus
 
 
 class ItemListView(ListView):
@@ -282,8 +288,6 @@ class ItemDetailView(DetailView):
 
         # Check if there's an existing conversation for this item and user
         if self.request.user.is_authenticated:
-            from bubble.messaging.models import Message
-
             conversation_exists = Message.objects.filter(
                 item=self.object,
                 sender__in=[self.request.user, self.object.user],
@@ -360,7 +364,15 @@ class ItemUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return response
 
     def get_success_url(self):
-        return reverse("items:detail", kwargs={"pk": self.object.pk})
+        if "publish" in self.request.POST:
+            # If publish button was clicked, set item as active
+            self.object.active = True
+            self.object.save()
+            url = reverse("items:detail", kwargs={"pk": self.object.pk})
+        else:
+            url = reverse("items:edit", kwargs={"pk": self.object.pk})
+
+        return url
 
 
 class ItemDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
@@ -392,8 +404,21 @@ class MyItemsView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["active_items"] = self.get_queryset().filter(active=True).count()
-        context["inactive_items"] = self.get_queryset().filter(active=False).count()
+        queryset = self.get_queryset()
+        context["active_items"] = queryset.filter(active=True).count()
+        context["inactive_items"] = queryset.filter(active=False).count()
+
+        # Add processing status counts
+        context["draft_items"] = queryset.filter(
+            processing_status=ProcessingStatus.DRAFT,
+        ).count()
+        context["processing_items"] = queryset.filter(
+            processing_status=ProcessingStatus.PROCESSING,
+        ).count()
+        context["failed_items"] = queryset.filter(
+            processing_status=ProcessingStatus.FAILED,
+        ).count()
+
         return context
 
 
@@ -416,20 +441,6 @@ def toggle_item_status(request, pk):
         )
 
     return redirect("items:my_items")
-
-
-def get_subcategories(request):
-    """AJAX view to get subcategories for a parent category"""
-    parent_id = request.GET.get("parent_id")
-    if parent_id:
-        subcategories = ItemCategory.objects.filter(parent_category_id=parent_id)
-        data = [{"id": cat.id, "name": cat.name} for cat in subcategories]
-    else:
-        # Return root categories
-        root_categories = ItemCategory.objects.filter(parent_category=None)
-        data = [{"id": cat.id, "name": cat.name} for cat in root_categories]
-
-    return JsonResponse({"subcategories": data})
 
 
 @login_required
@@ -511,94 +522,211 @@ class ContentDetailView(ContentMixin, ItemDetailView):
         ]
 
 
-class ContentCreateView(ContentMixin, ItemCreateView):
-    """Create view for content type specific items"""
+class ItemCreateImagesView(LoginRequiredMixin, TemplateView):
+    """Upload images and create temporary item."""
 
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["root_category"] = self.root_category
-        return kwargs
+    template_name = "items/item_create_images.html"
 
-    def get_template_names(self):
-        return [
-            f"items/{self.content_type_slug}_form.html",
-            "items/content_form.html",
-            "items/item_form.html",  # fallback
-        ]
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"] = ItemImageUploadForm()
+        return context
 
-    def get_success_url(self):
-        return reverse(
-            "items:detail",
-            kwargs={
-                "content_type": self.content_type_slug,
-                "pk": self.object.pk,
-            },
+    def post(self, request, *args, **kwargs):
+        # Create temporary item
+        item: Item = Item.objects.create(
+            user=request.user,
+            processing_status=ProcessingStatus.DRAFT,
+            active=False,  # Not active until completed
         )
 
+        # Handle image uploads
+        images = request.FILES.getlist("images")
+        image_objects = []
 
-class ContentUpdateView(ContentMixin, ItemUpdateView):
-    """Update view for content type specific items"""
+        for i, image in enumerate(images):
+            image_obj = Image.objects.create(item=item, original=image, ordering=i)
+            image_objects.append(image_obj)
 
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["root_category"] = self.root_category
-        return kwargs
+        item.processing_status = ProcessingStatus.DRAFT
+        if "skip_ai" in request.POST:
+            item.save(update_fields=["processing_status"])
 
-    def get_template_names(self):
-        return [
-            f"items/{self.content_type_slug}_form.html",
-            "items/content_form.html",
-            "items/item_form.html",  # fallback
-        ]
+            messages.info(
+                request,
+                _(
+                    "AI processing skipped. You can now edit the item details below.",
+                ),
+            )
+        elif images:
+            # Start background processing
+            item.processing_status = ProcessingStatus.PROCESSING
 
-    def get_success_url(self):
-        return reverse(
-            "items:detail",
-            kwargs={
-                "content_type": self.content_type_slug,
-                "pk": self.object.pk,
-            },
-        )
+            # Trigger async image processing
+            token = Token.objects.get_or_create(user=request.user)[0]
+            input_data = ItemProcessingRequest(
+                item_id=item.pk,
+                user_id=request.user.pk,
+                token=str(token),
+                base_url=request.build_absolute_uri("/")[:-1],  # Remove trailing slash
+            )
+            workflow_handle = asyncio.run(
+                TemporalService.start_item_processing(input_data)
+            )
 
+            # Store the workflow ID for potential cancellation
+            item.workflow_id = workflow_handle.id
+            item.save(update_fields=["processing_status", "workflow_id"])
 
-class ContentDeleteView(ContentMixin, ItemDeleteView):
-    """Delete view for content type specific items"""
+            messages.info(
+                request,
+                _(
+                    "Images uploaded! We're analyzing them to suggest a title "
+                    "and description. You can continue editing below.",
+                ),
+            )
 
-    def get_success_url(self):
-        return reverse(
-            "items:my_items",
-            kwargs={
-                "content_type": self.content_type_slug,
-            },
-        )
+        item.save(update_fields=["processing_status"])
 
-
-class MyContentView(ContentMixin, MyItemsView):
-    """User's content management view for specific content type"""
-
-    def get_template_names(self):
-        return [
-            f"items/my_{self.content_type_slug}.html",
-            "items/my_content.html",
-            "items/my_items.html",  # fallback
-        ]
+        # Redirect to step 2
+        return redirect("items:edit", pk=item.pk)
 
 
 @login_required
-def toggle_content_status(request, pk, content_type):
-    """Toggle active status for content type specific items"""
-    item = get_object_or_404(Item, pk=pk, user=request.user)
+@require_http_methods(["GET"])
+def check_processing_status(request, pk):
+    """AJAX endpoint to check item processing status."""
+    try:
+        item = get_object_or_404(Item, pk=pk, user=request.user)
 
-    # Verify item belongs to this content type
-    root_category = item.category.get_root_category()
-    if root_category.url_slug != content_type:
-        messages.error(request, _("Invalid content type"))
-        return redirect("items:my_items")
+        return JsonResponse(
+            {
+                "status": "success",
+                "processing_status": item.processing_status,
+                "processing_status_display": dict(ProcessingStatus.choices).get(
+                    item.processing_status,
+                    "",
+                ),
+                "name": item.name,
+                "description": item.description,
+                "is_processing": item.processing_status == ProcessingStatus.PROCESSING,
+                "is_completed": item.processing_status == ProcessingStatus.COMPLETED,
+                "has_failed": item.processing_status == ProcessingStatus.FAILED,
+                "workflow_id": item.workflow_id,
+                "can_cancel": (item.processing_status == ProcessingStatus.PROCESSING),
+            },
+        )
 
-    item.active = not item.active
-    item.save()
+    except Item.DoesNotExist:
+        return JsonResponse(
+            {"status": "error", "message": "Item not found"},
+            status=404,
+        )
 
-    status = _("activated") if item.active else _("deactivated")
-    messages.success(request, _("Item {} successfully.").format(status))
 
-    return redirect(reverse("my_content", kwargs={"content_type": content_type}))
+@login_required
+@require_http_methods(["POST"])
+def cancel_processing(request, pk):
+    """AJAX endpoint to cancel item processing."""
+    try:
+        item = get_object_or_404(Item, pk=pk, user=request.user)
+
+        # Check if item is currently being processed
+        if item.processing_status != ProcessingStatus.PROCESSING:
+            return JsonResponse(
+                {"status": "error", "message": "Item is not currently being processed"},
+                status=400,
+            )
+
+        # Update item status to completed
+        item.processing_status = ProcessingStatus.COMPLETED
+        item.save(update_fields=["processing_status"])
+
+        # If no workflow_id, just mark as completed (graceful fallback)
+        if not item.workflow_id:
+            return JsonResponse(
+                {
+                    "status": "success",
+                    "message": "Processing marked as completed",
+                    "processing_status": item.processing_status,
+                }
+            )
+
+        success = asyncio.run(TemporalService.cancel_workflow(item.workflow_id))
+
+        if success:
+            return JsonResponse(
+                {
+                    "status": "success",
+                    "message": "Processing cancelled successfully",
+                    "processing_status": item.processing_status,
+                }
+            )
+        return JsonResponse(
+            {"status": "error", "message": "Failed to cancel workflow"},
+            status=500,
+        )
+    except exceptions.TemporalError as exc:
+        return JsonResponse(
+            {"status": "error", "message": str(exc)},
+            status=404,
+        )
+    except Item.DoesNotExist:
+        return JsonResponse(
+            {"status": "error", "message": "Item not found"},
+            status=404,
+        )
+
+
+@login_required
+@require_http_methods(["POST"])
+def retrigger_processing(request, pk):
+    """AJAX endpoint to retrigger AI processing for an existing item."""
+    try:
+        item = get_object_or_404(Item, pk=pk, user=request.user)
+
+        # Check if item is in a state that allows retriggering
+        if item.processing_status == ProcessingStatus.PROCESSING:
+            return JsonResponse(
+                {"status": "error", "message": "Item is already being processed"},
+                status=400,
+            )
+
+        # Check if item has images to process
+        if not item.images.exists():
+            return JsonResponse(
+                {"status": "error", "message": "No images found to process"},
+                status=400,
+            )
+
+        # Start background processing
+        item.processing_status = ProcessingStatus.PROCESSING
+
+        # Trigger async image processing
+        token = Token.objects.get_or_create(user=request.user)[0]
+        input_data = ItemProcessingRequest(
+            item_id=item.pk,
+            user_id=request.user.pk,
+            token=str(token),
+            base_url=request.build_absolute_uri("/")[:-1],  # Remove trailing slash
+        )
+        workflow_handle = asyncio.run(TemporalService.start_item_processing(input_data))
+
+        # Store the workflow ID for potential cancellation
+        item.workflow_id = workflow_handle.id
+        item.save(update_fields=["processing_status", "workflow_id"])
+
+        return JsonResponse(
+            {
+                "status": "success",
+                "message": "AI processing restarted successfully",
+                "processing_status": item.processing_status,
+                "workflow_id": item.workflow_id,
+            }
+        )
+
+    except Item.DoesNotExist:
+        return JsonResponse(
+            {"status": "error", "message": "Item not found"},
+            status=404,
+        )

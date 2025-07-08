@@ -153,10 +153,10 @@
                       data-bs-toggle="dropdown">{% trans "Actions" %}</button>
               <ul class="dropdown-menu">
                 <li>
-                  <a class="dropdown-item" href="{% url 'items:edit' content_type=content_type_slug pk=item.pk %}">{% trans "Edit" %}</a>
+                  <a class="dropdown-item" href="{% url 'items:edit' pk=item.pk %}">{% trans "Edit" %}</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="{% url 'items:toggle_status' content_type=content_type_slug pk=item.pk %}">
+                  <a class="dropdown-item" href="{% url 'items:toggle_status' pk=item.pk %}">
                     {% if item.active %}
                       {% trans "Deactivate" %}
                     {% else %}
@@ -169,7 +169,7 @@
                 </li>
                 <li>
                   <a class="dropdown-item text-danger"
-                     href="{% url 'items:delete' content_type=content_type_slug pk=item.pk %}">{% trans "Delete" %}</a>
+                     href="{% url 'items:delete' pk=item.pk %}">{% trans "Delete" %}</a>
                 </li>
               </ul>
             </div>
@@ -256,7 +256,7 @@
             <div class="carousel-inner">
               {% for image in item_images %}
                 <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                  <img src="{{ image.original.url }}"
+                  <img src="{% url 'api:image-get-preview-image' image.id %}"
                        class="d-block w-100 item-image cursor-zoom-in"
                        alt="{{ item.name }}"
                        data-image-id="{{ forloop.counter0 }}"
@@ -285,7 +285,7 @@
           {% if item_images|length > 1 %}
             <div class="thumbnail-gallery mb-4">
               {% for image in item_images %}
-                <img src="{{ image.original.url }}"
+                <img src="{% url 'api:image-get-preview-image' image.id %}"
                      class="thumbnail {% if forloop.first %}active{% endif %}"
                      alt="{{ item.name }} thumbnail"
                      data-slide-index="{{ forloop.counter0 }}"
@@ -323,10 +323,10 @@
                           data-bs-toggle="dropdown">{% trans "Actions" %}</button>
                   <ul class="dropdown-menu">
                     <li>
-                      <a class="dropdown-item" href="{% url 'items:edit' content_type=content_type_slug pk=item.pk %}">{% trans "Edit" %}</a>
+                      <a class="dropdown-item" href="{% url 'items:edit' pk=item.pk %}">{% trans "Edit" %}</a>
                     </li>
                     <li>
-                      <a class="dropdown-item" href="{% url 'items:toggle_status' content_type=content_type_slug pk=item.pk %}">
+                      <a class="dropdown-item" href="{% url 'items:toggle_status' pk=item.pk %}">
                         {% if item.active %}
                           {% trans "Deactivate" %}
                         {% else %}
@@ -339,7 +339,7 @@
                     </li>
                     <li>
                       <a class="dropdown-item text-danger"
-                         href="{% url 'items:delete' content_type=content_type_slug pk=item.pk %}">{% trans "Delete" %}</a>
+                         href="{% url 'items:delete' pk=item.pk %}">{% trans "Delete" %}</a>
                     </li>
                   </ul>
                 </div>
@@ -509,7 +509,7 @@
     <!-- Back Button -->
     <div class="row mt-4">
       <div class="col-12">
-        <a href="{% url 'items:list' content_type=content_type_slug %}" class="btn btn-outline-secondary">
+        <a href="{% url 'items-category:list' content_type=content_type_slug %}" class="btn btn-outline-secondary">
           <i class="fas fa-arrow-left"></i> {% trans "Back to Items" %}
         </a>
       </div>
@@ -522,7 +522,7 @@
     var images = [
       {% for image in item_images %}
       {
-        src: "{{ image.original.url }}",
+        src: "{% url 'api:image-get-preview-image' image.id %}",
         alt: "{{ item.name }} - Image {{ forloop.counter }}"
       } {% if not forloop.last %}, {% endif %} {% endfor %}
     ];
