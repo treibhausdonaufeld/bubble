@@ -115,7 +115,7 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
 
         # Users can see images of their own items and public items
         queryset = (
-            Image.objects.filter(Q(item__user=user) | Q(item__intern=False))
+            Image.objects.filter(Q(item__user=user) | Q(item__internal=False))
             .select_related("item")
             .order_by("item", "ordering")
         )
