@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('categories', '0014_set_default_ordering'),
+        ('categories', '0015_alter_itemcategory_name'),
     ]
 
     operations = [

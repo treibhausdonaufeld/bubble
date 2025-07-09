@@ -92,7 +92,7 @@ class ItemForm(forms.ModelForm):
 
         # Add internal-only fields if user is internal
         if self.user and hasattr(self.user, "profile") and self.user.profile.internal:
-            self.fields["internal"] = forms.BooleanField(
+            self.fields["intern"] = forms.BooleanField(
                 required=False,
                 initial=False,
                 label=_("Internal"),
@@ -168,7 +168,7 @@ class ItemForm(forms.ModelForm):
         if "depending" in field_config:
             widget_attrs["data-depending"] = field_config["depending"]
 
-            # Support both old format (depending_value) and new format (depending_values)
+            # Support both old format (depending_value) and new format
             import json
 
             if "depending_values" in field_config:
