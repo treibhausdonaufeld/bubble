@@ -16,12 +16,10 @@ class ItemAdmin(admin.ModelAdmin):
         "name",
         "user",
         "category",
-        "item_type",
-        "price",
         "active",
         "date_created",
     )
-    list_filter = ("active", "item_type", "category", "date_created")
+    list_filter = ("active", "category", "date_created")
     search_fields = ("name", "description", "user__username", "category__name")
     ordering = ("-date_created",)
     autocomplete_fields = ("user", "category")
@@ -36,12 +34,6 @@ class ItemAdmin(admin.ModelAdmin):
             },
         ),
         (
-            _("Item Details"),
-            {
-                "fields": ("item_type", "price", "display_contact"),
-            },
-        ),
-        (
             _("Custom Fields"),
             {
                 "fields": ("custom_fields",),
@@ -52,14 +44,7 @@ class ItemAdmin(admin.ModelAdmin):
         (
             _("Internal Options"),
             {
-                "fields": ("internal", "payment_enabled"),
-                "classes": ("collapse",),
-            },
-        ),
-        (
-            _("Media"),
-            {
-                "fields": ("profile_img_frame", "profile_img_frame_alt"),
+                "fields": ("intern",),
                 "classes": ("collapse",),
             },
         ),

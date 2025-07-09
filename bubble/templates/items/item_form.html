@@ -14,6 +14,203 @@
   {{ block.super }}
   <!-- Select2 CSS -->
   <link href="{% static 'css/vendor/select2.min.css' %}" rel="stylesheet" />
+  <style>
+    /* File input and upload controls */
+    .hidden-file-input {
+      display: none;
+    }
+
+    .upload-stats {
+      display: none;
+    }
+    .upload-stats.show-stats {
+      display: flex !important;
+    }
+
+    .preview-container {
+      display: none;
+    }
+    .preview-container.show-container {
+      display: block;
+    }
+
+    /* Drop zone styles */
+    #drop-zone {
+      cursor: pointer;
+      user-select: none;
+      border-color: #dee2e6;
+      transition: all 0.3s ease;
+    }
+
+    #drop-zone:hover,
+    .drop-zone-active {
+      border-color: #007bff !important;
+      background-color: #dceeff !important;
+    }
+
+    .compact-drop-zone {
+      min-height: auto;
+      background-color: #fafafa;
+    }
+
+    .existing-images-drop-zone {
+      min-height: 200px;
+      background-color: #f8f9fa;
+    }
+
+    .existing-images-drop-zone:hover {
+      background-color: #f8f9fa !important;
+    }
+
+    /* Image card and item styles */
+    .image-card {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .image-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .image-card img {
+      height: 150px;
+      object-fit: cover;
+    }
+
+    .existing-image,
+    .preview-image {
+      height: 120px;
+      object-fit: cover;
+    }
+
+    .image-item {
+      cursor: move;
+      transition: opacity 0.3s;
+    }
+
+    .image-item.dragging {
+      opacity: 0.5;
+      transform: rotate(5deg);
+    }
+
+    /* Interactive controls that appear on hover */
+    .image-item:hover .reorder-controls,
+    .image-item:hover .drag-handle,
+    .image-item:hover .magnify-icon {
+      opacity: 1;
+    }
+
+    /* Reorder controls */
+    .reorder-controls {
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      z-index: 10;
+    }
+
+    .btn-reorder {
+      width: 24px;
+      height: 24px;
+      padding: 0;
+      font-size: 0.7rem;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      margin-bottom: 2px;
+    }
+
+    .btn-reorder:last-child {
+      margin-bottom: 0;
+    }
+
+    .btn-reorder:hover {
+      background-color: #fff;
+      border-color: #007bff;
+      color: #007bff;
+    }
+
+    /* Drag handle */
+    .drag-handle {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 4px 6px;
+      border-radius: 4px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      cursor: grab;
+      z-index: 10;
+    }
+
+    .drag-handle:active {
+      cursor: grabbing;
+    }
+
+    /* Magnification glass */
+    .magnify-icon {
+      bottom: 10px;
+      left: 10px;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.2s, background-color 0.2s;
+    }
+
+    .magnify-icon:hover {
+      background: rgba(0, 0, 0, 0.9);
+      transform: scale(1.1);
+    }
+
+    .magnify-icon i {
+      font-size: 14px;
+    }
+
+    /* Button styles */
+    .btn-danger.btn-sm {
+      width: 28px;
+      height: 28px;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-size: 0.75rem;
+    }
+
+    .btn-outline-primary.btn-sm {
+      font-size: 0.8rem;
+      padding: 0.25rem 0.5rem;
+    }
+
+    /* Image preview modal close button */
+    .image-preview-close {
+      background: rgba(0, 0, 0, 0.6) !important;
+      border-radius: 50% !important;
+      width: 40px !important;
+      height: 40px !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+      filter: invert(1) !important;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .col-md-3.col-sm-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+      }
+
+      .existing-image,
+      .preview-image {
+        height: 100px;
+      }
+    }
+  </style>
 {% endblock css %}
 
 {% block content %}
@@ -86,7 +283,7 @@
                     </div>
                     <div class="row" id="existing-images-grid">
                       {% for image in object.images.all %}
-                        <div class="col-md-3 col-sm-6 mb-3 image-item has-reordering" draggable="true" data-image-id="{{ image.pk }}" data-order="{{ forloop.counter0 }}">
+                        <div class="col-md-3 col-sm-6 mb-3 image-item" draggable="true" data-image-id="{{ image.pk }}" data-order="{{ forloop.counter0 }}">
                           <div class="card shadow-sm image-card">
                             <div class="position-relative">
                               <img src="{% url 'api:image-get-preview-image' image.id %}"
@@ -232,26 +429,12 @@
                   {% if form.description.help_text %}<div class="form-text">{{ form.description.help_text }}</div>{% endif %}
                 </div>
               </div>
-              <!-- Category and Type -->
+              <!-- Category -->
               <div class="row mb-3">
                 <div class="col-md-6">
                   <label for="{{ form.selected_category.id_for_label }}" class="form-label fw-bold">{{ form.selected_category.label }}</label>
                   {{ form.selected_category }}
                   {% if form.selected_category.errors %}<div class="text-danger">{{ form.selected_category.errors }}</div>{% endif %}
-                </div>
-                <div class="col-md-6">
-                  <label for="{{ form.item_type.id_for_label }}" class="form-label fw-bold">{{ form.item_type.label }} *</label>
-                  {{ form.item_type }}
-                  {% if form.item_type.errors %}<div class="text-danger">{{ form.item_type.errors }}</div>{% endif %}
-                </div>
-              </div>
-              <!-- Price -->
-              <div class="row mb-3">
-                <div class="col-md-6">
-                  <label for="{{ form.price.id_for_label }}" class="form-label fw-bold">{{ form.price.label }}</label>
-                  {{ form.price }}
-                  {% if form.price.errors %}<div class="text-danger">{{ form.price.errors }}</div>{% endif %}
-                  {% if form.price.help_text %}<div class="form-text">{{ form.price.help_text }}</div>{% endif %}
                 </div>
               </div>
               <!-- Dynamic Category Fields -->
@@ -277,6 +460,7 @@
                          for="{{ form.display_contact.id_for_label }}">{{ form.display_contact.label }}</label>
                   {% if form.display_contact.help_text %}<div class="form-text">{{ form.display_contact.help_text }}</div>{% endif %}
                 </div>
+                <label class="form-label">{% trans "Settings" %}</label>
                 <div class="form-check">
                   {{ form.active }}
                   <label class="form-check-label" for="{{ form.active.id_for_label }}">{{ form.active.label }}</label>
@@ -289,457 +473,128 @@
                     {% if form.internal.help_text %}<div class="form-text">{{ form.internal.help_text }}</div>{% endif %}
                   </div>
                 {% endif %}
-                {% if form.payment_enabled %}
-                  <div class="form-check">
-                    {{ form.payment_enabled }}
-                    <label class="form-check-label" for="{{ form.payment_enabled.id_for_label }}">{{ form.payment_enabled.label }}</label>
-                    {% if form.payment_enabled.help_text %}<div class="form-text">{{ form.payment_enabled.help_text }}</div>{% endif %}
-                  </div>
-                {% endif %}
               </div>
               <!-- Form Errors -->
               {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
               <!-- Form Actions -->
-              <div class="d-flex justify-content-between">
+                <div class="d-flex justify-content-between">
                 <button type="button" onclick="history.back()" class="btn btn-outline-secondary">{% trans "Cancel" %}</button>
                 {% if object and object.processing_status == 1 %}
                   <button type="button" class="btn btn-primary" disabled>
-                    <i class="fas fa-spinner fa-spin me-2"></i>
-                    {% trans "Processing..." %}
+                  <i class="fas fa-spinner fa-spin me-2"></i>
+                  {% trans "Processing..." %}
                   </button>
                 {% else %}
+                  <div class="d-flex gap-2">
                   <button type="submit" class="btn btn-primary">
-                      {% trans "Save draft" %}
+                  {% trans "Save draft" %}
                   </button>
                   <button type="submit" name="publish" class="btn btn-success">
-                      {% trans "Publish" %}
+                  {% trans "Publish" %}
                   </button>
+                  </div>
                 {% endif %}
-              </div>
+                </div>
             </form>
           </div>
         </div>
       </div>
     </div>
   </div>
-
-  <!-- Bootstrap Modals -->
-  <!-- Confirmation Modal -->
-  <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="confirmationModalLabel">{% trans "Confirm Action" %}</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body" id="confirmationModalBody">
-          <!-- Dynamic content will be inserted here -->
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
-          <button type="button" class="btn btn-primary" id="confirmationModalConfirm">{% trans "Confirm" %}</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Alert Modal -->
-  <div class="modal fade" id="alertModal" tabindex="-1" aria-labelledby="alertModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="alertModalLabel">{% trans "Information" %}</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body" id="alertModalBody">
-          <!-- Dynamic content will be inserted here -->
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">{% trans "OK" %}</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Error Modal -->
-  <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header bg-danger text-white">
-          <h5 class="modal-title" id="errorModalLabel">
-            <i class="fas fa-exclamation-triangle me-2"></i>{% trans "Error" %}
-          </h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body" id="errorModalBody">
-          <!-- Dynamic content will be inserted here -->
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">{% trans "OK" %}</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Image Preview Modal -->
-  <div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-      <div class="modal-content border-0">
-        <div class="modal-body text-center p-0 position-relative">
-          <img id="imagePreviewImg" src="" alt="" class="img-fluid" />
-          <button type="button" class="btn-close position-absolute top-0 end-0 m-3 image-preview-close"
-                  data-bs-dismiss="modal" aria-label="Close">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- jQuery and Select2 JavaScript (local files) -->
-  <script src="{% static 'js/vendor/jquery.min.js' %}"></script>
-  <script src="{% static 'js/vendor/select2.min.js' %}"></script>
-
-<script>
-  // Modal utility functions
-  function showConfirmModal(title, message, onConfirm) {
-    document.getElementById('confirmationModalLabel').textContent = title;
-    document.getElementById('confirmationModalBody').innerHTML = message;
-
-    const modal = new bootstrap.Modal(document.getElementById('confirmationModal'));
-    const confirmBtn = document.getElementById('confirmationModalConfirm');
-
-    // Remove any existing event listeners
-    const newConfirmBtn = confirmBtn.cloneNode(true);
-    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-
-    // Add new event listener
-    newConfirmBtn.addEventListener('click', function() {
-      modal.hide();
-      onConfirm();
-    });
-
-    modal.show();
-  }
-
-  function showAlertModal(title, message) {
-    document.getElementById('alertModalLabel').textContent = title;
-    document.getElementById('alertModalBody').innerHTML = message;
-
-    const modal = new bootstrap.Modal(document.getElementById('alertModal'));
-    modal.show();
-  }
-
-  function showErrorModal(message) {
-    document.getElementById('errorModalBody').innerHTML = message;
-
-    const modal = new bootstrap.Modal(document.getElementById('errorModal'));
-    modal.show();
-  }
-
-  // Function to cancel AI processing
-  function cancelProcessing() {
-    const itemId = {{ object.pk|default:0 }};
-    if (itemId <= 0) {
-      showErrorModal('{% trans "Item ID not found" %}');
-      return;
-    }
-
-    showConfirmModal(
-      '{% trans "Cancel AI Processing" %}',
-      '{% trans "Are you sure you want to cancel the AI processing? You can still edit the item manually." %}',
-      function() {
-        // Disable the cancel button and show loading
-        const cancelBtn = document.getElementById('cancel-processing-btn');
-        const originalText = cancelBtn.innerHTML;
-        cancelBtn.disabled = true;
-        cancelBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>{% trans "Cancelling..." %}';
-
-        // Send cancel request
-        fetch(`{% url 'items:cancel_processing' pk=0 %}`.replace('0', itemId), {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-          },
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.status === 'success') {
-            // Hide the processing alert
-            const processingAlert = document.getElementById('processing-alert');
-            if (processingAlert) {
-              processingAlert.style.display = 'none';
-            }
-
-            // If processing status is COMPLETED, show the completed alert
-            if (data.processing_status === 2) { // ProcessingStatus.COMPLETED
-              const completedAlert = document.getElementById('completed-alert');
-              if (completedAlert) {
-                completedAlert.style.display = 'block';
-              }
-            }
-
-            // Show success message
-            const alertDiv = document.createElement('div');
-            alertDiv.className = 'alert alert-success alert-dismissible fade show';
-            alertDiv.innerHTML = `
-              <i class="fas fa-check-circle me-2"></i>
-              ${data.message}
-              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-
-            // Insert the success message before the card
-            const card = document.querySelector('.card');
-            card.parentNode.insertBefore(alertDiv, card);
-
-            // Auto-dismiss after 5 seconds
-            setTimeout(() => {
-              if (alertDiv.parentNode) {
-                alertDiv.remove();
-              }
-            }, 5000);
-          } else {
-            showErrorModal('{% trans "Error:" %} ' + data.message);
-            // Re-enable the button
-            cancelBtn.disabled = false;
-            cancelBtn.innerHTML = originalText;
-          }
-        })
-        .catch(error => {
-          console.error('Error cancelling processing:', error);
-          showErrorModal('{% trans "An error occurred while cancelling processing. Please try again." %}');
-          // Re-enable the button
-          cancelBtn.disabled = false;
-          cancelBtn.innerHTML = originalText;
-        });
-      }
-    );
-  }
-
-  // Function to retrigger AI processing
-  function retriggerProcessing() {
-    const itemId = {{ object.pk|default:0 }};
-    if (itemId <= 0) {
-      showErrorModal('{% trans "Item ID not found" %}');
-      return;
-    }
-
-    showConfirmModal(
-      '{% trans "Run AI Processing Again" %}',
-      '{% trans "Are you sure you want to run AI processing again? This will overwrite any manual changes to the title and description." %}',
-      function() {
-        // Disable the retrigger button and show loading
-        const retriggerBtn = document.getElementById('retrigger-processing-btn');
-        const originalText = retriggerBtn.innerHTML;
-        retriggerBtn.disabled = true;
-        retriggerBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>{% trans "Starting..." %}';
-
-        // Send retrigger request
-        fetch(`{% url 'items:retrigger_processing' pk=0 %}`.replace('0', itemId), {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-          },
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.status === 'success') {
-            // Hide the completed alert and AI actions dropdown
-            const completedAlert = document.getElementById('completed-alert');
-            if (completedAlert) {
-              completedAlert.style.display = 'none';
-            }
-
-            const aiActionsDropdown = document.getElementById('aiActionsDropdown');
-            if (aiActionsDropdown) {
-              aiActionsDropdown.closest('.dropdown').style.display = 'none';
-            }
-
-            // Show the processing alert
-            const processingAlert = document.getElementById('processing-alert');
-            if (processingAlert) {
-              processingAlert.style.display = 'block';
-            }
-
-            // Show success message
-            const alertDiv = document.createElement('div');
-            alertDiv.className = 'alert alert-success alert-dismissible fade show';
-            alertDiv.innerHTML = `
-              <i class="fas fa-check-circle me-2"></i>
-              ${data.message}
-              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-
-            // Insert the success message before the card
-            const card = document.querySelector('.card');
-            card.parentNode.insertBefore(alertDiv, card);
-
-            // Auto-dismiss after 5 seconds
-            setTimeout(() => {
-              if (alertDiv.parentNode) {
-                alertDiv.remove();
-              }
-            }, 5000);
-
-            // Reload the page to show the updated processing state
-            setTimeout(() => {
-              location.reload();
-            }, 2000);
-          } else {
-            showErrorModal('{% trans "Error:" %} ' + data.message);
-            // Re-enable the button
-            retriggerBtn.disabled = false;
-            retriggerBtn.innerHTML = originalText;
-          }
-        })
-        .catch(error => {
-          console.error('Error retriggering processing:', error);
-          showErrorModal('{% trans "An error occurred while starting AI processing. Please try again." %}');
-          // Re-enable the button
-          retriggerBtn.disabled = false;
-          retriggerBtn.innerHTML = originalText;
-        });
-      }
-    );
-  }
-</script>
-
   <script>
-    <!-- Auto-refresh processing status script -->
-  {% if object and object.processing_status == 1 %}
-    $(document).ready(function() {
-      const itemId = {{ object.pk|default:0 }};
-      if (itemId > 0) {
-        const statusCheckInterval = setInterval(async function() {
-          try {
-            const response = await fetch(`{% url 'items:processing_status' pk=0 %}`.replace('0', itemId));
-            const data = await response.json();
+    document.addEventListener('DOMContentLoaded', function() {
 
-            if (data.status === 'success') {
-              if (data.is_completed) {
-                window.location.reload();
-              }
+      // Category selection is now handled by a simple dropdown
+
+      // Conditional field visibility logic
+      function setupConditionalFields() {
+        const conditionalFields = document.querySelectorAll('.conditional-field');
+        console.log('[SetupConditionalFields] Found', conditionalFields.length, 'conditional fields');
+
+        conditionalFields.forEach(field => {
+          const dependingOn = field.getAttribute('data-depending');
+
+          // Support both old format (data-depending-value) and new format (data-depending-values)
+          let dependingValues = [];
+          const dependingValuesAttr = field.getAttribute('data-depending-values');
+          const dependingValueAttr = field.getAttribute('data-depending-value');
+
+          console.log('[Field]', field.name || field.id, 'depends on:', dependingOn);
+          console.log('  - data-depending-values:', dependingValuesAttr);
+          console.log('  - data-depending-value:', dependingValueAttr);
+
+          if (dependingValuesAttr) {
+            // New array format
+            try {
+              dependingValues = JSON.parse(dependingValuesAttr);
+              console.log('  - Parsed values:', dependingValues);
+            } catch (e) {
+              console.error('Error parsing depending values:', e);
+              dependingValues = [];
             }
-          } catch (error) {
-            console.error('Error checking processing status:', error);
+          } else if (dependingValueAttr) {
+            // Old single value format
+            dependingValues = [dependingValueAttr];
+            console.log('  - Single value converted to array:', dependingValues);
           }
-        }, 3000); // Check every 3 seconds
-      }
-    });
-  {% endif %}
 
-</script>
+          if (dependingOn && dependingValues.length > 0) {
+            // Find the field this depends on
+            const dependentField = document.querySelector(`[name="custom_${dependingOn}"]`);
+            console.log('  - Looking for field:', `custom_${dependingOn}`);
+            console.log('  - Found dependent field:', dependentField ? 'YES' : 'NO');
 
-  <script>
-    $(document).ready(function() {
+            if (dependentField) {
+              // Function to toggle visibility
+              const toggleVisibility = () => {
+                const currentValue = dependentField.value;
+                const fieldContainer = field.closest('.mb-3');
 
-      console.log('Document ready, jQuery version:', $.fn.jquery);
-      console.log('Select2 available:', typeof $.fn.select2 !== 'undefined');
+                console.log(`[Toggle] ${field.name || field.id}: current value="${currentValue}", checking against:`, dependingValues);
+                console.log('  - Value in array?', dependingValues.includes(currentValue));
 
-      if (typeof $.fn.select2 === 'undefined') {
-        console.error('Select2 not available');
-        return;
-      }
-
-      // Find all select fields
-      console.log('Category fields found:', $('.select2-category').length);
-      console.log('Other select fields found:', $('.select2-field').length);
-
-      try {
-        // Initialize Select2 for category dropdown with AJAX
-        const categoryField = $('.select2-category');
-
-        categoryField.select2({
-          placeholder: "{% trans 'Search and select a category...' %}",
-          allowClear: true,
-          width: '100%',
-          theme: 'default',
-          ajax: {
-            url: "{% url 'api:category-select2' %}",
-            dataType: 'json',
-            delay: 250,
-            data: function (params) {
-              return {
-                q: params.term || '', // search term, empty if no search
-                page: params.page || 1
-              };
-            },
-            processResults: function (data, params) {
-              return {
-                results: data.results,
-                pagination: {
-                  more: data.pagination.more
+                // Check if current value is in the array of depending values
+                if (dependingValues.includes(currentValue)) {
+                  fieldContainer.style.display = 'block';
+                  // Restore required attribute if it was required before
+                  if (field.getAttribute('data-was-required') === 'true') {
+                    field.setAttribute('required', 'required');
+                  }
+                } else {
+                  fieldContainer.style.display = 'none';
+                  // If field is hidden, remove required attribute to prevent validation issues
+                  if (field.hasAttribute('required')) {
+                    field.setAttribute('data-was-required', 'true');
+                    field.removeAttribute('required');
+                  }
+                  // Clear the field value when hidden
+                  if (field.tagName === 'SELECT') {
+                    field.selectedIndex = 0;
+                  } else {
+                    field.value = '';
+                  }
                 }
               };
-            },
-            cache: true
-          },
-          minimumInputLength: 0, // Allow loading without search term
-          templateResult: function(category) {
-            if (category.loading) {
-              return category.text;
+
+              // Initial check
+              toggleVisibility();
+
+              // Listen for changes
+              dependentField.addEventListener('change', toggleVisibility);
+
+              // Also listen for Select2 events if it's a Select2 field
+              if (typeof $ !== 'undefined' && $.fn.select2) {
+                $(dependentField).on('select2:select', toggleVisibility);
+              }
             }
-            return category.text;
-          },
-          templateSelection: function(category) {
-            return category.text || category.category_name;
           }
         });
-
-        // Check if there's an initial value for editing
-        {% if object and object.category %}
-        const initialCategory = {
-          id: '{{ object.category.pk }}',
-          text: '{{ object.category.get_hierarchy|escapejs }}'
-        };
-
-        // Create and select the initial option
-        const initialOption = new Option(initialCategory.text, initialCategory.id, true, true);
-        categoryField.append(initialOption);
-        categoryField.trigger('change');
-
-        console.log('Set initial category:', initialCategory);
-        {% endif %}
-
-        // Initialize Select2 for all other select fields
-        $('.select2-field').select2({
-          allowClear: false,
-          width: '100%',
-          theme: 'default'
-        });
-
-        console.log('Select2 initialization complete');
-
-        // Show/hide price field based on item type (using jQuery for consistency)
-        const itemTypeField = $('#{{ form.item_type.id_for_label }}');
-        const priceField = $('#{{ form.price.id_for_label }}');
-        const priceContainer = priceField.closest('.col-md-6');
-
-        function togglePriceField() {
-          if (itemTypeField.val() === '0') { // Sell
-            priceContainer.show();
-            priceField.prop('required', true);
-          } else { // Give away or Borrow
-            priceContainer.hide();
-            priceField.prop('required', false);
-            priceField.val('');
-          }
-        }
-
-        // Use Select2 events for the item type field if it's a Select2 field
-        itemTypeField.on('change select2:select', togglePriceField);
-        togglePriceField(); // Initial call
-
-      } catch (error) {
-        console.error('Error initializing Select2:', error);
       }
-    }); // End of $(document).ready()
-  </script>
-  <script>
-    // Image upload preview functionality with drag & drop
-    document.addEventListener('DOMContentLoaded', function() {
+
+      // Call after page loads and after Select2 initialization
+      setTimeout(setupConditionalFields, 100);
+
+      // Image upload preview functionality with drag & drop
       const imageInput = document.getElementById('id_images');
       const previewContainer = document.getElementById('image-preview-container');
       const previewGrid = document.getElementById('image-preview-grid');
@@ -863,7 +718,7 @@
 
             reader.onload = function(e) {
               const col = document.createElement('div');
-              col.className = 'col-md-3 col-sm-6 mb-3 image-item has-reordering';
+              col.className = 'col-md-3 col-sm-6 mb-3 image-item';
               col.setAttribute('data-file-index', index);
               col.setAttribute('draggable', 'true');
 

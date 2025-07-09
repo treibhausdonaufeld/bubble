@@ -70,11 +70,6 @@ class ItemListView(ListView):
                 # If category doesn't exist, use original filter to avoid errors
                 queryset = queryset.filter(category_id=category)
 
-        # GET parameter item_type filtering
-        item_type = self.request.GET.get("item_type")
-        if item_type:
-            queryset = queryset.filter(item_type=item_type)
-
         status = self.request.GET.get("status")
         if status:
             queryset = queryset.filter(status=status)
@@ -83,34 +78,101 @@ class ItemListView(ListView):
         if tags:
             queryset = queryset.filter(tags__tag__in=tags).distinct()
 
+        # Apply dynamic filters
+        content_type_slug = self.kwargs.get("content_type", "")
+        if content_type_slug:
+            try:
+                root_category = ItemCategory.objects.get(
+                    url_slug=content_type_slug,
+                    parent_category__isnull=True,
+                )
+                # Process dynamic filters
+                for filter_name in root_category.filters:
+                    filter_value = self.request.GET.get(f"filter_{filter_name}")
+                    if filter_value and filter_name in root_category.custom_fields:
+                        # Filter by custom field value
+                        queryset = queryset.filter(
+                            custom_fields__contains={
+                                filter_name: {"value": filter_value},
+                            },
+                        )
+            except ItemCategory.DoesNotExist:
+                pass
+
         # Apply sorting
         sort = self.request.GET.get("sort", "newest")
-        if sort == "oldest":
-            queryset = queryset.order_by("date_created")
-        elif sort == "price_low":
-            queryset = queryset.order_by("price")
-        elif sort == "price_high":
-            queryset = queryset.order_by("-price")
-        elif sort == "name":
-            queryset = queryset.order_by("name")
-        else:  # newest (default)
-            queryset = queryset.order_by("-date_created")
+
+        # Get root category for dynamic sorting
+        content_type_slug = self.kwargs.get("content_type", "")
+        try:
+            root_category = ItemCategory.objects.get(
+                url_slug=content_type_slug,
+                parent_category__isnull=True,
+            )
+            # Check if this is a custom field sort
+            if sort.startswith("custom_"):
+                field_name = (
+                    sort.replace("custom_", "").replace("_asc", "").replace("_desc", "")
+                )
+                if field_name in root_category.sort_by:
+                    if sort.endswith("_desc"):
+                        queryset = queryset.order_by(
+                            f"-custom_fields__{field_name}__value",
+                        )
+                    else:
+                        queryset = queryset.order_by(
+                            f"custom_fields__{field_name}__value",
+                        )
+                else:
+                    # Fallback to newest
+                    queryset = queryset.order_by("-date_created")
+            elif sort == "oldest":
+                queryset = queryset.order_by("date_created")
+            elif sort == "name":
+                queryset = queryset.order_by("name")
+            elif sort == "name_desc":
+                queryset = queryset.order_by("-name")
+            else:  # newest (default)
+                queryset = queryset.order_by("-date_created")
+        except ItemCategory.DoesNotExist:
+            # Fallback sorting without category
+            if sort == "oldest":
+                queryset = queryset.order_by("date_created")
+            elif sort == "name":
+                queryset = queryset.order_by("name")
+            elif sort == "name_desc":
+                queryset = queryset.order_by("-name")
+            else:  # newest (default)
+                queryset = queryset.order_by("-date_created")
 
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Create filter form with GET parameters
-        context["filter_form"] = ItemFilterForm(self.request.GET)
+        # Get root category first if available
+        content_type_slug = self.kwargs.get("content_type", "")
+        root_category = None
+        if content_type_slug:
+            try:
+                root_category = ItemCategory.objects.get(
+                    url_slug=content_type_slug,
+                    parent_category__isnull=True,
+                )
+            except ItemCategory.DoesNotExist:
+                pass
+
+        # Create filter form with GET parameters and root category
+        if root_category:
+            context["filter_form"] = ItemFilterForm(
+                self.request.GET,
+                root_category=root_category,
+            )
+        else:
+            context["filter_form"] = ItemFilterForm(self.request.GET)
 
         # Get categories that have active items for current filter
         base_item_queryset = Item.objects.for_user(self.request.user)
-
-        # Apply item_type filter from GET params
-        item_type = self.request.GET.get("item_type")
-        if item_type:
-            base_item_queryset = base_item_queryset.filter(item_type=item_type)
 
         # Get categories that have items in the filtered queryset
         categories_with_items = ItemCategory.objects.filter(
@@ -165,32 +227,35 @@ class ItemListView(ListView):
         )
         context["all_categories"] = categories_with_items
 
-        # Add sort options - these are already translated in forms
+        # Build dynamic sort options based on category
         sort_options = [
             ("newest", _("Newest first")),
             ("oldest", _("Oldest first")),
-            ("price_low", _("Price: Low to High")),
-            ("price_high", _("Price: High to Low")),
             ("name", _("Name A-Z")),
+            ("name_desc", _("Name Z-A")),
         ]
+
+        # Add custom field sorting if root_category exists and has sort_by fields
+        if "root_category" in context and hasattr(context["root_category"], "sort_by"):
+            root_cat = context["root_category"]
+            if root_cat.sort_by:
+                # Get custom field definitions
+                for field_name in root_cat.sort_by:
+                    if field_name in root_cat.custom_fields:
+                        field_config = root_cat.custom_fields[field_name]
+                        field_label = field_config.get("label", field_name.title())
+                        sort_options.append(
+                            (f"custom_{field_name}_asc", f"{field_label} ↑"),
+                        )
+                        sort_options.append(
+                            (f"custom_{field_name}_desc", f"{field_label} ↓"),
+                        )
+
         context["sort_options"] = sort_options
         context["current_sort"] = self.request.GET.get("sort", "newest")
 
         # Add view mode
         context["view_mode"] = self.request.GET.get("view", "grid")
-
-        # Add context for current filter type from GET params
-        item_type_param = self.request.GET.get("item_type")
-        if item_type_param:
-            try:
-                item_type_filter = int(item_type_param)
-                item_type_names = {0: "sell", 1: "give_away", 2: "borrow", 3: "need"}
-                context["current_filter"] = item_type_names.get(item_type_filter)
-                context["current_filter_display"] = dict(Item.ITEM_TYPE_CHOICES).get(
-                    item_type_filter,
-                )
-            except (ValueError, TypeError):
-                pass
 
         # Add active filters for display
         active_filters = []
@@ -204,22 +269,31 @@ class ItemListView(ListView):
                 active_filters.append(("category", f"Category: {cat.get_hierarchy()}"))
             except ItemCategory.DoesNotExist:
                 pass
-        if self.request.GET.get("item_type"):
-            type_dict = dict(Item.ITEM_TYPE_CHOICES)
-            active_filters.append(
-                (
-                    "item_type",
-                    f"Type: {type_dict.get(int(self.request.GET.get('item_type')))}",
-                ),
-            )
-        if status := self.request.GET.get("status"):
-            status_dict = dict(Item.STATUS_CHOICES)
-            active_filters.append(
-                (
-                    "status",
-                    f"Condition: {status_dict.get(int(status))}",
-                ),
-            )
+
+        # Add dynamic filter active filters
+        if root_category and root_category.filters:
+            for filter_name in root_category.filters:
+                filter_value = self.request.GET.get(f"filter_{filter_name}")
+                if filter_value and filter_name in root_category.custom_fields:
+                    field_config = root_category.custom_fields[filter_name]
+                    label = field_config.get("label", filter_name.title())
+
+                    # For choice fields, get the display value
+                    display_value = filter_value
+                    if field_config.get("type") == "choice":
+                        choices = field_config.get("choices", [])
+                        for choice in choices:
+                            if isinstance(choice, dict):
+                                if choice.get("key") == filter_value:
+                                    display_value = choice.get("value", filter_value)
+                                    break
+                            elif choice == filter_value:
+                                display_value = choice
+                                break
+
+                    active_filters.append(
+                        (f"filter_{filter_name}", f"{label}: {display_value}"),
+                    )
 
         context["active_filters"] = active_filters
 
@@ -232,15 +306,35 @@ class ItemListView(ListView):
 
             # Try to get the corresponding root category
             try:
-                context["root_category"] = ItemCategory.objects.get(
+                root_category = ItemCategory.objects.get(
                     url_slug=content_type_slug,
                     parent_category__isnull=True,
                 )
+                context["root_category"] = root_category
+                # Check if root category has subcategories
+                context["has_subcategories"] = root_category.subcategories.exists()
+
+                # Pass filter configuration to template
+                if root_category.filters:
+                    filter_configs = []
+                    for filter_name in root_category.filters:
+                        if filter_name in root_category.custom_fields:
+                            field_config = root_category.custom_fields[filter_name]
+                            filter_configs.append(
+                                {
+                                    "name": filter_name,
+                                    "config": field_config,
+                                },
+                            )
+                    context["dynamic_filters"] = filter_configs
+
             except ItemCategory.DoesNotExist:
                 # Fallback - create a mock object with capitalized name
                 class MockCategory:
                     def __init__(self, slug):
                         self.name = slug.capitalize()
+                        self.filters = []
+                        self.sort_by = []
 
                 context["root_category"] = MockCategory(content_type_slug)
 

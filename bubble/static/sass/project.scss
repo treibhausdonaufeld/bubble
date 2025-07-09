@@ -1,5 +1,6 @@
 @import 'custom_bootstrap_vars';
 @import '~bootstrap/scss/bootstrap';
+@import '~select2/dist/css/select2.min.css';
 
 // project specific CSS goes here
 
@@ -269,6 +270,140 @@ $red: #b94a48;
   }
 }
 
+//////////////////
+// Select2      //
+//////////////////
+
+// Select2 Bootstrap 5 Theme
+.select2-container--default {
+  .select2-selection--single {
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 0.375rem;
+    height: calc(1.5em + 0.75rem + 2px);
+    padding: 0.375rem 0.75rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+    &:focus {
+      border-color: #86b7fe;
+      outline: 0;
+      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+  }
+
+  .select2-selection--multiple {
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 0.375rem;
+    min-height: calc(1.5em + 0.75rem + 2px);
+    padding: 0.375rem 0.75rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+    &:focus {
+      border-color: #86b7fe;
+      outline: 0;
+      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+  }
+
+  &.select2-container--focus .select2-selection--single,
+  &.select2-container--focus .select2-selection--multiple {
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  }
+
+  .select2-selection__rendered {
+    color: #212529;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .select2-selection__arrow {
+    height: calc(1.5em + 0.75rem);
+    top: 1px;
+    right: 10px;
+  }
+
+  .select2-dropdown {
+    border: 1px solid #ced4da;
+    border-radius: 0.375rem;
+    margin-top: 1px;
+  }
+
+  .select2-search--dropdown .select2-search__field {
+    border: 1px solid #ced4da;
+    border-radius: 0.375rem;
+    padding: 0.375rem 0.75rem;
+
+    &:focus {
+      border-color: #86b7fe;
+      outline: 0;
+      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+  }
+
+  .select2-results__option--highlighted[aria-selected] {
+    background-color: #0d6efd;
+    color: white;
+  }
+}
+
+//////////////////
+// Item Cards   //
+//////////////////
+
+.item-card {
+  position: relative;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+
+  .item-image {
+    position: relative;
+    overflow: hidden;
+  }
+}
+
+// Upper tag badge (top-right corner)
+.item-type-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+
+  .badge {
+    color: white;
+    font-weight: 500;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+}
+
+// Lower tag (bottom-left corner)
+.price-tag {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  background-color: white;
+  color: #333;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem;
+  font-weight: 600;
+  font-size: 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  z-index: 10;
+
+  // When it's a choice tag with background color
+  &.choice-tag {
+    color: white;
+  }
+}
+
 
 //////////////////
 // Item Thumbs  //
@@ -331,230 +466,4 @@ $red: #b94a48;
 /* Ensure proper spacing in navigation */
 .navbar-nav .nav-item .btn {
     margin: 0.25rem 0.5rem;
-}
-
-//////////////////
-// Items        //
-//////////////////
-
-/* File input and upload controls */
-.hidden-file-input {
-  display: none;
-}
-
-.upload-stats {
-  display: none;
-  &.show-stats {
-    display: flex !important;
-  }
-}
-
-.preview-container {
-  display: none;
-  &.show-container {
-    display: block;
-  }
-}
-
-/* Drop zone styles */
-#drop-zone {
-  cursor: pointer;
-  user-select: none;
-  border-color: #dee2e6;
-  transition: all 0.3s ease;
-  min-height: 200px;
-
-  &:hover,
-  &.drop-zone-active {
-    border-color: #007bff !important;
-    background-color: #dceeff !important;
-  }
-}
-
-.compact-drop-zone {
-  min-height: auto;
-  background-color: #fafafa;
-}
-
-.existing-images-drop-zone {
-  min-height: 200px;
-  background-color: #f8f9fa;
-
-  &:hover {
-    background-color: #f8f9fa !important;
-  }
-}
-
-/* Image card and item styles */
-.image-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-  }
-
-  img {
-    height: 150px;
-    object-fit: cover;
-  }
-}
-
-.existing-image,
-.preview-image {
-  height: 120px;
-  object-fit: cover;
-}
-
-.image-item {
-  transition: opacity 0.3s;
-
-  // Only for item_form.html with reordering enabled
-  &.has-reordering {
-    cursor: move;
-
-    &.dragging {
-      opacity: 0.5;
-      transform: rotate(5deg);
-    }
-
-    /* Interactive controls that appear on hover */
-    &:hover {
-      .reorder-controls,
-      .drag-handle,
-      .magnify-icon {
-        opacity: 1;
-      }
-    }
-
-    /* Reorder controls */
-    .reorder-controls {
-      opacity: 0;
-      transition: opacity 0.2s ease;
-      z-index: 10;
-    }
-
-    .btn-reorder {
-      width: 18px;
-      height: 18px;
-      padding: 0;
-      font-size: 0.5rem;
-      border: 1px solid rgba(0, 0, 0, 0.1);
-      margin-bottom: 1px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      &:last-child {
-        margin-bottom: 0;
-      }
-
-      &:hover {
-        background-color: #fff;
-        border-color: #007bff;
-        color: #007bff;
-      }
-    }
-
-    /* Drag handle */
-    .drag-handle {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(0, 0, 0, 0.7);
-      color: white;
-      padding: 6px 8px;
-      border-radius: 4px;
-      opacity: 0;
-      transition: opacity 0.2s ease;
-      cursor: grab;
-      z-index: 10;
-
-      &:active {
-        cursor: grabbing;
-      }
-    }
-  }
-
-  // For item_create_images.html without reordering
-  &:hover .magnify-icon {
-    opacity: 1;
-  }
-}
-
-/* Magnification glass */
-.magnify-icon {
-  bottom: 10px;
-  left: 10px;
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  opacity: 0;
-  transition: opacity 0.2s, background-color 0.2s;
-
-  &:hover {
-    background: rgba(0, 0, 0, 0.9);
-    transform: scale(1.1);
-  }
-
-  i {
-    font-size: 14px;
-  }
-}
-
-/* Button styles */
-.btn-danger.btn-sm {
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  font-size: 0.75rem;
-}
-
-.btn-outline-primary.btn-sm {
-  font-size: 0.8rem;
-  padding: 0.25rem 0.5rem;
-}
-
-/* Image preview modal close button */
-.image-preview-close {
-  background: rgba(0, 0, 0, 0.6) !important;
-  border-radius: 50% !important;
-  width: 40px !important;
-  height: 40px !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
-  filter: invert(1) !important;
-}
-
-/* Progress bars for create images flow */
-.progress-bar-outer {
-  width: 60%;
-  height: 8px;
-}
-
-.progress-bar-inner {
-  width: 50%;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .col-md-3.col-sm-6 {
-    flex: 0 0 50%;
-    max-width: 50%;
-  }
-
-  .existing-image,
-  .preview-image {
-    height: 100px;
-  }
 }

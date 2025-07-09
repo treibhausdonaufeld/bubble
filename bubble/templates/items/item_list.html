@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% load i18n %}
+{% load item_extras %}
 
 {% block title %}
   {% if current_filter_display %}
@@ -426,7 +427,6 @@
 {% block content %}
   <div class="container-fluid">
     <!-- Mobile Filter Toggle -->
-     {% if content_type_slug == "zeug" %}
     <div class="d-md-none mb-3">
       <button class="btn btn-outline-primary" id="mobile-filter-toggle">
         <i class="fas fa-filter"></i> {% trans "Filters" %}
@@ -434,7 +434,6 @@
     </div>
     <div class="row">
       <!-- Enhanced Filters Sidebar -->
-
       <div class="col-md-3">
         <div class="filter-overlay" id="filter-overlay"></div>
         <div class="filter-sidebar" id="filter-sidebar">
@@ -451,7 +450,7 @@
           <div class="p-3">
             <form method="get" id="filter-form">
               <!-- Active Filters Display -->
-              {% if active_filters %}
+              {% if active_filters or request.GET %}
                 <div class="active-filters">
                   <h6>{% trans "Active Filters" %}:</h6>
                   {% for filter_type, filter_value in active_filters %}
@@ -467,92 +466,87 @@
                 </div>
                 <hr />
               {% endif %}
-              <!-- Item Type -->
-              <div class="filter-section">
-                <label for="{{ filter_form.item_type.id_for_label }}"
-                       class="form-label fw-bold">
-                  <i class="fas fa-tag"></i> {% trans "Type" %}
-                </label>
-                {{ filter_form.item_type }}
-              </div>
-              <!-- Enhanced Search -->
-              <div class="filter-section">
-                <label class="form-label fw-bold">
-                  <i class="fas fa-search"></i> {% trans "Search" %}
-                </label>
-                <div class="search-container">
-                  <i class="fas fa-search search-icon search-icon-clickable"
-                     id="search-icon"></i>
-                  <input type="text"
-                         name="search"
-                         class="form-control search-input search-input-padding"
-                         placeholder="{% trans 'Search items...' %}"
-                         value="{{ filter_form.search.value|default_if_none:'' }}" />
-                </div>
-              </div>
+
               <!-- Dynamic Categories Tree -->
+              {% if has_subcategories %}
               <div class="filter-section">
                 <label class="form-label fw-bold">
                   <i class="fas fa-folder"></i> {% trans "Category" %}
                 </label>
                 <div class="category-tree">
-                  {% for root_category in category_tree %}
-                    <div class="category-item">
-                      <div class="category-header"
-                           data-bs-toggle="collapse"
-                           data-bs-target="#category-{{ root_category.category.id }}"
-                           aria-expanded="false">
-                        <i class="fas fa-folder"></i>
-                        <span class="category-name">{{ root_category.category.name }}</span>
-                        {% if root_category.subcategories %}<i class="fas fa-chevron-down toggle-icon"></i>{% endif %}
-                      </div>
-                      <div class="category-actions">
-                        <input type="radio"
-                               name="category"
-                               value="{{ root_category.category.id }}"
-                               id="cat_{{ root_category.category.id }}"
-                               data-include-children="true"
-                               {% if filter_form.category.value == root_category.category.id|stringformat:"s" %}checked{% endif %} />
-                        <label for="cat_{{ root_category.category.id }}" class="category-label">
-                          {{ root_category.category.name }} <small class="text-muted">(inkl. Unterkategorien)</small>
-                        </label>
-                      </div>
-                      {% if root_category.subcategories %}
-                        <div class="collapse category-children"
-                             id="category-{{ root_category.category.id }}">
-                          {% for subcategory in root_category.subcategories %}
-                            <div class="subcategory-item">
-                              <input type="radio"
-                                     name="category"
-                                     value="{{ subcategory.category.id }}"
-                                     id="cat_{{ subcategory.category.id }}"
-                                     {% if filter_form.category.value == subcategory.category.id|stringformat:"s" %}checked{% endif %} />
-                              <label for="cat_{{ subcategory.category.id }}" class="subcategory-label">
-                                <i class="fas fa-folder-open"></i>
-                                {{ subcategory.category.name }}
-                              </label>
+                  {% comment %}
+                  Instead of showing all root categories, we show only subcategories of the current root category
+                  {% endcomment %}
+                  {% for root_cat in category_tree %}
+                    {% if root_cat.category == root_category %}
+                      {% comment %} Skip the root category itself and show its subcategories directly {% endcomment %}
+                      {% for subcategory in root_cat.subcategories %}
+                        <div class="category-item">
+                          {% if subcategory.subcategories %}
+                            <div class="category-header"
+                                 data-bs-toggle="collapse"
+                                 data-bs-target="#category-{{ subcategory.category.id }}"
+                                 aria-expanded="false">
+                              <i class="fas fa-folder"></i>
+                              <span class="category-name">{{ subcategory.category.name }}</span>
+                              <i class="fas fa-chevron-down toggle-icon"></i>
                             </div>
-                            {% if subcategory.subcategories %}
-                              <div class="category-children ms-3">
-                                {% for subsubcategory in subcategory.subcategories %}
-                                  <div class="subcategory-item">
-                                    <input type="radio"
-                                           name="category"
-                                           value="{{ subsubcategory.category.id }}"
-                                           id="cat_{{ subsubcategory.category.id }}"
-                                           {% if filter_form.category.value == subsubcategory.category.id|stringformat:"s" %}checked{% endif %} />
-                                    <label for="cat_{{ subsubcategory.category.id }}" class="subcategory-label">
-                                      <i class="fas fa-file"></i>
-                                      {{ subsubcategory.category.name }}
-                                    </label>
+                          {% endif %}
+                          <div class="category-actions">
+                            <input type="radio"
+                                   name="category"
+                                   value="{{ subcategory.category.id }}"
+                                   id="cat_{{ subcategory.category.id }}"
+                                   {% if subcategory.subcategories %}data-include-children="true"{% endif %}
+                                   {% if filter_form.category.value == subcategory.category.id|stringformat:"s" %}checked{% endif %} />
+                            <label for="cat_{{ subcategory.category.id }}" class="category-label">
+                              {% if not subcategory.subcategories %}
+                                <i class="fas fa-folder"></i>
+                              {% endif %}
+                              {{ subcategory.category.name }}
+                              {% if subcategory.subcategories %}
+                                <small class="text-muted">(inkl. Unterkategorien)</small>
+                              {% endif %}
+                            </label>
+                          </div>
+                          {% if subcategory.subcategories %}
+                            <div class="collapse category-children"
+                                 id="category-{{ subcategory.category.id }}">
+                              {% for subsubcategory in subcategory.subcategories %}
+                                <div class="subcategory-item">
+                                  <input type="radio"
+                                         name="category"
+                                         value="{{ subsubcategory.category.id }}"
+                                         id="cat_{{ subsubcategory.category.id }}"
+                                         {% if filter_form.category.value == subsubcategory.category.id|stringformat:"s" %}checked{% endif %} />
+                                  <label for="cat_{{ subsubcategory.category.id }}" class="subcategory-label">
+                                    <i class="fas fa-folder-open"></i>
+                                    {{ subsubcategory.category.name }}
+                                  </label>
+                                </div>
+                                {% if subsubcategory.subcategories %}
+                                  <div class="category-children ms-3">
+                                    {% for sub3category in subsubcategory.subcategories %}
+                                      <div class="subcategory-item">
+                                        <input type="radio"
+                                               name="category"
+                                               value="{{ sub3category.category.id }}"
+                                               id="cat_{{ sub3category.category.id }}"
+                                               {% if filter_form.category.value == sub3category.category.id|stringformat:"s" %}checked{% endif %} />
+                                        <label for="cat_{{ sub3category.category.id }}" class="subcategory-label">
+                                          <i class="fas fa-file"></i>
+                                          {{ sub3category.category.name }}
+                                        </label>
+                                      </div>
+                                    {% endfor %}
                                   </div>
-                                {% endfor %}
-                              </div>
-                            {% endif %}
-                          {% endfor %}
+                                {% endif %}
+                              {% endfor %}
+                            </div>
+                          {% endif %}
                         </div>
-                      {% endif %}
-                    </div>
+                      {% endfor %}
+                    {% endif %}
                   {% endfor %}
                   <!-- Clear category option -->
                   <div class="category-item">
@@ -570,20 +564,30 @@
                   </div>
                 </div>
               </div>
-              <!-- Status/Condition -->
-              <div class="filter-section">
-                <label for="{{ filter_form.status.id_for_label }}"
-                       class="form-label fw-bold">
-                  <i class="fas fa-star"></i> {% trans "Zustand" %}
-                </label>
-                {{ filter_form.status }}
-              </div>
+              {% endif %}
+
+              <!-- Dynamic Filters -->
+              {% for field in filter_form %}
+                {% if field.name|slice:":7" == "filter_" %}
+                  <div class="filter-section">
+                    <label for="{{ field.id_for_label }}" class="form-label fw-bold">
+                      <i class="fas fa-filter"></i> {{ field.label }}
+                    </label>
+                    {{ field }}
+                  </div>
+                {% endif %}
+              {% endfor %}
+
               <!-- Sort -->
               <div class="filter-section">
-                <label for="{{ filter_form.sort.id_for_label }}" class="form-label fw-bold">
+                <label for="id_sort" class="form-label fw-bold">
                   <i class="fas fa-sort"></i> {% trans "Sort by" %}
                 </label>
-                {{ filter_form.sort }}
+                <select name="sort" class="form-select" id="id_sort">
+                  {% for value, label in sort_options %}
+                    <option value="{{ value }}" {% if current_sort == value %}selected{% endif %}>{{ label }}</option>
+                  {% endfor %}
+                </select>
               </div>
               {{ filter_form.view }}
               <div class="pt-3">
@@ -598,7 +602,6 @@
           </div>
         </div>
       </div>
-      {% endif %}
       <!-- Main Content Area -->
       <div class="col-md-9">
         <!-- Controls Bar -->
@@ -741,7 +744,6 @@
       });
 
       // Item type auto-submit
-      const itemTypeSelect = document.querySelector('select[name="item_type"]');
       if (itemTypeSelect) {
         itemTypeSelect.addEventListener('change', () => {
           form.submit();
@@ -755,6 +757,16 @@
           form.submit();
         });
       }
+
+      // Dynamic filter auto-submit
+      const dynamicFilters = document.querySelectorAll('[name^="filter_"]');
+      dynamicFilters.forEach(filter => {
+        if (filter.tagName === 'SELECT') {
+          filter.addEventListener('change', () => {
+            form.submit();
+          });
+        }
+      });
 
       // Search auto-submit on Enter key and search icon click
       const searchInput = document.querySelector('input[name="search"]');
@@ -888,12 +900,10 @@
 
       // Update floating button visual state based on active filters
       function updateFloatingButtonState() {
-        const itemTypeSelect = document.querySelector('select[name="item_type"]');
-        const statusSelect = document.querySelector('select[name="status"]');
+          const statusSelect = document.querySelector('select[name="status"]');
 
         const hasActiveFilters =
           (searchInput && searchInput.value.trim()) ||
-          (itemTypeSelect && itemTypeSelect.value) ||
           (statusSelect && statusSelect.value) ||
           (sortSelect && sortSelect.value !== sortSelect.options[0].value) ||
           selectedTags.length > 0 ||

@@ -5,7 +5,6 @@ import environ
 env = environ.Env()
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 
-
 READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=False)
 if READ_DOT_ENV_FILE:
     # OS environment variables take precedence over variables from .env

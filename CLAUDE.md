@@ -321,6 +321,32 @@ This project uses pre-commit hooks that run automatically on GitHub Actions. Key
 4. Create PR: `gh pr create --title "Title" --body "Description"`
 5. Wait for CI/CD checks to pass before merging
 
+## Categories and Dynamic Fields System
+
+**IMPORTANT**: For detailed documentation about the categories and items system, including dynamic fields and conditional field dependencies, see `/docs/categories-and-items.md`.
+
+### Quick Reference - Dynamic Fields
+
+Categories define custom fields in their `custom_fields` JSON:
+```json
+{
+  "field_name": {
+    "type": "choice|text|textarea|number|datetime",
+    "label": "Display Label",
+    "choices": ["option1", "option2"],
+    "required": true|false,
+    "depending": "other_field",      // Conditional dependency
+    "depending_value": "trigger_value" // Value that shows this field
+  }
+}
+```
+
+**Conditional Fields**: Fields can appear/hide based on other field values. Example:
+- "ram" field only shows when "device_type" is "laptop"
+- "shoe_size" only shows when "clothing_type" is "shoes"
+
+See `/docs/categories-and-items.md` for complete documentation.
+
 ## Future Services App Structure
 
 ### Planned Architecture

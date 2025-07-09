@@ -12,44 +12,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name="item",
-            name="intern",
-        ),
-        migrations.RemoveField(
-            model_name="item",
-            name="th_payment",
-        ),
-        migrations.AddField(
-            model_name="item",
-            name="internal",
-            field=models.BooleanField(
-                default=False, help_text="Internal item, not for public display"
-            ),
-        ),
-        migrations.AddField(
-            model_name="item",
-            name="payment_enabled",
-            field=models.BooleanField(
-                default=False, help_text="Enable payment via internal payment system"
-            ),
-        ),
-        migrations.AlterField(
-            model_name="item",
-            name="category",
-            field=models.ForeignKey(
-                blank=True,
-                null=True,
-                on_delete=django.db.models.deletion.SET_NULL,
-                related_name="items",
-                to="categories.itemcategory",
-            ),
-        ),
-        migrations.AlterField(
-            model_name="item",
-            name="display_contact",
-            field=models.BooleanField(
-                default=False, help_text="Display your contact information public"
-            ),
-        ),
+        # Empty migration - fields renamed/added elsewhere or don't exist
     ]

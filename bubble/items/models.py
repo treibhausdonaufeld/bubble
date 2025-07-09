@@ -1,5 +1,4 @@
 import uuid
-from decimal import Decimal
 from pathlib import Path
 
 from django.db import models
@@ -30,7 +29,7 @@ class ProcessingStatus(models.IntegerChoices):
 class ItemManager(models.Manager):
     def for_user(self, user) -> models.QuerySet:
         """Return a queryset filtered by user permissions."""
-        q = models.Q(active=True, internal=False)
+        q = models.Q(active=True, intern=False)
         if user.is_authenticated:
             # allow also own items of this user
             q |= models.Q(user=user)
@@ -62,30 +61,10 @@ class Item(models.Model):
     )
     name = models.CharField(max_length=255, blank=True)
     description = models.TextField(blank=True)
-    internal = models.BooleanField(
-        default=False,
-        help_text=_("Internal item, not for public display"),
-    )
-    display_contact = models.BooleanField(
-        default=False,
-        help_text=_("Display your contact information public"),
-    )
-    price = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        blank=True,
-        null=True,
-        default=Decimal("0.00"),
-    )
-    payment_enabled = models.BooleanField(
-        default=False,
-        help_text=_("Enable payment via internal payment system"),
-    )
-    item_type = models.IntegerField(choices=ItemType, default=ItemType.FOR_SALE)
+    intern = models.BooleanField(default=False)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
-    profile_img_frame = models.ImageField(upload_to="items/", blank=True, null=True)
-    profile_img_frame_alt = models.CharField(max_length=255, blank=True)
+
     processing_status = models.IntegerField(
         choices=ProcessingStatus,
         default=ProcessingStatus.DRAFT,
