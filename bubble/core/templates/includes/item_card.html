@@ -26,6 +26,9 @@
     {% endwith %}
     <!-- Item Type Badge -->
     <div class="item-type-badge">
+      {% if not item.active %}
+        <span class="badge bg-secondary">{% trans "Inactive" %}</span>
+      {% endif %}
       {% if item.item_type == 0 %}
         <span class="badge bg-success">{% trans "For Sale" %}</span>
       {% elif item.item_type == 1 %}

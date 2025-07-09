@@ -1018,7 +1018,7 @@ msgid "Created"
 msgstr "Erstellt"
 
 msgid "Inactive"
-msgstr "Inaktive"
+msgstr "Inaktiv"
 
 msgid "No items yet"
 msgstr "Noch keine Artikel"
