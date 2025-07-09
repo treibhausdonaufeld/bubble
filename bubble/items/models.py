@@ -29,7 +29,7 @@ class ProcessingStatus(models.IntegerChoices):
 class ItemManager(models.Manager):
     def for_user(self, user) -> models.QuerySet:
         """Return a queryset filtered by user permissions."""
-        q = models.Q(active=True, intern=False)
+        q = models.Q(active=True, internal=False)
         if user.is_authenticated:
             # allow also own items of this user
             q |= models.Q(user=user)
@@ -61,7 +61,7 @@ class Item(models.Model):
     )
     name = models.CharField(max_length=255, blank=True)
     description = models.TextField(blank=True)
-    intern = models.BooleanField(default=False)
+    internal = models.BooleanField(default=False)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
 

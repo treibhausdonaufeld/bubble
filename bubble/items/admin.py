@@ -44,7 +44,7 @@ class ItemAdmin(admin.ModelAdmin):
         (
             _("Internal Options"),
             {
-                "fields": ("intern",),
+                "fields": ("internal",),
                 "classes": ("collapse",),
             },
         ),

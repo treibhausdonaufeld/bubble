@@ -92,7 +92,7 @@ class ItemForm(forms.ModelForm):
 
         # Add internal-only fields if user is internal
         if self.user and hasattr(self.user, "profile") and self.user.profile.internal:
-            self.fields["intern"] = forms.BooleanField(
+            self.fields["internal"] = forms.BooleanField(
                 required=False,
                 initial=False,
                 label=_("Internal"),
@@ -100,7 +100,7 @@ class ItemForm(forms.ModelForm):
                 help_text=_("Check if this item is for internal use only"),
             )
             # Update Meta.fields to include intern fields
-            self.Meta.fields = [*self.Meta.fields, "intern"]
+            self.Meta.fields = [*self.Meta.fields, "internal"]
 
     def clean_name(self):
         name: str | None = self.cleaned_data.get("name")
@@ -323,7 +323,7 @@ class ItemForm(forms.ModelForm):
         if not (
             self.user and hasattr(self.user, "profile") and self.user.profile.internal
         ):
-            instance.intern = False
+            instance.internal = False
 
         if commit:
             instance.save()
