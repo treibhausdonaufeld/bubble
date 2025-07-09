@@ -6,7 +6,6 @@ from pathlib import Path
 
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
-from django.db.models import Q
 from django.http import HttpResponse
 from PIL import Image as PILImage
 from rest_framework import permissions, viewsets
@@ -134,7 +133,7 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
     """
 
     serializer_class = ImageSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
     def get_queryset(self):
         """Return images that the user can access."""
@@ -142,7 +141,7 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
 
         # Users can see images of their own items and public items
         queryset = (
-            Image.objects.filter(Q(item__user=user) | Q(item__internal=False))
+            Image.objects.filter(item__in=Item.objects.for_user(user))
             .select_related("item")
             .order_by("item", "ordering")
         )

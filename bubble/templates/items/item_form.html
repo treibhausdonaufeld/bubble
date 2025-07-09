@@ -477,23 +477,24 @@
               <!-- Form Errors -->
               {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
               <!-- Form Actions -->
-              <div class="d-flex justify-content-between">
-                <a href="{% if object %}{% url 'items:detail' pk=object.pk %}{% else %}{% url 'items-category:list' content_type=content_type_slug %}{% endif %}"
-                   class="btn btn-outline-secondary">{% trans "Cancel" %}</a>
+                <div class="d-flex justify-content-between">
+                <button type="button" onclick="history.back()" class="btn btn-outline-secondary">{% trans "Cancel" %}</button>
                 {% if object and object.processing_status == 1 %}
                   <button type="button" class="btn btn-primary" disabled>
-                    <i class="fas fa-spinner fa-spin me-2"></i>
-                    {% trans "Processing..." %}
+                  <i class="fas fa-spinner fa-spin me-2"></i>
+                  {% trans "Processing..." %}
                   </button>
                 {% else %}
+                  <div class="d-flex gap-2">
                   <button type="submit" class="btn btn-primary">
-                      {% trans "Save draft" %}
+                  {% trans "Save draft" %}
                   </button>
                   <button type="submit" name="publish" class="btn btn-success">
-                      {% trans "Publish" %}
+                  {% trans "Publish" %}
                   </button>
+                  </div>
                 {% endif %}
-              </div>
+                </div>
             </form>
           </div>
         </div>

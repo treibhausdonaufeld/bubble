@@ -24,7 +24,6 @@ from temporalio import exceptions
 from bubble.categories.models import ItemCategory
 from bubble.items.temporal.temporal_activities import ItemProcessingRequest
 from bubble.items.temporal.temporal_service import TemporalService
-from bubble.messaging.models import Message
 
 from .forms import ItemFilterForm, ItemForm, ItemImageUploadForm
 from .models import Image, Item, ProcessingStatus
@@ -38,7 +37,7 @@ class ItemListView(ListView):
 
     def get_queryset(self):
         queryset = (
-            Item.objects.filter(active=True)
+            Item.objects.for_user(self.request.user)
             .select_related("user", "category")
             .prefetch_related(
                 models.Prefetch("images", queryset=Image.objects.order_by("ordering")),
@@ -173,7 +172,7 @@ class ItemListView(ListView):
             context["filter_form"] = ItemFilterForm(self.request.GET)
 
         # Get categories that have active items for current filter
-        base_item_queryset = Item.objects.filter(active=True)
+        base_item_queryset = Item.objects.for_user(self.request.user)
 
         # Get categories that have items in the filtered queryset
         categories_with_items = ItemCategory.objects.filter(
@@ -366,7 +365,7 @@ class ItemDetailView(DetailView):
 
     def get_queryset(self):
         return (
-            Item.objects.filter(active=True)
+            Item.objects.for_user(self.request.user)
             .select_related("user", "category")
             .prefetch_related("images")
         )
@@ -379,15 +378,6 @@ class ItemDetailView(DetailView):
             if self.request.user.is_authenticated
             else False
         )
-
-        # Check if there's an existing conversation for this item and user
-        if self.request.user.is_authenticated:
-            conversation_exists = Message.objects.filter(
-                item=self.object,
-                sender__in=[self.request.user, self.object.user],
-                receiver__in=[self.request.user, self.object.user],
-            ).exists()
-            context["conversation_exists"] = conversation_exists
 
         return context
 
