@@ -1363,7 +1363,7 @@ msgstr "Erstellt"
 
 #: bubble/templates/items/my_items.html:118
 msgid "Inactive"
-msgstr "Inaktive"
+msgstr "Inaktiv"
 
 #: bubble/templates/items/my_items.html:182
 msgid "No items yet"
