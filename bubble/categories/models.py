@@ -3,8 +3,13 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 
+class ItemCategoryManager(models.Manager):
+    def get_by_natural_key(self, name):
+        return self.get(name=name)
+
+
 class ItemCategory(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True)
     emoji = models.CharField(max_length=10, blank=True)
     prompt_name = models.TextField(blank=True)
@@ -79,6 +84,9 @@ class ItemCategory(models.Model):
     def __str__(self):
         return self.name
 
+    def natural_key(self):
+        return (self.name,)
+
     def get_hierarchy(self):
         """Returns the full category hierarchy path"""
         if self.parent_category:
@@ -98,6 +106,10 @@ class ItemCategory(models.Model):
         while current.parent_category is not None:
             current = current.parent_category
         return current
+
+    def is_leaf_category(self):
+        """Check if this category has no subcategories (is a leaf category)"""
+        return not self.subcategories.exists()
 
     def get_descendants(self, *, include_self=False):
         """Get all descendant categories"""

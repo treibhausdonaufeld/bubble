@@ -10,12 +10,15 @@
   <div class="item-image">
     {% with first_image=item.get_first_image %}
       {% if first_image %}
-        <img src="{{ first_image.original.url }}"
+        <img src="{% url 'api:image-get-thumbnail-image' pk=first_image.id %}"
              class="card-img-top item-image-fixed-height"
-             alt="{{ item.name }}" />
+             alt="{{ item.name }}"
+             style="height: {{ image_height|default:200 }}px;
+                    object-fit: cover" />
+             />
       {% elif item.images.all|length > 0 %}
         {# Fallback for prefetched images #}
-        <img src="{{ item.images.all.0.original.url }}"
+        <img src="{% url 'api:image-get-thumbnail-image' pk=item.images.all.0.id %}"
              class="card-img-top item-image-fixed-height"
              alt="{{ item.name }}" />
       {% else %}
@@ -81,7 +84,7 @@
         <i class="fas fa-user"></i> {{ item.user.username }}
         {% if item.user.name %}({{ item.user.name }}){% endif %}
       </small>
-      <a href="{% if content_type_slug %}{% url 'items:detail' content_type=content_type_slug pk=item.pk %}{% else %}{% url 'items:detail' item.pk %}{% endif %}"
+      <a href="{% if content_type_slug %}{% url 'items:detail' pk=item.pk %}{% else %}{% url 'items:detail' item.pk %}{% endif %}"
          class="btn btn-outline-primary btn-sm">
         <i class="fas fa-eye"></i> {% trans "View" %}
       </a>

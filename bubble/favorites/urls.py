@@ -1,9 +1,11 @@
 from django.urls import path
 
-from .views import CheckFavoriteStatusView
-from .views import DeleteFavoriteView
-from .views import ToggleFavoriteView
-from .views import UserFavoritesView
+from .views import (
+    CheckFavoriteStatusView,
+    DeleteFavoriteView,
+    ToggleFavoriteView,
+    UserFavoritesView,
+)
 
 app_name = "favorites"
 urlpatterns = [

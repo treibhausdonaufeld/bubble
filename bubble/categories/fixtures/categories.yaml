@@ -1,0 +1,290 @@
+- model: categories.itemcategory
+  fields:
+    name: Dinge
+    description: ''
+    emoji: "\U0001F9FA"
+    prompt_name: ''
+    prompt_description: ''
+    parent_category: null
+    url_slug: things
+    ordering: 1
+    custom_fields: {}
+
+# Subcategories for Dinge
+- model: categories.itemcategory
+  fields:
+    name: Antiquitäten / Kunst
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 1
+    custom_fields: {}
+- model: categories.itemcategory
+  fields:
+    name: Baby / Kind
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 2
+    custom_fields: {}
+- model: categories.itemcategory
+  fields:
+    name: Beauty / Gesundheit / Wellness
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 3
+    custom_fields: {}
+- model: categories.itemcategory
+  fields:
+    name: Boote / Yachten / Jetskis
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 4
+    custom_fields: {}
+- model: categories.itemcategory
+  fields:
+    name: Bücher / Filme / Musik
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 5
+    custom_fields: {}
+- model: categories.itemcategory
+  fields:
+    name: Computer / Software
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 6
+    custom_fields: {}
+- model: categories.itemcategory
+  fields:
+    name: Dienstleistungen
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 7
+    custom_fields: {}
+- model: categories.itemcategory
+  fields:
+    name: Freizeit / Instrumente / Kulinarik
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 8
+    custom_fields: {}
+- model: categories.itemcategory
+  fields:
+    name: Games / Konsolen
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 9
+    custom_fields: {}
+- model: categories.itemcategory
+  fields:
+    name: Haus / Garten / Werkstatt
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 10
+    custom_fields: {}
+- model: categories.itemcategory
+  fields:
+    name: Kameras / TV / Multimedia
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 11
+    custom_fields: {}
+- model: categories.itemcategory
+  fields:
+    name: KFZ-Zubehör / Motorradteile
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 12
+    custom_fields: {}
+- model: categories.itemcategory
+  fields:
+    name: Mode / Accessoires
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 13
+    custom_fields: {}
+- model: categories.itemcategory
+  fields:
+    name: Smartphones / Telefonie
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 14
+    custom_fields: {}
+- model: categories.itemcategory
+  fields:
+    name: Spielen / Spielzeug
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 15
+    custom_fields: {}
+- model: categories.itemcategory
+  fields:
+    name: Sport / Sportgeräte
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 16
+    custom_fields: {}
+- model: categories.itemcategory
+  fields:
+    name: Tiere / Tierbedarf
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 17
+    custom_fields: {}
+- model: categories.itemcategory
+  fields:
+    name: Uhren / Schmuck
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 18
+    custom_fields: {}
+- model: categories.itemcategory
+  fields:
+    name: Wohnen / Haushalt / Gastronomie
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Dinge
+    url_slug: ''
+    ordering: 19
+    custom_fields: {}
+
+# Räume
+- model: categories.itemcategory
+  fields:
+    name: Räume
+    description: ''
+    emoji: "\U0001F6CB️"
+    prompt_name: ''
+    prompt_description: ''
+    parent_category: null
+    url_slug: rooms
+    ordering: 3
+    custom_fields: {}
+- model: categories.itemcategory
+  fields:
+    name: Spielen
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Räume
+    url_slug: ''
+    ordering: 1
+    custom_fields: {}
+- model: categories.itemcategory
+  fields:
+    name: Schlafen
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Räume
+    url_slug: ''
+    ordering: 1
+    custom_fields: {}
+- model: categories.itemcategory
+  fields:
+    name: Waschen
+    description: ''
+    emoji: ''
+    prompt_name: ''
+    prompt_description: ''
+    parent_category:
+    - Räume
+    url_slug: ''
+    ordering: 1
+    custom_fields: {}

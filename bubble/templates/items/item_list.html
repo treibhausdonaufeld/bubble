@@ -460,7 +460,7 @@
                     </span>
                   {% endfor %}
                   <div class="mt-2">
-                    <a href="{% url 'items:list' content_type=content_type_slug %}"
+                    <a href="{% url 'items-category:list' content_type=content_type_slug %}"
                        class="btn btn-sm btn-outline-secondary">{% trans "Clear All" %}</a>
                   </div>
                 </div>
@@ -594,7 +594,7 @@
                 <button type="submit" class="btn btn-primary w-100 mb-2">
                   <i class="fas fa-search"></i> {% trans "Filter" %}
                 </button>
-                <a href="{% url 'items:list' content_type=content_type_slug %}" class="btn btn-outline-secondary w-100">
+                <a href="{% url 'items-category:list' content_type=content_type_slug %}" class="btn btn-outline-secondary w-100">
                   <i class="fas fa-undo"></i> {% trans "Reset filter" %}
                 </a>
               </div>
@@ -630,7 +630,7 @@
                 </div>
                 <!-- Add Item Button -->
                 {% if user.is_authenticated %}
-                  <a href="{% url 'items:create' content_type=content_type_slug %}" class="btn btn-success">
+                  <a href="{% url 'items:create' %}" class="btn btn-success">
                     <i class="fas fa-plus"></i> {% trans "Create Item" %}
                   </a>
                 {% endif %}
@@ -693,7 +693,7 @@
             <h3>{% trans "No items found" %}</h3>
             <p class="text-muted mb-4">{% trans "Try adjusting your filters or search terms." %}</p>
             {% if user.is_authenticated %}
-              <a href="{% url 'items:create' content_type=content_type_slug %}" class="btn btn-primary btn-lg">
+              <a href="{% url 'items:create' %}" class="btn btn-primary btn-lg">
                 <i class="fas fa-plus"></i> {% trans "Add the first item" %}
               </a>
             {% endif %}
@@ -787,13 +787,6 @@
         });
       }
 
-      // Enhanced tag selector
-      const tagSearch = document.getElementById('tag-search');
-      const tagDropdown = document.getElementById('tag-dropdown');
-      const selectedTagsContainer = document.getElementById('selected-tags');
-      const tagsInput = document.querySelector('input[name="tags"]');
-      let selectedTags = [];
-
       // Initialize selected tags from URL parameters
       const urlParams = new URLSearchParams(window.location.search);
       const initialTags = urlParams.getAll('tags');
@@ -852,67 +845,6 @@
           }
         });
       }
-
-      // Tag search functionality
-      tagSearch.addEventListener('focus', () => {
-        tagDropdown.style.display = 'block';
-      });
-
-      tagSearch.addEventListener('blur', (e) => {
-        // Delay hiding to allow clicks on dropdown items
-        setTimeout(() => {
-          if (!tagDropdown.contains(e.relatedTarget)) {
-            tagDropdown.style.display = 'none';
-          }
-        }, 150);
-      });
-
-      tagSearch.addEventListener('input', () => {
-        const searchTerm = tagSearch.value.toLowerCase();
-        const tagItems = tagDropdown.querySelectorAll('.tag-item');
-
-        tagItems.forEach(item => {
-          const tagName = item.dataset.tagName.toLowerCase();
-          if (tagName.includes(searchTerm)) {
-            item.style.display = 'block';
-          } else {
-            item.style.display = 'none';
-          }
-        });
-      });
-
-      // Tag item clicks with auto-submit
-      tagDropdown.addEventListener('click', (e) => {
-        const tagItem = e.target.closest('.tag-item');
-        if (tagItem) {
-          const tagId = tagItem.dataset.tagId;
-          const tagName = tagItem.dataset.tagName;
-
-          if (tagItem.classList.contains('selected')) {
-            removeTag(tagId);
-          } else {
-            addTag(tagId, tagName);
-          }
-
-          // Auto-submit after tag selection change
-          setTimeout(() => {
-            form.submit();
-          }, 100);
-        }
-      });
-
-      // Remove tag clicks with auto-submit
-      selectedTagsContainer.addEventListener('click', (e) => {
-        if (e.target.classList.contains('remove')) {
-          const tagId = e.target.dataset.tagId;
-          removeTag(tagId);
-
-          // Auto-submit after tag removal
-          setTimeout(() => {
-            form.submit();
-          }, 100);
-        }
-      });
 
       // View mode toggle
       const viewButtons = document.querySelectorAll('.view-btn');

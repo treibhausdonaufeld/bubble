@@ -200,8 +200,8 @@ Core entity representing physical items users want to share.
 - `status`: Item condition (new/used/old)
 - `user`: Item owner (ForeignKey to User)
 - `category`: Single ItemCategory assignment
-- `intern`: Boolean (only visible to intern users)
-- `th_payment`: Boolean (accepts Treibhaus payment)
+- `internal`: Boolean (only visible to internal users)
+- `payment_enabled`: Boolean (accepts Treibhaus payment)
 - `display_contact`: Boolean (show owner contact info)
 - `active`: Boolean (item is publicly visible)
 
@@ -232,7 +232,7 @@ Independent labeling system for items.
 
 #### Profile Model
 Extended user information linked to Django User.
-- `intern`: Boolean (enables admin features like intern/th_payment fields)
+- `internal`: Boolean (enables admin features like internal/payment_enabled fields)
 - `address`, `phone`: Contact information
 - `email_reminder`: Notification preferences
 
@@ -284,13 +284,13 @@ Extended user information linked to Django User.
 - **Navigation pills** for quick type switching
 - **Shareable URLs** for specific item types and filters
 - **Owner-only actions** (edit/delete/toggle status)
-- **Intern-only features** (intern/th_payment fields for intern users)
+- **Intern-only features** (internal/payment_enabled fields for internal users)
 - **Contact display toggle** per item
 
 ### Security & Permissions
 - **Login required** for create/edit/delete operations
 - **Owner verification** for item modifications
-- **Intern field visibility** based on user.profile.intern
+- **Intern field visibility** based on user.profile.internal
 - **Form validation** for price requirements by item type
 
 ## Code Quality & CI/CD

@@ -1,8 +1,7 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 
-from .models import Image
-from .models import Item
+from .models import Image, Item
 
 
 class ImageInline(admin.TabularInline):

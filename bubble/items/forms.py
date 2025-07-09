@@ -1,10 +1,11 @@
+from typing import Any
+
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 from bubble.categories.models import ItemCategory
-from bubble.items.models import Image
-from bubble.items.models import Item
+from bubble.items.models import Image, Item
 
 
 class ItemForm(forms.ModelForm):
@@ -12,11 +13,8 @@ class ItemForm(forms.ModelForm):
 
     # Category dropdown showing only leaf categories (lowest level)
     selected_category = forms.ModelChoiceField(
-        queryset=ItemCategory.objects.filter(
-            parent_category__isnull=False,  # Has a parent
-            subcategories__isnull=True,  # Has no children
-        ),
-        required=True,
+        queryset=ItemCategory.objects.all(),  # Empty queryset for AJAX loading
+        required=False,
         widget=forms.Select(
             attrs={
                 "class": "form-select select2-category",
@@ -44,10 +42,20 @@ class ItemForm(forms.ModelForm):
                     "placeholder": _("Describe your item..."),
                 },
             ),
+            "item_type": forms.Select(attrs={"class": "form-select select2-field"}),
+            "price": forms.NumberInput(
+                attrs={
+                    "class": "form-control",
+                    "step": "0.01",
+                    "min": "0",
+                    "placeholder": _("Price in Euro"),
+                },
+            ),
+            "display_contact": forms.CheckboxInput(attrs={"class": "form-check-input"}),
             "active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
         }
         labels = {
-            "name": _("Item name"),
+            "name": _("Name"),
             "description": _("Description"),
             "active": _("Published"),
         }
@@ -58,23 +66,7 @@ class ItemForm(forms.ModelForm):
         self.root_category = kwargs.pop("root_category", None)
         super().__init__(*args, **kwargs)
 
-        # Show full hierarchy in the dropdown labels
-        self.fields["selected_category"].label_from_instance = (
-            lambda obj: obj.get_hierarchy()
-        )
-
-        # If root_category is provided, filter categories to only show descendants
-        if self.root_category:
-            descendant_ids = [self.root_category.id]
-            descendant_ids.extend(
-                [cat.id for cat in self.root_category.get_descendants()],
-            )
-            self.fields["selected_category"].queryset = ItemCategory.objects.filter(
-                id__in=descendant_ids,
-                subcategories__isnull=True,  # Only leaf categories
-            )
-
-        # If editing an existing item, set the selected category
+        # Set initial value for selected_category when editing an item
         if (
             self.instance.pk
             and hasattr(self.instance, "category")
@@ -98,9 +90,9 @@ class ItemForm(forms.ModelForm):
                 },
             )
 
-        # Add intern-only fields if user is intern
-        if self.user and hasattr(self.user, "profile") and self.user.profile.intern:
-            self.fields["intern"] = forms.BooleanField(
+        # Add internal-only fields if user is internal
+        if self.user and hasattr(self.user, "profile") and self.user.profile.internal:
+            self.fields["internal"] = forms.BooleanField(
                 required=False,
                 initial=False,
                 label=_("Internal"),
@@ -111,13 +103,24 @@ class ItemForm(forms.ModelForm):
             self.Meta.fields = [*self.Meta.fields, "intern"]
 
     def clean_name(self):
-        name = self.cleaned_data.get("name")
-        if len(name) < self.MIN_ITEM_NAME_LENGTH:
+        name: str | None = self.cleaned_data.get("name")
+        if name and len(name) < self.MIN_ITEM_NAME_LENGTH:
             raise ValidationError(
                 _("Item name must be at least %(min_length)d characters long.")
                 % {"min_length": self.MIN_ITEM_NAME_LENGTH},
             )
         return name
+
+    def clean_selected_category(self) -> ItemCategory | None:
+        """Validate that the selected category exists and is a leaf category."""
+        selected_category = self.cleaned_data.get("selected_category")
+
+        if selected_category and not selected_category.is_leaf_category():
+            raise ValidationError(
+                _("Please select a specific category (not a general category)."),
+            )
+
+        return selected_category
 
     def _add_dynamic_fields(self):
         """Add dynamic fields based on category's field schema"""
@@ -264,12 +267,12 @@ class ItemForm(forms.ModelForm):
         # Add field to form
         self.fields[f"custom_{field_name}"] = field
 
-    def clean(self):
+    def clean(self) -> dict[str, Any]:
         cleaned_data = super().clean()
-        selected_category = cleaned_data.get("selected_category")
+        if cleaned_data is None:
+            cleaned_data = {}
 
-        if not selected_category:
-            raise ValidationError(_("Please select a category."))
+        selected_category = cleaned_data.get("selected_category")
 
         # Set the final category
         cleaned_data["category"] = selected_category
@@ -316,9 +319,9 @@ class ItemForm(forms.ModelForm):
                 instance.custom_fields = {}
             instance.custom_fields.update(custom_values)
 
-        # Set default values for intern-only fields if user is not intern
+        # Set default values for internal-only fields if user is not internal
         if not (
-            self.user and hasattr(self.user, "profile") and self.user.profile.intern
+            self.user and hasattr(self.user, "profile") and self.user.profile.internal
         ):
             instance.intern = False
 
@@ -389,9 +392,11 @@ class ItemFilterForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         # Set up parent category choices
-        self.fields["parent_category"].queryset = ItemCategory.objects.filter(
-            parent_category=None,
-        )
+        parent_field = self.fields["parent_category"]
+        if isinstance(parent_field, forms.ModelChoiceField):
+            parent_field.queryset = ItemCategory.objects.filter(
+                parent_category=None,
+            )
 
         # Add dynamic filter fields based on root category configuration
         if root_category and root_category.filters:
@@ -413,20 +418,23 @@ class ItemFilterForm(forms.Form):
                     current = current.parent_category
 
                 # Set parent category
-                self.fields["parent_category"].initial = current.id
+                if isinstance(parent_field, forms.ModelChoiceField):
+                    parent_field.initial = current.pk
 
                 # If selected category has a parent, set up subcategory field
-                if selected_category.parent_category:
-                    self.fields["subcategory"].queryset = ItemCategory.objects.filter(
-                        parent_category=selected_category.parent_category,
-                    )
-                    self.fields["subcategory"].initial = selected_category.id
-                elif current != selected_category:
-                    # Selected category is a subcategory of root
-                    self.fields["subcategory"].queryset = ItemCategory.objects.filter(
-                        parent_category=current,
-                    )
-                    self.fields["subcategory"].initial = selected_category.id
+                subcategory_field = self.fields["subcategory"]
+                if isinstance(subcategory_field, forms.ModelChoiceField):
+                    if selected_category.parent_category:
+                        subcategory_field.queryset = ItemCategory.objects.filter(
+                            parent_category=selected_category.parent_category,
+                        )
+                        subcategory_field.initial = selected_category.pk
+                    elif current != selected_category:
+                        # Selected category is a subcategory of root
+                        subcategory_field.queryset = ItemCategory.objects.filter(
+                            parent_category=current,
+                        )
+                        subcategory_field.initial = selected_category.pk
             except ItemCategory.DoesNotExist:
                 pass
 
@@ -505,3 +513,23 @@ class ImageUploadForm(forms.ModelForm):
                 attrs={"class": "form-control", "accept": "image/*"},
             ),
         }
+
+
+class ItemImageUploadForm(forms.Form):
+    """Form for uploading images in step 1 of item creation."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # We'll handle multiple files in the template/JavaScript
+        self.fields["images"] = forms.FileField(
+            label=_("Upload Images"),
+            help_text=_("Select one or more images for your item"),
+            required=False,
+            widget=forms.FileInput(
+                attrs={
+                    "accept": "image/*",
+                    "class": "form-control",
+                    "id": "images-input",
+                },
+            ),
+        )
