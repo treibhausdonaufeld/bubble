@@ -24,7 +24,6 @@ from temporalio import exceptions
 from bubble.categories.models import ItemCategory
 from bubble.items.temporal.temporal_activities import ItemProcessingRequest
 from bubble.items.temporal.temporal_service import TemporalService
-from bubble.messaging.models import Message
 
 from .forms import ItemFilterForm, ItemForm, ItemImageUploadForm
 from .models import Image, Item, ProcessingStatus
@@ -285,15 +284,6 @@ class ItemDetailView(DetailView):
             if self.request.user.is_authenticated
             else False
         )
-
-        # Check if there's an existing conversation for this item and user
-        if self.request.user.is_authenticated:
-            conversation_exists = Message.objects.filter(
-                item=self.object,
-                sender__in=[self.request.user, self.object.user],
-                receiver__in=[self.request.user, self.object.user],
-            ).exists()
-            context["conversation_exists"] = conversation_exists
 
         return context
 
