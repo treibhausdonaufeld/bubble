@@ -14,13 +14,13 @@
   <style>
     /* Enhanced Filter Styles */
     .filter-sidebar {
-      background: #f8f9fa;
+      background: var(--bubble-sidebar-bg);
       border-radius: 8px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     .filter-header {
-      background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+      background: var(--bubble-filter-header-bg);
       color: white;
       border-radius: 8px 8px 0 0;
       padding: 1rem;
@@ -28,7 +28,7 @@
     }
 
     .filter-section {
-      border-bottom: 1px solid #e9ecef;
+      border-bottom: 1px solid var(--bubble-card-border);
       padding: 1rem 0;
     }
 
@@ -45,8 +45,8 @@
       top: 100%;
       left: 0;
       right: 0;
-      background: white;
-      border: 1px solid #ced4da;
+      background: var(--bubble-card-bg);
+      border: 1px solid var(--bubble-input-border);
       border-top: none;
       border-radius: 0 0 0.375rem 0.375rem;
       max-height: 200px;
@@ -58,16 +58,16 @@
     .tag-item {
       padding: 0.5rem;
       cursor: pointer;
-      border-bottom: 1px solid #f8f9fa;
+      border-bottom: 1px solid var(--bubble-card-border);
     }
 
     .tag-item:hover {
-      background-color: #f8f9fa;
+      background-color: var(--bubble-sidebar-bg);
     }
 
     .tag-item.selected {
-      background-color: #e3f2fd;
-      color: #1976d2;
+      background-color: rgba(var(--bs-primary-rgb), 0.1);
+      color: var(--bs-primary);
     }
 
     .selected-tags {

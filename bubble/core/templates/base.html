@@ -3,7 +3,7 @@
 
 <!DOCTYPE html>
 {% get_current_language as LANGUAGE_CODE %}
-<html lang="{{ LANGUAGE_CODE }}">
+<html lang="{{ LANGUAGE_CODE }}" data-bs-theme="{{ current_theme }}">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
@@ -17,6 +17,7 @@
     <meta name="description" content="Treibhaus donaufeld sharing platform" />
     <meta name="author" content="Fabian Helm" />
     <meta name="csrf-token" content="{{ csrf_token }}" />
+    <meta name="theme-preference" content="{{ current_theme }}" />
     <link rel="icon" href="{% static 'images/favicons/favicon.ico' %}" />
     {% block css %}
       <!-- Your stuff: Third-party CSS libraries go here -->
@@ -82,6 +83,14 @@
                            data-title="{{ page_title|default:'' }}">☆</a>
                       </li>
                     {% endif %}
+                    {# Mobile: Theme Switcher #}
+                    <li class="nav-item d-md-none">
+                      <button class="btn btn-link nav-link theme-cycle-toggle"
+                              data-current-theme="{{ current_theme }}"
+                              title="{% trans 'Toggle theme' %}">
+                        <span class="theme-icon">🖥️</span>
+                      </button>
+                    </li>
                     {# Mobile: Language Switcher #}
                     <li class="nav-item d-md-none">
                       <div class="d-flex align-items-center nav-link">
@@ -114,7 +123,7 @@
               <ul class="navbar-nav me-auto mb-2 mb-lg-0 flex-column flex-md-row desktop-only">
                 {% include 'includes/nav_main_items.html' %}
               </ul>
-              {# Desktop: Favorites and Language Switcher side by side #}
+              {# Desktop: Favorites, Theme and Language Switcher side by side #}
               <div class="d-none d-md-flex ms-md-auto mt-3 mt-md-0 align-items-center">
                 {% if user.is_authenticated %}
                   <button class="btn btn-link nav-link favorite-star me-3"
@@ -123,6 +132,11 @@
                           data-url="{{ request.build_absolute_uri }}"
                           data-title="{{ page_title|default:'' }}">☆</button>
                 {% endif %}
+                <button class="btn btn-link nav-link theme-cycle-toggle me-3"
+                        data-current-theme="{{ current_theme }}"
+                        title="{% trans 'Toggle theme' %}">
+                  <span class="theme-icon">🖥️</span>
+                </button>
                 <div class="d-flex language-switcher">
                   {% get_current_language as LANGUAGE_CODE %}
                   <a href="#"
@@ -149,6 +163,14 @@
                 {% csrf_token %}
                 <input name="next" type="hidden" value="{{ request.get_full_path }}" />
                 <input name="language" type="hidden" value="en" />
+              </form>
+              <form id="theme-form"
+                    action="{% url 'core:set_theme' %}"
+                    method="post"
+                    class="d-none">
+                {% csrf_token %}
+                <input name="next" type="hidden" value="{{ request.get_full_path }}" />
+                <input name="theme" id="theme-input" type="hidden" value="" />
               </form>
             </div>
           </div>
@@ -200,6 +222,96 @@
       {% endcomment %}
       <script>
         window.addEventListener('DOMContentLoaded', () => {
+
+          // Theme switching functionality
+          function getThemeIcon(theme) {
+            switch (theme) {
+              case 'light': return '☀️';
+              case 'dark': return '🌙';
+              case 'auto':
+              default: return '🖥️';
+            }
+          }
+
+          function getThemeTitle(theme) {
+            switch (theme) {
+              case 'light': return '{% trans "Light theme" %}';
+              case 'dark': return '{% trans "Dark theme" %}';
+              case 'auto':
+              default: return '{% trans "Auto theme" %}';
+            }
+          }
+
+          function getNextTheme(currentTheme) {
+            const themeOrder = ['auto', 'light', 'dark'];
+            const currentIndex = themeOrder.indexOf(currentTheme);
+            const nextIndex = (currentIndex + 1) % themeOrder.length;
+            return themeOrder[nextIndex];
+          }
+
+          function initTheme() {
+            const currentTheme = '{{ current_theme }}';
+            const htmlElement = document.documentElement;
+
+            // Apply the current theme from server
+            if (currentTheme === 'auto') {
+              // Remove data-bs-theme to let CSS handle auto detection
+              htmlElement.removeAttribute('data-bs-theme');
+            } else {
+              htmlElement.setAttribute('data-bs-theme', currentTheme);
+            }
+
+            // Update button icons and titles
+            updateThemeButtons(currentTheme);
+          }
+
+          function updateThemeButtons(activeTheme) {
+            const themeButtons = document.querySelectorAll('.theme-cycle-toggle');
+            themeButtons.forEach(button => {
+              const themeIcon = button.querySelector('.theme-icon');
+              if (themeIcon) {
+                themeIcon.textContent = getThemeIcon(activeTheme);
+              }
+              button.setAttribute('title', getThemeTitle(activeTheme));
+              button.setAttribute('data-current-theme', activeTheme);
+            });
+          }
+
+          function setTheme(theme) {
+            const htmlElement = document.documentElement;
+            const themeInput = document.getElementById('theme-input');
+            const themeForm = document.getElementById('theme-form');
+
+            // Update the form
+            themeInput.value = theme;
+
+            // Apply theme immediately for better UX
+            if (theme === 'auto') {
+              htmlElement.removeAttribute('data-bs-theme');
+            } else {
+              htmlElement.setAttribute('data-bs-theme', theme);
+            }
+
+            // Update button icons and titles
+            updateThemeButtons(theme);
+
+            // Submit the form
+            themeForm.submit();
+          }
+
+          // Initialize theme on page load
+          initTheme();
+
+          // Add event listeners to theme cycle buttons
+          const themeCycleButtons = document.querySelectorAll('.theme-cycle-toggle');
+          themeCycleButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+              e.preventDefault();
+              const currentTheme = button.getAttribute('data-current-theme');
+              const nextTheme = getNextTheme(currentTheme);
+              setTheme(nextTheme);
+            });
+          });
 
           // Mobile submenu functionality
           const submenuTriggers = document.querySelectorAll('.mobile-submenu-trigger');
