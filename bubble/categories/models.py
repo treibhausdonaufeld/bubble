@@ -1,3 +1,4 @@
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -38,6 +39,37 @@ class ItemCategory(models.Model):
             "Format: {'field_name': {'type': 'choice', 'label': 'Size', "
             "'choices': ['S', 'M', 'L'], 'required': true}}",
         ),
+    )
+
+    # Filter and display configuration
+    filters = ArrayField(
+        models.CharField(max_length=50),
+        default=list,
+        blank=True,
+        help_text=_(
+            "List of field names to display as filters. Can include both Item model fields and custom fields.",
+        ),
+    )
+
+    sort_by = ArrayField(
+        models.CharField(max_length=50),
+        default=list,
+        blank=True,
+        help_text=_(
+            "List of field names available for sorting. Custom fields will allow both ascending and descending sort.",
+        ),
+    )
+
+    upper_tag = models.CharField(
+        max_length=50,
+        blank=True,
+        help_text=_("Custom field name to display in upper tag on item cards"),
+    )
+
+    lower_tag = models.CharField(
+        max_length=50,
+        blank=True,
+        help_text=_("Custom field name to display in lower tag on item cards"),
     )
 
     class Meta:

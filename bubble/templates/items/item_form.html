@@ -12,8 +12,6 @@
 {% endblock title %}
 {% block css %}
   {{ block.super }}
-  <!-- Select2 CSS -->
-  <link href="{% static 'css/vendor/select2.min.css' %}" rel="stylesheet" />
 {% endblock css %}
 
 {% block content %}
@@ -121,26 +119,12 @@
                   {% if form.description.help_text %}<div class="form-text">{{ form.description.help_text }}</div>{% endif %}
                 </div>
               </div>
-              <!-- Category and Type -->
+              <!-- Category -->
               <div class="row mb-3">
-                <div class="col-md-6">
+                <div class="col-md-12">
                   <label for="{{ form.selected_category.id_for_label }}" class="form-label">{{ form.selected_category.label }} *</label>
                   {{ form.selected_category }}
                   {% if form.selected_category.errors %}<div class="text-danger">{{ form.selected_category.errors }}</div>{% endif %}
-                </div>
-                <div class="col-md-6">
-                  <label for="{{ form.item_type.id_for_label }}" class="form-label">{{ form.item_type.label }} *</label>
-                  {{ form.item_type }}
-                  {% if form.item_type.errors %}<div class="text-danger">{{ form.item_type.errors }}</div>{% endif %}
-                </div>
-              </div>
-              <!-- Price -->
-              <div class="row mb-3">
-                <div class="col-md-6">
-                  <label for="{{ form.price.id_for_label }}" class="form-label">{{ form.price.label }}</label>
-                  {{ form.price }}
-                  {% if form.price.errors %}<div class="text-danger">{{ form.price.errors }}</div>{% endif %}
-                  {% if form.price.help_text %}<div class="form-text">{{ form.price.help_text }}</div>{% endif %}
                 </div>
               </div>
               <!-- Dynamic Category Fields -->
@@ -161,12 +145,6 @@
               <div class="mb-3">
                 <label class="form-label">{% trans "Settings" %}</label>
                 <div class="form-check">
-                  {{ form.display_contact }}
-                  <label class="form-check-label"
-                         for="{{ form.display_contact.id_for_label }}">{{ form.display_contact.label }}</label>
-                  {% if form.display_contact.help_text %}<div class="form-text">{{ form.display_contact.help_text }}</div>{% endif %}
-                </div>
-                <div class="form-check">
                   {{ form.active }}
                   <label class="form-check-label" for="{{ form.active.id_for_label }}">{{ form.active.label }}</label>
                 </div>
@@ -178,22 +156,7 @@
                     {% if form.intern.help_text %}<div class="form-text">{{ form.intern.help_text }}</div>{% endif %}
                   </div>
                 {% endif %}
-                {% if form.th_payment %}
-                  <div class="form-check">
-                    {{ form.th_payment }}
-                    <label class="form-check-label" for="{{ form.th_payment.id_for_label }}">{{ form.th_payment.label }}</label>
-                    {% if form.th_payment.help_text %}<div class="form-text">{{ form.th_payment.help_text }}</div>{% endif %}
-                  </div>
-                {% endif %}
               </div>
-              <!-- Profile Image Frame -->
-              {% if form.profile_img_frame %}
-                <div class="mb-3">
-                  <label for="{{ form.profile_img_frame.id_for_label }}" class="form-label">{{ form.profile_img_frame.label }}</label>
-                  {{ form.profile_img_frame }}
-                  {% if form.profile_img_frame.errors %}<div class="text-danger">{{ form.profile_img_frame.errors }}</div>{% endif %}
-                </div>
-              {% endif %}
               <!-- Form Errors -->
               {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
               <!-- Form Actions -->
@@ -214,68 +177,98 @@
       </div>
     </div>
   </div>
-  <!-- jQuery and Select2 JavaScript (local files) -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="{% static 'js/vendor/select2.min.js' %}"></script>
-
   <script>
-    $(document).ready(function() {
-      console.log('Document ready, jQuery version:', $.fn.jquery);
-      console.log('Select2 available:', typeof $.fn.select2 !== 'undefined');
-
-      if (typeof $.fn.select2 === 'undefined') {
-        console.error('Select2 not available');
-        return;
-      }
-
-      // Find all select fields
-      console.log('Category fields found:', $('.select2-category').length);
-      console.log('Other select fields found:', $('.select2-field').length);
-
-      try {
-        // Initialize Select2 for category dropdown
-        $('.select2-category').select2({
-          placeholder: "{% trans 'Search and select a category...' %}",
-          allowClear: false,
-          width: '100%',
-          theme: 'default'
-        });
-
-        // Initialize Select2 for all other select fields
-        $('.select2-field').select2({
-          allowClear: false,
-          width: '100%',
-          theme: 'default'
-        });
-
-        console.log('Select2 initialization complete');
-
-        // Show/hide price field based on item type (using jQuery for consistency)
-        const itemTypeField = $('#{{ form.item_type.id_for_label }}');
-        const priceField = $('#{{ form.price.id_for_label }}');
-        const priceContainer = priceField.closest('.col-md-6');
-
-        function togglePriceField() {
-          if (itemTypeField.val() === '0') { // Sell
-            priceContainer.show();
-            priceField.prop('required', true);
-          } else { // Give away or Borrow
-            priceContainer.hide();
-            priceField.prop('required', false);
-            priceField.val('');
-          }
-        }
-
-        // Use Select2 events for the item type field if it's a Select2 field
-        itemTypeField.on('change select2:select', togglePriceField);
-        togglePriceField(); // Initial call
-
-      } catch (error) {
-        console.error('Error initializing Select2:', error);
-      }
-    });
+    document.addEventListener('DOMContentLoaded', function() {
 
       // Category selection is now handled by a simple dropdown
+
+      // Conditional field visibility logic
+      function setupConditionalFields() {
+        const conditionalFields = document.querySelectorAll('.conditional-field');
+        console.log('[SetupConditionalFields] Found', conditionalFields.length, 'conditional fields');
+
+        conditionalFields.forEach(field => {
+          const dependingOn = field.getAttribute('data-depending');
+
+          // Support both old format (data-depending-value) and new format (data-depending-values)
+          let dependingValues = [];
+          const dependingValuesAttr = field.getAttribute('data-depending-values');
+          const dependingValueAttr = field.getAttribute('data-depending-value');
+
+          console.log('[Field]', field.name || field.id, 'depends on:', dependingOn);
+          console.log('  - data-depending-values:', dependingValuesAttr);
+          console.log('  - data-depending-value:', dependingValueAttr);
+
+          if (dependingValuesAttr) {
+            // New array format
+            try {
+              dependingValues = JSON.parse(dependingValuesAttr);
+              console.log('  - Parsed values:', dependingValues);
+            } catch (e) {
+              console.error('Error parsing depending values:', e);
+              dependingValues = [];
+            }
+          } else if (dependingValueAttr) {
+            // Old single value format
+            dependingValues = [dependingValueAttr];
+            console.log('  - Single value converted to array:', dependingValues);
+          }
+
+          if (dependingOn && dependingValues.length > 0) {
+            // Find the field this depends on
+            const dependentField = document.querySelector(`[name="custom_${dependingOn}"]`);
+            console.log('  - Looking for field:', `custom_${dependingOn}`);
+            console.log('  - Found dependent field:', dependentField ? 'YES' : 'NO');
+
+            if (dependentField) {
+              // Function to toggle visibility
+              const toggleVisibility = () => {
+                const currentValue = dependentField.value;
+                const fieldContainer = field.closest('.mb-3');
+
+                console.log(`[Toggle] ${field.name || field.id}: current value="${currentValue}", checking against:`, dependingValues);
+                console.log('  - Value in array?', dependingValues.includes(currentValue));
+
+                // Check if current value is in the array of depending values
+                if (dependingValues.includes(currentValue)) {
+                  fieldContainer.style.display = 'block';
+                  // Restore required attribute if it was required before
+                  if (field.getAttribute('data-was-required') === 'true') {
+                    field.setAttribute('required', 'required');
+                  }
+                } else {
+                  fieldContainer.style.display = 'none';
+                  // If field is hidden, remove required attribute to prevent validation issues
+                  if (field.hasAttribute('required')) {
+                    field.setAttribute('data-was-required', 'true');
+                    field.removeAttribute('required');
+                  }
+                  // Clear the field value when hidden
+                  if (field.tagName === 'SELECT') {
+                    field.selectedIndex = 0;
+                  } else {
+                    field.value = '';
+                  }
+                }
+              };
+
+              // Initial check
+              toggleVisibility();
+
+              // Listen for changes
+              dependentField.addEventListener('change', toggleVisibility);
+
+              // Also listen for Select2 events if it's a Select2 field
+              if (typeof $ !== 'undefined' && $.fn.select2) {
+                $(dependentField).on('select2:select', toggleVisibility);
+              }
+            }
+          }
+        });
+      }
+
+      // Call after page loads and after Select2 initialization
+      setTimeout(setupConditionalFields, 100);
 
       // Image upload preview functionality with drag & drop
       const imageInput = document.getElementById('id_images');

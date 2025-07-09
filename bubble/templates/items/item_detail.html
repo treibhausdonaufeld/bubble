@@ -176,29 +176,6 @@
           {% endif %}
         </div>
         <div class="card-body">
-          <!-- Type and Price -->
-          <div class="mb-3">
-            {% if item.item_type == 0 %}
-              <span class="badge bg-success fs-6">{% trans "For Sale" %}</span>
-              {% if item.price %}<div class="h4 text-success mt-2">€{{ item.price }}</div>{% endif %}
-            {% elif item.item_type == 1 %}
-              <span class="badge bg-primary fs-6">{% trans "Give Away" %}</span>
-              <div class="h4 text-primary mt-2">{% trans "Free" %}</div>
-            {% elif item.item_type == 2 %}
-              <span class="badge bg-info fs-6">{% trans "Borrow" %}</span>
-            {% endif %}
-          </div>
-          <!-- Condition -->
-          <div class="mb-3">
-            <strong>{% trans "Condition:" %}</strong>
-            {% if item.status == 0 %}
-              <span class="badge bg-light text-dark">{% trans "New" %}</span>
-            {% elif item.status == 1 %}
-              <span class="badge bg-warning">{% trans "Used" %}</span>
-            {% elif item.status == 2 %}
-              <span class="badge bg-secondary">{% trans "Old" %}</span>
-            {% endif %}
-          </div>
           <!-- Category -->
           <div class="mb-3">
             <strong>{% trans "Category:" %}</strong> {{ item.category.name }}
@@ -213,13 +190,18 @@
                   {% else %}
                     <strong>{{ field_name|title }}:</strong>
                   {% endif %}
-                  {% if field_data.value %}
+                  {% if field_data.value is not None %}
                     {% if field_data.value == "new" %}{% trans "New" %}
                     {% elif field_data.value == "used" %}{% trans "Used" %}
                     {% elif field_data.value == "old" %}{% trans "Old" %}
+                    {% elif field_data.value == 0 or field_data.value == "" %}
+                      {# Don't display zero or empty values #}
                     {% else %}{{ field_data.value }}{% endif %}
                   {% else %}
-                    {{ field_data }}
+                    {# Fallback for old format where field_data might be just a value #}
+                    {% if field_data != 0 and field_data != "" %}
+                      {{ field_data }}
+                    {% endif %}
                   {% endif %}
                 </div>
               {% endif %}
@@ -346,29 +328,6 @@
               {% endif %}
             </div>
             <div class="card-body">
-              <!-- Type and Price -->
-              <div class="mb-3">
-                {% if item.item_type == 0 %}
-                  <span class="badge bg-success fs-6">{% trans "For Sale" %}</span>
-                  {% if item.price %}<div class="h4 text-success mt-2">€{{ item.price }}</div>{% endif %}
-                {% elif item.item_type == 1 %}
-                  <span class="badge bg-primary fs-6">{% trans "Give Away" %}</span>
-                  <div class="h4 text-primary mt-2">{% trans "Free" %}</div>
-                {% elif item.item_type == 2 %}
-                  <span class="badge bg-info fs-6">{% trans "Borrow" %}</span>
-                {% endif %}
-              </div>
-              <!-- Condition -->
-              <div class="mb-3">
-                <strong>{% trans "Condition:" %}</strong>
-                {% if item.status == 0 %}
-                  <span class="badge bg-light text-dark">{% trans "New" %}</span>
-                {% elif item.status == 1 %}
-                  <span class="badge bg-warning">{% trans "Used" %}</span>
-                {% elif item.status == 2 %}
-                  <span class="badge bg-secondary">{% trans "Old" %}</span>
-                {% endif %}
-              </div>
               <!-- Category -->
               <div class="mb-3">
                 <strong>{% trans "Category:" %}</strong> {{ item.category.name }}
@@ -383,13 +342,18 @@
                       {% else %}
                         <strong>{{ field_name|title }}:</strong>
                       {% endif %}
-                      {% if field_data.value %}
+                      {% if field_data.value is not None %}
                         {% if field_data.value == "new" %}{% trans "New" %}
                         {% elif field_data.value == "used" %}{% trans "Used" %}
                         {% elif field_data.value == "old" %}{% trans "Old" %}
+                        {% elif field_data.value == 0 or field_data.value == "" %}
+                          {# Don't display zero or empty values #}
                         {% else %}{{ field_data.value }}{% endif %}
                       {% else %}
-                        {{ field_data }}
+                        {# Fallback for old format where field_data might be just a value #}
+                        {% if field_data != 0 and field_data != "" %}
+                          {{ field_data }}
+                        {% endif %}
                       {% endif %}
                     </div>
                   {% endif %}
@@ -428,7 +392,7 @@
               <i class="fas fa-user me-2"></i>
               <strong>{{ item.user.username }}</strong>
             </div>
-            {% if item.display_contact and item.user.profile %}
+            {% if item.user.profile %}
               {% if item.user.email %}
                 <div class="d-flex align-items-center mb-2">
                   <i class="fas fa-envelope me-2"></i>
@@ -452,7 +416,7 @@
             <!-- Message/Request Button -->
             {% if user.is_authenticated and user != item.user %}
               <div class="mt-3">
-                <a href="{% url 'messaging:send_message' item.pk %}"
+                <a href=""
                    class="btn btn-success w-100">
                   <i class="fas fa-envelope me-2"></i>{% trans "Send Request" %}
                 </a>
@@ -473,7 +437,7 @@
             <i class="fas fa-user me-2"></i>
             <strong>{{ item.user.username }}</strong>
           </div>
-          {% if item.display_contact and item.user.profile %}
+          {% if item.user.profile %}
             {% if item.user.email %}
               <div class="d-flex align-items-center mb-2">
                 <i class="fas fa-envelope me-2"></i>
@@ -497,7 +461,7 @@
           <!-- Message/Request Button -->
           {% if user.is_authenticated and user != item.user %}
             <div class="mt-3">
-              <a href="{% url 'messaging:send_message' item.pk %}"
+              <a href=""
                  class="btn btn-success w-100">
                 <i class="fas fa-envelope me-2"></i>{% trans "Send Request" %}
               </a>

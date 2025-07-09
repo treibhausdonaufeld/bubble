@@ -44,7 +44,12 @@
       "Bash(ruff check:*)",
       "Bash(timeout:*)",
       "Bash(pre-commit run:*)",
-      "Bash(cp:*)"
+      "Bash(cp:*)",
+      "Bash(npm install:*)",
+      "Bash(touch:*)",
+      "Bash(just python debug_filters.py)",
+      "Bash(just:*)",
+      "Bash(gh pr list:*)"
     ],
     "deny": []
   }
