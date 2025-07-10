@@ -1,5 +1,6 @@
 from django.http import JsonResponse
 from django.shortcuts import redirect
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import gettext as _
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
@@ -32,4 +33,6 @@ def set_theme(request):
 
     # Redirect for regular form submissions
     next_url = request.POST.get("next", request.headers.get("referer", "/"))
+    if not url_has_allowed_host_and_scheme(next_url, allowed_hosts=None):
+        next_url = "/"
     return redirect(next_url)
