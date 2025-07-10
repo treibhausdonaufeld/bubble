@@ -184,7 +184,7 @@ class ItemListView(ListView):
         if item_type_param:
             try:
                 item_type_filter = int(item_type_param)
-                item_type_names = {0: "sell", 1: "give_away", 2: "borrow", 3: "need"}
+                item_type_names = {0: "sell", 1: "borrow"}
                 context["current_filter"] = item_type_names.get(item_type_filter)
                 context["current_filter_display"] = dict(Item.ITEM_TYPE_CHOICES).get(
                     item_type_filter,

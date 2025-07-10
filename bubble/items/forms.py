@@ -31,6 +31,7 @@ class ItemForm(forms.ModelForm):
             "description",
             "selected_category",
             "item_type",
+            "status",
             "price",
             "display_contact",
             "active",
@@ -47,6 +48,7 @@ class ItemForm(forms.ModelForm):
                 },
             ),
             "item_type": forms.Select(attrs={"class": "form-select select2-field"}),
+            "status": forms.Select(attrs={"class": "form-select select2-field"}),
             "price": forms.NumberInput(
                 attrs={
                     "class": "form-control",
@@ -62,6 +64,7 @@ class ItemForm(forms.ModelForm):
             "name": _("Name"),
             "description": _("Description"),
             "item_type": _("Type"),
+            "status": _("Condition"),
             "price": _("Price"),
             "display_contact": _("Show contact"),
             "active": _("Published"),
@@ -197,6 +200,12 @@ class ItemFilterForm(forms.Form):
 
     item_type = forms.ChoiceField(
         choices=[("", _("All types")), *Item.ITEM_TYPE_CHOICES],
+        required=False,
+        widget=forms.Select(attrs={"class": "form-select"}),
+    )
+
+    status = forms.ChoiceField(
+        choices=[("", _("All conditions")), *Item.STATUS_CHOICES],
         required=False,
         widget=forms.Select(attrs={"class": "form-select"}),
     )

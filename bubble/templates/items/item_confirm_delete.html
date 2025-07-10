@@ -61,9 +61,7 @@
                     {% trans "For Sale" %}
                     {% if object.price %}- €{{ object.price }}{% endif %}
                   {% elif object.item_type == 1 %}
-                    {% trans "Give Away" %}
-                  {% elif object.item_type == 2 %}
-                    {% trans "Borrow" %}
+                    {% trans "Rent" %}
                   {% endif %}
                 </div>
               </div>

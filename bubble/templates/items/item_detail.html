@@ -182,10 +182,8 @@
               <span class="badge bg-success fs-6">{% trans "For Sale" %}</span>
               {% if item.price %}<div class="h4 text-success mt-2">€{{ item.price }}</div>{% endif %}
             {% elif item.item_type == 1 %}
-              <span class="badge bg-primary fs-6">{% trans "Give Away" %}</span>
+              <span class="badge bg-primary fs-6">{% trans "Rent" %}</span>
               <div class="h4 text-primary mt-2">{% trans "Free" %}</div>
-            {% elif item.item_type == 2 %}
-              <span class="badge bg-info fs-6">{% trans "Borrow" %}</span>
             {% endif %}
           </div>
           <!-- Condition -->
@@ -196,7 +194,7 @@
             {% elif item.status == 1 %}
               <span class="badge bg-warning">{% trans "Used" %}</span>
             {% elif item.status == 2 %}
-              <span class="badge bg-secondary">{% trans "Old" %}</span>
+              <span class="badge bg-secondary">{% trans "Broken" %}</span>
             {% endif %}
           </div>
           <!-- Category -->
@@ -330,10 +328,8 @@
                   <span class="badge bg-success fs-6">{% trans "For Sale" %}</span>
                   {% if item.price %}<div class="h4 text-success mt-2">€{{ item.price }}</div>{% endif %}
                 {% elif item.item_type == 1 %}
-                  <span class="badge bg-primary fs-6">{% trans "Give Away" %}</span>
+                  <span class="badge bg-primary fs-6">{% trans "Rent" %}</span>
                   <div class="h4 text-primary mt-2">{% trans "Free" %}</div>
-                {% elif item.item_type == 2 %}
-                  <span class="badge bg-info fs-6">{% trans "Borrow" %}</span>
                 {% endif %}
               </div>
               <!-- Condition -->
@@ -344,7 +340,7 @@
                 {% elif item.status == 1 %}
                   <span class="badge bg-warning">{% trans "Used" %}</span>
                 {% elif item.status == 2 %}
-                  <span class="badge bg-secondary">{% trans "Old" %}</span>
+                  <span class="badge bg-secondary">{% trans "Broken" %}</span>
                 {% endif %}
               </div>
               <!-- Category -->
