@@ -183,6 +183,28 @@ body {
 
 .navbar {
   background-color: var(--bubble-navbar-bg) !important;
+
+  // Ensure navbar text uses theme colors
+  .navbar-brand {
+    color: var(--bs-body-color) !important;
+  }
+
+  .navbar-nav .nav-link {
+    color: var(--bs-body-color) !important;
+
+    &:hover, &:focus {
+      color: var(--bs-primary) !important;
+    }
+  }
+
+  .navbar-toggler {
+    border-color: var(--bs-border-color);
+    color: var(--bs-body-color);
+  }
+
+  .btn {
+    color: inherit;
+  }
 }
 
 .form-control, .form-select {
@@ -195,6 +217,30 @@ body {
     background-color: var(--bubble-input-bg);
     color: var(--bs-body-color);
   }
+
+  // Placeholder styling for all theme modes
+  &::placeholder {
+    color: var(--bubble-text-muted);
+    opacity: 1; // Override Firefox default opacity
+  }
+
+  &::-webkit-input-placeholder {
+    color: var(--bubble-text-muted);
+  }
+
+  &::-moz-placeholder {
+    color: var(--bubble-text-muted);
+    opacity: 1;
+  }
+
+  &:-ms-input-placeholder {
+    color: var(--bubble-text-muted);
+  }
+}
+
+// Form help text styling
+.form-text {
+  color: var(--bubble-text-muted) !important;
 }
 
 a {
@@ -237,6 +283,40 @@ a {
 
   &:hover {
     color: white;
+  }
+}
+
+// Dropdown styling for dark mode
+.dropdown-menu {
+  background-color: var(--bubble-card-bg);
+  border-color: var(--bubble-card-border);
+  color: var(--bs-body-color);
+
+  .dropdown-item {
+    color: var(--bs-body-color);
+
+    &:hover, &:focus {
+      background-color: var(--bubble-sidebar-bg);
+      color: var(--bs-body-color);
+    }
+
+    &:active {
+      background-color: var(--bs-primary);
+      color: white;
+    }
+
+    &.active {
+      background-color: var(--bs-primary);
+      color: white;
+    }
+  }
+
+  .dropdown-divider {
+    border-color: var(--bubble-card-border);
+  }
+
+  .dropdown-header {
+    color: var(--bubble-text-muted);
   }
 }
 

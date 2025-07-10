@@ -15,9 +15,15 @@ def theme_context(request):
     if current_theme not in valid_themes:
         current_theme = "auto"
 
+    # For template data-bs-theme attribute:
+    # - Return 'light' or 'dark' for explicit themes
+    # - Return None for 'auto' to let CSS media queries handle it
+    data_bs_theme = current_theme if current_theme != "auto" else None
+
     return {
         "site_name": "Bubble",
         "current_theme": current_theme,
+        "data_bs_theme": data_bs_theme,
         "available_themes": [
             {"value": "light", "label": "Light"},
             {"value": "dark", "label": "Dark"},
