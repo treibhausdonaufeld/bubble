@@ -419,3 +419,4 @@ WEBPACK_LOADER = {
 }
 # Your stuff...
 # ------------------------------------------------------------------------------
+Path(str(STATIC_ROOT)).mkdir(parents=True, exist_ok=True)
