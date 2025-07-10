@@ -249,6 +249,12 @@ msgstr "Gebraucht"
 msgid "Old"
 msgstr "Alt"
 
+msgid "Broken"
+msgstr "Kaputt"
+
+msgid "All conditions"
+msgstr "Alle Zustände"
+
 msgid "View"
 msgstr "Ansehen"
 
