@@ -360,64 +360,7 @@
         });
       }
 
-      // Initialize selected tags from URL parameters
-      const urlParams = new URLSearchParams(window.location.search);
-      const initialTags = urlParams.getAll('tags');
-      initialTags.forEach(tagId => {
-        const tagElement = document.querySelector(`[data-tag-id="${tagId}"]`);
-        if (tagElement) {
-          addTag(tagId, tagElement.dataset.tagName);
-        }
-      });
 
-      function addTag(tagId, tagName) {
-        if (selectedTags.find(tag => tag.id === tagId)) return;
-
-        selectedTags.push({
-          id: tagId,
-          name: tagName
-        });
-        updateSelectedTagsDisplay();
-        updateTagsInput();
-        updateTagDropdown();
-      }
-
-      function removeTag(tagId) {
-        selectedTags = selectedTags.filter(tag => tag.id !== tagId);
-        updateSelectedTagsDisplay();
-        updateTagsInput();
-        updateTagDropdown();
-      }
-
-      function updateSelectedTagsDisplay() {
-        selectedTagsContainer.innerHTML = '';
-        selectedTags.forEach(tag => {
-          const tagBadge = document.createElement('span');
-          tagBadge.className = 'tag-badge';
-          tagBadge.innerHTML = `
-        <i class="fas fa-tag"></i> ${tag.name}
-        <span class="remove" data-tag-id="${tag.id}">&times;</span>
-      `;
-          selectedTagsContainer.appendChild(tagBadge);
-        });
-      }
-
-      function updateTagsInput() {
-        const tagIds = selectedTags.map(tag => tag.id);
-        tagsInput.value = tagIds.join(',');
-      }
-
-      function updateTagDropdown() {
-        const tagItems = tagDropdown.querySelectorAll('.tag-item');
-        tagItems.forEach(item => {
-          const tagId = item.dataset.tagId;
-          if (selectedTags.find(tag => tag.id === tagId)) {
-            item.classList.add('selected');
-          } else {
-            item.classList.remove('selected');
-          }
-        });
-      }
 
       // View mode toggle
       const viewButtons = document.querySelectorAll('.view-btn');
@@ -481,7 +424,6 @@
           (itemTypeSelect && itemTypeSelect.value) ||
           (statusSelect && statusSelect.value) ||
           (sortSelect && sortSelect.value !== sortSelect.options[0].value) ||
-          selectedTags.length > 0 ||
           document.querySelector('input[name="category"]:checked:not(#cat_all)');
 
         if (floatingBtn) {
