@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('items', '0013_add_vector_field'),
+        ('items', '0012_item_workflow_id'),
     ]
 
     operations = [
