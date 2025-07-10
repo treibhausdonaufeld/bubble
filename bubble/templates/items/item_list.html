@@ -425,14 +425,6 @@
           (statusSelect && statusSelect.value) ||
           (sortSelect && sortSelect.value !== sortSelect.options[0].value) ||
           document.querySelector('input[name="category"]:checked:not(#cat_all)');
-
-        if (floatingBtn) {
-          if (hasActiveFilters) {
-            floatingBtn.classList.add('has-filters');
-          } else {
-            floatingBtn.classList.remove('has-filters');
-          }
-        }
       }
 
       // Monitor form changes to update floating button state
