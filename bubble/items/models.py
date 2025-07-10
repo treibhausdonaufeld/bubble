@@ -12,7 +12,7 @@ from config.settings.base import AUTH_USER_MODEL
 class StatusType(models.IntegerChoices):
     NEW = 0, _("New")
     USED = 1, _("Used")
-    OLD = 2, _("Old")
+    BROKEN = 2, _("Broken")
 
 
 class ItemType(models.IntegerChoices):
@@ -84,6 +84,11 @@ class Item(models.Model):
     item_type = models.IntegerField(choices=ItemType, default=ItemType.FOR_SALE)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
+    status = models.IntegerField(
+        choices=StatusType,
+        default=StatusType.USED,
+        help_text=_("Condition of the item"),
+    )
     profile_img_frame = models.ImageField(upload_to="items/", blank=True, null=True)
     profile_img_frame_alt = models.CharField(max_length=255, blank=True)
     processing_status = models.IntegerField(
@@ -96,13 +101,6 @@ class Item(models.Model):
         help_text="Temporal workflow ID for AI processing",
     )
 
-    # Store category-specific custom fields
-    custom_fields = models.JSONField(
-        default=dict,
-        blank=True,
-        help_text=_("Additional fields specific to the item's category"),
-    )
-
     # Custom manager
     objects = ItemManager()
 
@@ -112,7 +110,7 @@ class Item(models.Model):
     PROCESSING_STATUS_CHOICES = ProcessingStatus.choices
     STATUS_NEW = StatusType.NEW
     STATUS_USED = StatusType.USED
-    STATUS_OLD = StatusType.OLD
+    STATUS_BROKEN = StatusType.BROKEN
     ITEM_TYPE_FOR_SALE = ItemType.FOR_SALE
     ITEM_TYPE_RENT = ItemType.RENT
     PROCESSING_DRAFT = ProcessingStatus.DRAFT

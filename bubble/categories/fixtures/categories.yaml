@@ -3,8 +3,6 @@
     name: Dinge
     description: ''
     emoji: "\U0001F9FA"
-    prompt_name: ''
-    prompt_description: ''
     parent_category: null
     url_slug: things
     ordering: 1
@@ -16,8 +14,6 @@
     name: Antiquitäten / Kunst
     description: ''
     emoji: ''
-    prompt_name: ''
-    prompt_description: ''
     parent_category:
     - Dinge
     url_slug: ''
@@ -28,8 +24,6 @@
     name: Baby / Kind
     description: ''
     emoji: ''
-    prompt_name: ''
-    prompt_description: ''
     parent_category:
     - Dinge
     url_slug: ''
@@ -40,8 +34,6 @@
     name: Beauty / Gesundheit / Wellness
     description: ''
     emoji: ''
-    prompt_name: ''
-    prompt_description: ''
     parent_category:
     - Dinge
     url_slug: ''
@@ -52,8 +44,6 @@
     name: Boote / Yachten / Jetskis
     description: ''
     emoji: ''
-    prompt_name: ''
-    prompt_description: ''
     parent_category:
     - Dinge
     url_slug: ''
@@ -64,8 +54,6 @@
     name: Bücher / Filme / Musik
     description: ''
     emoji: ''
-    prompt_name: ''
-    prompt_description: ''
     parent_category:
     - Dinge
     url_slug: ''
@@ -76,8 +64,6 @@
     name: Computer / Software
     description: ''
     emoji: ''
-    prompt_name: ''
-    prompt_description: ''
     parent_category:
     - Dinge
     url_slug: ''
@@ -88,8 +74,6 @@
     name: Dienstleistungen
     description: ''
     emoji: ''
-    prompt_name: ''
-    prompt_description: ''
     parent_category:
     - Dinge
     url_slug: ''
@@ -100,8 +84,6 @@
     name: Freizeit / Instrumente / Kulinarik
     description: ''
     emoji: ''
-    prompt_name: ''
-    prompt_description: ''
     parent_category:
     - Dinge
     url_slug: ''
@@ -112,8 +94,6 @@
     name: Games / Konsolen
     description: ''
     emoji: ''
-    prompt_name: ''
-    prompt_description: ''
     parent_category:
     - Dinge
     url_slug: ''
@@ -124,8 +104,6 @@
     name: Haus / Garten / Werkstatt
     description: ''
     emoji: ''
-    prompt_name: ''
-    prompt_description: ''
     parent_category:
     - Dinge
     url_slug: ''
@@ -136,8 +114,6 @@
     name: Kameras / TV / Multimedia
     description: ''
     emoji: ''
-    prompt_name: ''
-    prompt_description: ''
     parent_category:
     - Dinge
     url_slug: ''
@@ -148,8 +124,6 @@
     name: KFZ-Zubehör / Motorradteile
     description: ''
     emoji: ''
-    prompt_name: ''
-    prompt_description: ''
     parent_category:
     - Dinge
     url_slug: ''
@@ -160,8 +134,6 @@
     name: Mode / Accessoires
     description: ''
     emoji: ''
-    prompt_name: ''
-    prompt_description: ''
     parent_category:
     - Dinge
     url_slug: ''
@@ -172,8 +144,6 @@
     name: Smartphones / Telefonie
     description: ''
     emoji: ''
-    prompt_name: ''
-    prompt_description: ''
     parent_category:
     - Dinge
     url_slug: ''
@@ -184,8 +154,6 @@
     name: Spielen / Spielzeug
     description: ''
     emoji: ''
-    prompt_name: ''
-    prompt_description: ''
     parent_category:
     - Dinge
     url_slug: ''
@@ -196,8 +164,6 @@
     name: Sport / Sportgeräte
     description: ''
     emoji: ''
-    prompt_name: ''
-    prompt_description: ''
     parent_category:
     - Dinge
     url_slug: ''
@@ -208,8 +174,6 @@
     name: Tiere / Tierbedarf
     description: ''
     emoji: ''
-    prompt_name: ''
-    prompt_description: ''
     parent_category:
     - Dinge
     url_slug: ''
@@ -220,8 +184,6 @@
     name: Uhren / Schmuck
     description: ''
     emoji: ''
-    prompt_name: ''
-    prompt_description: ''
     parent_category:
     - Dinge
     url_slug: ''
@@ -232,8 +194,6 @@
     name: Wohnen / Haushalt / Gastronomie
     description: ''
     emoji: ''
-    prompt_name: ''
-    prompt_description: ''
     parent_category:
     - Dinge
     url_slug: ''
@@ -246,8 +206,6 @@
     name: Räume
     description: ''
     emoji: "\U0001F6CB️"
-    prompt_name: ''
-    prompt_description: ''
     parent_category: null
     url_slug: rooms
     ordering: 3
@@ -257,8 +215,6 @@
     name: Spielen
     description: ''
     emoji: ''
-    prompt_name: ''
-    prompt_description: ''
     parent_category:
     - Räume
     url_slug: ''
@@ -269,8 +225,6 @@
     name: Schlafen
     description: ''
     emoji: ''
-    prompt_name: ''
-    prompt_description: ''
     parent_category:
     - Räume
     url_slug: ''
@@ -281,8 +235,6 @@
     name: Waschen
     description: ''
     emoji: ''
-    prompt_name: ''
-    prompt_description: ''
     parent_category:
     - Räume
     url_slug: ''

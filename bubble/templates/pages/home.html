@@ -22,42 +22,26 @@
             <p class="card-text">{% trans "Browse and share physical items in our community" %}</p>
             <!-- Item Type Navigation -->
             <div class="row g-2 mb-3">
-              <div class="col-4">
-                <a href="{% url 'items-category:list' content_type='zeug' %}?item_type=0"
+              <div class="col-6">
+                <a href="{% url 'items:list' %}?item_type=0"
                    class="btn btn-success btn-sm w-100">
                   <i class="fas fa-tag"></i>
                   <br />
                   <small>{% trans "For Sale" %}</small>
                 </a>
               </div>
-              <div class="col-4">
-                <a href="{% url 'items-category:list' content_type='zeug' %}?item_type=1"
-                   class="btn btn-info btn-sm w-100">
-                  <i class="fas fa-gift"></i>
-                  <br />
-                  <small>{% trans "Give Away" %}</small>
-                </a>
-              </div>
-              <div class="col-4">
-                <a href="{% url 'items-category:list' content_type='zeug' %}?item_type=2"
-                   class="btn btn-warning btn-sm w-100">
+              <div class="col-6">
+                <a href="{% url 'items:list' %}?item_type=1"
+                   class="btn btn-primary btn-sm w-100">
                   <i class="fas fa-handshake"></i>
                   <br />
-                  <small>{% trans "Borrow" %}</small>
-                </a>
-              </div>
-              <div class="col-4">
-                <a href="{% url 'items-category:list' content_type='zeug' %}?item_type=3"
-                   class="btn btn-secondary btn-sm w-100">
-                  <i class="fas fa-search"></i>
-                  <br />
-                  <small>{% trans "Need" %}</small>
+                  <small>{% trans "Rent" %}</small>
                 </a>
               </div>
             </div>
             <!-- Item Actions -->
             <div class="d-grid gap-2">
-              <a href="{% url 'items-category:list' content_type='zeug' %}" class="btn btn-outline-primary">
+              <a href="{% url 'items:list' %}" class="btn btn-outline-primary">
                 <i class="fas fa-list"></i> {% trans "Browse All Items" %}
               </a>
               {% if user.is_authenticated %}

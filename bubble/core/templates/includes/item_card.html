@@ -29,11 +29,7 @@
       {% if item.item_type == 0 %}
         <span class="badge bg-success">{% trans "For Sale" %}</span>
       {% elif item.item_type == 1 %}
-        <span class="badge bg-primary">{% trans "Give Away" %}</span>
-      {% elif item.item_type == 2 %}
-        <span class="badge bg-info">{% trans "Borrow" %}</span>
-      {% elif item.item_type == 3 %}
-        <span class="badge bg-warning">{% trans "Need" %}</span>
+        <span class="badge bg-primary">{% trans "Rent" %}</span>
       {% endif %}
     </div>
     <!-- Price Tag -->
@@ -52,7 +48,7 @@
         </span>
       {% elif item.status == 2 %}
         <span class="badge bg-secondary">
-          <i class="fas fa-star-o"></i> {% trans "Old" %}
+          <i class="fas fa-star-o"></i> {% trans "Broken" %}
         </span>
       {% endif %}
     </div>

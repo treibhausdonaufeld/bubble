@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% load i18n static %}
+
+{% block title %}
+  {{ room.name }}
+{% endblock title %}
+
+{% block css %}
+  {{ block.super }}
+  <style>
+    .room-image {
+      max-height: 500px;
+      object-fit: cover;
+      width: 100%;
+      border-radius: 8px;
+    }
+
+    .room-image-placeholder {
+      height: 500px;
+      background: #f8f9fa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+    }
+
+    .room-info-card {
+      border: none;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+
+    .room-header {
+      border-bottom: 2px solid #e9ecef;
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .description-section {
+      background-color: #f8f9fa;
+      padding: 2rem;
+      border-radius: 8px;
+      margin-top: 2rem;
+    }
+  </style>
+{% endblock css %}
+
+{% block content %}
+  <div class="container">
+    <div class="room-header">
+      <h1 class="mb-3">{{ room.name }}</h1>
+      <p class="text-muted">
+        <i class="fas fa-calendar"></i>
+        {% trans "Added on" %} {{ room.created_at|date:"F j, Y" }}
+      </p>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-8">
+        {% if room.photo %}
+          <img src="{{ room.photo.url }}"
+               alt="{{ room.name }}"
+               class="room-image mb-4" />
+        {% else %}
+          <div class="room-image-placeholder mb-4">
+            <i class="fas fa-door-open fa-8x text-muted"></i>
+          </div>
+        {% endif %}
+
+        <div class="description-section">
+          <h3 class="mb-3">{% trans "Description" %}</h3>
+          <p>{{ room.description|linebreaks }}</p>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <div class="card room-info-card">
+          <div class="card-header">
+            <h5 class="mb-0">{% trans "Room Information" %}</h5>
+          </div>
+          <div class="card-body">
+            <div class="mb-3">
+              <strong>{% trans "Name:" %}</strong>
+              <br />
+              {{ room.name }}
+            </div>
+
+            <div class="mb-3">
+              <strong>{% trans "Added:" %}</strong>
+              <br />
+              {{ room.created_at|date:"F j, Y" }}
+            </div>
+
+            {% if room.updated_at != room.created_at %}
+              <div class="mb-3">
+                <strong>{% trans "Last Updated:" %}</strong>
+                <br />
+                {{ room.updated_at|date:"F j, Y" }}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col-12">
+        <a href="{% url 'rooms:list' %}" class="btn btn-outline-secondary">
+          <i class="fas fa-arrow-left"></i> {% trans "Back to Rooms" %}
+        </a>
+      </div>
+    </div>
+  </div>
+{% endblock content %}

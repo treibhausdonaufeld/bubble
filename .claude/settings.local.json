@@ -44,7 +44,8 @@
       "Bash(ruff check:*)",
       "Bash(timeout:*)",
       "Bash(pre-commit run:*)",
-      "Bash(cp:*)"
+      "Bash(cp:*)",
+      "Bash(git fetch:*)"
     ],
     "deny": []
   }

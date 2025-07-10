@@ -11,8 +11,6 @@ class ItemCategory(models.Model):
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True)
     emoji = models.CharField(max_length=10, blank=True)
-    prompt_name = models.TextField(blank=True)
-    prompt_description = models.TextField(blank=True)
     parent_category = models.ForeignKey(
         "self",
         on_delete=models.CASCADE,
@@ -21,28 +19,10 @@ class ItemCategory(models.Model):
         null=True,
     )
 
-    # Fields for content type definition
-    url_slug = models.SlugField(
-        max_length=50,
-        blank=True,
-        help_text=_("URL path for this content type (e.g., 'sachen', 'events')"),
-    )
-
     # Ordering field for menu display
     ordering = models.IntegerField(
         default=1,
         help_text=_("Order of display in navigation menu (lower numbers appear first)"),
-    )
-
-    # Schema definition for custom fields
-    custom_fields = models.JSONField(
-        default=dict,
-        blank=True,
-        help_text=_(
-            "JSON schema for custom fields specific to this category. "
-            "Format: {'field_name': {'type': 'choice', 'label': 'Size', "
-            "'choices': ['S', 'M', 'L'], 'required': true}}",
-        ),
     )
 
     objects = ItemCategoryManager()
