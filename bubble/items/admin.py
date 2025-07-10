@@ -42,14 +42,6 @@ class ItemAdmin(admin.ModelAdmin):
             },
         ),
         (
-            _("Custom Fields"),
-            {
-                "fields": ("custom_fields",),
-                "classes": ("collapse",),
-                "description": _("Category-specific additional fields stored as JSON"),
-            },
-        ),
-        (
             _("Internal Options"),
             {
                 "fields": ("internal", "payment_enabled"),

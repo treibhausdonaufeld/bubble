@@ -426,7 +426,6 @@
 {% block content %}
   <div class="container-fluid">
     <!-- Mobile Filter Toggle -->
-     {% if content_type_slug == "zeug" %}
     <div class="d-md-none mb-3">
       <button class="btn btn-outline-primary" id="mobile-filter-toggle">
         <i class="fas fa-filter"></i> {% trans "Filters" %}
@@ -461,7 +460,7 @@
                     </span>
                   {% endfor %}
                   <div class="mt-2">
-                    <a href="{% url 'items-category:list' content_type=content_type_slug %}"
+                    <a href="{% url 'items:list' %}"
                        class="btn btn-sm btn-outline-secondary">{% trans "Clear All" %}</a>
                   </div>
                 </div>
@@ -590,7 +589,7 @@
                 <button type="submit" class="btn btn-primary w-100 mb-2">
                   <i class="fas fa-search"></i> {% trans "Filter" %}
                 </button>
-                <a href="{% url 'items-category:list' content_type=content_type_slug %}" class="btn btn-outline-secondary w-100">
+                <a href="{% url 'items:list' %}" class="btn btn-outline-secondary w-100">
                   <i class="fas fa-undo"></i> {% trans "Reset filter" %}
                 </a>
               </div>
@@ -598,7 +597,6 @@
           </div>
         </div>
       </div>
-      {% endif %}
       <!-- Main Content Area -->
       <div class="col-md-9">
         <!-- Controls Bar -->

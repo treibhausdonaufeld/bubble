@@ -11,7 +11,6 @@ class ItemCategoryAdmin(admin.ModelAdmin):
         "emoji",
         "get_hierarchy_display",
         "parent_category",
-        "url_slug",
         "ordering",
         "description",
     )
@@ -19,9 +18,6 @@ class ItemCategoryAdmin(admin.ModelAdmin):
     search_fields = (
         "name",
         "description",
-        "prompt_name",
-        "prompt_description",
-        "url_slug",
     )
     ordering = ("ordering", "parent_category__name", "name")
     autocomplete_fields = ("parent_category",)
@@ -37,21 +33,6 @@ class ItemCategoryAdmin(admin.ModelAdmin):
                     "description",
                     "ordering",
                 ),
-            },
-        ),
-        (
-            "Content Type Configuration",
-            {
-                "fields": ("url_slug", "custom_fields"),
-                "description": "Configure URL slug and dynamic fields",
-            },
-        ),
-        (
-            "AI Prompts",
-            {
-                "fields": ("prompt_name", "prompt_description"),
-                "classes": ("collapse",),
-                "description": "Optional fields for AI-generated content",
             },
         ),
     )

@@ -203,28 +203,6 @@
           <div class="mb-3">
             <strong>{% trans "Category:" %}</strong> {{ item.category.name }}
           </div>
-          <!-- Custom Fields -->
-          {% if item.custom_fields %}
-            {% for field_name, field_data in item.custom_fields.items %}
-              {% if field_data %}
-                <div class="mb-3">
-                  {% if field_data.label %}
-                    <strong>{{ field_data.label }}:</strong>
-                  {% else %}
-                    <strong>{{ field_name|title }}:</strong>
-                  {% endif %}
-                  {% if field_data.value %}
-                    {% if field_data.value == "new" %}{% trans "New" %}
-                    {% elif field_data.value == "used" %}{% trans "Used" %}
-                    {% elif field_data.value == "old" %}{% trans "Old" %}
-                    {% else %}{{ field_data.value }}{% endif %}
-                  {% else %}
-                    {{ field_data }}
-                  {% endif %}
-                </div>
-              {% endif %}
-            {% endfor %}
-          {% endif %}
           <!-- Tags -->
           {% if item_tags %}
             <div class="mb-3">
@@ -373,28 +351,6 @@
               <div class="mb-3">
                 <strong>{% trans "Category:" %}</strong> {{ item.category.name }}
               </div>
-              <!-- Custom Fields -->
-              {% if item.custom_fields %}
-                {% for field_name, field_data in item.custom_fields.items %}
-                  {% if field_data %}
-                    <div class="mb-3">
-                      {% if field_data.label %}
-                        <strong>{{ field_data.label }}:</strong>
-                      {% else %}
-                        <strong>{{ field_name|title }}:</strong>
-                      {% endif %}
-                      {% if field_data.value %}
-                        {% if field_data.value == "new" %}{% trans "New" %}
-                        {% elif field_data.value == "used" %}{% trans "Used" %}
-                        {% elif field_data.value == "old" %}{% trans "Old" %}
-                        {% else %}{{ field_data.value }}{% endif %}
-                      {% else %}
-                        {{ field_data }}
-                      {% endif %}
-                    </div>
-                  {% endif %}
-                {% endfor %}
-              {% endif %}
               <!-- Tags -->
               {% if item_tags %}
                 <div class="mb-3">
@@ -491,7 +447,7 @@
     <!-- Back Button -->
     <div class="row mt-4">
       <div class="col-12">
-        <a href="{% url 'items-category:list' content_type=content_type_slug %}" class="btn btn-outline-secondary">
+        <a href="{% url 'items:list' %}" class="btn btn-outline-secondary">
           <i class="fas fa-arrow-left"></i> {% trans "Back to Items" %}
         </a>
       </div>
