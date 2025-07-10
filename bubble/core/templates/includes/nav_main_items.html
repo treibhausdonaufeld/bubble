@@ -9,10 +9,12 @@
     <a class="nav-link{% if request.resolver_match.app_name == 'rooms' %} active{% endif %}"
        href="{% url 'rooms:list' %}">🛋️ {% trans "Rooms" %}</a>
   </li>
+  {% if user.is_authenticated %}
   <li class="nav-item">
     <a class="nav-link{% if request.resolver_match.url_name == 'list' and request.resolver_match.app_name == 'users' %} active{% endif %}"
        href="{% url 'users:list' %}">👥 {% trans "Community" %}</a>
   </li>
+  {% endif %}
 {% else %}
   <li class="nav-item">
     <a class="nav-link{% if request.resolver_match.app_name == 'items' %} active{% endif %}"
@@ -22,9 +24,11 @@
     <a class="nav-link{% if request.resolver_match.app_name == 'rooms' %} active{% endif %}"
        href="{% url 'rooms:list' %}">🛋️ {% trans "Rooms" %}</a>
   </li>
+  {% if user.is_authenticated %}
   <li class="nav-item">
     <a class="nav-link{% if request.resolver_match.url_name == 'list' and request.resolver_match.app_name == 'users' %} active{% endif %}"
        href="{% url 'users:list' %}">👥 {% trans "Community" %}</a>
   </li>
+  {% endif %}
 {% endif %}
 {% include 'includes/nav_user_items.html' %}
