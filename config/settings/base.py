@@ -209,9 +209,6 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
                 "bubble.users.context_processors.allauth_settings",
-                "bubble.core.context_processors.navigation_context",
-
-                "bubble.core.context_processors.theme_context",
             ],
         },
     },
