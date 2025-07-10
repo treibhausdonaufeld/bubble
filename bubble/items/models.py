@@ -4,7 +4,6 @@ from pathlib import Path
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from pgvector.django import VectorField
 
 from bubble.categories.models import ItemCategory
 from config.settings.base import AUTH_USER_MODEL
@@ -100,14 +99,6 @@ class Item(models.Model):
         max_length=255,
         blank=True,
         help_text="Temporal workflow ID for AI processing",
-    )
-
-    # Vector embedding field for similarity search
-    embedding = VectorField(
-        dimensions=1536,
-        null=True,
-        blank=True,
-        help_text=_("Vector embedding for similarity search"),
     )
 
     # Custom manager
