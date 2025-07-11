@@ -89,8 +89,6 @@ class Item(models.Model):
         default=StatusType.USED,
         help_text=_("Condition of the item"),
     )
-    profile_img_frame = models.ImageField(upload_to="items/", blank=True, null=True)
-    profile_img_frame_alt = models.CharField(max_length=255, blank=True)
     processing_status = models.IntegerField(
         choices=ProcessingStatus,
         default=ProcessingStatus.DRAFT,

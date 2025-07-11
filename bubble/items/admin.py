@@ -49,13 +49,6 @@ class ItemAdmin(admin.ModelAdmin):
             },
         ),
         (
-            _("Media"),
-            {
-                "fields": ("profile_img_frame", "profile_img_frame_alt"),
-                "classes": ("collapse",),
-            },
-        ),
-        (
             _("Timestamps"),
             {
                 "fields": ("date_created", "date_updated"),

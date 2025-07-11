@@ -538,9 +538,9 @@
       lightboxPrev.addEventListener('click', prevImage);
       lightboxNext.addEventListener('click', nextImage);
 
-      // Close on overlay click (but not when clicking the image)
+      // Close on overlay click or image click (but not when clicking navigation controls)
       lightboxOverlay.addEventListener('click', function(event) {
-        if (event.target === lightboxOverlay) {
+        if (event.target === lightboxOverlay || event.target.classList.contains('lightbox-image')) {
           closeLightbox();
         }
       });
@@ -549,12 +549,19 @@
       document.addEventListener('keydown', function(event) {
         if (lightboxOverlay.style.display !== 'flex') return;
 
-        if (event.key === 'Escape') {
-          closeLightbox();
-        } else if (event.key === 'ArrowLeft') {
-          prevImage();
-        } else if (event.key === 'ArrowRight') {
-          nextImage();
+        switch(event.key) {
+          case 'Escape':
+            event.preventDefault();
+            closeLightbox();
+            break;
+          case 'ArrowLeft':
+            event.preventDefault();
+            prevImage();
+            break;
+          case 'ArrowRight':
+            event.preventDefault();
+            nextImage();
+            break;
         }
       });
     }

@@ -38,6 +38,7 @@ class ItemListView(ListView):
     def get_queryset(self):
         queryset = (
             Item.objects.for_user(self.request.user)
+            .filter(active=True)
             .select_related("user", "category")
             .prefetch_related(
                 models.Prefetch("images", queryset=Image.objects.order_by("ordering")),
