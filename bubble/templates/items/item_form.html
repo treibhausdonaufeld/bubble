@@ -10,11 +10,6 @@
     {% trans "Add New Item" %}
   {% endif %}
 {% endblock title %}
-{% block css %}
-  {{ block.super }}
-  <!-- Select2 CSS -->
-  <link href="{% static 'css/vendor/select2.min.css' %}" rel="stylesheet" />
-{% endblock css %}
 
 {% block content %}
   <div class="container">
@@ -83,8 +78,9 @@
                   <div id="drop-zone" class="border border-2 border-dashed rounded p-3 mb-3 existing-images-drop-zone">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                       <h6 class="mb-0">{% trans "Current Images" %}</h6>
+                      <small class="text-muted">{% trans "Click to add more images" %}</small>
                     </div>
-                    <div class="row" id="existing-images-grid">
+                    <div class="row" id="existing-images-grid" title="{% trans 'Click to add more images' %}">
                       {% for image in object.images.all %}
                         <div class="col-md-3 col-sm-6 mb-3 image-item has-reordering" draggable="true" data-image-id="{{ image.pk }}" data-order="{{ forloop.counter0 }}">
                           <div class="card shadow-sm image-card">
@@ -403,9 +399,6 @@
     </div>
   </div>
 
-  <!-- jQuery and Select2 JavaScript (local files) -->
-  <script src="{% static 'js/vendor/jquery.min.js' %}"></script>
-  <script src="{% static 'js/vendor/select2.min.js' %}"></script>
 
 <script>
   // Modal utility functions
@@ -640,8 +633,8 @@
 </script>
 
   <script>
-    $(document).ready(function() {
-
+    // Image upload preview functionality with drag & drop
+    document.addEventListener('DOMContentLoaded', function() {
       console.log('Document ready, jQuery version:', $.fn.jquery);
       console.log('Select2 available:', typeof $.fn.select2 !== 'undefined');
 
@@ -662,7 +655,7 @@
           placeholder: "{% trans 'Search and select a category...' %}",
           allowClear: true,
           width: '100%',
-          theme: 'default',
+          theme: 'bootstrap-5',
           ajax: {
             url: "{% url 'api:category-select2' %}",
             dataType: 'json',
@@ -714,7 +707,7 @@
         $('.select2-field').select2({
           allowClear: false,
           width: '100%',
-          theme: 'default'
+          theme: 'bootstrap-5'
         });
 
         console.log('Select2 initialization complete');
@@ -742,11 +735,7 @@
       } catch (error) {
         console.error('Error initializing Select2:', error);
       }
-    }); // End of $(document).ready()
-  </script>
-  <script>
-    // Image upload preview functionality with drag & drop
-    document.addEventListener('DOMContentLoaded', function() {
+
       const imageInput = document.getElementById('id_images');
       const previewContainer = document.getElementById('image-preview-container');
       const previewGrid = document.getElementById('image-preview-grid');
@@ -786,6 +775,34 @@
         selectFilesBtn.addEventListener('click', function() {
           imageInput.click();
         });
+      }
+
+      // Make existing images grid clickable to add more images
+      const existingImagesGrid = document.getElementById('existing-images-grid');
+      if (existingImagesGrid && imageInput) {
+        // Add click listener to the entire grid
+        existingImagesGrid.addEventListener('click', function(e) {
+          // Prevent file dialog when clicking on interactive elements
+          if (e.target.closest('.btn') ||
+              e.target.closest('.remove-existing-btn') ||
+              e.target.closest('.btn-reorder') ||
+              e.target.closest('.magnify-icon')) {
+            return;
+          }
+
+          // Open file dialog
+          imageInput.click();
+        });
+
+        // Add click listener to the drop zone header as well
+        const dropZoneHeader = dropZone?.querySelector('.d-flex.justify-content-between');
+        if (dropZoneHeader) {
+          dropZoneHeader.addEventListener('click', function(e) {
+            if (!e.target.closest('.btn')) {
+              imageInput.click();
+            }
+          });
+        }
       }
 
       // Drag and drop functionality
