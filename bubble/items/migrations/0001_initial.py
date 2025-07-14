@@ -8,9 +8,7 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-        ("categories", "0001_initial"),
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
@@ -87,14 +85,14 @@ class Migration(migrations.Migration):
                     "profile_img_frame_alt",
                     models.CharField(blank=True, max_length=255, null=True),
                 ),
-                (
-                    "category",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name="items",
-                        to="categories.itemcategory",
-                    ),
-                ),
+                # (
+                #     "category",
+                #     models.ForeignKey(
+                #         on_delete=django.db.models.deletion.CASCADE,
+                #         related_name="items",
+                #         to="categories.itemcategory",
+                #     ),
+                # ),
             ],
         ),
     ]

@@ -4,8 +4,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
-from bubble.categories.models import ItemCategory
-from bubble.items.models import Image, Item
+from bubble.items.models import Image, Item, ItemCategory
 
 
 class ItemForm(forms.ModelForm):

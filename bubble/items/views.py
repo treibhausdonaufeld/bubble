@@ -21,12 +21,11 @@ from django.views.generic import (
 from rest_framework.authtoken.models import Token
 from temporalio import exceptions
 
-from bubble.categories.models import ItemCategory
 from bubble.items.temporal.temporal_activities import ItemProcessingRequest
 from bubble.items.temporal.temporal_service import TemporalService
 
 from .forms import ItemFilterForm, ItemForm, ItemImageUploadForm
-from .models import Image, Item, ProcessingStatus
+from .models import Image, Item, ItemCategory, ProcessingStatus
 
 
 class ItemListView(ListView):

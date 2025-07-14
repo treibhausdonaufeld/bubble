@@ -7,7 +7,6 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("categories", "0015_alter_itemcategory_name"),
         ("items", "0010_alter_item_item_type_alter_item_price"),
     ]
 
@@ -34,17 +33,17 @@ class Migration(migrations.Migration):
                 default=False, help_text="Enable payment via internal payment system"
             ),
         ),
-        migrations.AlterField(
-            model_name="item",
-            name="category",
-            field=models.ForeignKey(
-                blank=True,
-                null=True,
-                on_delete=django.db.models.deletion.SET_NULL,
-                related_name="items",
-                to="categories.itemcategory",
-            ),
-        ),
+        # migrations.AlterField(
+        #     model_name="item",
+        #     name="category",
+        #     field=models.ForeignKey(
+        #         blank=True,
+        #         null=True,
+        #         on_delete=django.db.models.deletion.SET_NULL,
+        #         related_name="items",
+        #         to="categories.itemcategory",
+        #     ),
+        # ),
         migrations.AlterField(
             model_name="item",
             name="display_contact",

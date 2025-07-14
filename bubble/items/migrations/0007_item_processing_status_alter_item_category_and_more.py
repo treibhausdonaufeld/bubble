@@ -7,7 +7,6 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("categories", "0014_set_default_ordering"),
         ("items", "0006_remove_item_status"),
     ]
 
@@ -25,17 +24,17 @@ class Migration(migrations.Migration):
                 default=0,
             ),
         ),
-        migrations.AlterField(
-            model_name="item",
-            name="category",
-            field=models.ForeignKey(
-                blank=True,
-                null=True,
-                on_delete=django.db.models.deletion.CASCADE,
-                related_name="items",
-                to="categories.itemcategory",
-            ),
-        ),
+        # migrations.AlterField(
+        #     model_name="item",
+        #     name="category",
+        #     field=models.ForeignKey(
+        #         blank=True,
+        #         null=True,
+        #         on_delete=django.db.models.deletion.CASCADE,
+        #         related_name="items",
+        #         to="categories.itemcategory",
+        #     ),
+        # ),
         migrations.AlterField(
             model_name="item",
             name="name",
