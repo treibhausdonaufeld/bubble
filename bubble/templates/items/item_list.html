@@ -275,28 +275,25 @@
 
     /* Enhanced Search */
     .search-input {
-      border-radius: 2rem;
+      border-radius: 0.375rem;
     }
 
     .search-container {
       position: relative;
     }
 
-    .search-icon {
-      position: absolute;
-      left: 0.75rem;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #6c757d;
-      pointer-events: none;
+    #ai-search-btn {
+      border-radius: 0.375rem;
+      transition: all 0.2s ease;
     }
 
-    .search-icon-clickable {
-      cursor: pointer;
+    #ai-search-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
-    .search-input-padding {
-      padding-left: 2.5rem;
+    #ai-search-btn:active {
+      transform: translateY(0);
     }
 
     /* Sort and View Controls */
@@ -448,6 +445,23 @@
             </div>
           </div>
           <div class="p-3">
+             <!-- Enhanced Search -->
+             <div class="filter-section">
+              <label class="form-label fw-bold">
+                <i class="fas fa-search"></i> {% trans "Search" %}
+              </label>
+              <div class="search-container">
+                <input type="text"
+                       name="search"
+                       id="search-input"
+                       class="form-control search-input"
+                       placeholder="{% trans 'Search items...' %}"
+                       value="{{ filter_form.search.value|default_if_none:'' }}" />
+                <button type="button" class="btn btn-primary btn-sm mt-2 w-100" id="ai-search-btn">
+                  <i class="fas fa-brain me-1"></i>
+                  {% trans "AI Search" %}
+                </button>
+              </div>
             <form method="get" id="filter-form">
               <!-- Active Filters Display -->
               {% if active_filters %}
@@ -482,20 +496,7 @@
                 </label>
                 {{ filter_form.status }}
               </div>
-              <!-- Enhanced Search -->
-              <div class="filter-section">
-                <label class="form-label fw-bold">
-                  <i class="fas fa-search"></i> {% trans "Search" %}
-                </label>
-                <div class="search-container">
-                  <i class="fas fa-search search-icon search-icon-clickable"
-                     id="search-icon"></i>
-                  <input type="text"
-                         name="search"
-                         class="form-control search-input search-input-padding"
-                         placeholder="{% trans 'Search items...' %}"
-                         value="{{ filter_form.search.value|default_if_none:'' }}" />
-                </div>
+
               </div>
               <!-- Dynamic Categories Tree -->
               <div class="filter-section">
@@ -754,22 +755,108 @@
         });
       }
 
-      // Search auto-submit on Enter key and search icon click
-      const searchInput = document.querySelector('input[name="search"]');
-      const searchIcon = document.getElementById('search-icon');
+      // AI Search functionality with concurrent search prevention
+      const searchInput = document.getElementById('search-input');
+      const aiSearchBtn = document.getElementById('ai-search-btn');
+      let searchInProgress = false;
 
-      if (searchInput) {
-        searchInput.addEventListener('keypress', (e) => {
-          if (e.key === 'Enter') {
-            e.preventDefault();
-            form.submit();
+      async function checkActiveSearches() {
+        try {
+          // Check if user has any active searches
+          const response = await fetch('/items/check-active-searches/', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            }
+          });
+          const data = await response.json();
+          return data.has_active_searches || false;
+        } catch (error) {
+          console.log('Could not check active searches:', error);
+          return false;
+        }
+      }
+
+      function updateAISearchButton(isSearching) {
+        if (isSearching) {
+          aiSearchBtn.disabled = true;
+          aiSearchBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>{% trans "AI Search Running..." %}';
+          aiSearchBtn.classList.add('btn-warning');
+          aiSearchBtn.classList.remove('btn-primary');
+        } else {
+          aiSearchBtn.disabled = false;
+          aiSearchBtn.innerHTML = '<i class="fas fa-brain me-1"></i>{% trans "AI Search" %}';
+          aiSearchBtn.classList.add('btn-primary');
+          aiSearchBtn.classList.remove('btn-warning');
+        }
+      }
+
+      if (aiSearchBtn && searchInput) {
+        // Check for active searches on page load
+        checkActiveSearches().then(hasActiveSearches => {
+          updateAISearchButton(hasActiveSearches);
+          searchInProgress = hasActiveSearches;
+        });
+
+        aiSearchBtn.addEventListener('click', async () => {
+          const searchText = searchInput.value.trim();
+
+          if (!searchText) {
+            alert('{% trans "Please enter a search term" %}');
+            return;
           }
+
+          if (searchInProgress) {
+            alert('{% trans "AI search is already running. Please wait for it to complete." %}');
+            return;
+          }
+
+          // Check for active searches before starting
+          const hasActiveSearches = await checkActiveSearches();
+          if (hasActiveSearches) {
+            alert('{% trans "You have an active AI search running. Please wait for it to complete." %}');
+            updateAISearchButton(true);
+            searchInProgress = true;
+            return;
+          }
+
+          // Start search
+          searchInProgress = true;
+          updateAISearchButton(true);
+          window.location.href = `/items/search/?q=${encodeURIComponent(searchText)}`;
         });
       }
 
-      if (searchIcon) {
-        searchIcon.addEventListener('click', () => {
-          form.submit();
+      if (searchInput) {
+        searchInput.addEventListener('keypress', async (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            const searchText = searchInput.value.trim();
+
+            if (!searchText) {
+              alert('{% trans "Please enter a search term" %}');
+              return;
+            }
+
+            if (searchInProgress) {
+              alert('{% trans "AI search is already running. Please wait for it to complete." %}');
+              return;
+            }
+
+            // Check for active searches before starting
+            const hasActiveSearches = await checkActiveSearches();
+            if (hasActiveSearches) {
+              alert('{% trans "You have an active AI search running. Please wait for it to complete." %}');
+              updateAISearchButton(true);
+              searchInProgress = true;
+              return;
+            }
+
+            // Start search
+            searchInProgress = true;
+            updateAISearchButton(true);
+            window.location.href = `/items/search/?q=${encodeURIComponent(searchText)}`;
+          }
         });
       }
 

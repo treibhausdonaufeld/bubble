@@ -63,6 +63,17 @@ class ProcessingError:
     retry_count: int
 
 
+@dataclass
+class SimilaritySearchRequest:
+    """Request data for similarity search activity."""
+
+    search_id: str
+    query: str
+    user_id: int
+    token: str
+    base_url: str
+
+
 def fetch_categories(base_url: str, token: str) -> list[str]:
     """Fetch item categories from the API."""
     categories_url = f"{base_url}/api/categories/"
@@ -253,3 +264,205 @@ def save_item_suggestions(item_result: ItemImageResult) -> bool:
 
     logger.info("Item data saved: %s", item_result)
     return True
+
+
+@activity.defn
+def generate_search_embedding(search_request: SimilaritySearchRequest) -> dict:
+    """Generate embedding for search query and find similar items."""
+    logger.info("Generating embedding for search query: %s", search_request.query)
+
+    # Call the Django API to perform the search
+    search_url = f"{search_request.base_url}/items/api/similarity-search/"
+    headers = {"Authorization": f"Token {search_request.token}"}
+
+    search_data = {
+        "query": search_request.query,
+        "search_id": search_request.search_id,
+    }
+
+    try:
+        response = requests.post(
+            search_url, headers=headers, json=search_data, timeout=60
+        )
+        response.raise_for_status()
+
+        search_results = response.json()
+        logger.info(
+            "Generated embedding and found %d similar items",
+            len(search_results.get("items", [])),
+        )
+
+        return {
+            "search_id": search_request.search_id,
+            "query": search_request.query,
+            "items": search_results.get("items", []),
+            "status": "completed",
+        }
+
+    except Exception as e:
+        logger.error("Error in generate_search_embedding: %s", str(e))
+        return {
+            "search_id": search_request.search_id,
+            "query": search_request.query,
+            "items": [],
+            "status": "failed",
+            "error": str(e),
+        }
+
+
+@activity.defn
+def save_search_results(search_results: dict) -> bool:
+    """Save search results to database."""
+    logger.info("Saving search results for search ID: %s", search_results["search_id"])
+
+    try:
+        # Import Django components
+        import os
+        from datetime import datetime
+
+        import django
+
+        # Set up Django environment
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.local")
+        django.setup()
+
+        from bubble.items.models import SearchStatus, SimilaritySearch
+
+        # Update the search record
+        search_obj = SimilaritySearch.objects.get(search_id=search_results["search_id"])
+        search_obj.results = search_results.get("items", [])
+        search_obj.results_count = len(search_results.get("items", []))
+        search_obj.date_completed = datetime.now()
+
+        if search_results.get("status") == "failed":
+            search_obj.status = SearchStatus.FAILED
+            search_obj.error_message = search_results.get("error", "Unknown error")
+        else:
+            search_obj.status = SearchStatus.COMPLETED
+
+        search_obj.save()
+
+        logger.info(
+            "Search results saved successfully for search ID: %s",
+            search_results["search_id"],
+        )
+        return True
+
+    except Exception as e:
+        logger.error("Error saving search results: %s", str(e))
+        return False
+
+
+@activity.defn
+def generate_item_embedding(item_request: ItemProcessingRequest) -> dict:
+    """Generate and save embedding for an item during publishing."""
+    logger.info("Generating embedding for item %s", item_request.item_id)
+
+    result = {
+        "item_id": item_request.item_id,
+        "embedding_created": False,
+        "embedding_updated": False,
+        "previous_embedding_existed": False,
+        "embedding_dimensions": 0,
+        "status": "pending",
+    }
+
+    try:
+        # Import Django components
+        import os
+        import time
+
+        import django
+
+        # Set up Django environment
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.local")
+        django.setup()
+
+        from bubble.items.models import Item, ProcessingStatus
+        from bubble.items.services.embedding_service import EmbeddingService
+
+        # Get the item
+        item = Item.objects.get(id=item_request.item_id)
+
+        # Check if embedding already exists
+        old_embedding = item.embedding
+        result["previous_embedding_existed"] = old_embedding is not None
+
+        # Add a small delay to make the processing visible
+        time.sleep(1)  # 1 second delay to show processing status
+
+        # Generate new embedding with timeout handling
+        try:
+            embedding_service = EmbeddingService()
+            new_embedding = embedding_service.generate_item_embedding(item)
+
+            if new_embedding is None:
+                logger.error(
+                    "EmbeddingService returned None for item %s", item_request.item_id
+                )
+                item.publishing_status = ProcessingStatus.FAILED
+                item.save(update_fields=["publishing_status"])
+                result["status"] = "failed"
+                result["error"] = "Embedding service returned None"
+                return result
+
+        except Exception as embedding_error:
+            logger.error(
+                "Error in embedding service for item %s: %s",
+                item_request.item_id,
+                str(embedding_error),
+            )
+            item.publishing_status = ProcessingStatus.FAILED
+            item.save(update_fields=["publishing_status"])
+            result["status"] = "failed"
+            result["error"] = f"Embedding service error: {embedding_error!s}"
+            return result
+
+        if new_embedding:
+            result["embedding_dimensions"] = len(new_embedding)
+
+            # Save the new embedding
+            item.embedding = new_embedding
+            item.publishing_status = ProcessingStatus.COMPLETED
+            item.save(update_fields=["embedding", "publishing_status"])
+
+            result["embedding_created"] = not result["previous_embedding_existed"]
+            result["embedding_updated"] = result["previous_embedding_existed"]
+            result["status"] = "completed"
+
+            logger.info(
+                "Successfully processed embedding for item %s - Created: %s, Updated: %s",
+                item_request.item_id,
+                result["embedding_created"],
+                result["embedding_updated"],
+            )
+            return result
+        logger.warning("No embedding generated for item %s", item_request.item_id)
+        item.publishing_status = ProcessingStatus.FAILED
+        item.save(update_fields=["publishing_status"])
+        result["status"] = "failed"
+        return result
+
+    except Exception as e:
+        logger.error(
+            "Error generating embedding for item %s: %s", item_request.item_id, str(e)
+        )
+        result["status"] = "error"
+        result["error"] = str(e)
+        try:
+            # Update status to failed on exception
+            from bubble.items.models import Item, ProcessingStatus
+
+            item = Item.objects.get(id=item_request.item_id)
+            item.publishing_status = ProcessingStatus.FAILED
+            item.save(update_fields=["publishing_status"])
+            logger.info(
+                "Updated item %s publishing status to FAILED", item_request.item_id
+            )
+        except Exception as save_error:
+            logger.error(
+                "Could not update item %s status to FAILED: %s",
+                item_request.item_id,
+                str(save_error),
+            )
+        return result

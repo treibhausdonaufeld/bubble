@@ -38,3 +38,13 @@ TEMPORAL_MAX_CONCURRENT_WORKFLOWS: int = env.int(
 # AI configuration
 ANTHROPIC_API_KEY = env("ANTHROPIC_API_KEY", default="")
 ANTHROPIC_MODEL = env("ANTHROPIC_MODEL", default="claude-3-5-sonnet-20241022")
+
+# Sentence Transformers configuration
+SENTENCE_TRANSFORMER_MODEL = env(
+    "SENTENCE_TRANSFORMER_MODEL",
+    default="sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+)
+EMBEDDING_DIMENSION = env.int("EMBEDDING_DIMENSION", default=768)
+
+# Internal service URL for temporal worker to access Django
+TEMPORAL_DJANGO_BASE_URL = env("TEMPORAL_DJANGO_BASE_URL", default="http://django:8000")

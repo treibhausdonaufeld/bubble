@@ -969,6 +969,12 @@ msgstr "Suchen"
 msgid "Search items..."
 msgstr "Artikel suchen..."
 
+msgid "AI Search"
+msgstr "KI-Suche"
+
+msgid "Please enter a search term"
+msgstr "Bitte geben Sie einen Suchbegriff ein"
+
 msgid "All Categories"
 msgstr "Alle Kategorien"
 
@@ -1129,6 +1135,78 @@ msgstr "Deutsch"
 
 msgid "English"
 msgstr "Englisch"
+
+msgid "AI Search Results"
+msgstr "KI-Suchergebnisse"
+
+msgid "AI-Powered Search"
+msgstr "KI-gestützte Suche"
+
+msgid "Describe what you're looking for in natural language. Our AI will find the most similar items."
+msgstr "Beschreiben Sie, was Sie in natürlicher Sprache suchen. Unsere KI findet die ähnlichsten Artikel."
+
+msgid "What are you looking for?"
+msgstr "Was suchen Sie?"
+
+msgid "e.g., Gaming laptop with good graphics for video editing"
+msgstr "z.B. Gaming-Laptop mit guter Grafik für Videobearbeitung"
+
+msgid "Search with AI"
+msgstr "Mit KI suchen"
+
+msgid "Examples:"
+msgstr "Beispiele:"
+
+msgid "Kaffeemaschine für Espresso mit Milchaufschäumer"
+msgstr "Kaffeemaschine für Espresso mit Milchaufschäumer"
+
+msgid "Mountainbike für schwierige Trails"
+msgstr "Mountainbike für schwierige Trails"
+
+msgid "Laptop for programming and development work"
+msgstr "Laptop für Programmierung und Entwicklung"
+
+msgid "AI Found These Similar Items"
+msgstr "KI fand diese ähnlichen Artikel"
+
+msgid "Showing top 10 results for"
+msgstr "Zeige die besten 10 Ergebnisse für"
+
+msgid "Similarity"
+msgstr "Ähnlichkeit"
+
+msgid "How it works:"
+msgstr "So funktioniert es:"
+
+msgid "Our AI analyzes your search query and compares it with item descriptions, names, and categories to find the most relevant matches. Lower similarity scores indicate better matches."
+msgstr "Unsere KI analysiert Ihre Suchanfrage und vergleicht sie mit Artikelbeschreibungen, Namen und Kategorien, um die relevantesten Übereinstimmungen zu finden. Niedrigere Ähnlichkeitswerte zeigen bessere Übereinstimmungen an."
+
+msgid "No Similar Items Found"
+msgstr "Keine ähnlichen Artikel gefunden"
+
+msgid "We couldn't find any items similar to"
+msgstr "Wir konnten keine ähnlichen Artikel finden für"
+
+msgid "Tips:"
+msgstr "Tipps:"
+
+msgid "Try using different keywords"
+msgstr "Versuchen Sie andere Schlüsselwörter"
+
+msgid "Use more general terms"
+msgstr "Verwenden Sie allgemeinere Begriffe"
+
+msgid "Try searching in German or English"
+msgstr "Versuchen Sie die Suche auf Deutsch oder Englisch"
+
+msgid "Start Your AI Search"
+msgstr "Starten Sie Ihre KI-Suche"
+
+msgid "Enter a description of what you're looking for in the search box above."
+msgstr "Geben Sie eine Beschreibung dessen, was Sie suchen, in das Suchfeld oben ein."
+
+msgid "Back to All Items"
+msgstr "Zurück zu allen Artikeln"
 
 #~ msgid "URL path for this content type (e.g., 'sachen', 'events')"
 #~ msgstr "URL-Pfad für diesen Inhaltstyp (z.B. 'sachen', 'events')"

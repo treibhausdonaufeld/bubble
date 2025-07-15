@@ -4,7 +4,7 @@ from pathlib import Path
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from pgvector.django import VectorField
+from pgvector.django import HnswIndex, VectorField
 
 from bubble.categories.models import ItemCategory
 from config.settings.base import AUTH_USER_MODEL
@@ -23,6 +23,13 @@ class ItemType(models.IntegerChoices):
 
 class ProcessingStatus(models.IntegerChoices):
     DRAFT = 0, _("Draft")
+    PROCESSING = 1, _("Processing")
+    COMPLETED = 2, _("Completed")
+    FAILED = 3, _("Failed")
+
+
+class SearchStatus(models.IntegerChoices):
+    PENDING = 0, _("Pending")
     PROCESSING = 1, _("Processing")
     COMPLETED = 2, _("Completed")
     FAILED = 3, _("Failed")
@@ -101,10 +108,20 @@ class Item(models.Model):
         blank=True,
         help_text="Temporal workflow ID for AI processing",
     )
+    publishing_workflow_id = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="Temporal workflow ID for publishing process",
+    )
+    publishing_status = models.IntegerField(
+        choices=ProcessingStatus,
+        default=ProcessingStatus.DRAFT,
+        help_text="Status of the publishing process",
+    )
 
     # Vector embedding field for similarity search
     embedding = VectorField(
-        dimensions=1536,
+        dimensions=768,
         null=True,
         blank=True,
         help_text=_("Vector embedding for similarity search"),
@@ -112,6 +129,17 @@ class Item(models.Model):
 
     # Custom manager
     objects = ItemManager()
+
+    class Meta:
+        indexes = [
+            HnswIndex(
+                name="item_embedding_hnsw_index",
+                fields=["embedding"],
+                m=16,
+                ef_construction=64,
+                opclasses=["vector_cosine_ops"],
+            )
+        ]
 
     # Add class constants for easy access
     STATUS_CHOICES = StatusType.choices
@@ -177,3 +205,53 @@ class Image(models.Model):
         if not self.original:
             return None
         return self._get_temp_path("thumbnail")
+
+
+class SimilaritySearch(models.Model):
+    """Model to track similarity search requests and their status."""
+
+    search_id = models.CharField(max_length=255, unique=True, db_index=True)
+    query = models.TextField()
+    user = models.ForeignKey(
+        AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="similarity_searches",
+        null=True,
+        blank=True,
+    )
+    status = models.IntegerField(
+        choices=SearchStatus,
+        default=SearchStatus.PENDING,
+    )
+    workflow_id = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="Temporal workflow ID for search processing",
+    )
+    results = models.JSONField(default=list, blank=True)
+    results_count = models.IntegerField(default=0)
+    error_message = models.TextField(blank=True)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_completed = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["-date_created"]
+        indexes = [
+            models.Index(fields=["search_id", "status"]),
+            models.Index(fields=["user", "date_created"]),
+        ]
+
+    def __str__(self):
+        return f"Search: '{self.query[:50]}...' by {self.user or 'Anonymous'}"
+
+    @property
+    def is_completed(self):
+        return self.status == SearchStatus.COMPLETED
+
+    @property
+    def is_processing(self):
+        return self.status == SearchStatus.PROCESSING
+
+    @property
+    def has_failed(self):
+        return self.status == SearchStatus.FAILED

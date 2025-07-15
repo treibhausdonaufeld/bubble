@@ -93,5 +93,11 @@ CELERY_TASK_EAGER_PROPAGATES = True
 # django-webpack-loader
 # ------------------------------------------------------------------------------
 WEBPACK_LOADER["DEFAULT"]["CACHE"] = not DEBUG
+# Python path for local packages
+# ------------------------------------------------------------------------------
+import sys
+
+sys.path.append("/home/dev-user/.local/lib/python3.13/site-packages")
+
 # Your stuff...
 # ------------------------------------------------------------------------------

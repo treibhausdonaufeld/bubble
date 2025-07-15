@@ -1,5 +1,6 @@
 import asyncio
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -9,6 +10,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext_lazy as _
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.views.generic import (
     CreateView,
@@ -22,11 +24,13 @@ from rest_framework.authtoken.models import Token
 from temporalio import exceptions
 
 from bubble.categories.models import ItemCategory
-from bubble.items.temporal.temporal_activities import ItemProcessingRequest
+from bubble.items.temporal.temporal_activities import (
+    ItemProcessingRequest,
+)
 from bubble.items.temporal.temporal_service import TemporalService
 
 from .forms import ItemFilterForm, ItemForm, ItemImageUploadForm
-from .models import Image, Item, ProcessingStatus
+from .models import Image, Item, ProcessingStatus, SearchStatus, SimilaritySearch
 
 
 class ItemListView(ListView):
@@ -286,12 +290,60 @@ class ItemCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.user = self.request.user
+
+        # Set active status based on which button was clicked
+        if "publish" in self.request.POST:
+            form.instance.active = True
+        else:
+            form.instance.active = False
+
         response = super().form_valid(form)
 
         # Handle multiple image uploads
         images = self.request.FILES.getlist("images")
         for image in images:
             Image.objects.create(item=self.object, original=image)
+
+        # Generate embedding if item is being published (async with temporal)
+        if "publish" in self.request.POST:
+            # Start async publishing workflow
+            token = Token.objects.get_or_create(user=self.request.user)[0]
+            # Use internal Django URL for temporal worker if configured
+            base_url = getattr(settings, "TEMPORAL_DJANGO_BASE_URL", None)
+            if not base_url:
+                base_url = self.request.build_absolute_uri("/")[:-1]
+
+            input_data = ItemProcessingRequest(
+                item_id=self.object.pk,
+                user_id=self.request.user.pk,
+                token=str(token),
+                base_url=base_url,
+            )
+
+            try:
+                workflow_handle = asyncio.run(
+                    TemporalService.start_item_publishing(input_data)
+                )
+                # Store the workflow ID for status tracking
+                self.object.publishing_workflow_id = workflow_handle.id
+                self.object.publishing_status = ProcessingStatus.PROCESSING
+                self.object.save(
+                    update_fields=["publishing_workflow_id", "publishing_status"]
+                )
+
+            except Exception:
+                # Fallback to synchronous if workflow fails
+                messages.warning(
+                    self.request,
+                    _("Publishing workflow failed, using fallback processing."),
+                )
+                from bubble.items.services.embedding_service import EmbeddingService
+
+                service = EmbeddingService()
+                embedding = service.generate_item_embedding(self.object)
+                if embedding:
+                    self.object.embedding = embedding
+                    self.object.save(update_fields=["embedding"])
 
         messages.success(self.request, _("Item created successfully!"))
         return response
@@ -322,6 +374,12 @@ class ItemUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return kwargs
 
     def form_valid(self, form):
+        # Set active status based on which button was clicked
+        if "publish" in self.request.POST:
+            form.instance.active = True
+        else:
+            form.instance.active = False
+
         response = super().form_valid(form)
 
         # Handle multiple image uploads
@@ -329,16 +387,56 @@ class ItemUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         for image in images:
             Image.objects.create(item=self.object, original=image)
 
+        # Generate embedding if item is being published (async with temporal)
+        if "publish" in self.request.POST:
+            # Start async publishing workflow
+            token = Token.objects.get_or_create(user=self.request.user)[0]
+            # Use internal Django URL for temporal worker if configured
+            base_url = getattr(settings, "TEMPORAL_DJANGO_BASE_URL", None)
+            if not base_url:
+                base_url = self.request.build_absolute_uri("/")[:-1]
+
+            input_data = ItemProcessingRequest(
+                item_id=self.object.pk,
+                user_id=self.request.user.pk,
+                token=str(token),
+                base_url=base_url,
+            )
+
+            try:
+                workflow_handle = asyncio.run(
+                    TemporalService.start_item_publishing(input_data)
+                )
+                # Store the workflow ID for status tracking
+                self.object.publishing_workflow_id = workflow_handle.id
+                self.object.publishing_status = ProcessingStatus.PROCESSING
+                self.object.save(
+                    update_fields=["publishing_workflow_id", "publishing_status"]
+                )
+
+            except Exception:
+                # Fallback to synchronous if workflow fails
+                messages.warning(
+                    self.request,
+                    _("Publishing workflow failed, using fallback processing."),
+                )
+                from bubble.items.services.embedding_service import EmbeddingService
+
+                service = EmbeddingService()
+                embedding = service.generate_item_embedding(self.object)
+                if embedding:
+                    self.object.embedding = embedding
+                    self.object.save(update_fields=["embedding"])
+
         messages.success(self.request, _("Item updated successfully!"))
         return response
 
     def get_success_url(self):
         if "publish" in self.request.POST:
-            # If publish button was clicked, set item as active
-            self.object.active = True
-            self.object.save()
+            # If publish button was clicked, redirect to detail page
             url = reverse("items:detail", kwargs={"pk": self.object.pk})
         else:
+            # If save draft was clicked, stay on edit page
             url = reverse("items:edit", kwargs={"pk": self.object.pk})
 
         return url
@@ -473,11 +571,16 @@ class ItemCreateImagesView(LoginRequiredMixin, TemplateView):
 
             # Trigger async image processing
             token = Token.objects.get_or_create(user=request.user)[0]
+            # Use internal Django URL for temporal worker if configured
+            base_url = getattr(settings, "TEMPORAL_DJANGO_BASE_URL", None)
+            if not base_url:
+                base_url = request.build_absolute_uri("/")[:-1]
+
             input_data = ItemProcessingRequest(
                 item_id=item.pk,
                 user_id=request.user.pk,
                 token=str(token),
-                base_url=request.build_absolute_uri("/")[:-1],  # Remove trailing slash
+                base_url=base_url,
             )
             workflow_handle = asyncio.run(
                 TemporalService.start_item_processing(input_data)
@@ -533,6 +636,36 @@ def check_processing_status(request, pk):
         )
 
 
+@require_http_methods(["GET"])
+def check_active_searches(request):
+    """Check if user has any active similarity searches."""
+    try:
+        if not request.user.is_authenticated:
+            return JsonResponse({"has_active_searches": False})
+
+        # Check for any processing searches for this user
+        active_searches = SimilaritySearch.objects.filter(
+            user=request.user,
+            status__in=[SearchStatus.PENDING, SearchStatus.PROCESSING],
+        ).exists()
+
+        return JsonResponse(
+            {
+                "status": "success",
+                "has_active_searches": active_searches,
+            }
+        )
+
+    except Exception as e:
+        return JsonResponse(
+            {
+                "status": "error",
+                "message": str(e),
+                "has_active_searches": False,
+            }
+        )
+
+
 @login_required
 @require_http_methods(["POST"])
 def cancel_processing(request, pk):
@@ -580,11 +713,6 @@ def cancel_processing(request, pk):
             {"status": "error", "message": str(exc)},
             status=404,
         )
-    except Item.DoesNotExist:
-        return JsonResponse(
-            {"status": "error", "message": "Item not found"},
-            status=404,
-        )
 
 
 @login_required
@@ -613,11 +741,16 @@ def retrigger_processing(request, pk):
 
         # Trigger async image processing
         token = Token.objects.get_or_create(user=request.user)[0]
+        # Use internal Django URL for temporal worker if configured
+        base_url = getattr(settings, "TEMPORAL_DJANGO_BASE_URL", None)
+        if not base_url:
+            base_url = request.build_absolute_uri("/")[:-1]
+
         input_data = ItemProcessingRequest(
             item_id=item.pk,
             user_id=request.user.pk,
             token=str(token),
-            base_url=request.build_absolute_uri("/")[:-1],  # Remove trailing slash
+            base_url=base_url,
         )
         workflow_handle = asyncio.run(TemporalService.start_item_processing(input_data))
 
@@ -639,3 +772,298 @@ def retrigger_processing(request, pk):
             {"status": "error", "message": "Item not found"},
             status=404,
         )
+
+
+class ItemSimilaritySearchView(TemplateView):
+    """View for AI-powered similarity search with async processing."""
+
+    template_name = "items/item_similarity_list.html"
+
+    def get(self, request, *args, **kwargs):
+        query = request.GET.get("q", "").strip()
+
+        if not query:
+            # No query provided, show empty search page
+            return self.render_to_response({"search_query": "", "items": []})
+
+        # Check for existing active searches for this user
+        import uuid
+
+        from .models import SearchStatus, SimilaritySearch
+
+        if request.user.is_authenticated:
+            # Check if user already has an active search
+            active_search = SimilaritySearch.objects.filter(
+                user=request.user,
+                status__in=[SearchStatus.PENDING, SearchStatus.PROCESSING],
+            ).first()
+
+            if active_search:
+                # User has an active search, redirect to that search
+                context = {
+                    "search_query": active_search.query,
+                    "search_id": active_search.search_id,
+                    "search_status": "processing",
+                    "items": [],
+                    "existing_search": True,
+                }
+                return self.render_to_response(context)
+
+        # Generate a unique search ID for this query+user combination
+        search_id = f"search-{uuid.uuid4().hex[:12]}"
+
+        # Create search record
+        search_obj = SimilaritySearch.objects.create(
+            search_id=search_id,
+            query=query,
+            user=request.user if request.user.is_authenticated else None,
+            status=SearchStatus.PENDING,
+        )
+
+        # Start async workflow
+        try:
+            from rest_framework.authtoken.models import Token
+
+            from .temporal.temporal_activities import SimilaritySearchRequest
+            from .temporal.temporal_service import TemporalService
+
+            # Get or create token for API access
+            token = None
+            if request.user.is_authenticated:
+                token, _ = Token.objects.get_or_create(user=request.user)
+
+            # Use internal Django URL for temporal worker if configured
+            base_url = getattr(settings, "TEMPORAL_DJANGO_BASE_URL", None)
+            if not base_url:
+                base_url = request.build_absolute_uri("/")[:-1]
+
+            search_request = SimilaritySearchRequest(
+                search_id=search_id,
+                query=query,
+                user_id=request.user.id if request.user.is_authenticated else 0,
+                token=str(token) if token else "",
+                base_url=base_url,
+            )
+
+            # Start workflow
+            workflow_handle = asyncio.run(
+                TemporalService.start_similarity_search(search_request)
+            )
+
+            # Update search object with workflow info
+            search_obj.workflow_id = workflow_handle.id
+            search_obj.status = SearchStatus.PROCESSING
+            search_obj.save(update_fields=["workflow_id", "status"])
+
+        except Exception as e:
+            # If workflow fails to start, mark as failed
+            search_obj.status = SearchStatus.FAILED
+            search_obj.error_message = str(e)
+            search_obj.save(update_fields=["status", "error_message"])
+
+        # Return response with search status
+        context = {
+            "search_query": query,
+            "search_id": search_id,
+            "search_status": "processing",
+            "items": [],  # Initially empty, will be populated via AJAX
+        }
+        return self.render_to_response(context)
+
+
+@require_http_methods(["GET"])
+def check_search_status(request, search_id):
+    """AJAX endpoint to check similarity search status."""
+    try:
+        from .models import SimilaritySearch
+
+        search_obj = get_object_or_404(SimilaritySearch, search_id=search_id)
+
+        return JsonResponse(
+            {
+                "status": "success",
+                "search_status": search_obj.status,
+                "search_status_display": dict(SearchStatus.choices).get(
+                    search_obj.status, ""
+                ),
+                "query": search_obj.query,
+                "is_processing": search_obj.is_processing,
+                "is_completed": search_obj.is_completed,
+                "has_failed": search_obj.has_failed,
+                "results_count": search_obj.results_count,
+                "workflow_id": search_obj.workflow_id,
+                "error_message": search_obj.error_message,
+            }
+        )
+
+    except SimilaritySearch.DoesNotExist:
+        return JsonResponse(
+            {"status": "error", "message": "Search not found"},
+            status=404,
+        )
+
+
+@require_http_methods(["GET"])
+def get_search_results(request, search_id):
+    """AJAX endpoint to get similarity search results."""
+    try:
+        from .models import SimilaritySearch
+
+        search_obj = get_object_or_404(SimilaritySearch, search_id=search_id)
+
+        if not search_obj.is_completed:
+            return JsonResponse(
+                {"status": "error", "message": "Search not completed yet"},
+                status=400,
+            )
+
+        # Return the cached results
+        return JsonResponse(
+            {
+                "status": "success",
+                "search_id": search_id,
+                "query": search_obj.query,
+                "results": search_obj.results,
+                "results_count": search_obj.results_count,
+            }
+        )
+
+    except SimilaritySearch.DoesNotExist:
+        return JsonResponse(
+            {"status": "error", "message": "Search not found"},
+            status=404,
+        )
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def api_similarity_search(request):
+    """API endpoint for similarity search - called by temporal workflow."""
+    try:
+        import json
+
+        from django.http import JsonResponse
+
+        from bubble.items.services.embedding_service import EmbeddingService
+
+        # Check authentication via token header
+        auth_header = request.headers.get("authorization", "")
+        if not auth_header.startswith("Token "):
+            return JsonResponse(
+                {"status": "error", "message": "Authentication required", "items": []},
+                status=401,
+            )
+
+        token_key = auth_header.split(" ")[1]
+        try:
+            token = Token.objects.get(key=token_key)
+            # Token is valid, continue with the request
+        except Token.DoesNotExist:
+            return JsonResponse(
+                {"status": "error", "message": "Invalid token", "items": []}, status=401
+            )
+
+        # Parse request data
+        data = json.loads(request.body)
+        query = data.get("query", "").strip()
+        search_id = data.get("search_id", "")
+
+        if not query:
+            return JsonResponse(
+                {"status": "error", "message": "Query is required", "items": []},
+                status=400,
+            )
+
+        # Perform similarity search
+        embedding_service = EmbeddingService()
+        similar_items = embedding_service.find_similar_items(query, limit=20)
+
+        # Format results for API response
+        results = []
+        for item, similarity in similar_items:
+            # Get first image if available
+            first_image = item.images.first()
+            image_url = None
+            if first_image:
+                image_url = first_image.original.url if first_image.original else None
+
+            results.append(
+                {
+                    "id": item.id,
+                    "name": item.name,
+                    "description": item.description,
+                    "price": str(item.price) if item.price else None,
+                    "similarity": float(similarity),
+                    "image_url": image_url,
+                    "category": item.category.name if item.category else None,
+                    "user": item.user.username,
+                    "date_created": item.date_created.isoformat(),
+                }
+            )
+
+        return JsonResponse(
+            {
+                "status": "success",
+                "search_id": search_id,
+                "query": query,
+                "items": results,
+                "count": len(results),
+            }
+        )
+
+    except Exception as e:
+        return JsonResponse(
+            {"status": "error", "message": str(e), "items": []}, status=500
+        )
+
+
+@require_http_methods(["GET"])
+def check_publishing_status(request, pk):
+    """AJAX endpoint to check item publishing status."""
+    try:
+        item = get_object_or_404(Item, pk=pk, user=request.user)
+
+        return JsonResponse(
+            {
+                "status": "success",
+                "publishing_status": item.publishing_status,
+                "publishing_status_display": dict(ProcessingStatus.choices).get(
+                    item.publishing_status, ""
+                ),
+                "is_processing": item.publishing_status == ProcessingStatus.PROCESSING,
+                "is_completed": item.publishing_status == ProcessingStatus.COMPLETED,
+                "has_failed": item.publishing_status == ProcessingStatus.FAILED,
+                "workflow_id": item.publishing_workflow_id,
+            }
+        )
+
+    except Item.DoesNotExist:
+        return JsonResponse(
+            {"status": "error", "message": "Item not found"},
+            status=404,
+        )
+
+
+@login_required
+def debug_publishing_status(request, pk):
+    """Debug view to check publishing workflow status."""
+    item = get_object_or_404(Item, pk=pk)
+
+    # Only allow item owner to check status
+    if item.user != request.user:
+        return JsonResponse({"error": "Not authorized"}, status=403)
+
+    return JsonResponse(
+        {
+            "item_id": item.id,
+            "item_name": item.name,
+            "publishing_status": item.publishing_status,
+            "publishing_status_display": item.get_publishing_status_display(),
+            "publishing_workflow_id": item.publishing_workflow_id,
+            "has_embedding": item.embedding is not None,
+            "embedding_dimensions": len(item.embedding)
+            if item.embedding is not None
+            else 0,
+            "date_updated": item.date_updated.isoformat(),
+        }
+    )
