@@ -31,16 +31,45 @@
       <div class="row mt-4">
         <div class="col-sm-12">
           <h3>{% trans "Favorites" %}</h3>
-          <p>
-            <a href="{% url 'favorites:user_list' username=object.username %}"
-               class="btn btn-outline-primary">
-              {% trans "View all favorites" %}
-              <span class="badge bg-secondary ms-2">{{ object.favorites.count }}</span>
-            </a>
-          </p>
-        </div>
-      </div>
-      <!-- End Favorites Section -->
+
+          <!-- Favorites Overview -->
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">
+                    <i class="fas fa-heart"></i> {% trans "My Favorites" %}
+                  </h5>
+                  <p class="card-text">
+                    <span class="badge bg-primary fs-6">{{ object.favorites.count }}</span>
+                    {% trans "total favorites" %}
+                  </p>
+                  <a href="{% url 'favorites:user_list' username=object.username %}"
+                     class="btn btn-outline-primary">
+                    {% trans "View All" %}
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">
+                    <i class="fas fa-list"></i> {% trans "Favorite Lists" %}
+                  </h5>
+                  <p class="card-text">
+                    <span class="badge bg-success fs-6">{{ object.owned_favorite_lists.count }}</span>
+                    {% trans "owned lists" %}
+                  </p>
+                  <a href="{% url 'favorites:list_list' %}"
+                     class="btn btn-outline-success">
+                    {% trans "Manage Lists" %}
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
     {% endif %}
   </div>
 {% endblock content %}

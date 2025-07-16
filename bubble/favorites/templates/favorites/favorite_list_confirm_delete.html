@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Delete Favorite List" %}{% endblock title %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-trash"></i> {% trans "Delete Favorite List" %}
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>{% trans "Warning!" %}</strong>
+                        {% trans "This action cannot be undone." %}
+                    </div>
+
+                    <p>{% trans "Are you sure you want to delete the favorite list" %} <strong>"{{ object.name }}"</strong>?</p>
+
+                    {% if object.favorites.count > 0 %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            {% blocktrans count count=object.favorites.count %}
+                                This list contains {{ count }} favorite that will also be deleted.
+                            {% plural %}
+                                This list contains {{ count }} favorites that will also be deleted.
+                            {% endblocktrans %}
+                        </div>
+                    {% endif %}
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'favorites:list_detail' object.pk %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> {% trans "Cancel" %}
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash"></i> {% trans "Delete List" %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

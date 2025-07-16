@@ -4,9 +4,9 @@
 
 {% block title %}
   {% if current_filter_display %}
-    {{ current_filter_display }} {{ root_category.name }}
+    {{ current_filter_display }} - {{ page_title }}
   {% else %}
-  {{ root_category.name }}
+    {{ page_title }}
   {% endif %}
 {% endblock title %}
 
