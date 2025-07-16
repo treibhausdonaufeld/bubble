@@ -56,6 +56,16 @@ class CheckFavoriteStatusView(LoginRequiredMixin, View):
 class ToggleFavoriteView(LoginRequiredMixin, View):
     """AJAX view to toggle favorite status"""
 
+    def _create_response(self, status, message, *, is_favorited):
+        """Helper to create JSON response."""
+        return JsonResponse(
+            {
+                "status": status,
+                "message": message,
+                "is_favorited": is_favorited,
+            }
+        )
+
     def post(self, request):
         data = json.loads(request.body)
         url = data.get("url")
@@ -67,6 +77,9 @@ class ToggleFavoriteView(LoginRequiredMixin, View):
             return JsonResponse({"error": _("URL is required")}, status=400)
 
         # Get or create default favorite list if no list specified
+        favorite_list = None
+        error_response = None
+
         if favorite_list_id:
             try:
                 # Get the favorite list - check if user can edit it
@@ -74,14 +87,19 @@ class ToggleFavoriteView(LoginRequiredMixin, View):
 
                 # Check if user has permission to add to this list
                 if not favorite_list.can_edit(request.user):
-                    return JsonResponse(
+                    error_response = JsonResponse(
                         {"error": _("You don't have permission to add to this list")},
                         status=403,
                     )
             except FavoriteList.DoesNotExist:
-                return JsonResponse({"error": _("Favorite list not found")}, status=404)
+                error_response = JsonResponse(
+                    {"error": _("Favorite list not found")}, status=404
+                )
         else:
             favorite_list = FavoriteList.get_or_create_default_list(request.user)
+
+        if error_response:
+            return error_response
 
         # If this is a title update request
         if update_title:
@@ -91,24 +109,16 @@ class ToggleFavoriteView(LoginRequiredMixin, View):
                 )
                 favorite.title = title
                 favorite.save()
-                return JsonResponse(
-                    {
-                        "status": "updated",
-                        "message": _("Favorite updated"),
-                        "is_favorited": True,
-                    },
+                return self._create_response(
+                    "updated", _("Favorite updated"), is_favorited=True
                 )
             except Favorite.DoesNotExist:
                 # Create new if doesn't exist
                 Favorite.objects.create(
                     user=request.user, url=url, title=title, favorite_list=favorite_list
                 )
-                return JsonResponse(
-                    {
-                        "status": "added",
-                        "message": _("Added to favorites"),
-                        "is_favorited": True,
-                    },
+                return self._create_response(
+                    "added", _("Added to favorites"), is_favorited=True
                 )
 
         favorite, created = Favorite.objects.get_or_create(
@@ -121,20 +131,12 @@ class ToggleFavoriteView(LoginRequiredMixin, View):
         if not created:
             # If it already exists, remove it
             favorite.delete()
-            return JsonResponse(
-                {
-                    "status": "removed",
-                    "message": _("Remove from favorites"),
-                    "is_favorited": False,
-                },
+            return self._create_response(
+                "removed", _("Remove from favorites"), is_favorited=False
             )
 
-        return JsonResponse(
-            {
-                "status": "added",
-                "message": _("Added to favorites"),
-                "is_favorited": True,
-            },
+        return self._create_response(
+            "added", _("Added to favorites"), is_favorited=True
         )
 
 
