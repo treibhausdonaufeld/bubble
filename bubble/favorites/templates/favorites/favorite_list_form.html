@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+    {% if object %}
+        {% trans "Edit Favorite List" %}
+    {% else %}
+        {% trans "Create Favorite List" %}
+    {% endif %}
+{% endblock title %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">
+                        {% if object %}
+                            <i class="fas fa-edit"></i> {% trans "Edit Favorite List" %}
+                        {% else %}
+                            <i class="fas fa-plus"></i> {% trans "Create Favorite List" %}
+                        {% endif %}
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <!-- Name field -->
+                        <div class="mb-3">
+                            <label for="{{ form.name.id_for_label }}" class="form-label">{{ form.name.label }}</label>
+                            {{ form.name }}
+                            {% if form.name.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.name.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Shared with field -->
+                        <div class="mb-3">
+                            <label for="{{ form.shared_with.id_for_label }}" class="form-label">{{ form.shared_with.label }}</label>
+                            <div class="form-text mb-2">{{ form.shared_with.help_text }}</div>
+                            {{ form.shared_with }}
+                            {% if form.shared_with.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.shared_with.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Editors field -->
+                        <div class="mb-3">
+                            <label for="{{ form.editors.id_for_label }}" class="form-label">{{ form.editors.label }}</label>
+                            <div class="form-text mb-2">{{ form.editors.help_text }}</div>
+                            {{ form.editors }}
+                            {% if form.editors.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.editors.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Form actions -->
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'favorites:list_list' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> {% trans "Cancel" %}
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                {% if object %}
+                                    <i class="fas fa-save"></i> {% trans "Update List" %}
+                                {% else %}
+                                    <i class="fas fa-plus"></i> {% trans "Create List" %}
+                                {% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Select2 for user selectors
+    $('.select2-users').select2({
+        placeholder: gettext('Search and select users...'),
+        allowClear: true,
+        width: '100%',
+        theme: 'bootstrap-5',
+        language: {
+            noResults: function() {
+                return gettext('No users found');
+            },
+            searching: function() {
+                return gettext('Searching...');
+            },
+            removeAllItems: function() {
+                return gettext('Remove all users');
+            }
+        },
+        // Format user display
+        templateResult: function(user) {
+            if (!user.id) {
+                return user.text;
+            }
+            // Format as username (Full Name)
+            var $user = $(
+                '<span>' + user.text + '</span>'
+            );
+            return $user;
+        },
+        templateSelection: function(user) {
+            return user.text;
+        }
+    });
+});
+</script>
+{% endblock content %}

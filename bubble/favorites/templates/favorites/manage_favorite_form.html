@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Manage Favorite" %}{% endblock title %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">
+                        <i class="fas fa-star"></i> {% trans "Manage Favorite" %}
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <form method="post" id="manage-favorite-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="url" value="{{ url }}" />
+
+                        <!-- Title field -->
+                        <div class="mb-3">
+                            <label for="{{ form.title.id_for_label }}" class="form-label">{{ form.title.label }} *</label>
+                            {{ form.title }}
+                            {% if form.title.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.title.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- URL field (readonly) -->
+                        <div class="mb-3">
+                            <label for="{{ form.url.id_for_label }}" class="form-label">{{ form.url.label }}</label>
+                            {{ form.url }}
+                            {% if form.url.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.url.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Favorite Lists field -->
+                        <div class="mb-3">
+                            <label for="{{ form.favorite_lists.id_for_label }}" class="form-label">{{ form.favorite_lists.label }}</label>
+                            <div class="form-text mb-2">{{ form.favorite_lists.help_text }}</div>
+                            {{ form.favorite_lists }}
+                            {% if form.favorite_lists.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.favorite_lists.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Form actions -->
+                        <div class="d-flex justify-content-between">
+                            <button type="button" class="btn btn-secondary" onclick="window.history.back()">
+                                <i class="fas fa-arrow-left"></i> {% trans "Cancel" %}
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> {% trans "Save Changes" %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Select2 for favorite lists selector
+    $('.select2-lists').select2({
+        placeholder: gettext('Select lists for this favorite...'),
+        allowClear: true,
+        width: '100%',
+        theme: 'bootstrap-5',
+        language: {
+            noResults: function() {
+                return gettext('No lists found');
+            },
+            searching: function() {
+                return gettext('Searching...');
+            },
+            removeAllItems: function() {
+                return gettext('Remove from all lists');
+            }
+        },
+        // Format list display
+        templateResult: function(list) {
+            if (!list.id) {
+                return list.text;
+            }
+            var $list = $(
+                '<span>' + list.text + '</span>'
+            );
+            return $list;
+        },
+        templateSelection: function(list) {
+            return list.text;
+        }
+    });
+
+    // Handle form submission with AJAX for better UX
+    $('#manage-favorite-form').on('submit', function(e) {
+        e.preventDefault();
+
+        const submitBtn = $(this).find('button[type="submit"]');
+        const originalText = submitBtn.html();
+
+        // Show loading state
+        submitBtn.prop('disabled', true);
+        submitBtn.html('<i class="fas fa-spinner fa-spin me-1"></i>' + gettext('Saving...'));
+
+        // Submit form via AJAX
+        $.ajax({
+            url: '{% url "favorites:manage" %}',
+            method: 'POST',
+            data: $(this).serialize(),
+            headers: {
+                'X-CSRFToken': $('[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(response) {
+                if (response.status === 'success') {
+                    // Show success message
+                    const alertDiv = $('<div class="alert alert-success alert-dismissible fade show" role="alert">' +
+                        '<i class="fas fa-check-circle me-2"></i>' + response.message +
+                        '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>' +
+                        '</div>');
+
+                    $('.card').before(alertDiv);
+
+                    // Update star appearance on parent page
+                    if (window.opener) {
+                        // Update star on parent window
+                        const favoriteBtns = window.opener.document.querySelectorAll('.favorite-star-mobile, #favorite-star-desktop, #favorite-star');
+                        favoriteBtns.forEach(btn => {
+                            if (response.is_favorited) {
+                                btn.textContent = '★';
+                                btn.classList.add('favorited');
+                                btn.title = gettext('Manage favorites');
+                            } else {
+                                btn.textContent = '☆';
+                                btn.classList.remove('favorited');
+                                btn.title = gettext('Add to favorites');
+                            }
+                        });
+                    }
+
+                    // Close window after 1.5 seconds
+                    setTimeout(function() {
+                        window.close();
+                    }, 1500);
+                }
+            },
+            error: function(xhr) {
+                let errorMessage = gettext('An error occurred. Please try again.');
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage = xhr.responseJSON.message;
+                }
+
+                const alertDiv = $('<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
+                    '<i class="fas fa-exclamation-triangle me-2"></i>' + errorMessage +
+                    '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>' +
+                    '</div>');
+
+                $('.card').before(alertDiv);
+            },
+            complete: function() {
+                // Restore button state
+                submitBtn.prop('disabled', false);
+                submitBtn.html(originalText);
+            }
+        });
+    });
+});
+</script>
+{% endblock content %}

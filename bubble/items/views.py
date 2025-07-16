@@ -101,6 +101,9 @@ class ItemListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        # Add page title
+        context["page_title"] = _("Items")
+
         # Create filter form with GET parameters
         context["filter_form"] = ItemFilterForm(self.request.GET)
 

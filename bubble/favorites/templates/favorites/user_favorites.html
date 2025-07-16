@@ -9,14 +9,26 @@
   <div class="container">
     <div class="row">
       <div class="col-md-12">
-        <h1 class="mb-4">
-          {% trans "Favorites" %}
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h1 class="mb-0">
+            {% trans "Favorites" %}
+            {% if profile_user == request.user %}
+              <small class="text-muted">{% trans "My Favorites" %}</small>
+            {% else %}
+              <small class="text-muted">{{ profile_user.username }}</small>
+            {% endif %}
+          </h1>
           {% if profile_user == request.user %}
-            <small class="text-muted">{% trans "My Favorites" %}</small>
-          {% else %}
-            <small class="text-muted">{{ profile_user.username }}</small>
+            <div class="btn-group" role="group">
+              <a href="{% url 'favorites:list_list' %}" class="btn btn-outline-primary">
+                <i class="fas fa-list"></i> {% trans "My Lists" %}
+              </a>
+              <a href="{% url 'favorites:list_create' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> {% trans "Create List" %}
+              </a>
+            </div>
           {% endif %}
-        </h1>
+        </div>
         {% if favorites %}
           <div class="list-group mb-4">
             {% for favorite in favorites %}
@@ -26,7 +38,14 @@
                     <a href="{{ favorite.url }}" target="_blank" rel="noopener">{{ favorite.title }}</a>
                   </h5>
                   <p class="mb-1 text-muted small">{{ favorite.url|truncatechars:80 }}</p>
-                  <small class="text-muted">{% trans "Added on" %} {{ favorite.created_at|date:"d.m.Y H:i" }}</small>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted">{% trans "Added on" %} {{ favorite.created_at|date:"d.m.Y H:i" }}</small>
+                    {% if favorite.favorite_list %}
+                      <span class="badge bg-secondary">
+                        <i class="fas fa-list"></i> {{ favorite.favorite_list.name }}
+                      </span>
+                    {% endif %}
+                  </div>
                 </div>
                 {% if favorite.user == request.user %}
                   <button class="btn btn-sm btn-danger delete-favorite"

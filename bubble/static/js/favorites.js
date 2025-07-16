@@ -68,7 +68,7 @@ class FavoritesManager {
         if (isFavorited) {
             btn.textContent = '★';
             btn.classList.add('favorited');
-            btn.title = gettext('Remove from favorites');
+            btn.title = gettext('Manage favorites');
         } else {
             btn.textContent = '☆';
             btn.classList.remove('favorited');
@@ -76,83 +76,39 @@ class FavoritesManager {
         }
     }
 
-    async handleFavoriteClick(event) {
-        event.preventDefault();
-        const btn = event.currentTarget;
-        const url = btn.dataset.url;
-        const pageTitle = document.title || btn.dataset.title || '';
-
-        console.log('CSRF Token:', this.csrfToken);
-        console.log('URL to favorite:', url);
-        console.log('Page title:', pageTitle);
-
-        // First check if already favorited
-        btn.disabled = true;
-        const originalText = btn.textContent;
-        btn.textContent = '...';
-
+    async openManagementForm(url, pageTitle) {
+        // Load management form content via AJAX and show in modal
         try {
-            // Check current status by attempting toggle
-            const checkResponse = await fetch('/favorites/toggle/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': this.csrfToken,
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: JSON.stringify({
-                    url: url,
-                    title: ''  // Empty title to check status
-                })
-            });
-
-            if (!checkResponse.ok) {
-                throw new Error(`HTTP error! status: ${checkResponse.status}`);
+            const response = await fetch(`/favorites/manage/?url=${encodeURIComponent(url)}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            const checkData = await checkResponse.json();
-            console.log('Response data:', checkData);
+            const html = await response.text();
+            // Extract just the form content from the response
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const formContent = doc.querySelector('.card-body').innerHTML;
 
-            if (checkData.is_favorited) {
-                // Was not favorited, now is - show modal to get title
-                this.showAddModal(url, pageTitle);
-            } else {
-                // Was favorited, now removed
-                this.updateStarAppearance(btn, false);
-                this.showToast(checkData.message);
-            }
+            // Show in modal
+            this.showManagementModal(formContent, url);
+
         } catch (error) {
-            console.error('Full error details:', error);
-            console.error('Error message:', error.message);
-            console.error('Error stack:', error.stack);
-            this.showToast(`Network error: ${error.message}`, 'error');
-            btn.textContent = originalText;
-        } finally {
-            btn.disabled = false;
+            console.error('Error loading management form:', error);
+            this.showToast('Error loading favorites form', 'error');
         }
     }
 
-    showAddModal(url, title) {
+    showManagementModal(formContent, url) {
         const modalHtml = `
             <div class="modal-header">
-                <h5 class="modal-title">${gettext('Add to favorites')}</h5>
+                <h5 class="modal-title">
+                    <i class="fas fa-star"></i> ${gettext('Manage Favorite')}
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="${gettext('Close')}"></button>
             </div>
             <div class="modal-body">
-                <form id="add-favorite-form">
-                    <div class="mb-3">
-                        <label for="favorite-title" class="form-label">${gettext('Title')}</label>
-                        <input type="text" class="form-control" id="favorite-title" name="title" value="${this.escapeHtml(title)}" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="favorite-url" class="form-label">${gettext('URL')}</label>
-                        <input type="text" class="form-control" id="favorite-url" name="url" value="${this.escapeHtml(url)}" readonly>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${gettext('Cancel')}</button>
-                <button type="button" class="btn btn-primary" id="save-favorite">${gettext('Save')}</button>
+                ${formContent}
             </div>
         `;
 
@@ -162,77 +118,89 @@ class FavoritesManager {
         const modal = new bootstrap.Modal(document.getElementById('favoritesModal'));
         modal.show();
 
-        // Handle save
-        let saved = false;
-        document.getElementById('save-favorite').addEventListener('click', async () => {
-            const titleInput = document.getElementById('favorite-title');
-            if (titleInput.value.trim()) {
-                saved = true;
-                // Update the favorite with the title
-                await this.updateFavoriteTitle(url, titleInput.value.trim());
-                modal.hide();
+        // Initialize Select2 for the modal form
+        $('.select2-lists').select2({
+            placeholder: gettext('Select lists for this favorite...'),
+            allowClear: true,
+            width: '100%',
+            theme: 'bootstrap-5',
+            dropdownParent: $('#favoritesModal'), // Important for modal
+            language: {
+                noResults: function() {
+                    return gettext('No lists found');
+                },
+                searching: function() {
+                    return gettext('Searching...');
+                },
+                removeAllItems: function() {
+                    return gettext('Remove from all lists');
+                }
             }
         });
 
-        modal._element.addEventListener('hidden.bs.modal', async () => {
-            if (!saved) {
-                // User closed without saving, remove the favorite
-                await this.toggleFavorite(url, '');
+        // Handle form submission
+        const form = document.getElementById('manage-favorite-form');
+        if (form) {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await this.handleManagementFormSubmit(form, modal, url);
+            });
+        }
+    }
+
+    async handleManagementFormSubmit(form, modal, url) {
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+
+        // Show loading state
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>' + gettext('Saving...');
+
+        try {
+            const formData = new FormData(form);
+            const response = await fetch('/favorites/manage/', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': this.csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+
+            const data = await response.json();
+
+            if (data.status === 'success') {
+                // Update star appearance
                 const btns = this.getFavoriteButtons();
-                btns.forEach(btn => this.updateStarAppearance(btn, false));
+                btns.forEach(btn => this.updateStarAppearance(btn, data.is_favorited));
+
+                // Show success message and close modal
+                this.showToast(data.message);
+                modal.hide();
+            } else {
+                throw new Error(data.message || 'Unknown error');
             }
-        });
-    }
-
-    async updateFavoriteTitle(url, title) {
-        try {
-            // Update the existing favorite with the title by making another request
-            const response = await fetch('/favorites/toggle/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': this.csrfToken,
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: JSON.stringify({
-                    url: url,
-                    title: title,
-                    update_title: true  // Flag to indicate we want to update title
-                })
-            });
-
-            const data = await response.json();
-            const btns = this.getFavoriteButtons();
-            btns.forEach(btn => this.updateStarAppearance(btn, true));
-            this.showToast(gettext('Added to favorites'));
         } catch (error) {
-            console.error('Error updating favorite:', error);
-            this.showToast('Error saving favorite', 'error');
+            console.error('Error saving favorite:', error);
+            this.showToast(error.message || 'Error saving favorite', 'error');
+        } finally {
+            // Restore button state
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
         }
     }
 
-    async toggleFavorite(url, title) {
-        try {
-            const response = await fetch('/favorites/toggle/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': this.csrfToken,
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: JSON.stringify({
-                    url: url,
-                    title: title
-                })
-            });
+    async handleFavoriteClick(event) {
+        event.preventDefault();
+        const btn = event.currentTarget;
+        const url = btn.dataset.url;
+        const pageTitle = document.title || btn.dataset.title || '';
 
-            const data = await response.json();
-            const btns = this.getFavoriteButtons();
-            btns.forEach(btn => this.updateStarAppearance(btn, data.is_favorited));
-        } catch (error) {
-            console.error('Error toggling favorite:', error);
-        }
+        // Always open the management form (never toggle)
+        this.openManagementForm(url, pageTitle);
     }
+
+
 
     showToast(message, type = 'success') {
         // Create a simple toast notification

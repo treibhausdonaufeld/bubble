@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{{ favorite_list.name }} - {% trans "Favorite List" %}{% endblock title %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-10 mx-auto">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="mb-0">
+                        {% if favorite_list.is_default %}
+                            <i class="fas fa-star text-warning"></i>
+                        {% endif %}
+                        {{ favorite_list.name }}
+                    </h1>
+                    <p class="text-muted mb-0">
+                        {% trans "Created by" %} {{ favorite_list.user.username }} ({{ favorite_list.user.name }})
+                        {% trans "on" %} {{ favorite_list.created_at|date:"d.m.Y" }}
+                    </p>
+                </div>
+
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-cog"></i> {% trans "Actions" %}
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{% url 'favorites:list_list' %}">
+                            <i class="fas fa-arrow-left"></i> {% trans "Back to Lists" %}
+                        </a></li>
+                        {% if can_edit %}
+                            <li><hr class="dropdown-divider" /></li>
+                            <li><a class="dropdown-item" href="{% url 'favorites:list_edit' favorite_list.pk %}">
+                                <i class="fas fa-edit"></i> {% trans "Edit List" %}
+                            </a></li>
+                            {% if not favorite_list.is_default %}
+                                <li><a class="dropdown-item text-danger" href="{% url 'favorites:list_delete' favorite_list.pk %}">
+                                    <i class="fas fa-trash"></i> {% trans "Delete List" %}
+                                </a></li>
+                            {% endif %}
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+
+            <!-- List sharing info -->
+            {% if favorite_list.shared_with.exists or favorite_list.editors.exists %}
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <i class="fas fa-users"></i> {% trans "Shared Access" %}
+                        </h6>
+                        {% if favorite_list.shared_with.exists %}
+                            <p class="mb-2">
+                                <strong>{% trans "Viewers:" %}</strong>
+                                {% for user in favorite_list.shared_with.all %}
+                                    <span class="badge bg-secondary">{{ user.username }} ({{ user.name }})</span>
+                                {% endfor %}
+                            </p>
+                        {% endif %}
+                        {% if favorite_list.editors.exists %}
+                            <p class="mb-0">
+                                <strong>{% trans "Editors:" %}</strong>
+                                {% for user in favorite_list.editors.all %}
+                                    <span class="badge bg-primary">{{ user.username }} ({{ user.name }})</span>
+                                {% endfor %}
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Favorites list -->
+            {% if favorites %}
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-heart"></i>
+                            {% blocktrans count count=favorites.count %}
+                                {{ count }} Favorite
+                            {% plural %}
+                                {{ count }} Favorites
+                            {% endblocktrans %}
+                        </h5>
+                        {% if can_edit %}
+                            <a href="{% url 'favorites:create_manual' %}?list={{ favorite_list.pk }}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-plus"></i> {% trans "Add Favorite" %}
+                            </a>
+                        {% endif %}
+                    </div>
+                    <div class="list-group list-group-flush">
+                        {% for favorite in favorites %}
+                            <div class="list-group-item" data-favorite-id="{{ favorite.id }}">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">
+                                            <a href="{{ favorite.url }}" target="_blank" class="text-decoration-none">
+                                                {{ favorite.title }}
+                                                <i class="fas fa-external-link-alt fa-sm text-muted ms-1"></i>
+                                            </a>
+                                        </h6>
+                                        <p class="mb-1 text-muted small">{{ favorite.url }}</p>
+                                        <small class="text-muted">
+                                            {% trans "Added" %}: {{ favorite.created_at|date:"d.m.Y H:i" }}
+                                        </small>
+                                    </div>
+                                    {% if can_edit %}
+                                        <div class="dropdown">
+                                            <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" href="{{ favorite.url }}" target="_blank">
+                                                    <i class="fas fa-external-link-alt"></i> {% trans "Open Link" %}
+                                                </a></li>
+                                                <li><hr class="dropdown-divider" /></li>
+                                                <li><a class="dropdown-item text-danger delete-favorite"
+                                                       href="{% url 'favorites:delete' favorite.pk %}"
+                                                       data-favorite-id="{{ favorite.id }}">
+                                                    <i class="fas fa-trash"></i> {% trans "Remove" %}
+                                                </a></li>
+                                            </ul>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-heart fa-3x text-muted mb-3"></i>
+                    <h3 class="text-muted">{% trans "No favorites in this list yet" %}</h3>
+                    <p class="text-muted">{% trans "Start adding favorites to this list from any page using the star button." %}</p>
+                    {% if can_edit %}
+                        <a href="{% url 'favorites:create_manual' %}?list={{ favorite_list.pk }}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> {% trans "Add First Favorite" %}
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Delete confirmation modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{% trans "Confirm Delete" %}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                {% trans "Are you sure you want to remove this favorite from the list?" %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+                <button type="button" class="btn btn-danger" id="confirmDelete">{% trans "Remove" %}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    let deleteUrl = '';
+    let favoriteElement = null;
+
+    // Handle delete button clicks
+    document.querySelectorAll('.delete-favorite').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            deleteUrl = this.getAttribute('href');
+            favoriteElement = this.closest('.list-group-item');
+            deleteModal.show();
+        });
+    });
+
+    // Handle confirm delete
+    document.getElementById('confirmDelete').addEventListener('click', function() {
+        if (deleteUrl) {
+            fetch(deleteUrl, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    favoriteElement.remove();
+                    deleteModal.hide();
+
+                    // Show success message
+                    const alert = document.createElement('div');
+                    alert.className = 'alert alert-success alert-dismissible fade show';
+                    alert.innerHTML = `
+                        ${data.message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    `;
+                    document.querySelector('.container').prepend(alert);
+
+                    // Auto-dismiss after 3 seconds
+                    setTimeout(() => {
+                        alert.remove();
+                    }, 3000);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                deleteModal.hide();
+            });
+        }
+    });
+});
+</script>
+{% endblock content %}
