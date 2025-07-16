@@ -205,10 +205,6 @@ Core entity representing physical items users want to share.
 - `display_contact`: Boolean (show owner contact info)
 - `active`: Boolean (item is publicly visible)
 
-#### ItemTagRelation Model
-Many-to-many relationship between Items and ItemTags.
-
-
 
 #### Image Model
 Multiple images per item with ordering support.
@@ -223,10 +219,6 @@ Hierarchical organization system for items.
 #### ServiceCategory Model
 Flat organization system for future services (no hierarchy).
 
-#### ItemTag Model
-Independent labeling system for items.
-- Many-to-many relationship with Items via ItemTagRelation
-- Admin-managed only (users can select, not create)
 
 ### Users App (`users.models`)
 
@@ -238,7 +230,6 @@ Extended user information linked to Django User.
 
 ### Relationships
 - **Item ↔ ItemCategory**: One-to-many (each item has one category)
-- **Item ↔ ItemTag**: Many-to-many via ItemTagRelation
 - **Item ↔ User**: Many-to-one (user owns multiple items)
 - **User ↔ Profile**: One-to-one (automatic creation)
 
@@ -259,15 +250,14 @@ Extended user information linked to Django User.
 ```
 
 **Filtering Support:**
-- GET parameters: `?search=laptop&category=1&tags=2,3&status=1`
-- URL-based type filtering: `/items/sell/?category=1&tags=2`
+- GET parameters: `?search=laptop&category=1&status=1`
+- URL-based type filtering: `/items/sell/?category=1`
 - Shareable filtered links for easy sharing
 
 ## Frontend Features
 
 ### Item Management
 - **Complete CRUD operations** with proper permissions
-- **Tag selection** via checkboxes (admin-managed tags)
 - **Category hierarchies** with dropdown selection
 - **Image upload support** (multiple images per item)
 - **Responsive design** with Bootstrap 5
@@ -275,7 +265,6 @@ Extended user information linked to Django User.
 ### Filtering & Search
 - **Text search** across name and description
 - **Category filtering** with hierarchical support
-- **Tag filtering** with checkbox selection
 - **Item type filtering** via URL or form
 - **Status/condition filtering**
 - **Pagination** with customizable page size

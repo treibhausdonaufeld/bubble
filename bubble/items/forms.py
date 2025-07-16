@@ -166,7 +166,7 @@ class ItemFilterForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": "form-control search-input",
-                "placeholder": _("Search items, tags, categories..."),
+                "placeholder": _("Search items, categories..."),
             },
         ),
     )

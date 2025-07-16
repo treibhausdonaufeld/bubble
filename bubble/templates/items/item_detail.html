@@ -201,16 +201,6 @@
           <div class="mb-3">
             <strong>{% trans "Category:" %}</strong> {{ item.category.name }}
           </div>
-          <!-- Tags -->
-          {% if item_tags %}
-            <div class="mb-3">
-              <strong>{% trans "Tags:" %}</strong>
-              <br />
-              {% for tag_relation in item_tags %}
-                <span class="badge bg-secondary me-1">{{ tag_relation.tag.name }}</span>
-              {% endfor %}
-            </div>
-          {% endif %}
           <!-- Posted Date -->
           <div class="mb-3">
             <strong>{% trans "Created:" %}</strong> {{ item.date_created|date:"F j, Y" }}
@@ -347,16 +337,6 @@
               <div class="mb-3">
                 <strong>{% trans "Category:" %}</strong> {{ item.category.name }}
               </div>
-              <!-- Tags -->
-              {% if item_tags %}
-                <div class="mb-3">
-                  <strong>{% trans "Tags:" %}</strong>
-                  <br />
-                  {% for tag_relation in item_tags %}
-                    <span class="badge bg-secondary me-1">{{ tag_relation.tag.name }}</span>
-                  {% endfor %}
-                </div>
-              {% endif %}
               <!-- Posted Date -->
               <div class="mb-3">
                 <strong>{% trans "Created:" %}</strong> {{ item.date_created|date:"F j, Y" }}

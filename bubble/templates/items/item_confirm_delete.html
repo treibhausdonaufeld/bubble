@@ -71,18 +71,6 @@
                 </div>
                 <div class="col-6">{{ object.date_created|date:"F d, Y" }}</div>
               </div>
-              {% if object.tags.exists %}
-                <div class="row">
-                  <div class="col-6">
-                    <strong>{% trans "Tags:" %}</strong>
-                  </div>
-                  <div class="col-6">
-                    {% for tag_relation in object.tags.all %}
-                      <span class="badge bg-secondary me-1">{{ tag_relation.tag.name }}</span>
-                    {% endfor %}
-                  </div>
-                </div>
-              {% endif %}
             </div>
             <form method="post">
               {% csrf_token %}

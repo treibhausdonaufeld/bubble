@@ -52,7 +52,6 @@ class ItemListView(ListView):
                 | Q(description__icontains=search)
                 | Q(category__name__icontains=search)
                 | Q(category__parent_category__name__icontains=search)
-                | Q(tags__tag__name__icontains=search)
                 | Q(user__username__icontains=search)
                 | Q(user__name__icontains=search),
             ).distinct()
@@ -78,10 +77,6 @@ class ItemListView(ListView):
         status = self.request.GET.get("status")
         if status:
             queryset = queryset.filter(status=status)
-
-        tags = self.request.GET.getlist("tags")
-        if tags:
-            queryset = queryset.filter(tags__tag__in=tags).distinct()
 
         # Apply sorting
         sort = self.request.GET.get("sort", "newest")
