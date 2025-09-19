@@ -149,6 +149,7 @@ source = { editable = "." }
 dependencies = [
     { name = "anthropic" },
     { name = "argon2-cffi" },
+    { name = "asgiref" },
     { name = "celery" },
     { name = "crispy-bootstrap5" },
     { name = "django" },
@@ -158,10 +159,14 @@ dependencies = [
     { name = "django-celery-beat" },
     { name = "django-cors-headers" },
     { name = "django-crispy-forms" },
+    { name = "django-debug-toolbar" },
     { name = "django-environ" },
+    { name = "django-extensions" },
     { name = "django-model-utils" },
     { name = "django-pwa" },
+    { name = "django-react-tailwind-vite" },
     { name = "django-redis" },
+    { name = "django-vite" },
     { name = "django-webpack-loader" },
     { name = "djangorestframework" },
     { name = "drf-spectacular" },
@@ -172,6 +177,7 @@ dependencies = [
     { name = "httpx" },
     { name = "pgvector" },
     { name = "pillow" },
+    { name = "pre-commit" },
     { name = "psycopg", extra = ["binary"] },
     { name = "python-slugify" },
     { name = "redis" },
@@ -236,6 +242,7 @@ dev = [
 requires-dist = [
     { name = "anthropic", specifier = ">=0.57.1" },
     { name = "argon2-cffi" },
+    { name = "asgiref", specifier = ">=3.8.1" },
     { name = "celery" },
     { name = "crispy-bootstrap5" },
     { name = "django" },
@@ -245,10 +252,14 @@ requires-dist = [
     { name = "django-celery-beat" },
     { name = "django-cors-headers" },
     { name = "django-crispy-forms" },
+    { name = "django-debug-toolbar", specifier = ">=5.2.0" },
     { name = "django-environ" },
+    { name = "django-extensions", specifier = ">=4.1" },
     { name = "django-model-utils" },
     { name = "django-pwa", specifier = ">=2.0.1" },
+    { name = "django-react-tailwind-vite", specifier = ">=0.1.7" },
     { name = "django-redis" },
+    { name = "django-vite", specifier = ">=3.1.0" },
     { name = "django-webpack-loader" },
     { name = "djangorestframework" },
     { name = "drf-spectacular" },
@@ -259,6 +270,7 @@ requires-dist = [
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "pgvector", specifier = ">=0.3.6" },
     { name = "pillow" },
+    { name = "pre-commit", specifier = ">=4.2.0" },
     { name = "psycopg", extras = ["binary"] },
     { name = "python-slugify" },
     { name = "redis" },
@@ -796,6 +808,15 @@ wheels = [
 ]
 
 [[package]]
+name = "django-react-tailwind-vite"
+version = "0.1.7"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/49/2f/79b1d6d65bc692761cc53318439203b98389aac4a42f06bd5af65dfdd303/django_react_tailwind_vite-0.1.7.tar.gz", hash = "sha256:1a7e676cced1b138cd008b96bf42af8bf2c1926e319e6fd14e06d6fa122b36c3", size = 16650, upload-time = "2025-08-05T13:38:30.813Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/4d/df/0e6b5fda3d2a966a99745acd0dad5dd00d6ecaa5652847f89956fb16f154/django_react_tailwind_vite-0.1.7-py3-none-any.whl", hash = "sha256:1a18a16e5d3906b8176722bb9b6cc7280f5a0e509147b50810799155291d3c56", size = 23126, upload-time = "2025-08-05T13:38:29.161Z" },
+]
+
+[[package]]
 name = "django-redis"
 version = "6.0.0"
 source = { registry = "https://pypi.org/simple" }
@@ -851,6 +872,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/ba/5b/0dbe271fef3c2274b83dbcb1b19fa3dacf1f7e542382819294644e78ea8b/django_timezone_field-7.1.tar.gz", hash = "sha256:b3ef409d88a2718b566fabe10ea996f2838bc72b22d3a2900c0aa905c761380c", size = 13727, upload-time = "2025-01-11T17:49:54.486Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ec/09/7a808392a751a24ffa62bec00e3085a9c1a151d728c323a5bab229ea0e58/django_timezone_field-7.1-py3-none-any.whl", hash = "sha256:93914713ed882f5bccda080eda388f7006349f25930b6122e9b07bf8db49c4b4", size = 13177, upload-time = "2025-01-11T17:49:52.142Z" },
+]
+
+[[package]]
+name = "django-vite"
+version = "3.1.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/23/fe/4be07f538bbf9bf8bf73b045552ec2a1b4fba67e3176abb30490b643368e/django_vite-3.1.0.tar.gz", hash = "sha256:8b4ffe4a9fa81ff568bfb195e74dde8694aaf13fd4b656ae60bf59cce08b85e8", size = 25434, upload-time = "2025-02-23T15:32:07.914Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/30/59/7df4b1077fa41b43b4e542696d75138dbb86a65f44248c607b3e0f1014ce/django_vite-3.1.0-py3-none-any.whl", hash = "sha256:4e46572bd6b1ce70784be129205dc2ffcbc7a3c19fea50bebfb72b327bbde5fc", size = 23579, upload-time = "2025-02-23T15:32:06.603Z" },
 ]
 
 [[package]]

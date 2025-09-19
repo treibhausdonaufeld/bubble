@@ -90,6 +90,7 @@ THIRD_PARTY_APPS = [
     "corsheaders",
     "drf_spectacular",
     "webpack_loader",
+    "django_vite",
 ]
 
 LOCAL_APPS = [
@@ -419,3 +420,10 @@ WEBPACK_LOADER = {
 }
 # Your stuff...
 # ------------------------------------------------------------------------------
+
+DJANGO_VITE = {
+    "default": {
+        "dev_mode": DEBUG,
+        "manifest_path": BASE_DIR / "assets" / "manifest.json",
+    }
+}
