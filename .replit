@@ -1,4 +1,4 @@
-modules = ["python-3.12", "web", "bash", "nodejs-20"]
+modules = ["python-3.12", "web", "nodejs-20", "bash"]
 run = """
 #!/bin/bash
 
@@ -31,7 +31,7 @@ fi
 """
 
 [nix]
-channel = "stable-24_05"
+channel = "stable-25_05"
 
 [deployment]
 run = ["sh", "-c", """
@@ -70,5 +70,40 @@ localPort = 3000
 externalPort = 80
 
 [[ports]]
+localPort = 5000
+externalPort = 80
+
+[[ports]]
 localPort = 8000
 externalPort = 8000
+
+[[ports]]
+localPort = 40475
+externalPort = 3000
+
+[agent]
+expertMode = true
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Django Server"
+
+[[workflows.workflow]]
+name = "Django Server"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python manage.py runserver 0.0.0.0:5000"
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
