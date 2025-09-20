@@ -79,14 +79,15 @@ class BookListView(ListView):
                         queryset = queryset.filter(id__in=combined_ids)
                         
                         # If sort is by relevance, prioritize vector similarity
-                        if sort == 'relevance':
-                            queryset = queryset.extra(
-                                select={
-                                    'similarity_score': f"""
-                                    CASE WHEN id IN ({','.join(map(str, vector_ids))}) 
-                                    THEN 1 ELSE 0 END
-                                    """
-                                }
+                        if sort == 'relevance' and vector_ids:
+                            # Use proper ORM annotations to avoid SQL issues
+                            from django.db.models import Case, When, IntegerField
+                            queryset = queryset.annotate(
+                                similarity_score=Case(
+                                    When(id__in=vector_ids, then=1),
+                                    default=0,
+                                    output_field=IntegerField()
+                                )
                             ).order_by('-similarity_score', '-date_created')
                         else:
                             queryset = text_queryset
