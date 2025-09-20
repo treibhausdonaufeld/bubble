@@ -1,4 +1,4 @@
-modules = ["python-3.12", "web", "nodejs-20", "bash"]
+modules = ["python-3.12", "web", "nodejs-20", "bash", "python3"]
 run = """
 #!/bin/bash
 
@@ -32,6 +32,7 @@ fi
 
 [nix]
 channel = "stable-25_05"
+packages = ["freetype", "lcms2", "libimagequant", "libjpeg", "libtiff", "libwebp", "libxcrypt", "openjpeg", "postgresql", "tcl", "tk", "zlib"]
 
 [deployment]
 run = ["sh", "-c", """
