@@ -26,6 +26,7 @@ urlpatterns = [
     # Your stuff: custom urls includes go here
     # Dynamic content type URLs (e.g., /sachen/, /dienste/, /events/)
     path("items/", include(("bubble.items.urls", "items"))),
+    path("books/", include(("bubble.books.urls", "books"))),
     path("rooms/", include(("bubble.rooms.urls", "rooms"))),
     # ...
     # Media files

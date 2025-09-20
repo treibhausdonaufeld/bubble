@@ -1,0 +1,147 @@
+{% load i18n %}
+
+<div class="card h-100 book-card">
+  {% if book.image %}
+    <img src="{{ book.image.url }}" class="card-img-top book-cover" alt="{{ book.title }}">
+  {% else %}
+    <div class="card-img-top book-cover-placeholder d-flex align-items-center justify-content-center">
+      <i class="fas fa-book fa-2x text-muted"></i>
+    </div>
+  {% endif %}
+  
+  <div class="card-body d-flex flex-column">
+    <h5 class="card-title">
+      <a href="{% url 'books:detail' book.pk %}" class="text-decoration-none">
+        {{ book.title|truncatechars:50 }}
+      </a>
+    </h5>
+    
+    {% if book.get_authors_display %}
+      <p class="card-text text-muted small mb-1">
+        <i class="fas fa-user"></i> {{ book.get_authors_display|truncatechars:40 }}
+      </p>
+    {% endif %}
+    
+    {% if book.year %}
+      <p class="card-text text-muted small mb-1">
+        <i class="fas fa-calendar"></i> {{ book.year }}
+      </p>
+    {% endif %}
+    
+    {% if book.get_genres_display %}
+      <p class="card-text text-muted small mb-2">
+        <i class="fas fa-tags"></i> {{ book.get_genres_display|truncatechars:30 }}
+      </p>
+    {% endif %}
+    
+    {% if book.description %}
+      <p class="card-text flex-grow-1">
+        {{ book.description|truncatechars:100 }}
+      </p>
+    {% endif %}
+    
+    <div class="mt-auto">
+      {% if book.location %}
+        <small class="text-muted">
+          <i class="fas fa-map-marker-alt"></i> {{ book.location.name }}
+        </small>
+      {% endif %}
+      
+      <div class="d-flex justify-content-between align-items-center mt-2">
+        <small class="text-muted">
+          {% trans "by" %} {{ book.user.get_display_name|default:book.user.username }}
+        </small>
+        
+        {% if request.user == book.user %}
+          <div class="btn-group" role="group">
+            <a href="{% url 'books:edit' book.pk %}" class="btn btn-sm btn-outline-primary">
+              <i class="fas fa-edit"></i>
+            </a>
+            <a href="{% url 'books:delete' book.pk %}" class="btn btn-sm btn-outline-danger">
+              <i class="fas fa-trash"></i>
+            </a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.book-card {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.book-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.book-cover {
+  height: 200px;
+  object-fit: cover;
+}
+
+.book-cover-placeholder {
+  height: 200px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.filter-sidebar {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 767.98px) {
+  .filter-sidebar {
+    position: fixed;
+    top: 0;
+    left: -300px;
+    width: 300px;
+    height: 100vh;
+    z-index: 1050;
+    transition: left 0.3s ease;
+    overflow-y: auto;
+  }
+  
+  .filter-sidebar.active {
+    left: 0;
+  }
+  
+  .filter-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1040;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+  }
+  
+  .filter-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .filter-header {
+    background: #007bff;
+    color: white;
+    padding: 1rem;
+  }
+}
+
+.filter-section {
+  margin-bottom: 1.5rem;
+}
+
+.filter-actions {
+  border-top: 1px solid #dee2e6;
+  padding-top: 1rem;
+  margin-top: 1rem;
+}
+</style>
