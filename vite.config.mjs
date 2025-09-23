@@ -1,15 +1,23 @@
 
-import { defineConfig } from 'vite'
 import tailwindcss from '@tailwindcss/vite'
-import path from 'path'
+import react from '@vitejs/plugin-react'
 import dotenv from 'dotenv'
+import path from 'path'
+import { defineConfig } from 'vite'
 
 // Load environment variables
 dotenv.config({ path: './frontend/environments/.env.development' })
 
 export default defineConfig({
+  root: './frontend',
   base: '/static/',
+  server: {
+    port: 5173,
+    host: '127.0.0.1',
+    cors: true
+  },
   plugins: [
+    react(),
     tailwindcss()
   ],
   resolve: {
@@ -26,7 +34,7 @@ export default defineConfig({
     manifest: "manifest.json",
     rollupOptions: {
       input: {
-        mainAssets: path.resolve(__dirname, './frontend/index.tsx'),
+        mainAssets: './main.tsx',
       },
     },
     sourcemap: true, // Generate source maps for development

@@ -1,0 +1,163 @@
+@import "tailwindcss";
+
+/* Local Goods Network - Community Sharing Design System
+   Warm, trustworthy colors that evoke community and sustainability
+   All colors MUST be HSL.
+*/
+
+@theme {
+  /* Community-focused warm palette */
+  --color-background: 45 15% 98%;
+  --color-foreground: 25 25% 15%;
+
+  --color-card: 0 0% 100%;
+  --color-card-foreground: 25 25% 15%;
+
+  --color-popover: 0 0% 100%;
+  --color-popover-foreground: 25 25% 15%;
+
+  /* Primary: Subtle sage green inspired by logo - calm, natural */
+  --color-primary: 120 25% 35%;
+  --color-primary-foreground: 0 0% 98%;
+  --color-primary-glow: 120 35% 45%;
+
+  /* Secondary: Very soft blush - gentle, welcoming */
+  --color-secondary: 340 15% 92%;
+  --color-secondary-foreground: 340 25% 25%;
+
+  --color-muted: 45 20% 94%;
+  --color-muted-foreground: 25 15% 45%;
+
+  /* Accent: Muted lavender inspired by logo - subtle sophistication */
+  --color-accent: 270 25% 55%;
+  --color-accent-foreground: 0 0% 98%;
+
+  /* Success: Natural green */
+  --color-success: 120 45% 50%;
+  --color-success-foreground: 0 0% 98%;
+
+  /* Warning: Sunset orange */
+  --color-warning: 30 85% 60%;
+  --color-warning-foreground: 25 35% 15%;
+
+  --color-destructive: 0 75% 55%;
+  --color-destructive-foreground: 0 0% 98%;
+
+  --color-border: 45 25% 88%;
+  --color-input: 45 25% 92%;
+  --color-ring: 140 35% 25%;
+
+  /* Chart colors */
+  --color-chart-1: 120 25% 35%;
+  --color-chart-2: 270 25% 55%;
+  --color-chart-3: 30 85% 60%;
+  --color-chart-4: 340 15% 92%;
+  --color-chart-5: 120 45% 50%;
+
+  --color-sidebar-background: 0 0% 98%;
+  --color-sidebar-foreground: 240 5.3% 26.1%;
+  --color-sidebar-primary: 240 5.9% 10%;
+  --color-sidebar-primary-foreground: 0 0% 98%;
+  --color-sidebar-accent: 240 4.8% 95.9%;
+  --color-sidebar-accent-foreground: 240 5.9% 10%;
+  --color-sidebar-border: 220 13% 91%;
+  --color-sidebar-ring: 217.2 91.2% 59.8%;
+
+  --radius: 0.75rem;
+
+  /* Enhanced design tokens */
+  --gradient-primary: linear-gradient(135deg, hsl(var(--color-primary)), hsl(var(--color-primary-glow)));
+  --gradient-warm: linear-gradient(135deg, hsl(var(--color-accent)), hsl(120 35% 45%));
+  --gradient-logo: linear-gradient(135deg, hsl(120 25% 35%), hsl(270 25% 55%));
+  --gradient-subtle: linear-gradient(180deg, hsl(var(--color-background)), hsl(var(--color-muted)));
+
+  /* Elegant shadows using brand colors */
+  --shadow-soft: 0 2px 8px hsl(var(--color-primary) / 0.08);
+  --shadow-medium: 0 4px 16px hsl(var(--color-primary) / 0.12);
+  --shadow-strong: 0 8px 32px hsl(var(--color-primary) / 0.16);
+  --shadow-glow: 0 0 24px hsl(var(--color-accent) / 0.25);
+
+  /* Smooth transitions */
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@theme dark {
+  /* Dark mode with warmer, community-friendly tones */
+  --color-background: 25 15% 8%;
+  --color-foreground: 45 25% 92%;
+
+  --color-card: 25 20% 12%;
+  --color-card-foreground: 45 25% 92%;
+
+  --color-popover: 25 20% 12%;
+  --color-popover-foreground: 45 25% 92%;
+
+  /* Primary: Brighter sage green for dark mode */
+  --color-primary: 120 35% 55%;
+  --color-primary-foreground: 25 15% 8%;
+  --color-primary-glow: 120 45% 65%;
+
+  /* Secondary: Soft dark blush for dark mode */
+  --color-secondary: 340 20% 22%;
+  --color-secondary-foreground: 340 15% 85%;
+
+  --color-muted: 25 20% 16%;
+  --color-muted-foreground: 45 15% 60%;
+
+  /* Accent: Brighter lavender for dark mode */
+  --color-accent: 270 35% 65%;
+  --color-accent-foreground: 25 15% 8%;
+
+  /* Success: Bright natural green */
+  --color-success: 120 55% 60%;
+  --color-success-foreground: 25 15% 8%;
+
+  /* Warning: Bright sunset orange */
+  --color-warning: 30 85% 65%;
+  --color-warning-foreground: 25 25% 15%;
+
+  --color-destructive: 0 75% 60%;
+  --color-destructive-foreground: 0 0% 98%;
+
+  --color-border: 25 25% 22%;
+  --color-input: 25 25% 18%;
+  --color-ring: 140 45% 65%;
+
+  /* Chart colors for dark mode */
+  --color-chart-1: 120 35% 55%;
+  --color-chart-2: 270 35% 65%;
+  --color-chart-3: 30 85% 65%;
+  --color-chart-4: 340 20% 22%;
+  --color-chart-5: 120 55% 60%;
+
+  --color-sidebar-background: 240 5.9% 10%;
+  --color-sidebar-foreground: 240 4.8% 95.9%;
+  --color-sidebar-primary: 224.3 76.3% 48%;
+  --color-sidebar-primary-foreground: 0 0% 100%;
+  --color-sidebar-accent: 240 3.7% 15.9%;
+  --color-sidebar-accent-foreground: 240 4.8% 95.9%;
+  --color-sidebar-border: 240 3.7% 15.9%;
+  --color-sidebar-ring: 217.2 91.2% 59.8%;
+
+  /* Dark mode gradients and shadows */
+  --gradient-primary: linear-gradient(135deg, hsl(var(--color-primary)), hsl(var(--color-primary-glow)));
+  --gradient-warm: linear-gradient(135deg, hsl(var(--color-accent)), hsl(120 45% 65%));
+  --gradient-logo: linear-gradient(135deg, hsl(120 35% 55%), hsl(270 35% 65%));
+  --gradient-subtle: linear-gradient(180deg, hsl(var(--color-background)), hsl(var(--color-muted)));
+
+  --shadow-soft: 0 2px 8px hsl(0 0% 0% / 0.3);
+  --shadow-medium: 0 4px 16px hsl(0 0% 0% / 0.4);
+  --shadow-strong: 0 8px 32px hsl(0 0% 0% / 0.5);
+  --shadow-glow: 0 0 24px hsl(var(--color-accent) / 0.3);
+}
+
+/* Global styles */
+* {
+  border-color: hsl(var(--color-border));
+}
+
+body {
+  background-color: hsl(var(--color-background));
+  color: hsl(var(--color-foreground));
+}

@@ -424,6 +424,10 @@ WEBPACK_LOADER = {
 DJANGO_VITE = {
     "default": {
         "dev_mode": DEBUG,
+        "dev_server_host": "127.0.0.1",
+        "dev_server_port": 5173,
+        "dev_server_protocol": "http",
         "manifest_path": BASE_DIR / "assets" / "manifest.json",
+        "static_url_prefix": "/static/",
     }
 }
