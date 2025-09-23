@@ -28,13 +28,13 @@ export default defineConfig({
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
   },
   build: {
-    outDir: path.resolve(__dirname, './assets'),
-    assetsDir: 'productionAssets',
+    outDir: path.resolve(__dirname, './build'),
+    assetsDir: 'static',
     emptyOutDir: true, // Empty the output directory before build
     manifest: "manifest.json",
     rollupOptions: {
       input: {
-        mainAssets: './main.tsx',
+        mainAssets: './frontend/main.tsx',
       },
     },
     sourcemap: true, // Generate source maps for development
