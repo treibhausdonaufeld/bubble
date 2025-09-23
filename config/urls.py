@@ -2,23 +2,32 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from django.urls import include, path
+from django.http import HttpRequest
+from django.urls import include, path, re_path
 from django.views import defaults as default_views
+from django.views.generic import TemplateView
 from django.views.i18n import JavaScriptCatalog
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
 
+
+class HomeView(TemplateView):
+    template_name = "home.html"
+    context = {}
+
+    def get(self, request: HttpRequest, *args, **kwargs):
+        return self.render_to_response(self.context)
+
+
 urlpatterns = [
+    path("", HomeView.as_view(), name="home"),
+    re_path(r"^app/.*$", HomeView.as_view(), name="app"),
     path("i18n/", include("django.conf.urls.i18n")),
     path(
         "jsi18n/",
         JavaScriptCatalog.as_view(domain="django"),
         name="javascript-catalog",
     ),
-    # progressive web app urls
-    path("", include("pwa.urls")),
-    # bubble app
-    path("", include("bubble.core.urls", namespace="core")),
     path("favorites/", include("bubble.favorites.urls", namespace="favorites")),
     path(settings.ADMIN_URL, admin.site.urls),
     path("users/", include("bubble.users.urls", namespace="users")),
@@ -31,6 +40,7 @@ urlpatterns = [
     # Media files
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
 ]
+
 if settings.DEBUG:
     # Static file serving when using Gunicorn + Uvicorn for local web socket development
     urlpatterns += staticfiles_urlpatterns()
