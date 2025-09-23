@@ -9,7 +9,7 @@ from django.core.files.storage import default_storage
 from django.db.models import Q
 from django.http import HttpResponse
 from PIL import Image as PILImage
-from rest_framework import permissions, viewsets
+from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
@@ -113,11 +113,7 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
 class ItemViewSet(viewsets.ModelViewSet):
     """
     ViewSet for retrieving, creating, updating, and deleting items.
-    Only authenticated users can access items.
-    Users can only see their own items and modify them.
     """
-
-    permission_classes = [permissions.IsAuthenticated]
 
     def get_serializer_class(self):
         """Return appropriate serializer class based on action."""
@@ -130,7 +126,7 @@ class ItemViewSet(viewsets.ModelViewSet):
         user = self.request.user
 
         queryset = (
-            Item.objects.filter(user=user)
+            Item.objects.for_user(user)
             .select_related("user", "category")
             .prefetch_related("images")
         )
@@ -223,7 +219,6 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
     """
 
     serializer_class = ImageSerializer
-    permission_classes = [permissions.AllowAny]
 
     def get_queryset(self):
         """Return images that the user can access."""
