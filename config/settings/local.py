@@ -23,6 +23,7 @@ ALLOWED_HOSTS = ["*"]
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
     "https://share.treibhausdonaufeld.at",
+    f"https://{env('REPLIT_DEV_DOMAIN', default='localhost')}",
 ]
 
 # CACHES
