@@ -27,6 +27,7 @@ urlpatterns = [
     # Dynamic content type URLs (e.g., /sachen/, /dienste/, /events/)
     path("items/", include(("bubble.items.urls", "items"))),
     path("rooms/", include(("bubble.rooms.urls", "rooms"))),
+    path("messaging/", include(("bubble.messaging.urls", "messaging"))),
     # ...
     # Media files
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),

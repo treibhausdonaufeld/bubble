@@ -209,6 +209,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 "bubble.users.context_processors.allauth_settings",
                 "bubble.core.context_processors.theme_context",
+                "bubble.messaging.context_processors.unread_messages_count",
             ],
         },
     },

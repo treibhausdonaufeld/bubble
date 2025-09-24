@@ -370,78 +370,66 @@
             </div>
           </div>
         </div>
-        {% if user.is_authenticated %}
-        <!-- Contact Card (Desktop) -->
+        <!-- Messaging Card (Desktop) -->
         <div class="card d-none d-md-block">
           <div class="card-header">
             <h5>{% trans "Contact" %}</h5>
           </div>
           <div class="card-body">
-            <div class="d-flex align-items-center mb-2">
+            <div class="d-flex align-items-center mb-3">
               <i class="fas fa-user me-2"></i>
               <strong>{{ item.user.username }}</strong>
+              {% if item.user.name %}({{ item.user.name }}){% endif %}
             </div>
-            {% if item.display_contact and item.user.profile %}
-              {% if item.user.email %}
-                <div class="d-flex align-items-center mb-2">
-                  <i class="fas fa-envelope me-2"></i>
-                  <a href="mailto:{{ item.user.email }}">{{ item.user.email }}</a>
-                </div>
-              {% endif %}
-              {% if item.user.profile.phone %}
-                <div class="d-flex align-items-center mb-2">
-                  <i class="fas fa-phone me-2"></i>
-                  <span>{{ item.user.profile.phone }}</span>
+            {% if user.is_authenticated %}
+              {% if not is_owner %}
+                <a href="{% url 'messaging:send_message' item_id=item.pk %}" class="btn btn-primary w-100">
+                  <i class="fas fa-comment"></i> {% trans "Send message" %}
+                </a>
+              {% else %}
+                <div class="alert alert-info mb-0">
+                  {% trans "This is your item" %}
                 </div>
               {% endif %}
             {% else %}
-              <p class="text-muted">{% trans "Contact information is not displayed" %}</p>
-            {% endif %}
-            {% if not user.is_authenticated %}
-              <div class="alert alert-info">
-                <a href="{% url 'account_login' %}">{% trans "Sign In" %}</a> {% trans "to see all contact details" %}
+              <div class="alert alert-info mb-0">
+                <a href="{% url 'account_login' %}?next={% url 'items:detail' pk=item.pk %}">{% trans "Sign in" %}</a> {% trans "to send messages" %}
               </div>
             {% endif %}
           </div>
         </div>
       </div>
     </div>
-    <!-- Contact Card (Mobile Only - At Bottom) -->
+    <!-- Messaging Card (Mobile Only - At Bottom) -->
     <div class="d-md-none mt-4">
       <div class="card">
         <div class="card-header">
           <h5>{% trans "Contact" %}</h5>
         </div>
         <div class="card-body">
-          <div class="d-flex align-items-center mb-2">
+          <div class="d-flex align-items-center mb-3">
             <i class="fas fa-user me-2"></i>
             <strong>{{ item.user.username }}</strong>
+            {% if item.user.name %}({{ item.user.name }}){% endif %}
           </div>
-          {% if item.display_contact and item.user.profile %}
-            {% if item.user.email %}
-              <div class="d-flex align-items-center mb-2">
-                <i class="fas fa-envelope me-2"></i>
-                <a href="mailto:{{ item.user.email }}">{{ item.user.email }}</a>
-              </div>
-            {% endif %}
-            {% if item.user.profile.phone %}
-              <div class="d-flex align-items-center mb-2">
-                <i class="fas fa-phone me-2"></i>
-                <span>{{ item.user.profile.phone }}</span>
+          {% if user.is_authenticated %}
+            {% if not is_owner %}
+              <a href="{% url 'messaging:send_message' item_id=item.pk %}" class="btn btn-primary w-100">
+                <i class="fas fa-comment"></i> {% trans "Send message" %}
+              </a>
+            {% else %}
+              <div class="alert alert-info mb-0">
+                {% trans "This is your item" %}
               </div>
             {% endif %}
           {% else %}
-            <p class="text-muted">{% trans "Contact information is not displayed" %}</p>
-          {% endif %}
-          {% if not user.is_authenticated %}
-            <div class="alert alert-info">
-              <a href="{% url 'account_login' %}">{% trans "Sign In" %}</a> {% trans "to see all contact details" %}
+            <div class="alert alert-info mb-0">
+              <a href="{% url 'account_login' %}?next={% url 'items:detail' pk=item.pk %}">{% trans "Sign in" %}</a> {% trans "to send messages" %}
             </div>
           {% endif %}
         </div>
       </div>
     </div>
-    {% endif %}
     <!-- Back Button -->
     <div class="row mt-4">
       <div class="col-12">

@@ -1,0 +1,95 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{% trans "Unread Messages" %}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .message-item {
+            border-left: 3px solid #007bff;
+            padding-left: 15px;
+            margin-bottom: 20px;
+        }
+        .sender {
+            font-weight: bold;
+            color: #007bff;
+        }
+        .item-name {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+        .message-preview {
+            margin-top: 5px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #dee2e6;
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h2>{% trans "Hello" %} {{ user.username }},</h2>
+        <p>{% blocktrans count counter=unread_count %}You have {{ counter }} unread message.{% plural %}You have {{ counter }} unread messages.{% endblocktrans %}</p>
+    </div>
+    
+    <div class="messages">
+        {% for message in messages %}
+        <div class="message-item">
+            <div class="sender">
+                {{ message.sender.username }}
+                {% if message.sender.name %}({{ message.sender.name }}){% endif %}
+            </div>
+            {% if message.item %}
+            <div class="item-name">
+                {% trans "About:" %} {{ message.item.name }}
+            </div>
+            {% endif %}
+            <div class="message-preview">
+                {{ message.message|truncatewords:20 }}
+            </div>
+            <small>{{ message.date_created|timesince }} {% trans "ago" %}</small>
+        </div>
+        {% endfor %}
+        
+        {% if unread_count > 5 %}
+        <p>{% trans "...and more messages waiting for you." %}</p>
+        {% endif %}
+    </div>
+    
+    <a href="{{ site_url }}{% url 'messaging:conversation_list' %}" class="button">
+        {% trans "View all messages" %}
+    </a>
+    
+    <div class="footer">
+        <p>{% trans "This is an automated message from bubble." %}</p>
+        <p>{% trans "To stop receiving these notifications, please update your email preferences in your profile settings." %}</p>
+    </div>
+</body>
+</html>

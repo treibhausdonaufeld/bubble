@@ -14,6 +14,18 @@
     <a class="nav-link{% if request.resolver_match.url_name == 'list' and request.resolver_match.app_name == 'users' %} active{% endif %}"
        href="{% url 'users:list' %}">👥 {% trans "Community" %}</a>
   </li>
+  <li class="nav-item">
+    <a class="nav-link{% if request.resolver_match.app_name == 'messaging' %} active{% endif %} position-relative"
+       href="{% url 'messaging:conversation_list' %}">
+      💬 {% trans "Messages" %}
+      {% if unread_messages_count > 0 %}
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+          {{ unread_messages_count }}
+          <span class="visually-hidden">{% trans "unread messages" %}</span>
+        </span>
+      {% endif %}
+    </a>
+  </li>
   {% endif %}
 {% else %}
   <li class="nav-item">
@@ -28,6 +40,18 @@
   <li class="nav-item">
     <a class="nav-link{% if request.resolver_match.url_name == 'list' and request.resolver_match.app_name == 'users' %} active{% endif %}"
        href="{% url 'users:list' %}">👥 {% trans "Community" %}</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link{% if request.resolver_match.app_name == 'messaging' %} active{% endif %} position-relative"
+       href="{% url 'messaging:conversation_list' %}">
+      💬 {% trans "Messages" %}
+      {% if unread_messages_count > 0 %}
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+          {{ unread_messages_count }}
+          <span class="visually-hidden">{% trans "unread messages" %}</span>
+        </span>
+      {% endif %}
+    </a>
   </li>
   {% endif %}
 {% endif %}
