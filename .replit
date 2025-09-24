@@ -1,4 +1,4 @@
-modules = ["python-3.12", "web", "nodejs-20", "bash", "python3"]
+modules = ["python-3.12", "web", "nodejs-20", "bash", "python3", "postgresql-16"]
 run = """
 #!/bin/bash
 
