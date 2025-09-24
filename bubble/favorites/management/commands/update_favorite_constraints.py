@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from django.db import connection
+from django.db import DatabaseError, connection
 
 
 class Command(BaseCommand):
@@ -27,7 +27,7 @@ class Command(BaseCommand):
                 """)
                 self.stdout.write("Added new unique constraint with favorite_list_id")
 
-            except Exception as e:
+            except DatabaseError as e:
                 self.stdout.write(f"Error updating constraints: {e}")
 
             self.stdout.write(

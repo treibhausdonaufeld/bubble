@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
-from django.db import connection
+from django.db import DatabaseError, connection
 
 User = get_user_model()
 
@@ -17,7 +17,8 @@ class Command(BaseCommand):
                 CREATE TABLE IF NOT EXISTS favorites_favoritelist (
                     id SERIAL PRIMARY KEY,
                     name VARCHAR(255) NOT NULL,
-                    user_id INTEGER NOT NULL REFERENCES users_user(id) ON DELETE CASCADE,
+                    user_id INTEGER NOT NULL
+                        REFERENCES users_user(id) ON DELETE CASCADE,
                     is_default BOOLEAN NOT NULL DEFAULT FALSE,
                     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
                     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
@@ -28,8 +29,11 @@ class Command(BaseCommand):
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS favorites_favoritelist_shared_with (
                     id SERIAL PRIMARY KEY,
-                    favoritelist_id INTEGER NOT NULL REFERENCES favorites_favoritelist(id) ON DELETE CASCADE,
-                    user_id INTEGER NOT NULL REFERENCES users_user(id) ON DELETE CASCADE,
+                    favoritelist_id INTEGER NOT NULL
+                        REFERENCES favorites_favoritelist(id)
+                        ON DELETE CASCADE,
+                    user_id INTEGER NOT NULL
+                        REFERENCES users_user(id) ON DELETE CASCADE,
                     UNIQUE(favoritelist_id, user_id)
                 );
             """)
@@ -38,8 +42,11 @@ class Command(BaseCommand):
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS favorites_favoritelist_editors (
                     id SERIAL PRIMARY KEY,
-                    favoritelist_id INTEGER NOT NULL REFERENCES favorites_favoritelist(id) ON DELETE CASCADE,
-                    user_id INTEGER NOT NULL REFERENCES users_user(id) ON DELETE CASCADE,
+                    favoritelist_id INTEGER NOT NULL
+                        REFERENCES favorites_favoritelist(id)
+                        ON DELETE CASCADE,
+                    user_id INTEGER NOT NULL
+                        REFERENCES users_user(id) ON DELETE CASCADE,
                     UNIQUE(favoritelist_id, user_id)
                 );
             """)
@@ -55,7 +62,7 @@ class Command(BaseCommand):
                     ADD COLUMN favorite_list_id INTEGER;
                 """)
                 self.stdout.write("Column added successfully")
-            except Exception as e:
+            except DatabaseError as e:
                 if "already exists" in str(e):
                     self.stdout.write("Column already exists, skipping...")
                 else:
@@ -66,10 +73,12 @@ class Command(BaseCommand):
                 cursor.execute("""
                     ALTER TABLE favorites_favorite
                     ADD CONSTRAINT favorites_favorite_favorite_list_id_fkey
-                    FOREIGN KEY (favorite_list_id) REFERENCES favorites_favoritelist(id) ON DELETE CASCADE;
+                    FOREIGN KEY (favorite_list_id)
+                        REFERENCES favorites_favoritelist(id)
+                        ON DELETE CASCADE;
                 """)
                 self.stdout.write("Foreign key constraint added successfully")
-            except Exception as e:
+            except DatabaseError as e:
                 if "already exists" in str(e):
                     self.stdout.write(
                         "Foreign key constraint already exists, skipping..."
@@ -85,13 +94,14 @@ class Command(BaseCommand):
                 try:
                     cursor.execute(
                         """
-                        INSERT INTO favorites_favoritelist (name, user_id, is_default, created_at, updated_at)
+                        INSERT INTO favorites_favoritelist
+                        (name, user_id, is_default, created_at, updated_at)
                         VALUES (%s, %s, %s, NOW(), NOW());
                     """,
                         ["My Favorites", user.id, True],
                     )
                     self.stdout.write(f"Created default list for user {user.username}")
-                except Exception as e:
+                except DatabaseError as e:
                     self.stdout.write(
                         f"Error creating default list for user {user.username}: {e}"
                     )
@@ -104,14 +114,15 @@ class Command(BaseCommand):
                     UPDATE favorites_favorite
                     SET favorite_list_id = (
                         SELECT id FROM favorites_favoritelist
-                        WHERE favorites_favoritelist.user_id = favorites_favorite.user_id
+                        WHERE favorites_favoritelist.user_id =
+                            favorites_favorite.user_id
                         AND favorites_favoritelist.is_default = TRUE
                         LIMIT 1
                     )
                     WHERE favorite_list_id IS NULL;
                 """)
                 self.stdout.write("Updated existing favorites successfully")
-            except Exception as e:
+            except DatabaseError as e:
                 self.stdout.write(f"Error updating existing favorites: {e}")
 
             self.stdout.write("Creating indexes for better performance...")
@@ -119,16 +130,19 @@ class Command(BaseCommand):
             # Create indexes for better performance
             try:
                 cursor.execute("""
-                    CREATE INDEX IF NOT EXISTS idx_favoritelist_user_id ON favorites_favoritelist(user_id);
+                    CREATE INDEX IF NOT EXISTS idx_favoritelist_user_id
+                    ON favorites_favoritelist(user_id);
                 """)
                 cursor.execute("""
-                    CREATE INDEX IF NOT EXISTS idx_favoritelist_is_default ON favorites_favoritelist(is_default);
+                    CREATE INDEX IF NOT EXISTS idx_favoritelist_is_default
+                    ON favorites_favoritelist(is_default);
                 """)
                 cursor.execute("""
-                    CREATE INDEX IF NOT EXISTS idx_favorite_list_id ON favorites_favorite(favorite_list_id);
+                    CREATE INDEX IF NOT EXISTS idx_favorite_list_id
+                    ON favorites_favorite(favorite_list_id);
                 """)
                 self.stdout.write("Indexes created successfully")
-            except Exception as e:
+            except DatabaseError as e:
                 self.stdout.write(f"Error creating indexes: {e}")
 
             self.stdout.write(

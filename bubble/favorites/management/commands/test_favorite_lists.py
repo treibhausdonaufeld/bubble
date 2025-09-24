@@ -29,7 +29,9 @@ class Command(BaseCommand):
         # Show some example lists
         for fl in FavoriteList.objects.all()[:5]:
             self.stdout.write(
-                f"List: {fl.name} (User: {fl.user.username}, Default: {fl.is_default}, Favorites: {fl.favorites.count()})"
+                f"List: {fl.name} (User: {fl.user.username}, "
+                f"Default: {fl.is_default}, "
+                f"Favorites: {fl.favorites.count()})"
             )
 
         self.stdout.write(

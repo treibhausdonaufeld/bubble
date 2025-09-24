@@ -32,6 +32,7 @@ class Command(BaseCommand):
 
         self.stdout.write(
             self.style.SUCCESS(
-                f'Created test list "{list_name}" (ID: {test_list.id}) for user {username}'
+                f'Created test list "{list_name}" (ID: {test_list.id}) '
+                f"for user {username}"
             )
         )

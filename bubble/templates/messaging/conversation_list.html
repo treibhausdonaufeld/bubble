@@ -11,11 +11,11 @@
     <div class="row">
       <div class="col-12">
         <h2 class="mb-4">{% trans "Messages" %}</h2>
-        
+
         {% if conversations %}
           <div class="list-group">
             {% for conv in conversations %}
-              <a href="{% if conv.item %}{% url 'messaging:conversation_detail_item' username=conv.other_user.username item_id=conv.item.id %}{% else %}{% url 'messaging:conversation_detail' username=conv.other_user.username %}{% endif %}" 
+              <a href="{% if conv.item %}{% url 'messaging:conversation_detail_item' username=conv.other_user.username item_id=conv.item.id %}{% else %}{% url 'messaging:conversation_detail' username=conv.other_user.username %}{% endif %}"
                  class="list-group-item list-group-item-action {% if conv.unread_count > 0 %}list-group-item-info{% endif %}">
                 <div class="d-flex w-100 justify-content-between">
                   <div>

@@ -1,8 +1,8 @@
 {% load i18n %}
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>{% trans "Unread Messages" %}</title>
     <style>
         body {
@@ -58,7 +58,7 @@
         <h2>{% trans "Hello" %} {{ user.username }},</h2>
         <p>{% blocktrans count counter=unread_count %}You have {{ counter }} unread message.{% plural %}You have {{ counter }} unread messages.{% endblocktrans %}</p>
     </div>
-    
+
     <div class="messages">
         {% for message in messages %}
         <div class="message-item">
@@ -77,16 +77,16 @@
             <small>{{ message.date_created|timesince }} {% trans "ago" %}</small>
         </div>
         {% endfor %}
-        
+
         {% if unread_count > 5 %}
         <p>{% trans "...and more messages waiting for you." %}</p>
         {% endif %}
     </div>
-    
+
     <a href="{{ site_url }}{% url 'messaging:conversation_list' %}" class="button">
         {% trans "View all messages" %}
     </a>
-    
+
     <div class="footer">
         <p>{% trans "This is an automated message from bubble." %}</p>
         <p>{% trans "To stop receiving these notifications, please update your email preferences in your profile settings." %}</p>
