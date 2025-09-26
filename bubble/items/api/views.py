@@ -6,7 +6,6 @@ from pathlib import Path
 
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
-from django.db.models import Q
 from django.http import HttpResponse
 from PIL import Image as PILImage
 from rest_framework import viewsets
@@ -14,100 +13,11 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from bubble.items.api.serializers import (
-    CategorySelect2Serializer,
-    CategorySerializer,
-    CategoryTreeSerializer,
     ImageSerializer,
     ItemListSerializer,
     ItemSerializer,
 )
-from bubble.items.models import Image, Item, ItemCategory
-
-
-class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    ViewSet for category operations.
-    Provides list, retrieve, and custom actions for categories.
-    """
-
-    queryset = ItemCategory.objects.all().order_by("ordering", "name")
-    serializer_class = CategorySerializer
-
-    @action(detail=False, methods=["get"], url_path="select2")
-    def select2(self, request):
-        """
-        Endpoint for Select2 dropdown with AJAX search support.
-        Returns categories in Select2 format with full hierarchy paths.
-
-        Query parameters:
-        - q: search term (optional)
-        - page: page number for pagination (optional)
-        """
-        search_term = request.query_params.get("q", "").strip()
-
-        # Get all leaf categories (categories without subcategories)
-        queryset = ItemCategory.objects.filter(
-            subcategories__isnull=True,  # Has no children
-        ).order_by("name")
-
-        # Filter by search term if provided
-        if search_term:
-            queryset = queryset.filter(
-                Q(name__icontains=search_term)
-                | Q(parent_category__name__icontains=search_term),
-            )
-
-        # Limit results to prevent too many options
-        queryset = queryset[:50]
-
-        # Serialize data
-        serializer = CategorySelect2Serializer(queryset, many=True)
-
-        return Response({"results": serializer.data, "pagination": {"more": False}})
-
-    @action(detail=False, methods=["get"], url_path="tree")
-    def tree(self, request):
-        """
-        Get category tree structure starting from root categories.
-        Returns nested category hierarchy.
-        """
-        # Get root categories
-        root_categories = ItemCategory.objects.filter(
-            parent_category__isnull=True,
-        ).order_by("ordering", "name")
-
-        serializer = CategoryTreeSerializer(root_categories, many=True)
-        return Response(serializer.data)
-
-    @action(detail=True, methods=["get"], url_path="subcategories")
-    def subcategories(self, request, pk=None):
-        """
-        Get subcategories for a specific category.
-        """
-        category = self.get_object()
-        subcategories = category.subcategories.all().order_by("ordering", "name")
-        serializer = CategorySerializer(subcategories, many=True)
-        return Response(serializer.data)
-
-    @action(detail=False, methods=["get"], url_path="leaves")
-    def leaves(self, request):
-        """
-        Get all leaf categories (categories without children).
-        Useful for item categorization.
-        """
-        leaf_categories = ItemCategory.objects.filter(
-            subcategories__isnull=True,
-        ).order_by("name")
-
-        search_term = request.query_params.get("search", "").strip()
-        if search_term:
-            leaf_categories = leaf_categories.filter(
-                Q(name__icontains=search_term)
-                | Q(parent_category__name__icontains=search_term),
-            )
-
-        serializer = CategoryTreeSerializer(leaf_categories, many=True)
-        return Response(serializer.data)
+from bubble.items.models import Image, Item
 
 
 class ItemViewSet(viewsets.ModelViewSet):
@@ -127,7 +37,7 @@ class ItemViewSet(viewsets.ModelViewSet):
 
         queryset = (
             Item.objects.for_user(user)
-            .select_related("user", "category")
+            .select_related("user")
             .prefetch_related("images")
         )
 
@@ -139,7 +49,7 @@ class ItemViewSet(viewsets.ModelViewSet):
         # Filter by category if specified
         category = self.request.query_params.get("category")
         if category is not None:
-            queryset = queryset.filter(category_id=category)
+            queryset = queryset.filter(category=category)
 
         # Filter by processing status if specified
         processing_status = self.request.query_params.get("processing_status")
@@ -153,7 +63,7 @@ class ItemViewSet(viewsets.ModelViewSet):
         elif active.lower() == "false":
             queryset = queryset.filter(active=False)
 
-        return queryset.order_by("-date_created")
+        return queryset.order_by("-created_at")
 
     def perform_create(self, serializer):
         """Set the user when creating an item."""
@@ -164,7 +74,7 @@ class ItemViewSet(viewsets.ModelViewSet):
         """Get only the current user's items."""
         queryset = (
             Item.objects.filter(user=request.user)
-            .select_related("user", "category")
+            .select_related("user")
             .prefetch_related("images")
         )
 
@@ -176,7 +86,7 @@ class ItemViewSet(viewsets.ModelViewSet):
         """Get only public items (not internal)."""
         queryset = (
             Item.objects.filter(internal=False, active=True)
-            .select_related("user", "category")
+            .select_related("user")
             .prefetch_related("images")
         )
 

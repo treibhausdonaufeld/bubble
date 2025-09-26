@@ -24,8 +24,6 @@ urlpatterns = [
     path("users/", include("bubble.users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
-    # Dynamic content type URLs (e.g., /sachen/, /dienste/, /events/)
-    path("items/", include(("bubble.items.urls", "items"))),
     path("rooms/", include(("bubble.rooms.urls", "rooms"))),
     # ...
     # Media files
