@@ -22,6 +22,7 @@ dependencies = [
     "django-redis",
     "django-webpack-loader",
     "djangorestframework",
+    "drf-orjson-renderer>=1.7.3",
     "drf-spectacular",
     "fido2",
     "flower",
