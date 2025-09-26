@@ -39,7 +39,12 @@ class ItemAdmin(admin.ModelAdmin):
         (
             _("Item Details"),
             {
-                "fields": ("condition", "price", "display_contact"),
+                "fields": (
+                    "condition",
+                    "sale_price",
+                    "rental_price",
+                    "display_contact",
+                ),
             },
         ),
         (

@@ -33,7 +33,6 @@ class ItemSerializer(serializers.ModelSerializer):
             "date_updated",
             "images",
             "first_image",
-            "category",
         ]
 
     def get_first_image(self, obj):

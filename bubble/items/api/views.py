@@ -81,18 +81,6 @@ class ItemViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-    @action(detail=False, methods=["get"])
-    def public_items(self, request):
-        """Get only public items (not internal)."""
-        queryset = (
-            Item.objects.filter(internal=False, active=True)
-            .select_related("user")
-            .prefetch_related("images")
-        )
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-
     @action(detail=True, methods=["post"])
     def reorder_images(self, request, pk=None):
         """Reorder images for an item."""

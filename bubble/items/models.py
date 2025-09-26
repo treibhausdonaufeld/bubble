@@ -3,6 +3,7 @@ from decimal import Decimal
 from pathlib import Path
 
 from django.db import models
+from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
 from config.settings.base import AUTH_USER_MODEL
@@ -76,8 +77,8 @@ class Item(models.Model):
         unique=True,
         help_text=_("Unique identifier for the item"),
     )
-    name = models.CharField(max_length=255, blank=True)
-    slug = models.SlugField(max_length=255, unique=True, db_index=True, blank=True)
+    name = models.CharField(max_length=200, blank=True)
+    slug = models.SlugField(max_length=200, unique=True, blank=True)
     description = models.TextField(blank=True)
     internal = models.BooleanField(
         default=False,
@@ -136,7 +137,20 @@ class Item(models.Model):
     ITEM_TYPE_CHOICES = ItemType.choices
 
     def __str__(self):
-        return self.name or f"Item {self.pk}"
+        return f"{self.pk} - {self.name}" or f"Item {self.pk}"
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            original_slug = slugify(self.name)
+            queryset = self._meta.model.objects.all()
+            if self.pk:
+                queryset = queryset.exclude(pk=self.pk)
+
+            counter = 1
+            while queryset.filter(slug=self.slug).exists():
+                self.slug = f"{original_slug}-{counter}"
+                counter += 1
+        super().save(*args, **kwargs)
 
     @property
     def item_type(self) -> ItemType:
