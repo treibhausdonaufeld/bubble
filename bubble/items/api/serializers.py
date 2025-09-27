@@ -80,9 +80,9 @@ class ItemListSerializer(serializers.ModelSerializer):
         """Get the first image of the item."""
         first_image = obj.get_first_image()
         if first_image:
-            return {
-                "uuid": first_image.uuid,
-                "original": first_image.original.url if first_image.original else None,
-                "filename": first_image.filename,
-            }
+            request = self.context.get("request")
+            if first_image.thumbnail and request:
+                return request.build_absolute_uri(first_image.thumbnail.url)
+            if first_image.thumbnail:
+                return first_image.thumbnail.url
         return None

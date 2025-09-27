@@ -33,7 +33,14 @@ class ItemAdmin(admin.ModelAdmin):
         (
             None,
             {
-                "fields": ("name", "description", "user", "category", "active"),
+                "fields": (
+                    "name",
+                    "description",
+                    "user",
+                    "category",
+                    "active",
+                    "status",
+                ),
             },
         ),
         (
