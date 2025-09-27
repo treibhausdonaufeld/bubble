@@ -260,7 +260,7 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
         image = self.get_object()
         return self._generate_resized_image(
             image,
-            max_size=300,
-            quality=80,
+            max_size=400,
+            quality=90,
             suffix="thumbnail",
         )

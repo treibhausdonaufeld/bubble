@@ -81,6 +81,7 @@ THIRD_PARTY_APPS = [
     "guardian",
     "simple_history",
     "djmoney",
+    "imagekit",
     "crispy_forms",
     "crispy_bootstrap5",
     "allauth",

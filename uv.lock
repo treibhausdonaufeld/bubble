@@ -176,6 +176,7 @@ dependencies = [
     { name = "django-environ" },
     { name = "django-filter" },
     { name = "django-guardian" },
+    { name = "django-imagekit" },
     { name = "django-model-utils" },
     { name = "django-money" },
     { name = "django-pwa" },
@@ -268,6 +269,7 @@ requires-dist = [
     { name = "django-environ" },
     { name = "django-filter", specifier = ">=25.1" },
     { name = "django-guardian", specifier = ">=3.2.0" },
+    { name = "django-imagekit", specifier = ">=5.0.0" },
     { name = "django-model-utils" },
     { name = "django-money", specifier = ">=3.5.4" },
     { name = "django-pwa", specifier = ">=2.0.1" },
@@ -796,6 +798,18 @@ wheels = [
 ]
 
 [[package]]
+name = "django-appconf"
+version = "1.1.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/61/a9/dcf95ff3fa0620b6818fc02276fbbb8926e7f286039b6d015e56e8b7af39/django-appconf-1.1.0.tar.gz", hash = "sha256:9fcead372f82a0f21ee189434e7ae9c007cbb29af1118c18251720f3d06243e4", size = 15986, upload-time = "2025-02-13T16:09:40.258Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/62/9e/f3a899991e4aaae4b69c1aa187ba4a32e34742475c91eb13010ee7fbe9db/django_appconf-1.1.0-py3-none-any.whl", hash = "sha256:7abd5a163ff57557f216e84d3ce9dac36c37ffce1ab9a044d3d53b7c943dd10f", size = 6389, upload-time = "2025-02-13T16:09:39.133Z" },
+]
+
+[[package]]
 name = "django-celery-beat"
 version = "2.8.1"
 source = { registry = "https://pypi.org/simple" }
@@ -906,6 +920,19 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/e2/f9/bcff6a931298b9eb55e1550b55ab964fab747f594ba6d2d81cbe19736c5f/django_guardian-3.2.0.tar.gz", hash = "sha256:9e18ecd2e211b665972690c2d03d27bce0ea4932b5efac24a4bb9d526950a69e", size = 99940, upload-time = "2025-09-16T10:35:53.609Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/2f/23/63a7d868373a73d25c4a5c2dd3cce3aaeb22fbee82560d42b6e93ba01403/django_guardian-3.2.0-py3-none-any.whl", hash = "sha256:0768565a057988a93fc4a1d93649c4a794abfd7473a8408a079cfbf83c559d77", size = 134674, upload-time = "2025-09-16T10:35:51.69Z" },
+]
+
+[[package]]
+name = "django-imagekit"
+version = "5.0.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django-appconf" },
+    { name = "pilkit" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/61/cd/02611fc0cda31b17fec62c3235234ccf9920a4137de2b677e603749b968e/django-imagekit-5.0.0.tar.gz", hash = "sha256:aae9f74a8e9b6ceb5d15f7d8e266302901e76d9f532c78bd5135cb0fa206a6b0", size = 60041, upload-time = "2023-09-28T00:30:40.062Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/99/0e/a2a2044e7dab7c7aced92574b7428d65edc370024b94a72d5f00293076fe/django_imagekit-5.0.0-py3-none-any.whl", hash = "sha256:a8e77ed6549751026a51f961bb2cd5fda739be691496da8eecbe68ffb966c261", size = 39240, upload-time = "2023-09-28T01:00:43.931Z" },
 ]
 
 [[package]]
@@ -1836,6 +1863,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/44/43/9a0fb552ab4fd980680c2037962e331820f67585df740bedc4a2b50faf20/pgvector-0.4.1.tar.gz", hash = "sha256:83d3a1c044ff0c2f1e95d13dfb625beb0b65506cfec0941bfe81fd0ad44f4003", size = 30646, upload-time = "2025-04-26T18:56:37.151Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/bf/21/b5735d5982892c878ff3d01bb06e018c43fc204428361ee9fc25a1b2125c/pgvector-0.4.1-py3-none-any.whl", hash = "sha256:34bb4e99e1b13d08a2fe82dda9f860f15ddcd0166fbb25bffe15821cbfeb7362", size = 27086, upload-time = "2025-04-26T18:56:35.956Z" },
+]
+
+[[package]]
+name = "pilkit"
+version = "3.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pillow" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/b9/a5/bbe12d2c9dc06e29224c45a2cd7aa0ce923648588b6a15aadfee150bbd0c/pilkit-3.0.tar.gz", hash = "sha256:f6719e8cc0482e5447f5cb94f18b949d8e604ea9673a9b019c74d41b779e4eab", size = 402342, upload-time = "2023-09-27T22:47:18.638Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/de/ec/877b84b82cbcba6203e39d068cecfdbcfb61de69260cb851ea11be9b67f3/pilkit-3.0-py3-none-any.whl", hash = "sha256:fe1707b0411a1d0cbf9ad3986779fa5a346cec4582a188740924aa39f504d117", size = 20073, upload-time = "2023-09-27T22:47:16.285Z" },
 ]
 
 [[package]]
