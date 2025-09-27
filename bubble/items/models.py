@@ -5,7 +5,10 @@ from pathlib import Path
 from django.db import models
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
+from imagekit.models import ImageSpecField
+from imagekit.processors import ResizeToCover, ResizeToFill
 
+from bubble.users.models import User
 from config.settings.base import AUTH_USER_MODEL
 
 
@@ -48,14 +51,23 @@ class CategoryType(models.TextChoices):
 class ItemManager(models.Manager):
     def for_user(self, user) -> models.QuerySet:
         """Return a queryset filtered by user permissions."""
-        q = models.Q(status=StatusType.AVAILABLE)
-        if user.is_authenticated:
-            # allow also own items of this user
-            q |= models.Q(user=user)
-            if hasattr(user, "profile") and user.profile.internal:
-                # allow all active items for internal users
-                q |= models.Q(active=True)
-        return self.filter(q)
+        if not user.is_authenticated:
+            return self.none()
+        return self.filter(user=user)
+
+    def available(self, user: User | None) -> models.QuerySet:
+        """Return a queryset of available items."""
+        if (
+            user
+            and user.is_authenticated
+            and hasattr(user, "profile")
+            and user.profile.internal
+        ):
+            internal_filter = True
+        else:
+            internal_filter = False
+
+        return self.filter(status=StatusType.AVAILABLE, internal=internal_filter)
 
 
 class Item(models.Model):
@@ -177,9 +189,27 @@ def upload_to_item_images(instance: "Image", filename: str):
 
 
 class Image(models.Model):
+    uuid = models.UUIDField(
+        default=uuid.uuid4,
+        editable=False,
+        unique=True,
+    )
     original = models.ImageField(upload_to=upload_to_item_images, max_length=255)
     item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="images")
     ordering = models.IntegerField(default=0)
+
+    thumbnail = ImageSpecField(
+        source="original",
+        processors=[ResizeToFill(300, 200)],
+        format="JPEG",
+        options={"quality": 88},
+    )
+    preview = ImageSpecField(
+        source="original",
+        processors=[ResizeToCover(1200, 1200)],
+        format="JPEG",
+        options={"quality": 88},
+    )
 
     class Meta:
         ordering = ["item", "ordering"]

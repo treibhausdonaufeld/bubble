@@ -36,7 +36,7 @@ class ItemViewSet(viewsets.ModelViewSet):
         user = self.request.user
 
         queryset = (
-            Item.objects.for_user(user)
+            Item.objects.available(user)
             .select_related("user")
             .prefetch_related("images")
         )
@@ -109,7 +109,7 @@ class ItemViewSet(viewsets.ModelViewSet):
         return Response({"success": True})
 
 
-class ImageViewSet(viewsets.ReadOnlyModelViewSet):
+class ImageViewSet(viewsets.ModelViewSet):
     """
     ViewSet for retrieving images.
     Only authenticated users can access images.

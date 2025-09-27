@@ -1,19 +1,43 @@
 """Serializers for items API."""
 
-from rest_framework import serializers
+from django.utils.translation import gettext_lazy as _
+from rest_framework import serializers, status
 
 from bubble.items.models import Image, Item
+
+
+class ItemOwnerException(serializers.ValidationError):
+    status_code = status.HTTP_403_FORBIDDEN
+    default_detail = _("You can only create images for items you own.")
+    default_code = "permission_denied"
 
 
 class ImageSerializer(serializers.ModelSerializer):
     """Serializer for Image model."""
 
-    filename = serializers.ReadOnlyField()
+    item = serializers.SlugRelatedField(slug_field="uuid", queryset=Item.objects.all())
+    thumbnail = serializers.ImageField(read_only=True)
+    preview = serializers.ImageField(read_only=True)
 
     class Meta:
         model = Image
-        fields = ["id", "original", "filename", "ordering"]
+        fields = [
+            "uuid",
+            "original",
+            "ordering",
+            "thumbnail",
+            "preview",
+            "item",
+        ]
         read_only_fields = ["id"]
+
+    def validate_item(self, value):
+        """Ensure only item owners can create images for their items."""
+        request = self.context.get("request")
+        if request and request.user:
+            if value.user != request.user:
+                raise ItemOwnerException
+        return value
 
 
 class ItemSerializer(serializers.ModelSerializer):
