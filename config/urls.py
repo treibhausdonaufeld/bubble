@@ -24,8 +24,6 @@ urlpatterns = [
     path("users/", include("bubble.users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
-    # Dynamic content type URLs (e.g., /sachen/, /dienste/, /events/)
-    path("items/", include(("bubble.items.urls", "items"))),
     path("rooms/", include(("bubble.rooms.urls", "rooms"))),
     path("messaging/", include(("bubble.messaging.urls", "messaging"))),
     # ...
@@ -40,6 +38,8 @@ if settings.DEBUG:
 urlpatterns += [
     # API base url
     path("api/", include("config.api_router")),
+    # Include the API endpoints:
+    path("api/_allauth/", include("allauth.headless.urls")),
     # DRF auth token
     path("api/auth-token/", obtain_auth_token, name="obtain_auth_token"),
     path("api/schema/", SpectacularAPIView.as_view(), name="api-schema"),

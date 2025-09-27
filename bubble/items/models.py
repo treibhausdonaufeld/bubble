@@ -3,87 +3,16 @@ from decimal import Decimal
 from pathlib import Path
 
 from django.db import models
+from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
+from imagekit.models import ImageSpecField
+from imagekit.processors import ResizeToCover, ResizeToFill
 
+from bubble.users.models import User
 from config.settings.base import AUTH_USER_MODEL
 
 
-class ItemCategoryManager(models.Manager):
-    def get_by_natural_key(self, name):
-        return self.get(name=name)
-
-
-class ItemCategory(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    description = models.TextField(blank=True)
-    emoji = models.CharField(max_length=10, blank=True)
-    parent_category = models.ForeignKey(
-        "self",
-        on_delete=models.CASCADE,
-        related_name="subcategories",
-        blank=True,
-        null=True,
-    )
-
-    # Ordering field for menu display
-    ordering = models.IntegerField(
-        default=1,
-        help_text=_("Order of display in navigation menu (lower numbers appear first)"),
-    )
-
-    objects = ItemCategoryManager()
-
-    class Meta:
-        verbose_name_plural = _("Item Categories")
-        ordering = ["ordering", "name"]
-
-    def __str__(self):
-        return self.name
-
-    def natural_key(self):
-        return (self.name,)
-
-    def get_hierarchy(self):
-        """Returns the full category hierarchy path"""
-        if self.parent_category:
-            return f"{self.parent_category.get_hierarchy()} > {self.name}"
-        return self.name
-
-    @property
-    def is_root_category(self):
-        """Check if this is a root category (no parent)"""
-        return self.parent_category is None
-
-    def get_root_category(self):
-        """Get the root category of this category's hierarchy"""
-        if self.is_root_category:
-            return self
-        current = self
-        while current.parent_category is not None:
-            current = current.parent_category
-        return current
-
-    def is_leaf_category(self):
-        """Check if this category has no subcategories (is a leaf category)"""
-        return not self.subcategories.exists()
-
-    def get_descendants(self, *, include_self=False):
-        """Get all descendant categories"""
-        descendants = []
-        if include_self:
-            descendants.append(self)
-
-        # Recursively get all subcategories
-        def _get_subcategories(category):
-            for subcategory in category.subcategories.all():
-                descendants.append(subcategory)
-                _get_subcategories(subcategory)
-
-        _get_subcategories(self)
-        return descendants
-
-
-class StatusType(models.IntegerChoices):
+class ConditionType(models.IntegerChoices):
     NEW = 0, _("New")
     USED = 1, _("Used")
     BROKEN = 2, _("Broken")
@@ -92,41 +21,67 @@ class StatusType(models.IntegerChoices):
 class ItemType(models.IntegerChoices):
     FOR_SALE = 0, _("For Sale")
     RENT = 1, _("Rent")
+    BOTH = 2, _("Both")
 
 
-class ProcessingStatus(models.IntegerChoices):
+class StatusType(models.IntegerChoices):
     DRAFT = 0, _("Draft")
     PROCESSING = 1, _("Processing")
-    COMPLETED = 2, _("Completed")
-    FAILED = 3, _("Failed")
+    AVAILABLE = 2, _("Available")
+    RESERVED = 3, _("Reserved")
+    RENTED = 4, _("Rented")
+    SOLD = 5, _("Sold")
+
+
+class CategoryType(models.TextChoices):
+    BOOKS = "books", _("Books")
+    CLOTHING = "clothing", _("Clothing")
+    ELECTRONICS = "electronics", _("Electronics")
+    FURNITURE = "furniture", _("Furniture")
+    GARDEN = "garden", _("Garden")
+    KITCHEN = "kitchen", _("Kitchen")
+    OTHER = "other", _("Other")
+    ROOMS = "rooms", _("Rooms")
+    SPORTS = "sports", _("Sports")
+    TOOLS = "tools", _("Tools")
+    TOYS = "toys", _("Toys")
+    VEHICLES = "vehicles", _("Vehicles")
 
 
 class ItemManager(models.Manager):
     def for_user(self, user) -> models.QuerySet:
         """Return a queryset filtered by user permissions."""
-        q = models.Q(active=True, internal=False)
-        if user.is_authenticated:
-            # allow also own items of this user
-            q |= models.Q(user=user)
-            if hasattr(user, "profile") and user.profile.internal:
-                # allow all active items for internal users
-                q |= models.Q(active=True)
-        return self.filter(q)
+        if not user.is_authenticated:
+            return self.none()
+        return self.filter(user=user)
+
+    def available(self, user: User | None) -> models.QuerySet:
+        """Return a queryset of available items."""
+        if (
+            user
+            and user.is_authenticated
+            and hasattr(user, "profile")
+            and user.profile.internal
+        ):
+            internal_filter = True
+        else:
+            internal_filter = False
+
+        return self.filter(status=StatusType.AVAILABLE, internal=internal_filter)
 
 
 class Item(models.Model):
-    active = models.BooleanField(default=True)
     user = models.ForeignKey(
         AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="items",
     )
-    category = models.ForeignKey(
-        ItemCategory,
-        on_delete=models.SET_NULL,
-        related_name="items",
+    category = models.CharField(
+        max_length=100,
         blank=True,
-        null=True,
+        db_index=True,
+        choices=CategoryType,
+        help_text=_("Category of the item"),
     )
     uuid = models.UUIDField(
         default=uuid.uuid4,
@@ -134,7 +89,8 @@ class Item(models.Model):
         unique=True,
         help_text=_("Unique identifier for the item"),
     )
-    name = models.CharField(max_length=255, blank=True)
+    name = models.CharField(max_length=200, blank=True)
+    slug = models.SlugField(max_length=200, unique=True, blank=True)
     description = models.TextField(blank=True)
     internal = models.BooleanField(
         default=False,
@@ -144,28 +100,40 @@ class Item(models.Model):
         default=False,
         help_text=_("Display your contact information public"),
     )
-    price = models.DecimalField(
+    sale_price = models.DecimalField(
         max_digits=10,
         decimal_places=2,
         blank=True,
         null=True,
         default=Decimal("0.00"),
     )
+    rental_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        default=Decimal("0.00"),
+        help_text=_("Price per hour for rental items"),
+    )
+
     payment_enabled = models.BooleanField(
         default=False,
         help_text=_("Enable payment via internal payment system"),
     )
-    item_type = models.IntegerField(choices=ItemType, default=ItemType.FOR_SALE)
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_updated = models.DateTimeField(auto_now=True)
-    status = models.IntegerField(
-        choices=StatusType,
-        default=StatusType.USED,
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    condition = models.IntegerField(
+        choices=ConditionType,
+        default=ConditionType.USED,
         help_text=_("Condition of the item"),
     )
-    processing_status = models.IntegerField(
-        choices=ProcessingStatus,
-        default=ProcessingStatus.DRAFT,
+    active = models.BooleanField(default=True)
+
+    status = models.IntegerField(
+        choices=StatusType,
+        default=StatusType.DRAFT,
     )
     workflow_id = models.CharField(
         max_length=255,
@@ -177,21 +145,33 @@ class Item(models.Model):
     objects = ItemManager()
 
     # Add class constants for easy access
-    STATUS_CHOICES = StatusType.choices
+    CONDITION_CHOICES = ConditionType.choices
     ITEM_TYPE_CHOICES = ItemType.choices
-    PROCESSING_STATUS_CHOICES = ProcessingStatus.choices
-    STATUS_NEW = StatusType.NEW
-    STATUS_USED = StatusType.USED
-    STATUS_BROKEN = StatusType.BROKEN
-    ITEM_TYPE_FOR_SALE = ItemType.FOR_SALE
-    ITEM_TYPE_RENT = ItemType.RENT
-    PROCESSING_DRAFT = ProcessingStatus.DRAFT
-    PROCESSING_PROCESSING = ProcessingStatus.PROCESSING
-    PROCESSING_COMPLETED = ProcessingStatus.COMPLETED
-    PROCESSING_FAILED = ProcessingStatus.FAILED
 
     def __str__(self):
-        return self.name or f"Item {self.pk}"
+        return f"{self.pk} - {self.name}" or f"Item {self.pk}"
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            original_slug = slugify(self.name)
+            queryset = self._meta.model.objects.all()
+            if self.pk:
+                queryset = queryset.exclude(pk=self.pk)
+
+            counter = 1
+            while queryset.filter(slug=self.slug).exists():
+                self.slug = f"{original_slug}-{counter}"
+                counter += 1
+        super().save(*args, **kwargs)
+
+    @property
+    def item_type(self) -> ItemType:
+        """Determine item type based on prices."""
+        if self.sale_price and not self.rental_price:
+            return ItemType.FOR_SALE
+        if self.rental_price:
+            return ItemType.RENT
+        return ItemType.BOTH
 
     def is_ready_for_display(self):
         """Check if item has minimum required fields to be displayed."""
@@ -209,9 +189,27 @@ def upload_to_item_images(instance: "Image", filename: str):
 
 
 class Image(models.Model):
+    uuid = models.UUIDField(
+        default=uuid.uuid4,
+        editable=False,
+        unique=True,
+    )
     original = models.ImageField(upload_to=upload_to_item_images, max_length=255)
     item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="images")
     ordering = models.IntegerField(default=0)
+
+    thumbnail = ImageSpecField(
+        source="original",
+        processors=[ResizeToFill(300, 200)],
+        format="JPEG",
+        options={"quality": 88},
+    )
+    preview = ImageSpecField(
+        source="original",
+        processors=[ResizeToCover(1200, 1200)],
+        format="JPEG",
+        options={"quality": 88},
+    )
 
     class Meta:
         ordering = ["item", "ordering"]
