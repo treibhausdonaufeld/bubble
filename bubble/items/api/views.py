@@ -6,9 +6,11 @@ from pathlib import Path
 
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
+from django.db.models import Q
 from django.http import HttpResponse
+from django_filters.rest_framework import DjangoFilterBackend
 from PIL import Image as PILImage
-from rest_framework import viewsets
+from rest_framework import filters, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
@@ -20,6 +22,8 @@ from bubble.items.api.serializers import (
 )
 from bubble.items.models import Image, Item, StatusType
 
+from .filters import ItemFilter
+
 
 class ItemViewSet(viewsets.ModelViewSet):
     """
@@ -28,6 +32,18 @@ class ItemViewSet(viewsets.ModelViewSet):
 
     lookup_field = "uuid"
     queryset = Item.objects.all().select_related("user").prefetch_related("images")
+
+    # Filtering / searching / ordering
+    filterset_class = ItemFilter
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
+    # Search delegates to ItemFilter.search but DRF SearchFilter assists direct fields
+    search_fields = ["name", "description"]
+    ordering_fields = ["created_at", "updated_at", "sale_price", "rental_price"]
+    ordering = ["-created_at"]
 
     def get_serializer_class(self):
         """Return appropriate serializer class based on action."""
@@ -58,7 +74,7 @@ class ItemViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-    @action(detail=True, methods=["post"])
+    @action(detail=True, methods=["put"])
     def reorder_images(self, request, uuid=None):
         """Reorder images for an item."""
         item = self.get_object()
@@ -85,7 +101,7 @@ class ItemViewSet(viewsets.ModelViewSet):
 
         return Response({"success": True})
 
-    @action(detail=True, methods=["post"])
+    @action(detail=True, methods=["put"])
     def ai_describe_item(self, request, uuid=None):
         """Ai describe the item and populate fields."""
         item = self.get_object()
@@ -120,9 +136,20 @@ class ImageViewSet(viewsets.ModelViewSet):
         """Return images that the user can access."""
         user = self.request.user
 
-        # Users can see images of their own items and public items
+        # Determine accessible items:
+        # - Anonymous: only published items
+        # - Authenticated: own items + published items
+        if user.is_authenticated:
+            item_ids = Item.objects.filter(
+                (Q(user=user)) | Q(status__in=StatusType.published())
+            ).values_list("pk", flat=True)
+        else:
+            item_ids = Item.objects.filter(
+                status__in=StatusType.published()
+            ).values_list("pk", flat=True)
+
         queryset = (
-            Image.objects.filter(item__in=Item.objects.for_user(user))
+            Image.objects.filter(item_id__in=list(item_ids))
             .select_related("item")
             .order_by("item", "ordering")
         )

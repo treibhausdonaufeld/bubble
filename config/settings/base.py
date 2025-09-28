@@ -34,7 +34,7 @@ DEBUG = env.bool("DJANGO_DEBUG", False)
 # In Windows, this must be set to your system time zone.
 TIME_ZONE = "Europe/Vienna"
 # https://docs.djangoproject.com/en/dev/ref/settings/#language-code
-LANGUAGE_CODE = "de"
+LANGUAGE_CODE = "en"
 
 LANGUAGES = [
     ("de", _("Deutsch")),

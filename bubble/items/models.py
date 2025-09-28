@@ -6,8 +6,10 @@ from django.db import models
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from guardian.models import GroupObjectPermissionBase, UserObjectPermissionBase
+from guardian.shortcuts import assign_perm
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToCover, ResizeToFill
+from simple_history.models import HistoricalRecords
 
 from config.settings.base import AUTH_USER_MODEL
 
@@ -131,6 +133,9 @@ class Item(models.Model):
         help_text="Temporal workflow ID for AI processing",
     )
 
+    # enable history tracking
+    history = HistoricalRecords()
+
     # Custom manager
     objects = ItemManager()
 
@@ -152,7 +157,13 @@ class Item(models.Model):
             while queryset.filter(slug=self.slug).exists():
                 self.slug = f"{original_slug}-{counter}"
                 counter += 1
+
         super().save(*args, **kwargs)
+
+        if self.user:
+            # give all object permission to self.request.user on instance
+            assign_perm("change_item", self.user, obj=self)
+            assign_perm("delete_item", self.user, obj=self)
 
     @property
     def item_type(self) -> ItemType:
