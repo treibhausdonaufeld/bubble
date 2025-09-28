@@ -11,7 +11,7 @@ from .serializers import UserSerializer
 
 class UserViewSet(RetrieveModelMixin, ListModelMixin, UpdateModelMixin, GenericViewSet):
     serializer_class = UserSerializer
-    queryset = User.objects.all()
+    queryset = User.objects.exclude(is_superuser=True).exclude(username="AnonymousUser")
     lookup_field = "username"
 
     @action(detail=False)
