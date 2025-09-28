@@ -232,3 +232,67 @@ class ItemOwnerUserFactoryTestCase(TestCase):
 
         assert user.check_password(password)
         assert user.groups.filter(name="Item Owners").exists()
+
+
+class AnonymousUserItemAccessTestCase(TestCase):
+    """Tests for anonymous user access to ItemViewSet."""
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = ItemOwnerUserFactory(
+            username="testowner", email="owner@example.com", password=TEST_PASSWORD
+        )
+
+        # Create items with different statuses
+        self.draft_item = Item.objects.create(
+            name="Draft Item",
+            description="This is a draft item",
+            user=self.user,
+            sale_price=Decimal("10.00"),
+            status=1,  # DRAFT - should not be visible to anonymous users
+            category="TOOLS",
+        )
+        self.published_item = Item.objects.create(
+            name="Published Item",
+            description="This is a published item",
+            user=self.user,
+            sale_price=Decimal("20.00"),
+            status=2,  # AVAILABLE - should be visible to anonymous users
+            category="TOOLS",
+        )
+
+    def test_anonymous_user_can_view_published_items_only(self):
+        """Test that anonymous users can only see published items."""
+        url = reverse("api:item-published")
+        response = self.client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        results = response.json()["results"]
+        names = {item["name"] for item in results}
+
+        # Anonymous users should only see published items
+        assert self.published_item.name in names
+        assert self.draft_item.name not in names
+
+    def test_anonymous_user_cannot_access_my_items(self):
+        """Test that anonymous users cannot access my_items endpoint."""
+        url = reverse("api:item-my-items")
+        response = self.client.get(url)
+
+        # With DjangoObjectPermissions as default, anonymous users get 403
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    def test_authenticated_user_sees_own_and_published_items(self):
+        """Test that authenticated users see their own items plus published items."""
+        self.client.login(username="testowner", password=TEST_PASSWORD)
+
+        url = reverse("api:item-list")
+        response = self.client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        results = response.json()["results"]
+        names = {item["name"] for item in results}
+
+        # Authenticated users should see both their own items and published items
+        assert self.published_item.name in names
+        assert self.draft_item.name in names

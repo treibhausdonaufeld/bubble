@@ -1,17 +1,10 @@
 """API views for items."""
 
-import mimetypes
-from io import BytesIO
-from pathlib import Path
-
-from django.core.files.base import ContentFile
-from django.core.files.storage import default_storage
-from django.db.models import Q
-from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
-from PIL import Image as PILImage
+from guardian.shortcuts import get_objects_for_user
 from rest_framework import filters, viewsets
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
 from bubble.items.ai.image_analyze import analyze_image
@@ -55,9 +48,16 @@ class ItemViewSet(viewsets.ModelViewSet):
         """Set the user when creating an item."""
         serializer.save(user=self.request.user)
 
-    @action(detail=False, methods=["get"])
+    @action(
+        detail=False, methods=["get"], permission_classes=[IsAuthenticatedOrReadOnly]
+    )
     def published(self, request):
         queryset = self.get_queryset().filter(status__in=StatusType.published())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
@@ -70,6 +70,11 @@ class ItemViewSet(viewsets.ModelViewSet):
             .select_related("user")
             .prefetch_related("images")
         )
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
@@ -131,27 +136,19 @@ class ImageViewSet(viewsets.ModelViewSet):
 
     serializer_class = ImageSerializer
     lookup_field = "uuid"
+    ordering = ["item", "ordering"]
 
     def get_queryset(self):
         """Return images that the user can access."""
         user = self.request.user
 
-        # Determine accessible items:
-        # - Anonymous: only published items
-        # - Authenticated: own items + published items
-        if user.is_authenticated:
-            item_ids = Item.objects.filter(
-                (Q(user=user)) | Q(status__in=StatusType.published())
-            ).values_list("pk", flat=True)
-        else:
-            item_ids = Item.objects.filter(
-                status__in=StatusType.published()
-            ).values_list("pk", flat=True)
+        # Get all items where user has change_item permission
+        items_with_change_permission = get_objects_for_user(
+            user, "items.change_item", klass=Item
+        )
 
-        queryset = (
-            Image.objects.filter(item_id__in=list(item_ids))
-            .select_related("item")
-            .order_by("item", "ordering")
+        queryset = Image.objects.filter(
+            item_id__in=items_with_change_permission.values_list("pk", flat=True)
         )
 
         # Filter by item if specified
@@ -160,132 +157,3 @@ class ImageViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(item__uuid=item_uuid)
 
         return queryset
-
-    # add endpoint to get binary representation of the original image
-    @action(detail=True, methods=["get"], url_path="original")
-    def get_original_image(self, request, pk=None):
-        """Get the original image file."""
-
-        try:
-            image = self.get_object()
-            if not image.original:
-                return Response({"detail": "Original image not available."}, status=404)
-
-            content_type, _ = mimetypes.guess_type(image.original.name)
-            response = HttpResponse(
-                image.original.read(),
-                content_type=content_type or "application/octet-stream",
-            )
-            response["Content-Disposition"] = f'attachment; filename="{image.filename}"'
-        except Image.DoesNotExist:
-            return Response({"detail": "Image not found."}, status=404)
-        else:
-            return response
-
-    def _generate_resized_image(self, image, max_size, quality=85, suffix="preview"):
-        """
-        Generate a resized version of an image.
-
-        Args:
-            image: Image model instance
-            max_size: Maximum size for the longest side
-            quality: JPEG quality (1-100)
-            suffix: Suffix for the filename (e.g., 'preview', 'thumbnail')
-
-        Returns:
-            HttpResponse with the resized image
-        """
-        if not image.original:
-            return Response({"detail": "Original image not available."}, status=404)
-
-        # Get storage path from model method
-        if suffix == "preview":
-            resized_path = image.get_preview_path()
-        elif suffix == "thumbnail":
-            resized_path = image.get_thumbnail_path()
-        else:
-            return Response({"detail": "Invalid suffix."}, status=400)
-
-        if not resized_path:
-            return Response({"detail": "Unable to generate storage path."}, status=500)
-
-        # Check if resized version already exists
-        if default_storage.exists(resized_path):
-            # Serve existing resized image
-            with default_storage.open(resized_path, "rb") as resized_file:
-                content_type, _ = mimetypes.guess_type(resized_path)
-                response = HttpResponse(
-                    resized_file.read(),
-                    content_type=content_type or "image/jpeg",
-                )
-                response["Content-Disposition"] = (
-                    f'inline; filename="{Path(resized_path).name}"'
-                )
-                return response
-
-        # Generate new resized image
-        with default_storage.open(image.original.name, "rb") as original_file:
-            # Open image with PIL
-            pil_image = PILImage.open(original_file)
-
-            # Convert to RGB if necessary (for PNG with transparency)
-            if pil_image.mode in ("RGBA", "P"):
-                pil_image = pil_image.convert("RGB")
-
-            # Calculate new dimensions (max_size on longest side)
-            width, height = pil_image.size
-
-            if width > height:
-                new_width = max_size
-                new_height = int(height * max_size / width)
-            else:
-                new_height = max_size
-                new_width = int(width * max_size / height)
-
-            # Resize image
-            pil_image = pil_image.resize(
-                (new_width, new_height),
-                PILImage.Resampling.LANCZOS,
-            )
-
-            # Save to BytesIO
-            output = BytesIO()
-            pil_image.save(output, format="JPEG", quality=quality, optimize=True)
-            output.seek(0)
-
-            # Save resized image to storage
-            resized_file = ContentFile(output.getvalue())
-            default_storage.save(resized_path, resized_file)
-
-            # Return resized image
-            output.seek(0)
-            response = HttpResponse(
-                output.getvalue(),
-                content_type="image/jpeg",
-            )
-            response["Content-Disposition"] = (
-                f'inline; filename="{Path(resized_path).name}"'
-            )
-            return response
-
-    @action(detail=True, methods=["get"], url_path="preview")
-    def get_preview_image(self, request, pk=None):
-        """Get a preview (scaled-down) version of the image."""
-        image = self.get_object()
-        return self._generate_resized_image(
-            image,
-            max_size=1600,
-            quality=85,
-            suffix="preview",
-        )
-
-    @action(detail=True, methods=["get"], url_path="thumbnail")
-    def get_thumbnail_image(self, request, pk=None):
-        """Get a thumbnail (small) version of the image."""
-        image = self.get_object()
-        return self._generate_resized_image(
-            image,
-            max_size=400,
-            quality=90,
-            suffix="thumbnail",
-        )
