@@ -1,17 +1,18 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
+from guardian.admin import GuardedInlineAdminMixin, GuardedModelAdmin
 
 from .models import Image, Item
 
 
-class ImageInline(admin.TabularInline):
+class ImageInline(GuardedInlineAdminMixin, admin.TabularInline):
     model = Image
     extra = 1
     fields = ("original", "ordering")
 
 
 @admin.register(Item)
-class ItemAdmin(admin.ModelAdmin):
+class ItemAdmin(GuardedModelAdmin):
     list_display = (
         "name",
         "user",

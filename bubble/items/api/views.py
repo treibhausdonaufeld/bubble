@@ -18,7 +18,7 @@ from bubble.items.api.serializers import (
     ItemListSerializer,
     ItemSerializer,
 )
-from bubble.items.models import Image, Item
+from bubble.items.models import Image, Item, StatusType
 
 
 class ItemViewSet(viewsets.ModelViewSet):
@@ -27,50 +27,24 @@ class ItemViewSet(viewsets.ModelViewSet):
     """
 
     lookup_field = "uuid"
+    queryset = Item.objects.all().select_related("user").prefetch_related("images")
 
     def get_serializer_class(self):
         """Return appropriate serializer class based on action."""
-        if self.action in ("list", "my_items"):
+        if self.action in ("list", "my_items", "published"):
             return ItemListSerializer
         return ItemSerializer
-
-    def get_queryset(self):
-        """Return items that the user can access and that he owns."""
-        user = self.request.user
-
-        queryset = (
-            Item.objects.available(user)
-            .select_related("user")
-            .prefetch_related("images")
-        )
-
-        # Filter by item type if specified
-        item_type = self.request.query_params.get("item_type")
-        if item_type is not None:
-            queryset = queryset.filter(item_type=item_type)
-
-        # Filter by category if specified
-        category = self.request.query_params.get("category")
-        if category is not None:
-            queryset = queryset.filter(category=category)
-
-        # Filter by processing status if specified
-        processing_status = self.request.query_params.get("processing_status")
-        if processing_status is not None:
-            queryset = queryset.filter(processing_status=processing_status)
-
-        # Filter by active status (default to active only)
-        active = self.request.query_params.get("active", "")
-        if active.lower() == "true":
-            queryset = queryset.filter(active=True)
-        elif active.lower() == "false":
-            queryset = queryset.filter(active=False)
-
-        return queryset.order_by("-created_at")
 
     def perform_create(self, serializer):
         """Set the user when creating an item."""
         serializer.save(user=self.request.user)
+
+    @action(detail=False, methods=["get"])
+    def published(self, request):
+        queryset = self.get_queryset().filter(status__in=StatusType.published())
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
     @action(detail=False, methods=["get"])
     def my_items(self, request):

@@ -5,10 +5,10 @@ from pathlib import Path
 from django.db import models
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
+from guardian.models import GroupObjectPermissionBase, UserObjectPermissionBase
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToCover, ResizeToFill
 
-from bubble.users.models import User
 from config.settings.base import AUTH_USER_MODEL
 
 
@@ -32,6 +32,10 @@ class StatusType(models.IntegerChoices):
     RENTED = 4, _("Rented")
     SOLD = 5, _("Sold")
 
+    @classmethod
+    def published(cls):
+        return (cls.AVAILABLE, cls.RESERVED, cls.RENTED, cls.SOLD)
+
 
 class CategoryType(models.TextChoices):
     BOOKS = "books", _("Books")
@@ -54,20 +58,6 @@ class ItemManager(models.Manager):
         if not user.is_authenticated:
             return self.none()
         return self.filter(user=user)
-
-    def available(self, user: User | None) -> models.QuerySet:
-        """Return a queryset of available items."""
-        if (
-            user
-            and user.is_authenticated
-            and hasattr(user, "profile")
-            and user.profile.internal
-        ):
-            internal_filter = True
-        else:
-            internal_filter = False
-
-        return self.filter(status=StatusType.AVAILABLE, internal=internal_filter)
 
 
 class Item(models.Model):
@@ -180,6 +170,14 @@ class Item(models.Model):
     def get_first_image(self):
         """Return the first image of the item based on ordering."""
         return self.images.order_by("ordering").first()
+
+
+class ItemUserObjectPermission(UserObjectPermissionBase):
+    content_object = models.ForeignKey(Item, on_delete=models.CASCADE)
+
+
+class ItemGroupObjectPermission(GroupObjectPermissionBase):
+    content_object = models.ForeignKey(Item, on_delete=models.CASCADE)
 
 
 def upload_to_item_images(instance: "Image", filename: str):
