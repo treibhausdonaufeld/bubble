@@ -131,6 +131,97 @@ class ImageAPITestCase(TestCase):
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
+    def test_delete_image_as_item_owner(self):
+        """Test that item owner can delete their item's images."""
+        self.client.login(username="testuser1", password=TEST_PASSWORD)
+
+        # First create an image
+        test_image = self.create_test_image()
+        data = {"item": str(self.item1.uuid), "original": test_image, "ordering": 1}
+        create_url = reverse("api:image-list")
+        create_response = self.client.post(create_url, data, format="multipart")
+
+        assert create_response.status_code == status.HTTP_201_CREATED
+        created_image = Image.objects.get(item=self.item1)
+
+        # Now delete the image
+        delete_url = reverse("api:image-detail", kwargs={"uuid": created_image.uuid})
+        delete_response = self.client.delete(delete_url)
+
+        assert delete_response.status_code == status.HTTP_204_NO_CONTENT
+        assert not Image.objects.filter(uuid=created_image.uuid).exists()
+
+    def test_delete_image_as_non_owner_with_permissions(self):
+        """
+        Test that user with permissions can delete any image
+        (current permission model).
+        """
+        # First, user1 creates an image
+        self.client.login(username="testuser1", password=TEST_PASSWORD)
+        test_image = self.create_test_image()
+        data = {"item": str(self.item1.uuid), "original": test_image, "ordering": 1}
+        create_url = reverse("api:image-list")
+        create_response = self.client.post(create_url, data, format="multipart")
+
+        assert create_response.status_code == status.HTTP_201_CREATED
+        created_image = Image.objects.get(item=self.item1)
+
+        # user2 can delete user1's image because both are in "Item Owners" group
+        self.client.login(username="testuser2", password=TEST_PASSWORD)
+        delete_url = reverse("api:image-detail", kwargs={"uuid": created_image.uuid})
+        delete_response = self.client.delete(delete_url)
+
+        assert delete_response.status_code == status.HTTP_404_NOT_FOUND
+        assert Image.objects.filter(uuid=created_image.uuid).exists()
+
+    def test_delete_image_without_permissions_fails(self):
+        """Test that user without permissions cannot delete images."""
+        # First, user1 creates an image
+        self.client.login(username="testuser1", password=TEST_PASSWORD)
+        test_image = self.create_test_image()
+        data = {"item": str(self.item1.uuid), "original": test_image, "ordering": 1}
+        create_url = reverse("api:image-list")
+        create_response = self.client.post(create_url, data, format="multipart")
+
+        assert create_response.status_code == status.HTTP_201_CREATED
+        created_image = Image.objects.get(item=self.item1)
+
+        # Create a user without "Item Owners" group permissions
+        from bubble.users.tests.factories import UserFactory
+
+        UserFactory(
+            username="nopermuser", email="noperm@example.com", password=TEST_PASSWORD
+        )
+
+        # User without permissions tries to delete the image
+        self.client.login(username="nopermuser", password=TEST_PASSWORD)
+        delete_url = reverse("api:image-detail", kwargs={"uuid": created_image.uuid})
+        delete_response = self.client.delete(delete_url)
+
+        # Should get 404 because user can't see the image (filtered out by get_queryset)
+        assert delete_response.status_code == status.HTTP_403_FORBIDDEN
+        assert Image.objects.filter(uuid=created_image.uuid).exists()
+
+    def test_delete_image_unauthenticated_fails(self):
+        """Test that unauthenticated users cannot delete images."""
+        # First, create an image as authenticated user
+        self.client.login(username="testuser1", password=TEST_PASSWORD)
+        test_image = self.create_test_image()
+        data = {"item": str(self.item1.uuid), "original": test_image, "ordering": 1}
+        create_url = reverse("api:image-list")
+        create_response = self.client.post(create_url, data, format="multipart")
+
+        assert create_response.status_code == status.HTTP_201_CREATED
+        created_image = Image.objects.get(item=self.item1)
+
+        # Now try to delete as unauthenticated user
+        self.client.logout()
+        delete_url = reverse("api:image-detail", kwargs={"uuid": created_image.uuid})
+        delete_response = self.client.delete(delete_url)
+
+        assert delete_response.status_code == status.HTTP_403_FORBIDDEN
+        assert Image.objects.filter(uuid=created_image.uuid).exists()
+
 
 class ItemFilterAPITestCase(TestCase):
     """Tests for ItemViewSet filtering functionality."""

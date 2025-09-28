@@ -13,12 +13,8 @@ def create_default_groups(apps, schema_editor):
         # assign permission for CRUD on item and image models here
         for perm_codename in [
             "add_item",
-            "change_item",
-            "delete_item",
             "view_item",
             "add_image",
-            "change_image",
-            "delete_image",
             "view_image",
         ]:
             permission = Permission.objects.get(

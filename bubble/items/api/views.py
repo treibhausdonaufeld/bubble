@@ -4,7 +4,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from guardian.shortcuts import get_objects_for_user
 from rest_framework import filters, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import DjangoModelPermissions, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
 from bubble.items.ai.image_analyze import analyze_image
@@ -138,13 +138,17 @@ class ImageViewSet(viewsets.ModelViewSet):
     lookup_field = "uuid"
     ordering = ["item", "ordering"]
 
+    # we can use generic permissions here as the queryset limits strictly
+    # to only editable items for the user
+    permission_classes = [DjangoModelPermissions]
+
     def get_queryset(self):
         """Return images that the user can access."""
         user = self.request.user
 
         # Get all items where user has change_item permission
         items_with_change_permission = get_objects_for_user(
-            user, "items.change_item", klass=Item
+            user, "items.change_item", klass=Item, accept_global_perms=False
         )
 
         queryset = Image.objects.filter(
