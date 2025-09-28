@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
-from guardian.admin import GuardedInlineAdminMixin, GuardedModelAdmin
+from guardian.admin import GuardedInlineAdminMixin, GuardedModelAdminMixin
+from simple_history.admin import SimpleHistoryAdmin
 
 from .models import Image, Item
 
@@ -12,7 +13,7 @@ class ImageInline(GuardedInlineAdminMixin, admin.TabularInline):
 
 
 @admin.register(Item)
-class ItemAdmin(GuardedModelAdmin):
+class ItemAdmin(GuardedModelAdminMixin, SimpleHistoryAdmin):
     list_display = (
         "name",
         "user",

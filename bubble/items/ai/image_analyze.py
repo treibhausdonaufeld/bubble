@@ -42,6 +42,7 @@ def analyze_image(image_uuid: str, language: str = "de") -> ItemImageResult:
         "Fokussiere auf: Art des Gegenstands, Zustand, bemerkenswerte Eigenschaften. "
         "Gib einen Preisvorschlage für den Verkauf des Artikels. "
         f"Die Kategorie soll aus dieser Liste gewählt werden: {categories_string}"
+        f"Die Antwort soll in dieser Sprache erfolgend: {language}."
     ) + PROMPT_RETURN_FORMAT
 
     logger.info("Prompt instruction: %s", prompt_instruction)
