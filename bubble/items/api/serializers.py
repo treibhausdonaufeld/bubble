@@ -29,7 +29,6 @@ class ImageSerializer(serializers.ModelSerializer):
             "preview",
             "item",
         ]
-        read_only_fields = ["id"]
 
     def validate_item(self, value):
         """Ensure only item owners can create images for their items."""
@@ -49,7 +48,7 @@ class ItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Item
-        fields = "__all__"
+        exclude = ["id"]
         read_only_fields = [
             "uuid",
             "user",
@@ -74,7 +73,7 @@ class ItemListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Item
-        fields = "__all__"
+        exclude = ["id"]
 
     def get_first_image(self, obj):
         """Get the first image of the item."""

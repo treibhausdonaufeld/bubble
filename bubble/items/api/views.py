@@ -12,6 +12,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from bubble.items.ai.image_analyze import analyze_image
 from bubble.items.api.serializers import (
     ImageSerializer,
     ItemListSerializer,
@@ -25,9 +26,11 @@ class ItemViewSet(viewsets.ModelViewSet):
     ViewSet for retrieving, creating, updating, and deleting items.
     """
 
+    lookup_field = "uuid"
+
     def get_serializer_class(self):
         """Return appropriate serializer class based on action."""
-        if self.action == "list":
+        if self.action in ("list", "my_items"):
             return ItemListSerializer
         return ItemSerializer
 
@@ -82,7 +85,7 @@ class ItemViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @action(detail=True, methods=["post"])
-    def reorder_images(self, request, pk=None):
+    def reorder_images(self, request, uuid=None):
         """Reorder images for an item."""
         item = self.get_object()
 
@@ -95,18 +98,38 @@ class ItemViewSet(viewsets.ModelViewSet):
         if not isinstance(image_order, list):
             return Response({"error": "image_order must be a list"}, status=400)
 
-        # Validate that all image IDs belong to this item
-        item_image_ids = {str(img.id) for img in item.images.all()}
-        provided_image_ids = {str(img_id) for img_id in image_order}
+        # Validate that all image UUIDs belong to this item
+        item_image_uuids = {str(img.uuid) for img in item.images.all()}
+        provided_image_uuids = {str(img_uuid) for img_uuid in image_order}
 
-        if not provided_image_ids.issubset(item_image_ids):
-            return Response({"error": "Invalid image IDs provided"}, status=400)
+        if not provided_image_uuids.issubset(item_image_uuids):
+            return Response({"error": "Invalid image UUIDs provided"}, status=400)
 
         # Update the ordering of each image
-        for index, image_id in enumerate(image_order):
-            Image.objects.filter(id=image_id, item=item).update(ordering=index)
+        for index, image_uuid in enumerate(image_order):
+            Image.objects.filter(uuid=image_uuid, item=item).update(ordering=index)
 
         return Response({"success": True})
+
+    @action(detail=True, methods=["post"])
+    def ai_describe_item(self, request, uuid=None):
+        """Ai describe the item and populate fields."""
+        item = self.get_object()
+
+        # Check if the user owns the item
+        if item.user != request.user:
+            return Response({"error": "Permission denied"}, status=403)
+
+        analyze_response = analyze_image(item.get_first_image().uuid)
+
+        item.name = analyze_response.title
+        item.description = analyze_response.description
+        item.category = analyze_response.category
+        item.sale_price = analyze_response.price
+        item.save()
+
+        serializer = self.get_serializer(item)
+        return Response(serializer.data)
 
 
 class ImageViewSet(viewsets.ModelViewSet):
@@ -117,6 +140,7 @@ class ImageViewSet(viewsets.ModelViewSet):
     """
 
     serializer_class = ImageSerializer
+    lookup_field = "uuid"
 
     def get_queryset(self):
         """Return images that the user can access."""
@@ -130,9 +154,9 @@ class ImageViewSet(viewsets.ModelViewSet):
         )
 
         # Filter by item if specified
-        item_id = self.request.query_params.get("item")
-        if item_id is not None:
-            queryset = queryset.filter(item_id=item_id)
+        item_uuid = self.request.query_params.get("item")
+        if item_uuid is not None:
+            queryset = queryset.filter(item__uuid=item_uuid)
 
         return queryset
 
