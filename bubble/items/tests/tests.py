@@ -12,6 +12,7 @@ from PIL import Image as PILImage
 from rest_framework import status
 from rest_framework.test import APIClient
 
+from bubble.core.permissions_config import DefaultGroup
 from bubble.items.models import Image, Item
 from bubble.items.tests.factories import ItemOwnerUserFactory
 from bubble.users.tests.factories import UserFactory
@@ -310,7 +311,7 @@ class ItemOwnerUserFactoryTestCase(TestCase):
         """Test that ItemOwnerUserFactory creates a user in the Item Owners group."""
         user = ItemOwnerUserFactory()
 
-        assert user.groups.filter(name="Item Owners").exists()
+        assert user.groups.filter(name=DefaultGroup.DEFAULT).exists()
         assert user.username is not None
         assert user.email is not None
 
@@ -320,7 +321,7 @@ class ItemOwnerUserFactoryTestCase(TestCase):
         user = ItemOwnerUserFactory(password=password)
 
         assert user.check_password(password)
-        assert user.groups.filter(name="Item Owners").exists()
+        assert user.groups.filter(name=DefaultGroup.DEFAULT).exists()
 
 
 class AnonymousUserItemAccessTestCase(TestCase):
