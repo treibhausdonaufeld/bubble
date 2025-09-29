@@ -14,6 +14,7 @@ from rest_framework.test import APIClient
 
 from bubble.items.models import Image, Item
 from bubble.items.tests.factories import ItemOwnerUserFactory
+from bubble.users.tests.factories import UserFactory
 
 TEST_PASSWORD = "testpass123"  # noqa: S105
 
@@ -185,9 +186,6 @@ class ImageAPITestCase(TestCase):
 
         assert create_response.status_code == status.HTTP_201_CREATED
         created_image = Image.objects.get(item=self.item1)
-
-        # Create a user without "Item Owners" group permissions
-        from bubble.users.tests.factories import UserFactory
 
         UserFactory(
             username="nopermuser", email="noperm@example.com", password=TEST_PASSWORD

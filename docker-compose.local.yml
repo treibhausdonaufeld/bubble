@@ -50,13 +50,13 @@ services:
     image: ghcr.io/dragonflydb/dragonfly:v1.26.1
     restart: always
     ports:
-      - "127.0.0.1:6377:6379"
+      - '127.0.0.1:6377:6379'
     environment:
       # required to work with django-channels
       # https://github.com/dragonflydb/dragonfly/issues/182#issuecomment-1241624150
-      DFLY_default_lua_flags: "allow-undeclared-keys disable-atomicity"
+      DFLY_default_lua_flags: 'allow-undeclared-keys disable-atomicity'
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ['CMD', 'redis-cli', 'ping']
       interval: 30s
       timeout: 10s
       retries: 5
@@ -113,7 +113,7 @@ services:
       - TEMPORAL_ADDRESS=temporal:7233
       - TEMPORAL_CLI_ADDRESS=temporal:7233
     ports:
-      - "127.0.0.1:7233:7233"
+      - '127.0.0.1:7233:7233'
     volumes:
       - ./compose/local/temporal:/etc/temporal/config/dynamicconfig
     restart: always
@@ -135,7 +135,7 @@ services:
       - TEMPORAL_ADDRESS=temporal:7233
       - TEMPORAL_CORS_ORIGINS=http://localhost:3000,http://django:8000
     ports:
-      - "127.0.0.1:8080:8080"
+      - '127.0.0.1:8080:8080'
 
   node:
     build:
