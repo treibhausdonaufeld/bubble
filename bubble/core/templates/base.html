@@ -62,7 +62,6 @@
               <div class="mobile-menu-container">
                 <div class="mobile-menu main-menu active">
                   <ul class="navbar-nav me-auto mb-2 mb-lg-0 flex-column flex-md-row">
-                    {% include 'includes/nav_main_items.html' with is_mobile=True %}
                     {# Mobile: Favorites Star (only icon) - positioned BEFORE language switcher #}
                     {% if user.is_authenticated %}
                       <li class="nav-item d-md-none">
@@ -111,9 +110,6 @@
                 </div>
               </div>
               <!-- Desktop Menu -->
-              <ul class="navbar-nav me-auto mb-2 mb-lg-0 flex-column flex-md-row desktop-only">
-                {% include 'includes/nav_main_items.html' %}
-              </ul>
               {# Desktop: Favorites, Theme and Language Switcher side by side #}
               <div class="d-none d-md-flex ms-md-auto mt-3 mt-md-0 align-items-center">
                 {% if user.is_authenticated %}
