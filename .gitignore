@@ -283,3 +283,5 @@ webpack-stats.json
 
 db.sqlite3
 .envs/.local/.allauth
+
+.ruff_cache
