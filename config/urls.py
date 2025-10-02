@@ -16,14 +16,8 @@ urlpatterns = [
         name="javascript-catalog",
     ),
     # bubble app
-    path("", include("bubble.core.urls", namespace="core")),
-    path("favorites/", include("bubble.favorites.urls", namespace="favorites")),
     path(settings.ADMIN_URL, admin.site.urls),
-    path("users/", include("bubble.users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),
-    # Your stuff: custom urls includes go here
-    path("rooms/", include(("bubble.rooms.urls", "rooms"))),
-    # ...
     # Media files
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
 ]
