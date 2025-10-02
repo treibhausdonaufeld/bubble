@@ -335,7 +335,7 @@ CELERY_TASK_SEND_SENT_EVENT = True
 
 # django-allauth
 # ------------------------------------------------------------------------------
-ACCOUNT_ALLOW_REGISTRATION = env.bool("ACCOUNT_ALLOW_REGISTRATION", True)
+ACCOUNT_ALLOW_REGISTRATION = env.bool("ACCOUNT_ALLOW_REGISTRATION", default=False)
 
 SOCIALACCOUNT_ONLY = env.bool("SOCIALACCOUNT_ONLY", default=False)
 
@@ -355,6 +355,10 @@ SOCIALACCOUNT_ADAPTER = "bubble.users.adapters.SocialAccountAdapter"
 SOCIALACCOUNT_FORMS = {"signup": "bubble.users.forms.UserSocialSignupForm"}
 
 SOCIALACCOUNT_ENABLED = env.bool("SOCIALACCOUNT_ENABLED", default=True)
+
+SOCIALACCOUNT_ALLOW_REGISTRATION = env.bool(
+    "SOCIALACCOUNT_ALLOW_REGISTRATION", default=True
+)
 
 SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
 
@@ -383,9 +387,8 @@ if authentik_server_url := env("AUTHENTIK_SERVER_URL", default=""):
                 "secret": env("AUTHENTIK_SECRET", default="default_secret"),
                 "settings": {
                     "server_url": authentik_server_url,
-                    # Optional: specify scopes, e.g.,
-                    # "SCOPE": ["openid", "profile", "email"],
-                    # "oauth_pkce_enabled": True,
+                    "internal_group_name": "Mitglieder",
+                    # "admin_group_name": "admin",
                 },
             },
         ],

@@ -5,6 +5,9 @@ import typing
 from allauth.account.adapter import DefaultAccountAdapter
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from django.conf import settings
+from django.contrib.auth.models import Group
+
+from bubble.core.permissions_config import DefaultGroup
 
 if typing.TYPE_CHECKING:
     from allauth.socialaccount.models import SocialLogin
@@ -24,7 +27,7 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
         request: HttpRequest,
         sociallogin: SocialLogin,
     ) -> bool:
-        return getattr(settings, "ACCOUNT_ALLOW_REGISTRATION", True)
+        return getattr(settings, "SOCIALACCOUNT_ALLOW_REGISTRATION", True)
 
     def populate_user(
         self,
@@ -45,4 +48,42 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
                 user.name = first_name
                 if last_name := data.get("last_name"):
                     user.name += f" {last_name}"
+        return user
+
+    def save_user(self, request, sociallogin, form=None):
+        """
+        Add user to default group
+        """
+        user = super().save_user(request, sociallogin, form)
+
+        # add to default group
+        default_group, _ = Group.objects.get_or_create(name=DefaultGroup.DEFAULT)
+        user.groups.add(default_group)
+
+        # check for internal group
+        groups = sociallogin.account.extra_data.get("userinfo", {}).get("groups", [])
+        provider_internal_group_name = sociallogin.provider.app.settings.get(
+            "internal_group_name", ""
+        )
+
+        if provider_internal_group_name in groups:
+            internal_group, _ = Group.objects.get_or_create(name=DefaultGroup.INTERNAL)
+            user.groups.add(internal_group)
+            profile = user.profile
+            profile.internal = True
+            profile.save()
+
+        provider_admin_group_name = sociallogin.provider.app.settings.get(
+            "admin_group_name", ""
+        )
+
+        if provider_admin_group_name in groups:
+            internal_group, _ = Group.objects.get_or_create(
+                name=DefaultGroup.ADMINISTRATORS
+            )
+            user.groups.add(internal_group)
+            user.is_staff = True
+            user.is_superuser = True
+            user.save()
+
         return user
