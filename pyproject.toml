@@ -22,7 +22,6 @@ dependencies = [
     "django-imagekit>=5.0.0",
     "django-model-utils",
     "django-money>=3.5.4",
-    "django-pwa>=2.0.1",
     "django-redis",
     "django-simple-history>=3.10.1",
     "django-webpack-loader",

@@ -15,8 +15,6 @@ urlpatterns = [
         JavaScriptCatalog.as_view(domain="django"),
         name="javascript-catalog",
     ),
-    # progressive web app urls
-    path("", include("pwa.urls")),
     # bubble app
     path("", include("bubble.core.urls", namespace="core")),
     path("favorites/", include("bubble.favorites.urls", namespace="favorites")),
