@@ -5,6 +5,13 @@ volumes:
   bubble_local_temporal_data: {}
 
 services:
+  frontend:
+    image: bubble-frontend
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    ports:
+      - '3000:8888'
+
   django: &django
     build:
       context: .
