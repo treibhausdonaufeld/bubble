@@ -4,6 +4,7 @@
 
 from decimal import Decimal
 from io import BytesIO
+from unittest.mock import patch
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
@@ -13,6 +14,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from bubble.core.permissions_config import DefaultGroup
+from bubble.items.ai.image_analyze import ItemImageResult
 from bubble.items.models import Image, Item
 from bubble.items.tests.factories import ItemOwnerUserFactory
 from bubble.users.tests.factories import UserFactory
@@ -386,3 +388,119 @@ class AnonymousUserItemAccessTestCase(TestCase):
         # Authenticated users should see both their own items and published items
         assert self.published_item.name in names
         assert self.draft_item.name in names
+
+
+class AIDescribeItemTestCase(TestCase):
+    """Test cases for the ai_describe_item endpoint."""
+
+    def setUp(self):
+        """Set up test data."""
+        self.client = APIClient()
+
+        # Create test user with item permissions
+        self.owner = ItemOwnerUserFactory(
+            username="itemowner", email="owner@example.com", password=TEST_PASSWORD
+        )
+        self.other_user = ItemOwnerUserFactory(
+            username="otheruser", email="other@example.com", password=TEST_PASSWORD
+        )
+
+        # Create test item with owner
+        self.item = Item.objects.create(
+            name="Test Item",
+            description="Original description",
+            user=self.owner,
+            sale_price=Decimal("10.00"),
+        )
+
+        # Create test image for the item
+        test_image = self.create_test_image()
+        self.image = Image.objects.create(
+            item=self.item, original=test_image, ordering=1
+        )
+
+    def create_test_image(self):
+        """Create a test image file."""
+        img = PILImage.new("RGB", (100, 100), color="red")
+        img_io = BytesIO()
+        img.save(img_io, format="JPEG")
+        img_io.seek(0)
+        return SimpleUploadedFile(
+            "test_image.jpg", img_io.getvalue(), content_type="image/jpeg"
+        )
+
+    @patch("bubble.items.api.views.analyze_image")
+    def test_owner_can_call_ai_describe_item(self, mock_analyze_image):
+        """Test that item owner can call ai_describe_item endpoint."""
+        # Mock the analyze_image function to return test data
+        mock_analyze_image.return_value = ItemImageResult(
+            title="AI Generated Title",
+            description="AI Generated Description",
+            category="TOOLS",
+            price="25.00",
+        )
+
+        # Authenticate as the item owner
+        self.client.force_authenticate(user=self.owner)
+
+        # Call the ai_describe_item endpoint
+        url = reverse("api:item-ai-describe-item", kwargs={"uuid": self.item.uuid})
+        response = self.client.put(url)
+
+        # Assert successful response
+        assert response.status_code == status.HTTP_200_OK
+
+        # Verify the item was updated with AI data
+        self.item.refresh_from_db()
+        assert self.item.name == "AI Generated Title"
+        assert self.item.description == "AI Generated Description"
+        assert self.item.category == "TOOLS"
+        assert self.item.sale_price == Decimal("25.00")
+
+        # Verify analyze_image was called with correct image UUID
+        mock_analyze_image.assert_called_once_with(self.image.uuid)
+
+    @patch("bubble.items.api.views.analyze_image")
+    def test_non_owner_cannot_call_ai_describe_item(self, mock_analyze_image):
+        """Test that non-owner cannot call ai_describe_item endpoint."""
+        # Authenticate as a different user
+        self.client.force_authenticate(user=self.other_user)
+
+        # Try to call the ai_describe_item endpoint
+        url = reverse("api:item-ai-describe-item", kwargs={"uuid": self.item.uuid})
+        response = self.client.put(url)
+
+        # Assert permission denied
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+        # Verify the item was not modified
+        self.item.refresh_from_db()
+        assert self.item.name == "Test Item"
+        assert self.item.description == "Original description"
+
+        # Verify analyze_image was not called
+        mock_analyze_image.assert_not_called()
+
+    @patch("bubble.items.api.views.analyze_image")
+    def test_unauthenticated_user_cannot_call_ai_describe_item(
+        self, mock_analyze_image
+    ):
+        """Test that unauthenticated users cannot call ai_describe_item endpoint."""
+        # Don't authenticate
+
+        # Try to call the ai_describe_item endpoint
+        url = reverse("api:item-ai-describe-item", kwargs={"uuid": self.item.uuid})
+        response = self.client.put(url)
+
+        # Assert forbidden or unauthorized
+        assert response.status_code in (
+            status.HTTP_401_UNAUTHORIZED,
+            status.HTTP_403_FORBIDDEN,
+        )
+
+        # Verify the item was not modified
+        self.item.refresh_from_db()
+        assert self.item.name == "Test Item"
+
+        # Verify analyze_image was not called
+        mock_analyze_image.assert_not_called()

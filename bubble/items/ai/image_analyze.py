@@ -17,7 +17,8 @@ PROMPT_RETURN_FORMAT = (
     '  "description": "Detaillierte Beschreibung des Gegenstands '
     'und seines Zustands",\n'
     '  "category": "Hauptkategorie des Gegenstands"\n'
-    '  "price": "Vorgeschlagener Verkaufspreis in Euro"\n'
+    '  "price": "Vorgeschlagener Verkaufspreis in Euro, mit Punkt als '
+    'Komma-Trennzeichen"\n'
     "}"
 )
 

@@ -21,7 +21,7 @@ DEFAULT_GROUPS_CONFIG = {
         "description": "Default regular user, can create and view items",
         "permissions": {
             "items": {
-                "item": ["add", "view"],
+                "item": ["add", "view", "change", "delete"],
                 # need extra image permissions to update/delete images
                 "image": ["add", "view", "change", "delete"],
             },
