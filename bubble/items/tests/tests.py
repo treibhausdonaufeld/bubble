@@ -223,6 +223,152 @@ class ImageAPITestCase(TestCase):
         assert delete_response.status_code == status.HTTP_403_FORBIDDEN
         assert Image.objects.filter(uuid=created_image.uuid).exists()
 
+    def test_update_image_ordering_as_owner(self):
+        """Test that item owner can update the ordering of their images."""
+        self.client.login(username="testuser1", password=TEST_PASSWORD)
+
+        # First create an image
+        test_image = self.create_test_image()
+        initial_ordering = 1
+        updated_ordering = 5
+        data = {
+            "item": str(self.item1.uuid),
+            "original": test_image,
+            "ordering": initial_ordering,
+        }
+        create_url = reverse("api:image-list")
+        create_response = self.client.post(create_url, data, format="multipart")
+
+        assert create_response.status_code == status.HTTP_201_CREATED
+        created_image = Image.objects.get(item=self.item1)
+        assert created_image.ordering == initial_ordering
+
+        # Now update the ordering
+        update_url = reverse("api:image-detail", kwargs={"uuid": created_image.uuid})
+        update_data = {"ordering": updated_ordering}
+        update_response = self.client.patch(update_url, update_data, format="json")
+
+        assert update_response.status_code == status.HTTP_200_OK
+        created_image.refresh_from_db()
+        assert created_image.ordering == updated_ordering
+
+    def test_update_image_original_fails_for_existing_image(self):
+        """Test that updating the original field fails for existing images."""
+        self.client.login(username="testuser1", password=TEST_PASSWORD)
+
+        # First create an image
+        test_image = self.create_test_image()
+        data = {"item": str(self.item1.uuid), "original": test_image, "ordering": 1}
+        create_url = reverse("api:image-list")
+        create_response = self.client.post(create_url, data, format="multipart")
+
+        assert create_response.status_code == status.HTTP_201_CREATED
+        created_image = Image.objects.get(item=self.item1)
+        original_file = created_image.original.name
+
+        # Try to update the original field
+        new_image = self.create_test_image()
+        update_url = reverse("api:image-detail", kwargs={"uuid": created_image.uuid})
+        update_data = {"original": new_image}
+        update_response = self.client.patch(update_url, update_data, format="multipart")
+
+        # Should succeed but original should not change
+        assert update_response.status_code == status.HTTP_200_OK
+        created_image.refresh_from_db()
+        assert created_image.original.name == original_file
+
+    def test_update_image_item_fails_for_existing_image(self):
+        """Test that updating the item field fails for existing images."""
+        self.client.login(username="testuser1", password=TEST_PASSWORD)
+
+        # First create an image
+        test_image = self.create_test_image()
+        data = {"item": str(self.item1.uuid), "original": test_image, "ordering": 1}
+        create_url = reverse("api:image-list")
+        create_response = self.client.post(create_url, data, format="multipart")
+
+        assert create_response.status_code == status.HTTP_201_CREATED
+        created_image = Image.objects.get(item=self.item1)
+        original_item_uuid = created_image.item.uuid
+
+        # Try to update the item field to item2
+        update_url = reverse("api:image-detail", kwargs={"uuid": created_image.uuid})
+        update_data = {"item": str(self.item2.uuid)}
+        update_response = self.client.patch(update_url, update_data, format="json")
+
+        # Should succeed but item should not change
+        assert update_response.status_code == status.HTTP_200_OK
+        created_image.refresh_from_db()
+        assert created_image.item.uuid == original_item_uuid
+
+    def test_update_image_ordering_and_other_fields_only_ordering_changes(self):
+        """Test that when updating multiple fields, only ordering changes."""
+        self.client.login(username="testuser1", password=TEST_PASSWORD)
+
+        # First create an image
+        test_image = self.create_test_image()
+        initial_ordering = 1
+        new_ordering = 10
+        data = {
+            "item": str(self.item1.uuid),
+            "original": test_image,
+            "ordering": initial_ordering,
+        }
+        create_url = reverse("api:image-list")
+        create_response = self.client.post(create_url, data, format="multipart")
+
+        assert create_response.status_code == status.HTTP_201_CREATED
+        created_image = Image.objects.get(item=self.item1)
+        original_file = created_image.original.name
+        original_item_uuid = created_image.item.uuid
+
+        # Try to update multiple fields including ordering
+        new_image = self.create_test_image()
+        update_url = reverse("api:image-detail", kwargs={"uuid": created_image.uuid})
+        update_data = {
+            "ordering": new_ordering,
+            "original": new_image,
+            "item": str(self.item2.uuid),
+        }
+        update_response = self.client.patch(update_url, update_data, format="multipart")
+
+        # Should succeed
+        assert update_response.status_code == status.HTTP_200_OK
+        created_image.refresh_from_db()
+
+        # Only ordering should change
+        assert created_image.ordering == new_ordering
+        assert created_image.original.name == original_file
+        assert created_image.item.uuid == original_item_uuid
+        assert created_image.item.uuid == original_item_uuid
+
+    def test_update_image_non_owner_fails(self):
+        """Test that non-owner cannot update image ordering."""
+        self.client.login(username="testuser1", password=TEST_PASSWORD)
+
+        # First create an image as user1
+        test_image = self.create_test_image()
+        data = {"item": str(self.item1.uuid), "original": test_image, "ordering": 1}
+        create_url = reverse("api:image-list")
+        create_response = self.client.post(create_url, data, format="multipart")
+
+        assert create_response.status_code == status.HTTP_201_CREATED
+        created_image = Image.objects.get(item=self.item1)
+
+        # Try to update as user2
+        self.client.login(username="testuser2", password=TEST_PASSWORD)
+        update_url = reverse("api:image-detail", kwargs={"uuid": created_image.uuid})
+        update_data = {"ordering": 5}
+        update_response = self.client.patch(update_url, update_data, format="json")
+
+        # Should fail with forbidden or not found (filtered by get_queryset)
+        assert update_response.status_code in (
+            status.HTTP_403_FORBIDDEN,
+            status.HTTP_404_NOT_FOUND,
+        )
+        created_image.refresh_from_db()
+        assert created_image.ordering == 1
+
 
 class ItemFilterAPITestCase(TestCase):
     """Tests for ItemViewSet filtering functionality."""

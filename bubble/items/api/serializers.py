@@ -29,6 +29,18 @@ class ImageSerializer(serializers.ModelSerializer):
             "preview",
             "item",
         ]
+        read_only_fields = ["uuid", "thumbnail", "preview"]
+
+    def get_fields(self):
+        """Override to make fields read-only on update."""
+        fields = super().get_fields()
+
+        # For existing instances (updates), only allow ordering to be modified
+        if self.instance is not None:
+            fields["original"].read_only = True
+            fields["item"].read_only = True
+
+        return fields
 
     def validate_item(self, value):
         """Ensure only item owners can create images for their items."""
