@@ -14,15 +14,9 @@ from simple_history.models import HistoricalRecords
 
 from config.settings.base import AUTH_USER_MODEL
 
-
-def get_default_currency():
-    return settings.DEFAULT_CURRENCY
-
-
 money_defaults = {
     "max_digits": 10,
     "decimal_places": 2,
-    "default_currency": get_default_currency,
 }
 
 
@@ -108,12 +102,14 @@ class Item(models.Model):
         **money_defaults,
         blank=True,
         null=True,
+        default_currency=settings.DEFAULT_CURRENCY,
     )
     rental_price = MoneyField(
         **money_defaults,
         blank=True,
         null=True,
         help_text=_("Price per hour for rental items"),
+        default_currency=settings.DEFAULT_CURRENCY,
     )
 
     payment_enabled = models.BooleanField(

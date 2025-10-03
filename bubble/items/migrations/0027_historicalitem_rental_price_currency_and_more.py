@@ -325,7 +325,6 @@ class Migration(migrations.Migration):
                     ("ZWR", "Zimbabwean Dollar (2008)"),
                     ("ZWL", "Zimbabwean Dollar (2009–2024)"),
                 ],
-                default=bubble.items.models.get_default_currency,
                 editable=False,
                 max_length=3,
                 null=True,
@@ -644,7 +643,6 @@ class Migration(migrations.Migration):
                     ("ZWR", "Zimbabwean Dollar (2008)"),
                     ("ZWL", "Zimbabwean Dollar (2009–2024)"),
                 ],
-                default=bubble.items.models.get_default_currency,
                 editable=False,
                 max_length=3,
                 null=True,
@@ -963,7 +961,6 @@ class Migration(migrations.Migration):
                     ("ZWR", "Zimbabwean Dollar (2008)"),
                     ("ZWL", "Zimbabwean Dollar (2009–2024)"),
                 ],
-                default=bubble.items.models.get_default_currency,
                 editable=False,
                 max_length=3,
                 null=True,
@@ -1282,7 +1279,6 @@ class Migration(migrations.Migration):
                     ("ZWR", "Zimbabwean Dollar (2008)"),
                     ("ZWL", "Zimbabwean Dollar (2009–2024)"),
                 ],
-                default=bubble.items.models.get_default_currency,
                 editable=False,
                 max_length=3,
                 null=True,
@@ -1294,7 +1290,6 @@ class Migration(migrations.Migration):
             field=djmoney.models.fields.MoneyField(
                 blank=True,
                 decimal_places=2,
-                default_currency="<function get_default_currency at 0x7f5f091d0680>",
                 help_text="Price per hour for rental items",
                 max_digits=10,
                 null=True,
@@ -1306,7 +1301,6 @@ class Migration(migrations.Migration):
             field=djmoney.models.fields.MoneyField(
                 blank=True,
                 decimal_places=2,
-                default_currency="<function get_default_currency at 0x7f5f091d0680>",
                 max_digits=10,
                 null=True,
             ),
@@ -1317,7 +1311,6 @@ class Migration(migrations.Migration):
             field=djmoney.models.fields.MoneyField(
                 blank=True,
                 decimal_places=2,
-                default_currency="<function get_default_currency at 0x7f5f091d0680>",
                 help_text="Price per hour for rental items",
                 max_digits=10,
                 null=True,
@@ -1329,7 +1322,6 @@ class Migration(migrations.Migration):
             field=djmoney.models.fields.MoneyField(
                 blank=True,
                 decimal_places=2,
-                default_currency="<function get_default_currency at 0x7f5f091d0680>",
                 max_digits=10,
                 null=True,
             ),
