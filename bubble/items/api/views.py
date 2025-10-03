@@ -161,3 +161,17 @@ class ImageViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(item__uuid=item_uuid)
 
         return queryset
+
+    def perform_create(self, serializer):
+        """Set ordering automatically if not provided."""
+        # If ordering is not provided, set it based on existing images count
+        ordering = serializer.validated_data.get("ordering")
+        if "ordering" not in serializer.validated_data or ordering is None:
+            item = serializer.validated_data.get("item")
+            if item:
+                # Get the count of existing images for this item
+                existing_count = Image.objects.filter(item=item).count()
+                serializer.save(ordering=existing_count)
+                return
+
+        serializer.save()

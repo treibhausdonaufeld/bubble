@@ -18,6 +18,7 @@ class ImageSerializer(serializers.ModelSerializer):
     item = serializers.SlugRelatedField(slug_field="uuid", queryset=Item.objects.all())
     thumbnail = serializers.ImageField(read_only=True)
     preview = serializers.ImageField(read_only=True)
+    ordering = serializers.IntegerField(required=False, allow_null=True)
 
     class Meta:
         model = Image

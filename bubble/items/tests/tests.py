@@ -369,6 +369,120 @@ class ImageAPITestCase(TestCase):
         created_image.refresh_from_db()
         assert created_image.ordering == 1
 
+    def test_create_image_without_ordering_sets_automatic_ordering(self):
+        """Test that creating an image without ordering sets it automatically."""
+        self.client.login(username="testuser1", password=TEST_PASSWORD)
+
+        # Create first image without ordering
+        test_image1 = self.create_test_image()
+        data1 = {"item": str(self.item1.uuid), "original": test_image1}
+        url = reverse("api:image-list")
+        response1 = self.client.post(url, data1, format="multipart")
+
+        assert response1.status_code == status.HTTP_201_CREATED
+        images = list(Image.objects.filter(item=self.item1).order_by("ordering"))
+        assert len(images) == 1
+        assert images[0].ordering == 0  # First image should have ordering 0
+
+        # Create second image without ordering
+        test_image2 = self.create_test_image()
+        data2 = {"item": str(self.item1.uuid), "original": test_image2}
+        response2 = self.client.post(url, data2, format="multipart")
+
+        assert response2.status_code == status.HTTP_201_CREATED
+        images = list(Image.objects.filter(item=self.item1).order_by("ordering"))
+        expected_images_count = 2
+        assert len(images) == expected_images_count
+        assert images[1].ordering == 1  # Second image should have ordering 1
+
+        # Create third image without ordering
+        test_image3 = self.create_test_image()
+        data3 = {"item": str(self.item1.uuid), "original": test_image3}
+        response3 = self.client.post(url, data3, format="multipart")
+
+        assert response3.status_code == status.HTTP_201_CREATED
+        images = list(Image.objects.filter(item=self.item1).order_by("ordering"))
+        expected_images_count = 3
+        third_image_ordering = 2
+        assert len(images) == expected_images_count
+        assert images[2].ordering == third_image_ordering
+
+    def test_create_image_with_explicit_ordering_respects_provided_value(self):
+        """Test that providing explicit ordering value is respected."""
+        self.client.login(username="testuser1", password=TEST_PASSWORD)
+
+        # Create first image with explicit ordering
+        test_image1 = self.create_test_image()
+        explicit_ordering = 10
+        data1 = {
+            "item": str(self.item1.uuid),
+            "original": test_image1,
+            "ordering": explicit_ordering,
+        }
+        url = reverse("api:image-list")
+        response1 = self.client.post(url, data1, format="multipart")
+
+        assert response1.status_code == status.HTTP_201_CREATED
+        images = list(Image.objects.filter(item=self.item1).order_by("ordering"))
+        assert len(images) == 1
+        assert images[0].ordering == explicit_ordering
+
+        # Create second image without ordering - should use automatic
+        test_image2 = self.create_test_image()
+        data2 = {"item": str(self.item1.uuid), "original": test_image2}
+        response2 = self.client.post(url, data2, format="multipart")
+
+        assert response2.status_code == status.HTTP_201_CREATED
+        images = list(Image.objects.filter(item=self.item1).order_by("ordering"))
+        expected_images_count = 2
+        # Should be 1 because there's 1 existing image (count-based)
+        automatic_ordering = 1
+        assert len(images) == expected_images_count
+        # Auto-assigned image has ordering=1, explicit has ordering=10
+        assert images[0].ordering == automatic_ordering
+        assert images[1].ordering == explicit_ordering
+
+    def test_automatic_ordering_is_per_item(self):
+        """Test that automatic ordering is calculated per item, not globally."""
+        self.client.login(username="testuser1", password=TEST_PASSWORD)
+
+        # Create a second item for user1
+        item1_second = Item.objects.create(
+            name="Test Item 1 Second",
+            description="Another item for user1",
+            user=self.user1,
+            sale_price=Decimal("20.00"),
+        )
+
+        url = reverse("api:image-list")
+
+        # Create images for item1
+        test_image1 = self.create_test_image()
+        data1 = {"item": str(self.item1.uuid), "original": test_image1}
+        response1 = self.client.post(url, data1, format="multipart")
+        assert response1.status_code == status.HTTP_201_CREATED
+
+        test_image2 = self.create_test_image()
+        data2 = {"item": str(self.item1.uuid), "original": test_image2}
+        response2 = self.client.post(url, data2, format="multipart")
+        assert response2.status_code == status.HTTP_201_CREATED
+
+        # Create images for item1_second (different item, same user)
+        test_image3 = self.create_test_image()
+        data3 = {"item": str(item1_second.uuid), "original": test_image3}
+        response3 = self.client.post(url, data3, format="multipart")
+        assert response3.status_code == status.HTTP_201_CREATED
+
+        # Check ordering for item1 images
+        item1_images = Image.objects.filter(item=self.item1).order_by("ordering")
+        assert list(item1_images.values_list("ordering", flat=True)) == [0, 1]
+
+        # Check ordering for item1_second images (should start from 0)
+        item1_second_images = Image.objects.filter(item=item1_second).order_by(
+            "ordering"
+        )
+        assert list(item1_second_images.values_list("ordering", flat=True)) == [0]
+
 
 class ItemFilterAPITestCase(TestCase):
     """Tests for ItemViewSet filtering functionality."""
