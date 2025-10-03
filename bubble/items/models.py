@@ -1,10 +1,11 @@
 import uuid
-from decimal import Decimal
 from pathlib import Path
 
+from django.conf import settings
 from django.db import models
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
+from djmoney.models.fields import MoneyField
 from guardian.models import GroupObjectPermissionBase, UserObjectPermissionBase
 from guardian.shortcuts import assign_perm
 from imagekit.models import ImageSpecField
@@ -12,6 +13,17 @@ from imagekit.processors import ResizeToCover, ResizeToFill
 from simple_history.models import HistoricalRecords
 
 from config.settings.base import AUTH_USER_MODEL
+
+
+def get_default_currency():
+    return settings.DEFAULT_CURRENCY
+
+
+money_defaults = {
+    "max_digits": 10,
+    "decimal_places": 2,
+    "default_currency": get_default_currency,
+}
 
 
 class ConditionType(models.IntegerChoices):
@@ -92,19 +104,15 @@ class Item(models.Model):
         default=False,
         help_text=_("Display your contact information public"),
     )
-    sale_price = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
+    sale_price = MoneyField(
+        **money_defaults,
         blank=True,
         null=True,
-        default=Decimal("0.00"),
     )
-    rental_price = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
+    rental_price = MoneyField(
+        **money_defaults,
         blank=True,
         null=True,
-        default=Decimal("0.00"),
         help_text=_("Price per hour for rental items"),
     )
 

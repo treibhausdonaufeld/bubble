@@ -1,9 +1,10 @@
 """Serializers for items API."""
 
 from django.utils.translation import gettext_lazy as _
+from djmoney.contrib.django_rest_framework import MoneyField
 from rest_framework import serializers, status
 
-from bubble.items.models import Image, Item
+from bubble.items.models import Image, Item, money_defaults
 
 
 class ItemOwnerException(serializers.ValidationError):
@@ -58,6 +59,8 @@ class ItemSerializer(serializers.ModelSerializer):
     images = ImageSerializer(many=True, read_only=True)
     user = serializers.StringRelatedField(read_only=True)
     first_image = serializers.SerializerMethodField()
+    sale_price = MoneyField(**money_defaults)
+    rental_price = MoneyField(**money_defaults)
 
     class Meta:
         model = Item

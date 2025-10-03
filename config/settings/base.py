@@ -477,3 +477,5 @@ WEBPACK_LOADER = {
 }
 # Your stuff...
 # ------------------------------------------------------------------------------
+
+DEFAULT_CURRENCY = env("DEFAULT_CURRENCY", default="EUR")
