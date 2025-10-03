@@ -1,16 +1,11 @@
 from .base import *  # noqa: F403
-from .base import INSTALLED_APPS, MIDDLEWARE, WEBPACK_LOADER, env
-
-# Make sure DEBUG is True
-DEBUG = True
+from .base import INSTALLED_APPS, MIDDLEWARE, env
 
 # Set specific Replit domain
 REPLIT_DOMAIN = "b3a06dff-d072-437b-bf27-5ae70632bc24-00-25yras0fyq8kl.kirk.replit.dev"
 
 # GENERAL
 # ------------------------------------------------------------------------------
-# https://docs.djangoproject.com/en/dev/ref/settings/#debug
-DEBUG = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
 SECRET_KEY = env(
     "DJANGO_SECRET_KEY",
@@ -85,8 +80,5 @@ INSTALLED_APPS += ["django_extensions"]
 
 # https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-eager-propagates
 CELERY_TASK_EAGER_PROPAGATES = True
-# django-webpack-loader
-# ------------------------------------------------------------------------------
-WEBPACK_LOADER["DEFAULT"]["CACHE"] = not DEBUG
 # Your stuff...
 # ------------------------------------------------------------------------------

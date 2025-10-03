@@ -20,7 +20,9 @@ ALLOWED_HOSTS = env.list(
     default=["bubble.treibhausdonaufeld.at"],
 )
 
-ALLOWED_CIDR_NETS = ["172.16.0.0/12", "192.168.0.0/16"]
+ALLOWED_CIDR_NETS = env.list(
+    "ALLOWED_CIDR_NETS", default=["172.16.0.0/12", "192.168.0.0/16"]
+)
 
 # DATABASES
 # ------------------------------------------------------------------------------
@@ -51,8 +53,6 @@ SECURE_SSL_REDIRECT = env.bool("DJANGO_SECURE_SSL_REDIRECT", default=True)
 SESSION_COOKIE_SECURE = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#session-cookie-name
 SESSION_COOKIE_NAME = "__Secure-sessionid"
-# https://docs.djangoproject.com/en/dev/ref/settings/#csrf-cookie-secure
-CSRF_COOKIE_SECURE = True
 # https://docs.djangoproject.com/en/dev/topics/security/#ssl-https
 # https://docs.djangoproject.com/en/dev/ref/settings/#secure-hsts-seconds
 # TODO: set this to 60 seconds first and then to 518400 once you prove the former works
@@ -122,6 +122,8 @@ ANYMAIL = {
 # See https://docs.djangoproject.com/en/dev/topics/logging for
 # more details on how to customize your logging configuration.
 
+LOG_LEVEL = env("DJANGO_LOG_LEVEL", default="INFO")
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": True,
@@ -138,7 +140,7 @@ LOGGING = {
         },
     },
     "root": {
-        "level": "INFO",
+        "level": LOG_LEVEL,
         "handlers": ["console"],
     },
     "loggers": {
