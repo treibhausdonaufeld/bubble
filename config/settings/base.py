@@ -9,8 +9,6 @@ import environ
 # https://docs.djangoproject.com/en/dev/ref/settings/#languages
 from django.utils.translation import gettext_lazy as _
 
-from .temporal import *  # noqa: F403
-
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 # bubble/
 APPS_DIR = BASE_DIR / "bubble"

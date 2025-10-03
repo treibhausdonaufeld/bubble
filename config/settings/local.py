@@ -1,9 +1,6 @@
 from .base import *  # noqa: F403
 from .base import INSTALLED_APPS, MIDDLEWARE, env
 
-# Set specific Replit domain
-REPLIT_DOMAIN = "b3a06dff-d072-437b-bf27-5ae70632bc24-00-25yras0fyq8kl.kirk.replit.dev"
-
 # GENERAL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#secret-key

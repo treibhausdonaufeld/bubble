@@ -131,11 +131,6 @@ class Item(models.Model):
         choices=StatusType,
         default=StatusType.DRAFT,
     )
-    workflow_id = models.CharField(
-        max_length=255,
-        blank=True,
-        help_text="Temporal workflow ID for AI processing",
-    )
 
     # enable history tracking
     history = HistoricalRecords()

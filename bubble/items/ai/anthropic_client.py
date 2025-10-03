@@ -1,6 +1,8 @@
 import anthropic
+from django.conf import settings
 
-from config.settings.temporal import ANTHROPIC_API_KEY, ANTHROPIC_MODEL
+ANTHROPIC_API_KEY = getattr(settings, "ANTHROPIC_API_KEY", "")
+ANTHROPIC_MODEL = getattr(settings, "ANTHROPIC_MODEL", "claude-2")
 
 
 def call_model(
