@@ -143,6 +143,9 @@ class Item(models.Model):
     CONDITION_CHOICES = ConditionType.choices
     ITEM_TYPE_CHOICES = ItemType.choices
 
+    class Meta:
+        ordering = ["-created_at"]
+
     def __str__(self):
         return f"{self.pk} - {self.name}" or f"Item {self.pk}"
 
