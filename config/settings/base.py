@@ -73,7 +73,7 @@ DJANGO_APPS = [
     "django.contrib.staticfiles",
     # "django.contrib.humanize", # Handy template tags
     "django.contrib.admin",  # required
-    # "django.forms",
+    "django.forms",
 ]
 THIRD_PARTY_APPS = [
     "guardian",
