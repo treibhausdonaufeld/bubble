@@ -1,5 +1,4 @@
 {% load static i18n %}
-{% load render_bundle from webpack_loader %}
 
 <!DOCTYPE html>
 {% get_current_language as LANGUAGE_CODE %}
@@ -16,22 +15,6 @@
     <meta name="description" content="Treibhaus donaufeld sharing platform" />
     <meta name="csrf-token" content="{{ csrf_token }}" />
     <meta name="theme-preference" content="{{ current_theme }}" />
-    {% block css %}
-      <!-- Your stuff: Third-party CSS libraries go here -->
-      <!-- This file stores project-specific CSS -->
-      {% render_bundle 'project' 'css' %}
-    {% endblock css %}
-    <!-- Le javascript
-    ================================================== -->
-    {# Placed at the top of the document so pages load faster with defer #}
-    {% block javascript %}
-      <!-- Django i18n JavaScript catalog -->
-      <script src="{% url 'javascript-catalog' %}"></script>
-      <!-- Vendor dependencies bundled as one file -->
-      {% render_bundle 'vendors' 'js' attrs='defer' %}
-      <!-- place project specific Javascript in this file -->
-      {% render_bundle 'project' 'js' attrs='defer' %}
-    {% endblock javascript %}
   </head>
   <body class="{% block bodyclass %}{% endblock bodyclass %}">
     {% block body %}
