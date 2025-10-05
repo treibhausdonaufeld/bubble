@@ -36,10 +36,24 @@ dependencies = [
     "python-slugify",
     "redis",
     "sentry-sdk[django]",
-    "sentence-transformers>=2.2.0",
+    "torch",
+    "sentence-transformers",
     "uvicorn-worker",
     "uvicorn[standard]",
     "whitenoise",
+]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.uv.sources]
+torch = [
+  { index = "pytorch-cpu" },
+]
+torchvision = [
+  { index = "pytorch-cpu" },
 ]
 
 [build-system]
