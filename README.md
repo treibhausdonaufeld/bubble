@@ -104,3 +104,12 @@ Bootstrap v5 is installed using npm and customised by tweaking your variables in
 You can find a list of available variables [in the bootstrap source](https://github.com/twbs/bootstrap/blob/v5.1.3/scss/_variables.scss), or get explanations on them in the [Bootstrap docs](https://getbootstrap.com/docs/5.1/customize/sass/).
 
 Bootstrap's javascript as well as its dependencies are concatenated into a single file: `static/js/vendors.js`.
+
+
+## Embeddings
+
+Suggested models:
+
+- all-MiniLM-L6-v2
+- paraphrase-multilingual-MiniLM-L12-v2 - Better multilingual support (German), slightly larger
+- all-mpnet-base-v2 - Higher quality (768 dims), slower but more accurate

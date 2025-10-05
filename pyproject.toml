@@ -36,6 +36,7 @@ dependencies = [
     "python-slugify",
     "redis",
     "sentry-sdk[django]",
+    "sentence-transformers>=2.2.0",
     "uvicorn-worker",
     "uvicorn[standard]",
     "whitenoise",

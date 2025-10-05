@@ -59,8 +59,8 @@ class ItemSerializer(serializers.ModelSerializer):
     images = ImageSerializer(many=True, read_only=True)
     user = serializers.StringRelatedField(read_only=True)
     first_image = serializers.SerializerMethodField()
-    sale_price = MoneyField(**money_defaults)
-    rental_price = MoneyField(**money_defaults)
+    sale_price = MoneyField(**money_defaults, required=False, allow_null=True)
+    rental_price = MoneyField(**money_defaults, required=False, allow_null=True)
 
     class Meta:
         model = Item

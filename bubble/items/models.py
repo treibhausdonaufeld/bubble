@@ -10,8 +10,10 @@ from guardian.models import GroupObjectPermissionBase, UserObjectPermissionBase
 from guardian.shortcuts import assign_perm
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToCover, ResizeToFill
+from pgvector.django import VectorField
 from simple_history.models import HistoricalRecords
 
+from bubble.items.embeddings import get_embedding_model
 from config.settings.base import AUTH_USER_MODEL
 
 money_defaults = {
@@ -66,6 +68,30 @@ class ItemManager(models.Manager):
         if not user.is_authenticated:
             return self.none()
         return self.filter(user=user)
+
+    def semantic_search(self, query: str, limit: int = 10) -> models.QuerySet:
+        """
+        Perform semantic search on items using embeddings.
+
+        Args:
+            query: The search query text.
+            limit: Maximum number of results to return (default: 10).
+
+        Returns:
+            QuerySet ordered by semantic similarity (most similar first).
+        """
+
+        # Generate embedding for the query
+        model = get_embedding_model()
+        query_embedding = model.encode(query, convert_to_numpy=True).tolist()
+
+        # Use cosine distance for similarity (lower distance = more similar)
+        # Filter out items without embeddings
+        return (
+            self.filter(embedding__isnull=False)
+            .order_by(models.F("embedding__vector").cosine_distance(query_embedding))
+            .all()[:limit]
+        )
 
 
 class Item(models.Model):
@@ -191,6 +217,21 @@ class ItemUserObjectPermission(UserObjectPermissionBase):
 
 class ItemGroupObjectPermission(GroupObjectPermissionBase):
     content_object = models.ForeignKey(Item, on_delete=models.CASCADE)
+
+
+class ItemEmbedding(models.Model):
+    item = models.OneToOneField(
+        Item, on_delete=models.CASCADE, related_name="embedding", primary_key=True
+    )
+    vector = VectorField(
+        dimensions=384,
+        null=True,
+        blank=True,
+        help_text=_("Embedding vector for semantic search"),
+    )
+
+    def __str__(self):
+        return f"Embedding for {self.item.name} ({self.item.uuid})"
 
 
 def upload_to_item_images(instance: "Image", filename: str):
