@@ -2,11 +2,9 @@
 
 from functools import lru_cache
 
-from sentence_transformers import SentenceTransformer
-
 
 @lru_cache(maxsize=1)
-def get_embedding_model() -> SentenceTransformer:
+def get_embedding_model():
     """
     Load and cache the embedding model.
 
@@ -15,8 +13,9 @@ def get_embedding_model() -> SentenceTransformer:
 
     Returns:
         SentenceTransformer: The loaded model instance.
+        return SentenceTransformer("all-MiniLM-L6-v2")
     """
-    return SentenceTransformer("all-MiniLM-L6-v2")
+    return "to be implemented"
 
 
 def generate_item_embedding(item) -> list[float] | None:
@@ -31,7 +30,7 @@ def generate_item_embedding(item) -> list[float] | None:
 
     Returns:
         list[float] | None: A 384-dimensional embedding vector, or None if no text.
-    """
+
     # Combine name and description with a separator
     text_parts = []
     if item.name:
@@ -51,3 +50,5 @@ def generate_item_embedding(item) -> list[float] | None:
 
     # Convert to list for database storage
     return embedding.tolist()
+    """
+    return None
