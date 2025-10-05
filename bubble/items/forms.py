@@ -57,7 +57,6 @@ class ItemForm(forms.ModelForm):
                 },
             ),
             "display_contact": forms.CheckboxInput(attrs={"class": "form-check-input"}),
-            "active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
         }
         labels = {
             "name": _("Name"),
@@ -66,7 +65,6 @@ class ItemForm(forms.ModelForm):
             "status": _("Condition"),
             "price": _("Price"),
             "display_contact": _("Show contact"),
-            "active": _("Published"),
         }
         help_texts = {
             "display_contact": _("Check to display your contact information"),

@@ -16,10 +16,17 @@ from temporalio.worker import Worker
 from bubble.items.temporal.temporal_activities import (
     analyze_image,
     fetch_item_images,
+    generate_item_embedding,
+    generate_search_embedding,
     save_item_suggestions,
+    save_search_results,
     summarize_image_suggestions,
 )
-from bubble.items.temporal.temporal_workflows import ItemProcessingWorkflow
+from bubble.items.temporal.temporal_workflows import (
+    ItemProcessingWorkflow,
+    ItemPublishingWorkflow,
+    SimilaritySearchWorkflow,
+)
 from config.settings.temporal import (
     TEMPORAL_ADDRESS,
     TEMPORAL_LOG_LEVEL,
@@ -47,9 +54,14 @@ async def run_worker():
                 save_item_suggestions,
                 analyze_image,
                 summarize_image_suggestions,
+                generate_item_embedding,
+                generate_search_embedding,
+                save_search_results,
             ],
             workflows=[
                 ItemProcessingWorkflow,
+                ItemPublishingWorkflow,
+                SimilaritySearchWorkflow,
             ],
             activity_executor=executor,
         )

@@ -62,7 +62,7 @@ USER dev-user
 WORKDIR /home/dev-user/
 
 # Requirements are installed here to ensure they will be cached.
-COPY uv.lock pyproject.toml ./
+COPY --chown=dev-user:dev-user uv.lock pyproject.toml ./
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 

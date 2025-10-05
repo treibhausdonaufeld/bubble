@@ -12,8 +12,15 @@ from django.conf import settings
 from temporalio.client import Client, WorkflowHandle
 from temporalio.common import RetryPolicy
 
-from bubble.items.temporal.temporal_activities import ItemProcessingRequest
-from bubble.items.temporal.temporal_workflows import ItemProcessingWorkflow
+from bubble.items.temporal.temporal_activities import (
+    ItemProcessingRequest,
+    SimilaritySearchRequest,
+)
+from bubble.items.temporal.temporal_workflows import (
+    ItemProcessingWorkflow,
+    ItemPublishingWorkflow,
+    SimilaritySearchWorkflow,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -61,6 +68,72 @@ class TemporalService:
 
         handle = await client.start_workflow(
             ItemProcessingWorkflow.run,
+            args=[input_data],
+            id=workflow_id,
+            task_queue=task_queue,
+            retry_policy=RetryPolicy(maximum_attempts=1),  # Workflow-level retry
+        )
+
+        logger.info("Started workflow %s for item %s", workflow_id, input_data.item_id)
+        return handle
+
+    @classmethod
+    async def start_similarity_search(
+        cls,
+        search_request: SimilaritySearchRequest,
+    ) -> WorkflowHandle[SimilaritySearchWorkflow, dict[str, Any]]:
+        """Start similarity search workflow.
+
+        Args:
+            search_request: The search request data.
+
+        Returns:
+            WorkflowHandle: Handle to the started workflow.
+        """
+        task_queue: str = settings.TEMPORAL_TASK_QUEUE
+        client = await cls.get_client()
+
+        workflow_id = f"similarity-search-{search_request.search_id}"
+
+        logger.info(
+            "Starting similarity search workflow for query: %s", search_request.query
+        )
+
+        handle = await client.start_workflow(
+            SimilaritySearchWorkflow.run,
+            args=[search_request],
+            id=workflow_id,
+            task_queue=task_queue,
+            retry_policy=RetryPolicy(maximum_attempts=1),  # Workflow-level retry
+        )
+
+        logger.info(
+            "Started workflow %s for search: %s", workflow_id, search_request.search_id
+        )
+        return handle
+
+    @classmethod
+    async def start_item_publishing(
+        cls,
+        input_data: ItemProcessingRequest,
+    ) -> WorkflowHandle[ItemPublishingWorkflow, dict[str, Any]]:
+        """Start publishing workflow for an item.
+
+        Args:
+            input_data: The item data for publishing.
+
+        Returns:
+            WorkflowHandle: Handle to the started workflow.
+        """
+        task_queue: str = settings.TEMPORAL_TASK_QUEUE
+        client = await cls.get_client()
+
+        workflow_id = f"publish-item-{input_data.item_id}-{uuid4().hex[:8]}"
+
+        logger.info("Starting item publishing workflow for item %s", input_data.item_id)
+
+        handle = await client.start_workflow(
+            ItemPublishingWorkflow.run,
             args=[input_data],
             id=workflow_id,
             task_queue=task_queue,
