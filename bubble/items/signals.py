@@ -48,4 +48,6 @@ def update_item_embedding(sender, instance, created, **kwargs):
         vector_embedding = generate_item_embedding(instance)
         if vector_embedding is not None:
             # Update without triggering the signal again
-            ItemEmbedding.objects.filter(pk=instance.pk).update(vector=vector_embedding)
+            ItemEmbedding.objects.update_or_create(
+                item=instance, defaults={"vector": vector_embedding}
+            )

@@ -30,7 +30,6 @@ class ItemViewSet(viewsets.ModelViewSet):
     filterset_class = ItemFilter
     filter_backends = [
         DjangoFilterBackend,
-        filters.SearchFilter,
         filters.OrderingFilter,
     ]
     # Search delegates to ItemFilter.search but DRF SearchFilter assists direct fields
@@ -52,7 +51,12 @@ class ItemViewSet(viewsets.ModelViewSet):
         detail=False, methods=["get"], permission_classes=[IsAuthenticatedOrReadOnly]
     )
     def published(self, request):
+        """Get published items with all filters, search, and ordering applied."""
+        # Start with published items
         queryset = self.get_queryset().filter(status__in=StatusType.published())
+
+        # Apply all filters (including search and ordering)
+        queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -64,12 +68,19 @@ class ItemViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["get"])
     def my_items(self, request):
-        """Get only the current user's items."""
+        """
+        Get only the current user's items.
+
+        Applies all filters, search, and ordering to the user's items.
+        """
         queryset = (
             Item.objects.filter(user=request.user)
             .select_related("user")
             .prefetch_related("images")
         )
+
+        # Apply all filters (including search and ordering)
+        queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
         if page is not None:

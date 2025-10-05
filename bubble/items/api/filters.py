@@ -2,10 +2,16 @@
 
 from __future__ import annotations
 
+import logging
+
 import django_filters
 from django.db.models import Q, QuerySet
+from pgvector.django import CosineDistance
 
-from bubble.items.models import Item, StatusType
+from bubble.items.embeddings import get_embedding_model
+from bubble.items.models import Item, ItemEmbedding, StatusType
+
+logger = logging.getLogger(__name__)
 
 
 class ItemFilter(django_filters.FilterSet):
@@ -83,3 +89,17 @@ class ItemFilter(django_filters.FilterSet):
         return queryset.filter(
             Q(name__icontains=value) | Q(description__icontains=value)
         )
+
+    def semantic_search(self, queryset: QuerySet[Item], name: str, value: str):
+        """Not yet enabled..."""
+        model = get_embedding_model()
+        query_embedding = model.encode(value, convert_to_numpy=True).tolist()
+
+        # Use cosine distance for similarity (lower distance = more similar)
+        # Filter out items without embeddings
+
+        embeddings_qs = ItemEmbedding.objects.filter(vector__isnull=False).annotate(
+            distance=CosineDistance("vector", query_embedding)
+        )
+
+        return queryset.filter(pk__in=embeddings_qs.values_list("pk", flat=True))

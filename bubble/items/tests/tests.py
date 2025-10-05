@@ -15,7 +15,7 @@ from rest_framework.test import APIClient
 
 from bubble.core.permissions_config import DefaultGroup
 from bubble.items.ai.image_analyze import ItemImageResult
-from bubble.items.models import Image, Item
+from bubble.items.models import Image, Item, StatusType
 from bubble.items.tests.factories import ItemOwnerUserFactory
 from bubble.users.tests.factories import UserFactory
 
@@ -648,6 +648,142 @@ class AnonymousUserItemAccessTestCase(TestCase):
         # Authenticated users should see both their own items and published items
         assert self.published_item.name in names
         assert self.draft_item.name in names
+
+
+class PublishedEndpointFilterTestCase(TestCase):
+    """Test cases for filtering and searching on the published endpoint."""
+
+    def setUp(self):
+        """Set up test data."""
+        self.client = APIClient()
+        self.user = ItemOwnerUserFactory(
+            username="testowner", email="owner@example.com", password=TEST_PASSWORD
+        )
+
+        # Create published items with different attributes
+        self.published_laptop = Item.objects.create(
+            name="Gaming Laptop",
+            description="High-performance laptop for gaming",
+            user=self.user,
+            status=StatusType.AVAILABLE,
+            sale_price=Decimal("1500.00"),
+            category="ELECTRONICS",
+        )
+
+        self.published_desk = Item.objects.create(
+            name="Wooden Desk",
+            description="Beautiful oak desk for home office",
+            user=self.user,
+            status=StatusType.AVAILABLE,
+            sale_price=Decimal("300.00"),
+            category="FURNITURE",
+        )
+
+        self.published_chair = Item.objects.create(
+            name="Office Chair",
+            description="Ergonomic office chair",
+            user=self.user,
+            status=StatusType.RESERVED,
+            sale_price=Decimal("200.00"),
+            category="FURNITURE",
+        )
+
+        # Create a draft item (should not appear in published endpoint)
+        self.draft_item = Item.objects.create(
+            name="Draft Laptop",
+            description="Another laptop in draft",
+            user=self.user,
+            status=StatusType.DRAFT,
+            sale_price=Decimal("1000.00"),
+            category="ELECTRONICS",
+        )
+
+    def test_published_endpoint_search_filter(self):
+        """Test that search filter works on published endpoint."""
+        url = reverse("api:item-published") + "?search=laptop"
+        response = self.client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        results = response.json()["results"]
+        names = {item["name"] for item in results}
+
+        # Should find the published laptop but not the draft one
+        assert self.published_laptop.name in names
+        assert self.draft_item.name not in names
+        assert self.published_desk.name not in names
+
+    def test_published_endpoint_category_filter(self):
+        """Test that category filter works on published endpoint."""
+        url = reverse("api:item-published") + "?category=FURNITURE"
+        response = self.client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        results = response.json()["results"]
+        names = {item["name"] for item in results}
+
+        # Should find furniture items only
+        assert self.published_desk.name in names
+        assert self.published_chair.name in names
+        assert self.published_laptop.name not in names
+
+    def test_published_endpoint_price_range_filter(self):
+        """Test that price range filter works on published endpoint."""
+        url = reverse("api:item-published") + "?min_sale_price=250&max_sale_price=350"
+        response = self.client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        results = response.json()["results"]
+        names = {item["name"] for item in results}
+
+        # Should find only the desk (300)
+        assert self.published_desk.name in names
+        assert self.published_laptop.name not in names
+        assert self.published_chair.name not in names
+
+    def test_published_endpoint_ordering(self):
+        """Test that ordering works on published endpoint."""
+        url = reverse("api:item-published") + "?ordering=sale_price"
+        response = self.client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        results = response.json()["results"]
+
+        # Should be ordered by price ascending
+        prices = [Decimal(item["sale_price"]) for item in results]
+        assert prices == sorted(prices)
+
+    def test_published_endpoint_combined_filters(self):
+        """Test that multiple filters work together on published endpoint."""
+        url = (
+            reverse("api:item-published")
+            + "?category=FURNITURE&search=office&ordering=-sale_price"
+        )
+        response = self.client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        results = response.json()["results"]
+        names = {item["name"] for item in results}
+
+        # Should find items that are furniture AND contain "office"
+        assert self.published_desk.name in names
+        assert self.published_chair.name in names
+        assert self.published_laptop.name not in names
+
+    def test_my_items_endpoint_search_filter(self):
+        """Test that search filter works on my_items endpoint."""
+        self.client.force_authenticate(user=self.user)
+
+        url = reverse("api:item-my-items") + "?search=laptop"
+        response = self.client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        results = response.json()["results"]
+        names = {item["name"] for item in results}
+
+        # Should find both published and draft laptops
+        assert self.published_laptop.name in names
+        assert self.draft_item.name in names
+        assert self.published_desk.name not in names
 
 
 class AIDescribeItemTestCase(TestCase):
