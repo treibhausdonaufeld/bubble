@@ -34,7 +34,7 @@ class ProfileViewSet(ReadOnlyModelViewSet):
         """Return only the current user's profile."""
         return Profile.objects.filter(user=self.request.user)
 
-    @action(detail=False)
+    @action(detail=False, methods=["get", "patch"])
     def me(self, request):
         """Get the current user's profile."""
         profile = request.user.profile
