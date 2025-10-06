@@ -98,7 +98,6 @@ LOCAL_APPS = [
     "bubble.users",
     "bubble.core.apps.CoreConfig",
     "bubble.items.apps.ItemsConfig",
-    "bubble.messaging.apps.MessagingConfig",
     "bubble.bookings.apps.BookingsConfig",
     "bubble.favorites.apps.FavoritesConfig",
     "bubble.rooms.apps.RoomsConfig",

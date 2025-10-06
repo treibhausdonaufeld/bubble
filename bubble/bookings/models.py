@@ -1,7 +1,12 @@
+import uuid
+
+from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from djmoney.models.fields import MoneyField
+from simple_history.models import HistoricalRecords
 
-from bubble.items.models import Item
+from bubble.items.models import Item, money_defaults
 from config.settings.base import AUTH_USER_MODEL
 
 
@@ -13,6 +18,7 @@ class Booking(models.Model):
         (4, _("Completed")),
     )
 
+    uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
     status = models.IntegerField(choices=STATUS_CHOICES, default=1)
     item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="bookings")
     user = models.ForeignKey(
@@ -20,56 +26,57 @@ class Booking(models.Model):
         on_delete=models.CASCADE,
         related_name="bookings",
     )
-    date_from = models.DateField()
-    date_to = models.DateField()
-    time_from = models.TimeField(blank=True, null=True)
-    time_to = models.TimeField(blank=True, null=True)
+
+    time_from = models.DateTimeField(blank=True, null=True)
+    time_to = models.DateTimeField(blank=True, null=True)
+    offer = MoneyField(
+        **money_defaults,
+        blank=True,
+        null=True,
+        default_currency=settings.DEFAULT_CURRENCY,
+        help_text=_("Offered price for the booking"),
+    )
+    counter_offer = MoneyField(
+        **money_defaults,
+        blank=True,
+        null=True,
+        default_currency=settings.DEFAULT_CURRENCY,
+        help_text=_("Counter offer price for the booking"),
+    )
+
+    accepted_by = models.ForeignKey(
+        AUTH_USER_MODEL,
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="accepted_bookings",
+    )
+
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
 
+    history = HistoricalRecords()
+
     def __str__(self):
-        return f"Booking for {self.item.name} by {self.user.username}"
+        return f"Booking for {self.item.name} by {self.user}"
 
 
-class OpeningHour(models.Model):
-    DAYS_OF_WEEK = (
-        (1, _("Monday")),
-        (2, _("Tuesday")),
-        (3, _("Wednesday")),
-        (4, _("Thursday")),
-        (5, _("Friday")),
-        (6, _("Saturday")),
-        (7, _("Sunday")),
+class Message(models.Model):
+    uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
+    booking = models.ForeignKey(
+        Booking, on_delete=models.CASCADE, related_name="messages"
     )
-
-    item = models.ForeignKey(
-        Item,
+    sender = models.ForeignKey(
+        AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="opening_hours",
+        related_name="sent_messages",
     )
-    day = models.IntegerField(choices=DAYS_OF_WEEK)
-    time_from = models.TimeField()
-    time_to = models.TimeField()
+    date_created = models.DateTimeField(auto_now_add=True)
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ["-date_created"]
 
     def __str__(self):
-        return (
-            f"{self.get_day_display()} {self.time_from} - "
-            f"{self.time_to} for {self.item.name}"
-        )
-
-
-class ExceptionalOpeningHour(models.Model):
-    item = models.ForeignKey(
-        Item,
-        on_delete=models.CASCADE,
-        related_name="exceptional_hours",
-    )
-    date = models.DateField()
-    time_from = models.TimeField()
-    time_to = models.TimeField()
-
-    def __str__(self):
-        return (
-            f"Exception on {self.date}: {self.time_from} - "
-            f"{self.time_to} for {self.item.name}"
-        )
+        return f"Message from {self.sender}"
