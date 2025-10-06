@@ -105,7 +105,6 @@ You can find a list of available variables [in the bootstrap source](https://git
 
 Bootstrap's javascript as well as its dependencies are concatenated into a single file: `static/js/vendors.js`.
 
-
 ## Embeddings
 
 Suggested models:
@@ -113,3 +112,4 @@ Suggested models:
 - all-MiniLM-L6-v2
 - paraphrase-multilingual-MiniLM-L12-v2 - Better multilingual support (German), slightly larger
 - all-mpnet-base-v2 - Higher quality (768 dims), slower but more accurate
+- paraphrase-multilingual-mpnet-base-v2 - lucas choice
