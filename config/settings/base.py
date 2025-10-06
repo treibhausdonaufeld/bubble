@@ -420,3 +420,5 @@ WEBPACK_LOADER = {
 }
 # Your stuff...
 # ------------------------------------------------------------------------------
+# Embeddings Backend
+BOOK_EMBEDDING_BACKEND = env.str("BOOK_EMBEDDING_BACKEND", default="openai")

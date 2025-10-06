@@ -177,7 +177,7 @@ class Book(models.Model):
     
     # Vector field for semantic search
     embedding = VectorField(
-        dimensions=384,  # Using SentenceTransformers all-MiniLM-L6-v2 dimensions
+        dimensions=1536,  # Using OpenAI text-embedding-3-small dimensions
         null=True,
         blank=True,
         help_text=_("Vector embedding for semantic search")

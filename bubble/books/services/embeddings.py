@@ -148,7 +148,7 @@ def get_embeddings_service() -> EmbeddingsService:
     global _embeddings_service
     if _embeddings_service is None:
         # Check settings for preferred backend
-        backend_type = getattr(settings, 'BOOK_EMBEDDING_BACKEND', 'sentence_transformers')
+        backend_type = getattr(settings, 'BOOK_EMBEDDING_BACKEND', 'openai')
         
         if backend_type == 'openai':
             backend = OpenAIBackend()
