@@ -1,6 +1,5 @@
 volumes:
   bubble_local_postgres_data: {}
-  bubble_local_postgres_data_backups: {}
   bubble_local_redis_data: {}
 
 services:
@@ -39,7 +38,6 @@ services:
     restart: always
     volumes:
       - bubble_local_postgres_data:/var/lib/postgresql/data
-      - bubble_local_postgres_data_backups:/backups
     ports:
       - '8001:5432'
     env_file:
