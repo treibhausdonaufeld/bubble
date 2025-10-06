@@ -25,8 +25,8 @@ class Author(models.Model):
         verbose_name_plural = _("Authors")
         ordering = ["name"]
 
-    def __str__(self):
-        return self.name
+    def __str__(self) -> str:
+        return str(self.name)
 
     def natural_key(self):
         return (self.name,)
@@ -55,17 +55,17 @@ class Genre(models.Model):
         verbose_name_plural = _("Genres")
         ordering = ["name"]
 
-    def __str__(self):
-        return self.name
+    def __str__(self) -> str:
+        return str(self.name)
 
     def natural_key(self):
         return (self.name,)
 
-    def get_hierarchy(self):
+    def get_hierarchy(self) -> str:
         """Returns the full genre hierarchy path"""
         if self.parent_genre:
-            return f"{self.parent_genre.get_hierarchy()} > {self.name}"
-        return self.name
+            return f"{self.parent_genre.get_hierarchy()} > {str(self.name)}"
+        return str(self.name)
 
 
 class LocationManager(models.Manager):
@@ -84,8 +84,8 @@ class Location(models.Model):
         verbose_name_plural = _("Locations")
         ordering = ["name"]
 
-    def __str__(self):
-        return self.name
+    def __str__(self) -> str:
+        return str(self.name)
 
     def natural_key(self):
         return (self.name,)
@@ -108,8 +108,8 @@ class Verlag(models.Model):
         verbose_name_plural = _("Publishers")
         ordering = ["name"]
 
-    def __str__(self):
-        return self.name
+    def __str__(self) -> str:
+        return str(self.name)
 
     def natural_key(self):
         return (self.name,)
@@ -132,8 +132,8 @@ class Ort(models.Model):
         verbose_name_plural = _("Places")
         ordering = ["name"]
 
-    def __str__(self):
-        return self.name
+    def __str__(self) -> str:
+        return str(self.name)
 
     def natural_key(self):
         return (self.name,)
@@ -156,8 +156,8 @@ class Regal(models.Model):
         verbose_name_plural = _("Shelves")
         ordering = ["name"]
 
-    def __str__(self):
-        return self.name
+    def __str__(self) -> str:
+        return str(self.name)
 
     def natural_key(self):
         return (self.name,)
@@ -320,8 +320,8 @@ class Book(models.Model):
         verbose_name_plural = _("Books")
         ordering = ["-date_created"]
 
-    def __str__(self):
-        return self.title or f"Book {self.pk}"
+    def __str__(self) -> str:
+        return str(self.title) if self.title else f"Book {self.pk}"
 
     def is_ready_for_display(self):
         """Check if book has minimum required fields to be displayed."""
