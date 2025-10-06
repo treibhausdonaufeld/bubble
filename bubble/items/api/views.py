@@ -18,24 +18,44 @@ from bubble.items.models import Image, Item, StatusType
 from .filters import ItemFilter
 
 
-class ItemViewSet(viewsets.ModelViewSet):
-    """
-    ViewSet for retrieving, creating, updating, and deleting items.
-    """
+class ItemBaseViewSet(viewsets.GenericViewSet):
+    """Base viewset with common settings for items."""
 
     lookup_field = "uuid"
-    queryset = Item.objects.all().select_related("user").prefetch_related("images")
+    serializer_class = ItemListSerializer
 
     # Filtering / searching / ordering
     filterset_class = ItemFilter
     filter_backends = [
         DjangoFilterBackend,
+        filters.SearchFilter,
         filters.OrderingFilter,
     ]
-    # Search delegates to ItemFilter.search but DRF SearchFilter assists direct fields
     search_fields = ["name", "description"]
     ordering_fields = ["created_at", "updated_at", "sale_price", "rental_price"]
     ordering = ["-created_at"]
+
+
+class PublicItemViewSet(viewsets.ReadOnlyModelViewSet, ItemBaseViewSet):
+    """
+    ViewSet for retrieving published items.
+    This viewset is read-only and only returns items with a published status.
+    """
+
+    queryset = (
+        Item.objects.filter(status__in=StatusType.published())
+        .select_related("user")
+        .prefetch_related("images")
+    )
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+
+class ItemViewSet(viewsets.ModelViewSet, ItemBaseViewSet):
+    """
+    ViewSet for retrieving, creating, updating, and deleting items.
+    """
+
+    queryset = Item.objects.all().select_related("user").prefetch_related("images")
 
     def get_serializer_class(self):
         """Return appropriate serializer class based on action."""
@@ -46,25 +66,6 @@ class ItemViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         """Set the user when creating an item."""
         serializer.save(user=self.request.user)
-
-    @action(
-        detail=False, methods=["get"], permission_classes=[IsAuthenticatedOrReadOnly]
-    )
-    def published(self, request):
-        """Get published items with all filters, search, and ordering applied."""
-        # Start with published items
-        queryset = self.get_queryset().filter(status__in=StatusType.published())
-
-        # Apply all filters (including search and ordering)
-        queryset = self.filter_queryset(queryset)
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
 
     @action(detail=False, methods=["get"])
     def my_items(self, request):

@@ -616,7 +616,7 @@ class AnonymousUserItemAccessTestCase(TestCase):
 
     def test_anonymous_user_can_view_published_items_only(self):
         """Test that anonymous users can only see published items."""
-        url = reverse("api:item-published")
+        url = reverse("api:public-item-list")
         response = self.client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
@@ -701,7 +701,7 @@ class PublishedEndpointFilterTestCase(TestCase):
 
     def test_published_endpoint_search_filter(self):
         """Test that search filter works on published endpoint."""
-        url = reverse("api:item-published") + "?search=laptop"
+        url = reverse("api:public-item-list") + "?search=laptop"
         response = self.client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
@@ -715,7 +715,7 @@ class PublishedEndpointFilterTestCase(TestCase):
 
     def test_published_endpoint_category_filter(self):
         """Test that category filter works on published endpoint."""
-        url = reverse("api:item-published") + "?category=furniture"
+        url = reverse("api:public-item-list") + "?category=furniture"
         response = self.client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
@@ -729,7 +729,7 @@ class PublishedEndpointFilterTestCase(TestCase):
 
     def test_published_endpoint_price_range_filter(self):
         """Test that price range filter works on published endpoint."""
-        url = reverse("api:item-published") + "?min_sale_price=250&max_sale_price=350"
+        url = reverse("api:public-item-list") + "?min_sale_price=250&max_sale_price=350"
         response = self.client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
@@ -743,7 +743,7 @@ class PublishedEndpointFilterTestCase(TestCase):
 
     def test_published_endpoint_ordering(self):
         """Test that ordering works on published endpoint."""
-        url = reverse("api:item-published") + "?ordering=sale_price"
+        url = reverse("api:public-item-list") + "?ordering=sale_price"
         response = self.client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
@@ -756,7 +756,7 @@ class PublishedEndpointFilterTestCase(TestCase):
     def test_published_endpoint_combined_filters(self):
         """Test that multiple filters work together on published endpoint."""
         url = (
-            reverse("api:item-published")
+            reverse("api:public-item-list")
             + "?category=furniture&search=office&ordering=-sale_price"
         )
         response = self.client.get(url)
