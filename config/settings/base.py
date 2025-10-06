@@ -96,6 +96,7 @@ LOCAL_APPS = [
     "bubble.users",
     "bubble.core.apps.CoreConfig",
     "bubble.items.apps.ItemsConfig",
+    "bubble.books.apps.BooksConfig",
     "bubble.messaging.apps.MessagingConfig",
     "bubble.bookings.apps.BookingsConfig",
     "bubble.favorites.apps.FavoritesConfig",
@@ -422,3 +423,5 @@ WEBPACK_LOADER = {
 }
 # Your stuff...
 # ------------------------------------------------------------------------------
+# Embeddings Backend
+BOOK_EMBEDDING_BACKEND = env.str("BOOK_EMBEDDING_BACKEND", default="openai")

@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+  {% if object %}
+    {% trans "Edit Book" %}: {{ object.title }}
+  {% else %}
+    {% trans "Add New Book" %}
+  {% endif %}
+{% endblock title %}
+
+{% block content %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="mb-0">
+            {% if object %}
+              <i class="fas fa-edit"></i> {% trans "Edit Book" %}: {{ object.title }}
+            {% else %}
+              <i class="fas fa-plus"></i> {% trans "Add New Book" %}
+            {% endif %}
+          </h4>
+        </div>
+        <div class="card-body">
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="row">
+              <!-- Title (Required) -->
+              <div class="col-12 mb-3">
+                <label for="{{ form.title.id_for_label }}" class="form-label">
+                  {{ form.title.label }} <span class="text-danger">*</span>
+                </label>
+                {{ form.title }}
+                {% if form.title.errors %}
+                  <div class="text-danger small">{{ form.title.errors.0 }}</div>
+                {% endif %}
+              </div>
+              
+              <!-- Authors -->
+              <div class="col-md-6 mb-3">
+                <label for="{{ form.authors.id_for_label }}" class="form-label">
+                  {{ form.authors.label }}
+                </label>
+                {{ form.authors }}
+                <small class="form-text text-muted">
+                  {% trans "Hold Ctrl/Cmd to select multiple authors" %}
+                </small>
+                {% if form.authors.errors %}
+                  <div class="text-danger small">{{ form.authors.errors.0 }}</div>
+                {% endif %}
+              </div>
+              
+              <!-- Year -->
+              <div class="col-md-6 mb-3">
+                <label for="{{ form.year.id_for_label }}" class="form-label">
+                  {{ form.year.label }}
+                </label>
+                {{ form.year }}
+                {% if form.year.errors %}
+                  <div class="text-danger small">{{ form.year.errors.0 }}</div>
+                {% endif %}
+              </div>
+              
+              <!-- Topic -->
+              <div class="col-12 mb-3">
+                <label for="{{ form.topic.id_for_label }}" class="form-label">
+                  {{ form.topic.label }}
+                </label>
+                {{ form.topic }}
+                {% if form.topic.errors %}
+                  <div class="text-danger small">{{ form.topic.errors.0 }}</div>
+                {% endif %}
+              </div>
+              
+              <!-- Genres -->
+              <div class="col-md-6 mb-3">
+                <label for="{{ form.genres.id_for_label }}" class="form-label">
+                  {{ form.genres.label }}
+                </label>
+                {{ form.genres }}
+                <small class="form-text text-muted">
+                  {% trans "Hold Ctrl/Cmd to select multiple genres" %}
+                </small>
+                {% if form.genres.errors %}
+                  <div class="text-danger small">{{ form.genres.errors.0 }}</div>
+                {% endif %}
+              </div>
+              
+              <!-- Location -->
+              <div class="col-md-6 mb-3">
+                <label for="{{ form.location.id_for_label }}" class="form-label">
+                  {{ form.location.label }}
+                </label>
+                {{ form.location }}
+                {% if form.location.errors %}
+                  <div class="text-danger small">{{ form.location.errors.0 }}</div>
+                {% endif %}
+              </div>
+              
+              <!-- Description -->
+              <div class="col-12 mb-3">
+                <label for="{{ form.description.id_for_label }}" class="form-label">
+                  {{ form.description.label }}
+                </label>
+                {{ form.description }}
+                {% if form.description.errors %}
+                  <div class="text-danger small">{{ form.description.errors.0 }}</div>
+                {% endif %}
+              </div>
+              
+              <!-- Image -->
+              <div class="col-12 mb-3">
+                <label for="{{ form.image.id_for_label }}" class="form-label">
+                  {{ form.image.label }}
+                </label>
+                {{ form.image }}
+                <small class="form-text text-muted">
+                  {% trans "Upload a cover image for your book (optional)" %}
+                </small>
+                {% if form.image.errors %}
+                  <div class="text-danger small">{{ form.image.errors.0 }}</div>
+                {% endif %}
+                
+                <!-- Current Image Preview -->
+                {% if object.image %}
+                  <div class="mt-2">
+                    <small class="text-muted">{% trans "Current image:" %}</small><br>
+                    <img src="{{ object.image.url }}" alt="{{ object.title }}" 
+                         class="img-thumbnail" style="max-width: 150px; max-height: 150px;">
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+            
+            <!-- Form Actions -->
+            <div class="d-flex justify-content-between">
+              <a href="{% if object %}{% url 'books:detail' object.pk %}{% else %}{% url 'books:list' %}{% endif %}" 
+                 class="btn btn-secondary">
+                <i class="fas fa-times"></i> {% trans "Cancel" %}
+              </a>
+              <button type="submit" class="btn btn-success">
+                {% if object %}
+                  <i class="fas fa-save"></i> {% trans "Update Book" %}
+                {% else %}
+                  <i class="fas fa-plus"></i> {% trans "Create Book" %}
+                {% endif %}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+      
+      <!-- Quick Add Links -->
+      <div class="row mt-3">
+        <div class="col-md-6">
+          <div class="card card-body text-center">
+            <small class="text-muted">
+              {% trans "Don't see an author?" %}<br>
+              <a href="#" class="text-decoration-none">{% trans "Add new author" %}</a>
+            </small>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card card-body text-center">
+            <small class="text-muted">
+              {% trans "Missing a genre?" %}<br>
+              <a href="#" class="text-decoration-none">{% trans "Add new genre" %}</a>
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

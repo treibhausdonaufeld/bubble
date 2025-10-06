@@ -1,0 +1,287 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block title %}
+  {% trans "Books" %}
+{% endblock title %}
+
+{% block content %}
+  <div class="container-fluid">
+    <!-- Mobile Filter Toggle -->
+    <div class="d-md-none mb-3">
+      <button class="btn btn-outline-primary" id="mobile-filter-toggle">
+        <i class="fas fa-filter"></i> {% trans "Filters" %}
+      </button>
+    </div>
+    <div class="row">
+      <!-- Enhanced Filters Sidebar -->
+      <div class="col-md-3">
+        <div class="filter-overlay" id="filter-overlay"></div>
+        <div class="filter-sidebar" id="filter-sidebar">
+          <div class="filter-header">
+            <div class="d-flex justify-content-between align-items-center">
+              <h5 class="mb-0">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+              </h5>
+              <button class="btn btn-sm btn-outline-light d-md-none" id="close-filters">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div class="p-3">
+            <form method="get" id="filter-form">
+              <!-- Enhanced Search -->
+              <div class="filter-section">
+                <label class="form-label fw-bold">
+                  <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                {{ filter_form.search }}
+                <small class="form-text text-muted">
+                  {% trans "Search books, authors, genres, topics..." %}
+                </small>
+              </div>
+
+              <!-- Authors Filter -->
+              <div class="filter-section">
+                <label for="{{ filter_form.authors.id_for_label }}"
+                       class="form-label fw-bold">
+                  <i class="fas fa-user"></i> {% trans "Authors" %}
+                </label>
+                {{ filter_form.authors }}
+              </div>
+
+              <!-- Genres Filter -->
+              <div class="filter-section">
+                <label for="{{ filter_form.genres.id_for_label }}"
+                       class="form-label fw-bold">
+                  <i class="fas fa-tags"></i> {% trans "Genres" %}
+                </label>
+                {{ filter_form.genres }}
+              </div>
+
+              <!-- Location Filter -->
+              <div class="filter-section">
+                <label for="{{ filter_form.location.id_for_label }}"
+                       class="form-label fw-bold">
+                  <i class="fas fa-map-marker-alt"></i> {% trans "Location" %}
+                </label>
+                {{ filter_form.location }}
+              </div>
+
+              <!-- Year Range -->
+              <div class="filter-section">
+                <label class="form-label fw-bold">
+                  <i class="fas fa-calendar"></i> {% trans "Publication Year" %}
+                </label>
+                <div class="row">
+                  <div class="col-6">
+                    {{ filter_form.year_min }}
+                  </div>
+                  <div class="col-6">
+                    {{ filter_form.year_max }}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Sort Options -->
+              <div class="filter-section">
+                <label for="{{ filter_form.sort.id_for_label }}"
+                       class="form-label fw-bold">
+                  <i class="fas fa-sort"></i> {% trans "Sort by" %}
+                </label>
+                {{ filter_form.sort }}
+              </div>
+
+              <!-- Filter Actions -->
+              <div class="filter-actions">
+                <button type="submit" class="btn btn-primary btn-sm w-100 mb-2">
+                  <i class="fas fa-search"></i> {% trans "Apply Filters" %}
+                </button>
+                <a href="{% url 'books:list' %}" class="btn btn-outline-secondary btn-sm w-100">
+                  {% trans "Clear All" %}
+                </a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-md-9">
+        <!-- Header with Add Book Button -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h1>
+            <i class="fas fa-book"></i> {% trans "Books" %}
+            {% if books|length > 0 %}
+              <small class="text-muted">({{ paginator.count }} {% trans "total" %})</small>
+            {% endif %}
+          </h1>
+          {% if request.user.is_authenticated %}
+            <a href="{% url 'books:create' %}" class="btn btn-success">
+              <i class="fas fa-plus"></i> {% trans "Add Book" %}
+            </a>
+          {% endif %}
+        </div>
+
+        {% if books %}
+          <!-- Books Grid -->
+          <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for book in books %}
+              <div class="col">
+                {% include "includes/book_card.html" with book=book %}
+              </div>
+            {% endfor %}
+          </div>
+
+          <!-- Pagination -->
+          {% if is_paginated %}
+            <nav aria-label="Books pagination" class="mt-4">
+              <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                  <li class="page-item">
+                    <a class="page-link" href="?{% if request.GET.urlencode %}{{ request.GET.urlencode }}&{% endif %}page=1">
+                      {% trans "First" %}
+                    </a>
+                  </li>
+                  <li class="page-item">
+                    <a class="page-link" href="?{% if request.GET.urlencode %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.previous_page_number }}">
+                      {% trans "Previous" %}
+                    </a>
+                  </li>
+                {% endif %}
+
+                <li class="page-item active">
+                  <span class="page-link">
+                    {% trans "Page" %} {{ page_obj.number }} {% trans "of" %} {{ page_obj.paginator.num_pages }}
+                  </span>
+                </li>
+
+                {% if page_obj.has_next %}
+                  <li class="page-item">
+                    <a class="page-link" href="?{% if request.GET.urlencode %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.next_page_number }}">
+                      {% trans "Next" %}
+                    </a>
+                  </li>
+                  <li class="page-item">
+                    <a class="page-link" href="?{% if request.GET.urlencode %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.paginator.num_pages }}">
+                      {% trans "Last" %}
+                    </a>
+                  </li>
+                {% endif %}
+              </ul>
+            </nav>
+          {% endif %}
+        {% else %}
+          <!-- Empty State -->
+          <div class="text-center py-5">
+            <i class="fas fa-book fa-3x text-muted mb-3"></i>
+            <h3 class="text-muted">{% trans "No books found" %}</h3>
+            <p class="text-muted">
+              {% if request.GET.search %}
+                {% trans "No books match your search criteria." %}
+              {% else %}
+                {% trans "Be the first to add a book!" %}
+              {% endif %}
+            </p>
+            {% if request.user.is_authenticated %}
+              <a href="{% url 'books:create' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> {% trans "Add Your First Book" %}
+              </a>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Filter Handling Script and CSS -->
+  <style>
+    .filter-sidebar {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    @media (max-width: 767.98px) {
+      .filter-sidebar {
+        position: fixed;
+        top: 0;
+        left: -300px;
+        width: 300px;
+        height: 100vh;
+        z-index: 1050;
+        transition: left 0.3s ease;
+        overflow-y: auto;
+      }
+      
+      .filter-sidebar.active {
+        left: 0;
+      }
+      
+      .filter-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 1040;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease;
+      }
+      
+      .filter-overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+      
+      .filter-header {
+        background: #007bff;
+        color: white;
+        padding: 1rem;
+      }
+    }
+
+    .filter-section {
+      margin-bottom: 1.5rem;
+    }
+
+    .filter-actions {
+      border-top: 1px solid #dee2e6;
+      padding-top: 1rem;
+      margin-top: 1rem;
+    }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const mobileToggle = document.getElementById('mobile-filter-toggle');
+      const filterSidebar = document.getElementById('filter-sidebar');
+      const filterOverlay = document.getElementById('filter-overlay');
+      const closeFilters = document.getElementById('close-filters');
+
+      if (mobileToggle) {
+        mobileToggle.addEventListener('click', function() {
+          filterSidebar.classList.add('active');
+          filterOverlay.classList.add('active');
+        });
+      }
+
+      if (closeFilters) {
+        closeFilters.addEventListener('click', function() {
+          filterSidebar.classList.remove('active');
+          filterOverlay.classList.remove('active');
+        });
+      }
+
+      if (filterOverlay) {
+        filterOverlay.addEventListener('click', function() {
+          filterSidebar.classList.remove('active');
+          filterOverlay.classList.remove('active');
+        });
+      }
+    });
+  </script>
+{% endblock content %}
