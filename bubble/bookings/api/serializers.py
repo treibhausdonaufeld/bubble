@@ -38,7 +38,7 @@ class BookingListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Booking
-        fields = ["uuid", "status", "item", "user", "created_at"]
+        fields = ["uuid", "status", "item", "item_details", "user", "created_at"]
 
 
 class MessageSerializer(serializers.ModelSerializer):
