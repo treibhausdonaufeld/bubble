@@ -91,6 +91,78 @@ class Location(models.Model):
         return (self.name,)
 
 
+class VerlagManager(models.Manager):
+    def get_by_natural_key(self, name):
+        return self.get(name=name)
+
+
+class Verlag(models.Model):
+    """Publisher model"""
+    name = models.CharField(max_length=255, unique=True)
+    description = models.TextField(blank=True)
+    
+    objects = VerlagManager()
+
+    class Meta:
+        verbose_name = _("Publisher")
+        verbose_name_plural = _("Publishers")
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+    def natural_key(self):
+        return (self.name,)
+
+
+class OrtManager(models.Manager):
+    def get_by_natural_key(self, name):
+        return self.get(name=name)
+
+
+class Ort(models.Model):
+    """Place/City model"""
+    name = models.CharField(max_length=255, unique=True)
+    description = models.TextField(blank=True)
+    
+    objects = OrtManager()
+
+    class Meta:
+        verbose_name = _("Place")
+        verbose_name_plural = _("Places")
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+    def natural_key(self):
+        return (self.name,)
+
+
+class RegalManager(models.Manager):
+    def get_by_natural_key(self, name):
+        return self.get(name=name)
+
+
+class Regal(models.Model):
+    """Shelf model for book storage location"""
+    name = models.CharField(max_length=255, unique=True)
+    description = models.TextField(blank=True)
+    
+    objects = RegalManager()
+
+    class Meta:
+        verbose_name = _("Shelf")
+        verbose_name_plural = _("Shelves")
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+    def natural_key(self):
+        return (self.name,)
+
+
 class BookManager(models.Manager):
     def for_user(self, user) -> models.QuerySet:
         """Return a queryset filtered by user permissions."""
@@ -111,6 +183,11 @@ class BookManager(models.Manager):
 
 
 class Book(models.Model):
+    OWNERSHIP_CHOICES = [
+        ('library', _('Library')),
+        ('user', _('User')),
+    ]
+    
     active = models.BooleanField(default=True)
     user = models.ForeignKey(
         AUTH_USER_MODEL,
@@ -130,12 +207,32 @@ class Book(models.Model):
         null=True,
         help_text=_("Publication year")
     )
+    verlag = models.ForeignKey(
+        Verlag,
+        on_delete=models.SET_NULL,
+        related_name="books",
+        blank=True,
+        null=True,
+        help_text=_("Publisher")
+    )
+    ort = models.ForeignKey(
+        Ort,
+        on_delete=models.SET_NULL,
+        related_name="books",
+        blank=True,
+        null=True,
+        help_text=_("Place of publication")
+    )
     topic = models.CharField(
         max_length=255,
         blank=True,
         help_text=_("Main topic or subject")
     )
     description = models.TextField(blank=True, help_text=_("Book description"))
+    referenz = models.TextField(
+        blank=True,
+        help_text=_("References (multiple allowed)")
+    )
     
     # Relationships
     genres = models.ManyToManyField(
@@ -151,6 +248,38 @@ class Book(models.Model):
         blank=True,
         null=True,
         help_text=_("Book location")
+    )
+    
+    # Ownership and library fields
+    ownership = models.CharField(
+        max_length=20,
+        choices=OWNERSHIP_CHOICES,
+        default='user',
+        help_text=_("Book ownership type")
+    )
+    abbreviation = models.CharField(
+        max_length=100,
+        blank=True,
+        help_text=_("Library abbreviation (only if ownership is library)")
+    )
+    regal = models.ForeignKey(
+        Regal,
+        on_delete=models.SET_NULL,
+        related_name="books",
+        blank=True,
+        null=True,
+        help_text=_("Shelf location")
+    )
+    
+    # Booking fields
+    booked = models.BooleanField(
+        default=False,
+        help_text=_("Is the book currently booked?")
+    )
+    booked_till = models.DateField(
+        blank=True,
+        null=True,
+        help_text=_("Booked until date (only if booked)")
     )
     
     # Image field
@@ -211,8 +340,17 @@ class Book(models.Model):
         content_parts = [
             self.title or "",
             self.get_authors_display(),
+            str(self.year) if self.year else "",
+            self.verlag.name if self.verlag else "",
+            self.ort.name if self.ort else "",
             self.get_genres_display(),
             self.topic or "",
             self.description or "",
+            self.referenz or "",
+            self.ownership or "",
+            self.abbreviation or "",
+            self.regal.name if self.regal else "",
+            "booked" if self.booked else "",
+            str(self.booked_till) if self.booked_till else "",
         ]
         return " ".join(filter(None, content_parts))

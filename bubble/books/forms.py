@@ -4,7 +4,7 @@ Forms for books app.
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from .models import Book, Author, Genre, Location
+from .models import Book, Author, Genre, Location, Verlag, Ort, Regal
 
 
 class BookFilterForm(forms.Form):
@@ -89,18 +89,30 @@ class BookForm(forms.ModelForm):
     class Meta:
         model = Book
         fields = [
-            'title', 'authors', 'year', 'topic', 'description', 
-            'genres', 'location', 'image'
+            'title', 'authors', 'year', 'verlag', 'ort', 'topic', 
+            'description', 'referenz', 'genres', 'location', 
+            'ownership', 'abbreviation', 'regal', 'booked', 'booked_till',
+            'image'
         ]
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': _('Enter book title'),
             }),
+            'authors': forms.SelectMultiple(attrs={
+                'class': 'form-control',
+                'size': '5',
+            }),
             'year': forms.NumberInput(attrs={
                 'class': 'form-control',
                 'min': '1000',
                 'max': '2030',
+            }),
+            'verlag': forms.Select(attrs={
+                'class': 'form-control',
+            }),
+            'ort': forms.Select(attrs={
+                'class': 'form-control',
             }),
             'topic': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -111,9 +123,10 @@ class BookForm(forms.ModelForm):
                 'rows': 5,
                 'placeholder': _('Describe the book...'),
             }),
-            'authors': forms.SelectMultiple(attrs={
+            'referenz': forms.Textarea(attrs={
                 'class': 'form-control',
-                'size': '5',
+                'rows': 3,
+                'placeholder': _('Enter references (multiple allowed)...'),
             }),
             'genres': forms.SelectMultiple(attrs={
                 'class': 'form-control',
@@ -121,6 +134,23 @@ class BookForm(forms.ModelForm):
             }),
             'location': forms.Select(attrs={
                 'class': 'form-control',
+            }),
+            'ownership': forms.Select(attrs={
+                'class': 'form-control',
+            }),
+            'abbreviation': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': _('Library abbreviation'),
+            }),
+            'regal': forms.Select(attrs={
+                'class': 'form-control',
+            }),
+            'booked': forms.CheckboxInput(attrs={
+                'class': 'form-check-input',
+            }),
+            'booked_till': forms.DateInput(attrs={
+                'class': 'form-control',
+                'type': 'date',
             }),
             'image': forms.FileInput(attrs={
                 'class': 'form-control',
@@ -134,3 +164,24 @@ class BookForm(forms.ModelForm):
         for field_name, field in self.fields.items():
             if field_name != 'title':
                 field.required = False
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        ownership = cleaned_data.get('ownership')
+        abbreviation = cleaned_data.get('abbreviation')
+        booked = cleaned_data.get('booked')
+        booked_till = cleaned_data.get('booked_till')
+        
+        # Validate abbreviation is provided when ownership is library
+        if ownership == 'library' and not abbreviation:
+            self.add_error('abbreviation', _('Abbreviation is required when ownership is library'))
+        
+        # Validate booked_till is provided when booked is True
+        if booked and not booked_till:
+            self.add_error('booked_till', _('Booked till date is required when book is booked'))
+        
+        # Clear booked_till if booked is False
+        if not booked and booked_till:
+            cleaned_data['booked_till'] = None
+            
+        return cleaned_data
