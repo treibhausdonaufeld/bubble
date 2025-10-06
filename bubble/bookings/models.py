@@ -29,6 +29,7 @@ class Booking(models.Model):
 
     time_from = models.DateTimeField(blank=True, null=True)
     time_to = models.DateTimeField(blank=True, null=True)
+
     offer = MoneyField(
         **money_defaults,
         blank=True,
@@ -52,8 +53,8 @@ class Booking(models.Model):
         related_name="accepted_bookings",
     )
 
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_updated = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     history = HistoricalRecords()
 
@@ -71,12 +72,12 @@ class Message(models.Model):
         on_delete=models.CASCADE,
         related_name="sent_messages",
     )
-    date_created = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     message = models.TextField()
     is_read = models.BooleanField(default=False)
 
     class Meta:
-        ordering = ["-date_created"]
+        ordering = ["-created_at"]
 
     def __str__(self):
         return f"Message from {self.sender}"

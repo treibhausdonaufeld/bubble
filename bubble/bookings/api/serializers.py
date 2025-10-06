@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from bubble.bookings.models import Booking
+from bubble.bookings.models import Booking, Message
 from bubble.items.models import Item
 
 
@@ -12,7 +12,7 @@ class BookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Booking
         fields = [
-            "id",
+            "uuid",
             "status",
             "item",
             "user",
@@ -21,10 +21,10 @@ class BookingSerializer(serializers.ModelSerializer):
             "offer",
             "counter_offer",
             "accepted_by",
-            "date_created",
-            "date_updated",
+            "created_at",
+            "updated_at",
         ]
-        read_only_fields = ["id", "user", "date_created", "date_updated"]
+        read_only_fields = ["uuid", "user", "created_at", "updated_at"]
 
 
 class BookingListSerializer(serializers.ModelSerializer):
@@ -32,4 +32,24 @@ class BookingListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Booking
-        fields = ["id", "status", "item", "user", "date_created"]
+        fields = ["uuid", "status", "item", "user", "created_at"]
+
+
+class MessageSerializer(serializers.ModelSerializer):
+    """Serializer for Message model. Booking is referenced by UUID."""
+
+    booking = serializers.SlugRelatedField(
+        slug_field="uuid", queryset=Booking.objects.all()
+    )
+    sender = serializers.StringRelatedField(read_only=True)
+
+    class Meta:
+        model = Message
+        fields = [
+            "uuid",
+            "booking",
+            "sender",
+            "created_at",
+            "message",
+        ]
+        read_only_fields = ["uuid", "sender", "created_at"]

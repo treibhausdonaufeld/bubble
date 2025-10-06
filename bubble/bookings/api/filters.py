@@ -1,6 +1,6 @@
 import django_filters
 
-from bubble.bookings.models import Booking
+from bubble.bookings.models import Booking, Message
 
 
 class BookingFilter(django_filters.FilterSet):
@@ -10,13 +10,28 @@ class BookingFilter(django_filters.FilterSet):
     )
     item = django_filters.UUIDFilter(field_name="item__uuid")
     user = django_filters.NumberFilter(field_name="user__id")
-    date_created_after = django_filters.IsoDateTimeFilter(
-        field_name="date_created", lookup_expr="gte"
+    created_at_after = django_filters.IsoDateTimeFilter(
+        field_name="created_at", lookup_expr="gte"
     )
-    date_created_before = django_filters.IsoDateTimeFilter(
-        field_name="date_created", lookup_expr="lte"
+    created_at_before = django_filters.IsoDateTimeFilter(
+        field_name="created_at", lookup_expr="lte"
     )
 
     class Meta:
         model = Booking
-        fields = ["status", "item", "user", "date_created_after", "date_created_before"]
+        fields = ["status", "item", "user", "created_at_after", "created_at_before"]
+
+
+class MessageFilter(django_filters.FilterSet):
+    booking = django_filters.UUIDFilter(field_name="booking__uuid")
+    sender = django_filters.NumberFilter(field_name="sender__id")
+    created_at_after = django_filters.IsoDateTimeFilter(
+        field_name="created_at", lookup_expr="gte"
+    )
+    created_at_before = django_filters.IsoDateTimeFilter(
+        field_name="created_at", lookup_expr="lte"
+    )
+
+    class Meta:
+        model = Message
+        fields = ["booking", "sender", "created_at_after", "created_at_before"]

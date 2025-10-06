@@ -96,9 +96,9 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "bubble.users",
-    "bubble.core.apps.CoreConfig",
     "bubble.items.apps.ItemsConfig",
     "bubble.bookings.apps.BookingsConfig",
+    "bubble.core.apps.CoreConfig",
     "bubble.favorites.apps.FavoritesConfig",
     "bubble.rooms.apps.RoomsConfig",
     # "bubble.payments.apps.PaymentsConfig",
