@@ -9,6 +9,7 @@ from unittest.mock import patch
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.urls import reverse
+from djmoney.money import Money
 from PIL import Image as PILImage
 from rest_framework import status
 from rest_framework.test import APIClient
@@ -667,7 +668,7 @@ class PublishedEndpointFilterTestCase(TestCase):
             user=self.user,
             status=StatusType.AVAILABLE,
             sale_price=Decimal("1500.00"),
-            category="ELECTRONICS",
+            category="electronics",
         )
 
         self.published_desk = Item.objects.create(
@@ -676,7 +677,7 @@ class PublishedEndpointFilterTestCase(TestCase):
             user=self.user,
             status=StatusType.AVAILABLE,
             sale_price=Decimal("300.00"),
-            category="FURNITURE",
+            category="furniture",
         )
 
         self.published_chair = Item.objects.create(
@@ -685,7 +686,7 @@ class PublishedEndpointFilterTestCase(TestCase):
             user=self.user,
             status=StatusType.RESERVED,
             sale_price=Decimal("200.00"),
-            category="FURNITURE",
+            category="furniture",
         )
 
         # Create a draft item (should not appear in published endpoint)
@@ -695,7 +696,7 @@ class PublishedEndpointFilterTestCase(TestCase):
             user=self.user,
             status=StatusType.DRAFT,
             sale_price=Decimal("1000.00"),
-            category="ELECTRONICS",
+            category="electronics",
         )
 
     def test_published_endpoint_search_filter(self):
@@ -714,7 +715,7 @@ class PublishedEndpointFilterTestCase(TestCase):
 
     def test_published_endpoint_category_filter(self):
         """Test that category filter works on published endpoint."""
-        url = reverse("api:item-published") + "?category=FURNITURE"
+        url = reverse("api:item-published") + "?category=furniture"
         response = self.client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
@@ -756,7 +757,7 @@ class PublishedEndpointFilterTestCase(TestCase):
         """Test that multiple filters work together on published endpoint."""
         url = (
             reverse("api:item-published")
-            + "?category=FURNITURE&search=office&ordering=-sale_price"
+            + "?category=furniture&search=office&ordering=-sale_price"
         )
         response = self.client.get(url)
 
@@ -851,7 +852,7 @@ class AIDescribeItemTestCase(TestCase):
         assert self.item.name == "AI Generated Title"
         assert self.item.description == "AI Generated Description"
         assert self.item.category == "TOOLS"
-        assert self.item.sale_price == Decimal("25.00")
+        assert self.item.sale_price == Money("25.00", "EUR")
 
         # Verify analyze_image was called with correct image UUID
         mock_analyze_image.assert_called_once_with(self.image.uuid)
