@@ -350,7 +350,5 @@ class Book(models.Model):
             self.ownership or "",
             self.abbreviation or "",
             self.regal.name if self.regal else "",
-            "booked" if self.booked else "",
-            str(self.booked_till) if self.booked_till else "",
         ]
         return " ".join(filter(None, content_parts))
