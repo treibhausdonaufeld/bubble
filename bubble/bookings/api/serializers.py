@@ -1,6 +1,8 @@
 from rest_framework import serializers
+from users.api.serializers import UserSerializer
 
 from bubble.bookings.models import Booking, Message
+from bubble.items.api.serializers import ItemMinimalSerializer
 from bubble.items.models import Item
 
 
@@ -8,6 +10,8 @@ class BookingSerializer(serializers.ModelSerializer):
     """Detailed serializer for Booking where `item` is represented only by UUID."""
 
     item = serializers.SlugRelatedField(slug_field="uuid", queryset=Item.objects.all())
+    item_details = ItemMinimalSerializer(read_only=True, source="item")
+    user = UserSerializer(read_only=True)
 
     class Meta:
         model = Booking
@@ -15,6 +19,7 @@ class BookingSerializer(serializers.ModelSerializer):
             "uuid",
             "status",
             "item",
+            "item_details",
             "user",
             "time_from",
             "time_to",
@@ -29,6 +34,7 @@ class BookingSerializer(serializers.ModelSerializer):
 
 class BookingListSerializer(serializers.ModelSerializer):
     item = serializers.SlugRelatedField(read_only=True, slug_field="uuid")
+    item_details = ItemMinimalSerializer(read_only=True, source="item")
 
     class Meta:
         model = Booking

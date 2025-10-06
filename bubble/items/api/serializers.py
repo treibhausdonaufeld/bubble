@@ -101,3 +101,9 @@ class ItemListSerializer(serializers.ModelSerializer):
             if first_image.thumbnail:
                 return first_image.thumbnail.url
         return None
+
+
+class ItemMinimalSerializer(ItemListSerializer):
+    class Meta:
+        model = Item
+        fields = ["uuid", "name", "first_image"]

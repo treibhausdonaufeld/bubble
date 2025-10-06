@@ -4,22 +4,38 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
+from guardian.shortcuts import get_objects_for_user
 from simple_history.models import HistoricalRecords
 
 from bubble.items.models import Item, money_defaults
 from config.settings.base import AUTH_USER_MODEL
 
 
-class Booking(models.Model):
-    STATUS_CHOICES = (
-        (1, _("Pending")),
-        (2, _("Confirmed")),
-        (3, _("Cancelled")),
-        (4, _("Completed")),
-    )
+class BookingStatus(models.IntegerChoices):
+    PENDING = 1, _("Pending")
+    CANCELLED = 2, _("Cancelled")
+    CONFIRMED = 3, _("Confirmed")
+    COMPLETED = 4, _("Completed")
+    REJECTED = 5, _("Rejected")
 
+
+class BookingManager(models.Manager):
+    def get_for_user(self, user):
+        items_with_change_permission = get_objects_for_user(
+            user,
+            "items.change_item",
+            klass=Item,
+            accept_global_perms=False,
+        )
+
+        return self.filter(user=user) | self.filter(
+            item__in=items_with_change_permission
+        )
+
+
+class Booking(models.Model):
     uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
-    status = models.IntegerField(choices=STATUS_CHOICES, default=1)
+    status = models.IntegerField(choices=BookingStatus, default=BookingStatus.PENDING)
     item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="bookings")
     user = models.ForeignKey(
         AUTH_USER_MODEL,
@@ -57,6 +73,8 @@ class Booking(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     history = HistoricalRecords()
+
+    objects = BookingManager()
 
     def __str__(self):
         return f"Booking for {self.item.name} by {self.user}"

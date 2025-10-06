@@ -29,6 +29,10 @@ DEFAULT_GROUPS_CONFIG = {
                 "user": ["view"],
                 "profile": ["view"],
             },
+            "bookings": {
+                "booking": ["add", "view", "change"],
+                "message": ["add", "view"],
+            },
         },
     },
     DefaultGroup.INTERNAL: {

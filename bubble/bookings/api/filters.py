@@ -1,12 +1,12 @@
 import django_filters
 
-from bubble.bookings.models import Booking, Message
+from bubble.bookings.models import Booking, BookingStatus, Message
 
 
 class BookingFilter(django_filters.FilterSet):
     # Allow filtering by multiple statuses (e.g. ?status=1,2)
     status = django_filters.MultipleChoiceFilter(
-        field_name="status", choices=Booking.STATUS_CHOICES, conjoined=False
+        field_name="status", choices=BookingStatus.choices, conjoined=False
     )
     item = django_filters.UUIDFilter(field_name="item__uuid")
     user = django_filters.NumberFilter(field_name="user__id")

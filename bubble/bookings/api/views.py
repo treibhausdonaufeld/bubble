@@ -1,6 +1,7 @@
+from django.utils.translation import gettext as _
 from django_filters.rest_framework import DjangoFilterBackend
-from guardian.shortcuts import get_objects_for_user
 from rest_framework import filters, viewsets
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import DjangoModelPermissions
 
 from bubble.bookings.api.filters import BookingFilter, MessageFilter
@@ -9,15 +10,13 @@ from bubble.bookings.api.serializers import (
     BookingSerializer,
     MessageSerializer,
 )
-from bubble.bookings.models import Booking, Message
-from bubble.items.models import Item
+from bubble.bookings.models import Booking, BookingStatus, Message
 
 
 class BookingViewSet(viewsets.ModelViewSet):
     """ViewSet for bookings with filtering and permissions."""
 
     lookup_field = "uuid"
-    queryset = Booking.objects.select_related("item", "user", "accepted_by").all()
     filter_backends = [
         DjangoFilterBackend,
         filters.OrderingFilter,
@@ -35,21 +34,24 @@ class BookingViewSet(viewsets.ModelViewSet):
         return BookingSerializer
 
     def get_queryset(self):
-        user = self.request.user
-
-        items_with_change_permission = get_objects_for_user(
-            self.request.user,
-            "items.change_item",
-            klass=Item,
-            accept_global_perms=False,
-        )
-
-        return self.queryset.filter(user=user) | self.queryset.filter(
-            item__in=items_with_change_permission
+        return Booking.objects.get_for_user(self.request.user).select_related(
+            "item", "user", "accepted_by"
         )
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+    def perform_update(self, serializer):
+        """Make sure that the user can only set status to certain values"""
+        if (
+            self.request.user_id == serializer.instance.user_id
+            and serializer.validated_data.get("status")
+            not in (BookingStatus.CANCELLED, BookingStatus.PENDING)
+        ):
+            msg = _("Invalid status change.")
+            raise ValidationError(msg)
+
+        serializer.save()
 
 
 class MessageViewSet(viewsets.ModelViewSet):
@@ -67,6 +69,10 @@ class MessageViewSet(viewsets.ModelViewSet):
     ordering_fields = ["created_at", "sender"]
     ordering = ["-created_at"]
     permission_classes = [DjangoModelPermissions]
+
+    def get_queryset(self):
+        bookings_for_user = Booking.objects.get_for_user(self.request.user)
+        return self.queryset.filter(booking__in=bookings_for_user)
 
     def perform_create(self, serializer):
         serializer.save(sender=self.request.user)
