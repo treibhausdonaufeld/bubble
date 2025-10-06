@@ -35,6 +35,12 @@ class ItemBaseViewSet(viewsets.GenericViewSet):
     ordering_fields = ["created_at", "updated_at", "sale_price", "rental_price"]
     ordering = ["-created_at"]
 
+    def get_serializer_class(self):
+        """Return appropriate serializer class based on action."""
+        if self.action in ("list", "my_items"):
+            return ItemListSerializer
+        return ItemSerializer
+
 
 class PublicItemViewSet(viewsets.ReadOnlyModelViewSet, ItemBaseViewSet):
     """
@@ -55,50 +61,30 @@ class ItemViewSet(viewsets.ModelViewSet, ItemBaseViewSet):
     ViewSet for retrieving, creating, updating, and deleting items.
     """
 
-    queryset = Item.objects.all().select_related("user").prefetch_related("images")
+    def get_queryset(self):
+        """Return items belonging to the authenticated user."""
 
-    def get_serializer_class(self):
-        """Return appropriate serializer class based on action."""
-        if self.action in ("list", "my_items", "published"):
-            return ItemListSerializer
-        return ItemSerializer
+        items_with_change_permission = get_objects_for_user(
+            self.request.user,
+            "items.change_item",
+            klass=Item,
+            accept_global_perms=False,
+        )
+
+        return (
+            Item.objects.filter(pk__in=items_with_change_permission)
+            .select_related("user")
+            .prefetch_related("images")
+        )
 
     def perform_create(self, serializer):
         """Set the user when creating an item."""
         serializer.save(user=self.request.user)
 
-    @action(detail=False, methods=["get"])
-    def my_items(self, request):
-        """
-        Get only the current user's items.
-
-        Applies all filters, search, and ordering to the user's items.
-        """
-        queryset = (
-            Item.objects.filter(user=request.user)
-            .select_related("user")
-            .prefetch_related("images")
-        )
-
-        # Apply all filters (including search and ordering)
-        queryset = self.filter_queryset(queryset)
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-
     @action(detail=True, methods=["put"])
     def reorder_images(self, request, uuid=None):
         """Reorder images for an item."""
         item = self.get_object()
-
-        # Check if the user owns the item
-        if item.user != request.user:
-            return Response({"error": "Permission denied"}, status=403)
 
         image_order = request.data.get("image_order", [])
 
@@ -122,10 +108,6 @@ class ItemViewSet(viewsets.ModelViewSet, ItemBaseViewSet):
     def ai_describe_item(self, request, uuid=None):
         """Ai describe the item and populate fields."""
         item = self.get_object()
-
-        # Check if the user owns the item
-        if item.user != request.user:
-            return Response({"error": "Permission denied"}, status=403)
 
         analyze_response = analyze_image(item.get_first_image().uuid)
 
