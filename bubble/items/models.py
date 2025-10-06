@@ -236,8 +236,9 @@ class ItemEmbedding(models.Model):
 
 def upload_to_item_images(instance: "Image", filename: str):
     extension: str = Path(filename).suffix or ".jpg"
-    item_prefix: str = f"items/{str(instance.item.uuid)[0:4]}/{instance.item.uuid}"
-    return f"{item_prefix}/{uuid.uuid4()}/original{extension}"
+    item_creation_datestr = instance.item.created_at.strftime("%Y/%m/%d")
+    item_prefix: str = f"items/{item_creation_datestr}/{instance.item.uuid}"
+    return f"{item_prefix}/{str(uuid.uuid4())[0:8]}/original{extension}"
 
 
 class Image(models.Model):

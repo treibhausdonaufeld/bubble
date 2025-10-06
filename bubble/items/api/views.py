@@ -1,9 +1,14 @@
 """API views for items."""
 
+import contextlib
+
+from django.core.exceptions import ValidationError as DjangoValidationError
+from django.utils.translation import gettext_lazy as _
 from django_filters.rest_framework import DjangoFilterBackend
 from guardian.shortcuts import get_objects_for_user
 from rest_framework import filters, viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import DjangoModelPermissions, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
@@ -109,12 +114,17 @@ class ItemViewSet(viewsets.ModelViewSet, ItemBaseViewSet):
         """Ai describe the item and populate fields."""
         item = self.get_object()
 
-        analyze_response = analyze_image(item.get_first_image().uuid)
+        first_image = item.get_first_image()
+        if not first_image:
+            raise ValidationError(_("Item has no images to analyze."))
+
+        analyze_response = analyze_image(first_image.uuid)
 
         item.name = analyze_response.title
         item.description = analyze_response.description
         item.category = analyze_response.category
-        item.sale_price = analyze_response.price
+        with contextlib.suppress(DjangoValidationError):
+            item.sale_price = analyze_response.price
         item.save()
 
         serializer = self.get_serializer(item)
