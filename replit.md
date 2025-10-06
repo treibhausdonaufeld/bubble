@@ -29,7 +29,7 @@ Preferred communication style: Simple, everyday language.
 - **Primary Database**: PostgreSQL with pgvector extension for embedding storage
 - **Caching**: Redis for session storage and caching
 - **File Storage**: Local filesystem for development, configurable for production
-- **Vector Storage**: pgvector for semantic search capabilities in books app
+- **Vector Storage**: pgvector (1536 dimensions) for semantic search using OpenAI embeddings in books app
 
 ## Authentication and Authorization
 - **User Management**: Custom User model extending AbstractUser
@@ -39,7 +39,9 @@ Preferred communication style: Simple, everyday language.
 - **API Authentication**: Token-based authentication for API endpoints
 
 ## External Dependencies
-- **AI Services**: Anthropic Claude API for image analysis and content generation
+- **AI Services**: 
+  - Anthropic Claude API for image analysis and content generation
+  - OpenAI text-embedding-3-small for book embeddings (1536 dimensions)
 - **Workflow Engine**: Temporal.io for reliable workflow execution
 - **Email**: Configurable email backend (console for dev, SMTP for production)
 - **Monitoring**: Sentry for error tracking and performance monitoring
