@@ -2,6 +2,7 @@ import uuid
 
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
 from guardian.shortcuts import get_objects_for_user
@@ -43,7 +44,7 @@ class Booking(models.Model):
         related_name="bookings",
     )
 
-    time_from = models.DateTimeField(blank=True, null=True)
+    time_from = models.DateTimeField(blank=True, null=True, default=timezone.now)
     time_to = models.DateTimeField(blank=True, null=True)
 
     offer = MoneyField(

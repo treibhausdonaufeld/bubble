@@ -33,13 +33,42 @@ class BookingSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["uuid", "user", "created_at", "updated_at"]
 
+    def validate(self, attrs):
+        """
+        Validate that if time_to is not set, the item must allow open-ended rentals.
+        """
+        time_to = attrs.get("time_to")
+        item = attrs.get("item")
+
+        # If time_to is not provided and we're creating/updating
+        if time_to is None and item and not item.rental_open_end:
+            raise serializers.ValidationError(
+                {
+                    "time_to": (
+                        "End time is required for this item. "
+                        "The item does not allow open-ended rentals."
+                    )
+                }
+            )
+
+        return super().validate(attrs)
+
 
 class BookingListSerializer(BookingSerializer):
     item = serializers.SlugRelatedField(read_only=True, slug_field="uuid")
 
     class Meta:
         model = Booking
-        fields = ["uuid", "status", "item", "item_details", "user", "created_at"]
+        fields = [
+            "uuid",
+            "status",
+            "item",
+            "item_details",
+            "user",
+            "created_at",
+            "time_from",
+            "time_to",
+        ]
 
 
 class MessageSerializer(serializers.ModelSerializer):
