@@ -26,6 +26,7 @@ services:
       - ./.envs/.local/.postgres
     environment:
       - GEMINI_API_KEY=${GEMINI_API_KEY:-not_set}
+      - FRONTEND_URL=http://localhost:3000
     ports:
       - '8000:8000'
     command: /start
