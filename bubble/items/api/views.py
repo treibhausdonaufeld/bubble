@@ -17,7 +17,7 @@ from bubble.items.api.serializers import (
     ItemListSerializer,
     ItemSerializer,
 )
-from bubble.items.models import Image, Item, StatusType
+from bubble.items.models import Image, Item
 
 from .filters import ItemFilter
 
@@ -53,9 +53,7 @@ class PublicItemViewSet(viewsets.ReadOnlyModelViewSet, ItemBaseViewSet):
     """
 
     queryset = (
-        Item.objects.filter(status__in=StatusType.published())
-        .select_related("user")
-        .prefetch_related("images")
+        Item.objects.published().select_related("user").prefetch_related("images")
     )
     permission_classes = [IsAuthenticatedOrReadOnly]
 

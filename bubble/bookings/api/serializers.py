@@ -9,7 +9,9 @@ from bubble.users.api.serializers import UserSerializer
 class BookingSerializer(serializers.ModelSerializer):
     """Detailed serializer for Booking where `item` is represented only by UUID."""
 
-    item = serializers.SlugRelatedField(slug_field="uuid", queryset=Item.objects.all())
+    item = serializers.SlugRelatedField(
+        slug_field="uuid", queryset=Item.objects.published()
+    )
     item_details = ItemMinimalSerializer(read_only=True, source="item")
     user = UserSerializer(read_only=True)
 

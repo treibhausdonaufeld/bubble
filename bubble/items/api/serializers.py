@@ -57,7 +57,9 @@ class ItemSerializer(serializers.ModelSerializer):
     """Serializer for Item model."""
 
     images = ImageSerializer(many=True, read_only=True)
-    user = serializers.StringRelatedField(read_only=True)
+    username = serializers.SlugRelatedField(
+        read_only=True, source="user", slug_field="username"
+    )
     first_image = serializers.SerializerMethodField()
     sale_price = MoneyField(**money_defaults, required=False, allow_null=True)
     rental_price = MoneyField(**money_defaults, required=False, allow_null=True)
@@ -71,14 +73,17 @@ class ItemSerializer(serializers.ModelSerializer):
             "created_at",
             "date_updated",
             "images",
-            "first_image",
         ]
 
     def get_first_image(self, obj):
         """Get the first image of the item."""
         first_image = obj.get_first_image()
         if first_image:
-            return ImageSerializer(first_image).data
+            request = self.context.get("request")
+            if first_image.thumbnail and request:
+                return request.build_absolute_uri(first_image.thumbnail.url)
+            if first_image.thumbnail:
+                return first_image.thumbnail.url
         return None
 
     def validate(self, attrs):
@@ -107,25 +112,10 @@ class ItemSerializer(serializers.ModelSerializer):
         return super().validate(attrs)
 
 
-class ItemListSerializer(serializers.ModelSerializer):
+class ItemListSerializer(ItemSerializer):
     """Lightweight serializer for item lists."""
 
-    first_image = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Item
-        exclude = ["id"]
-
-    def get_first_image(self, obj):
-        """Get the first image of the item."""
-        first_image = obj.get_first_image()
-        if first_image:
-            request = self.context.get("request")
-            if first_image.thumbnail and request:
-                return request.build_absolute_uri(first_image.thumbnail.url)
-            if first_image.thumbnail:
-                return first_image.thumbnail.url
-        return None
+    images = None
 
 
 class ItemMinimalSerializer(ItemListSerializer):

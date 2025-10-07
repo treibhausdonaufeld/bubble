@@ -63,6 +63,10 @@ class CategoryType(models.TextChoices):
 
 
 class ItemManager(models.Manager):
+    def published(self) -> models.QuerySet:
+        """Return a queryset of published items."""
+        return self.filter(status__in=StatusType.published())
+
     def get_for_user(self, user) -> models.QuerySet:
         """Return a queryset filtered by user permissions."""
         items_with_change_permission = get_objects_for_user(
