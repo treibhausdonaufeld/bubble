@@ -5,7 +5,6 @@ import contextlib
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.translation import gettext_lazy as _
 from django_filters.rest_framework import DjangoFilterBackend
-from guardian.shortcuts import get_objects_for_user
 from rest_framework import filters, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
@@ -68,16 +67,8 @@ class ItemViewSet(viewsets.ModelViewSet, ItemBaseViewSet):
 
     def get_queryset(self):
         """Return items belonging to the authenticated user."""
-
-        items_with_change_permission = get_objects_for_user(
-            self.request.user,
-            "items.change_item",
-            klass=Item,
-            accept_global_perms=False,
-        )
-
         return (
-            Item.objects.filter(pk__in=items_with_change_permission)
+            Item.objects.get_for_user(self.request.user)
             .select_related("user")
             .prefetch_related("images")
         )
@@ -148,15 +139,10 @@ class ImageViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """Return images that the user can access."""
-        user = self.request.user
-
-        # Get all items where user has change_item permission
-        items_with_change_permission = get_objects_for_user(
-            user, "items.change_item", klass=Item, accept_global_perms=False
-        )
-
         queryset = Image.objects.filter(
-            item_id__in=items_with_change_permission.values_list("pk", flat=True)
+            item_id__in=Item.objects.get_for_user(self.request.user).values_list(
+                "pk", flat=True
+            )
         )
 
         # Filter by item if specified

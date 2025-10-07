@@ -1,9 +1,9 @@
 from rest_framework import serializers
-from users.api.serializers import UserSerializer
 
 from bubble.bookings.models import Booking, Message
 from bubble.items.api.serializers import ItemMinimalSerializer
 from bubble.items.models import Item
+from bubble.users.api.serializers import UserSerializer
 
 
 class BookingSerializer(serializers.ModelSerializer):

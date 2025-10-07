@@ -7,7 +7,7 @@ from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
 from guardian.models import GroupObjectPermissionBase, UserObjectPermissionBase
-from guardian.shortcuts import assign_perm
+from guardian.shortcuts import assign_perm, get_objects_for_user
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToCover, ResizeToFill
 from pgvector.django import VectorField
@@ -63,11 +63,15 @@ class CategoryType(models.TextChoices):
 
 
 class ItemManager(models.Manager):
-    def for_user(self, user) -> models.QuerySet:
+    def get_for_user(self, user) -> models.QuerySet:
         """Return a queryset filtered by user permissions."""
-        if not user.is_authenticated:
-            return self.none()
-        return self.filter(user=user)
+        items_with_change_permission = get_objects_for_user(
+            user,
+            "items.change_item",
+            klass=Item,
+            accept_global_perms=False,
+        )
+        return self.filter(pk__in=items_with_change_permission)
 
     def semantic_search(self, query: str, limit: int = 10) -> models.QuerySet:
         """
