@@ -44,7 +44,7 @@ class BookingViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         """Make sure that the user can only set status to certain values"""
         if (
-            self.request.user_id == serializer.instance.user_id
+            self.request.user == serializer.instance.user
             and serializer.validated_data.get("status")
             not in (BookingStatus.CANCELLED, BookingStatus.PENDING)
         ):

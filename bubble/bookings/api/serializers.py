@@ -34,9 +34,8 @@ class BookingSerializer(serializers.ModelSerializer):
         read_only_fields = ["uuid", "user", "created_at", "updated_at"]
 
 
-class BookingListSerializer(serializers.ModelSerializer):
+class BookingListSerializer(BookingSerializer):
     item = serializers.SlugRelatedField(read_only=True, slug_field="uuid")
-    item_details = ItemMinimalSerializer(read_only=True, source="item")
 
     class Meta:
         model = Booking

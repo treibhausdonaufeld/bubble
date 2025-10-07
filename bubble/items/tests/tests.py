@@ -512,7 +512,6 @@ class ItemFilterAPITestCase(TestCase):
             name="Available Saw",
             description="Sharp saw",
             user=self.user,
-            sale_price=Decimal("15.00"),
             rental_price=Decimal("3.00"),
             status=2,  # AVAILABLE
             category="tools",
