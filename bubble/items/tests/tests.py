@@ -808,7 +808,7 @@ class AIDescribeItemTestCase(TestCase):
         mock_analyze_image.return_value = ItemImageResult(
             title="AI Generated Title",
             description="AI Generated Description",
-            category="TOOLS",
+            category="tools",
             price="25.00",
         )
 
@@ -816,7 +816,7 @@ class AIDescribeItemTestCase(TestCase):
         self.client.force_authenticate(user=self.owner)
 
         # Call the ai_describe_item endpoint
-        url = reverse("api:item-ai-describe-item", kwargs={"uuid": self.item.uuid})
+        url = reverse("api:item-ai-describe", kwargs={"uuid": self.item.uuid})
         response = self.client.put(url)
 
         # Assert successful response
@@ -826,7 +826,7 @@ class AIDescribeItemTestCase(TestCase):
         self.item.refresh_from_db()
         assert self.item.name == "AI Generated Title"
         assert self.item.description == "AI Generated Description"
-        assert self.item.category == "TOOLS"
+        assert self.item.category == "tools"
         assert self.item.sale_price == Money("25.00", "EUR")
 
         # Verify analyze_image was called with correct image UUID
@@ -839,7 +839,7 @@ class AIDescribeItemTestCase(TestCase):
         self.client.force_authenticate(user=self.other_user)
 
         # Try to call the ai_describe_item endpoint
-        url = reverse("api:item-ai-describe-item", kwargs={"uuid": self.item.uuid})
+        url = reverse("api:item-ai-describe", kwargs={"uuid": self.item.uuid})
         response = self.client.put(url)
 
         # Assert permission denied
@@ -861,7 +861,7 @@ class AIDescribeItemTestCase(TestCase):
         # Don't authenticate
 
         # Try to call the ai_describe_item endpoint
-        url = reverse("api:item-ai-describe-item", kwargs={"uuid": self.item.uuid})
+        url = reverse("api:item-ai-describe", kwargs={"uuid": self.item.uuid})
         response = self.client.put(url)
 
         # Assert forbidden or unauthorized

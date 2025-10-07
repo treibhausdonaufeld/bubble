@@ -1,8 +1,10 @@
 """API views for items."""
 
 import contextlib
+import uuid as _uuid
 
 from django.core.exceptions import ValidationError as DjangoValidationError
+from django.core.files.base import ContentFile
 from django.utils.translation import gettext_lazy as _
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
@@ -12,6 +14,7 @@ from rest_framework.permissions import DjangoModelPermissions, IsAuthenticatedOr
 from rest_framework.response import Response
 
 from bubble.items.ai.image_analyze import analyze_image
+from bubble.items.ai.image_create import generate_image_from_prompt
 from bubble.items.api.serializers import (
     ImageSerializer,
     ItemListSerializer,
@@ -99,7 +102,7 @@ class ItemViewSet(viewsets.ModelViewSet, ItemBaseViewSet):
         return Response({"success": True})
 
     @action(detail=True, methods=["put"])
-    def ai_describe_item(self, request, uuid=None):
+    def ai_describe(self, request, uuid=None):
         """Ai describe the item and populate fields."""
         item = self.get_object()
 
@@ -117,6 +120,38 @@ class ItemViewSet(viewsets.ModelViewSet, ItemBaseViewSet):
         item.save()
 
         serializer = self.get_serializer(item)
+        return Response(serializer.data)
+
+    @action(detail=True, methods=["put"])
+    def ai_image(self, request, uuid=None):
+        """Generate an image from the item's name and description and attach it.
+
+        The generated image is created by a small Google image model and saved
+        as a new Image.original file for the item. Returns the created image
+        data via ImageSerializer.
+        """
+        item = self.get_object()
+
+        # Build prompt from name and description
+        text_parts = []
+        if item.name:
+            text_parts.append(item.name)
+        if item.description:
+            text_parts.append(item.description)
+
+        if not text_parts:
+            return Response({"detail": "Item has no name or description."}, status=400)
+
+        prompt = "\n\n".join(text_parts)
+
+        image_bytes, _mime = generate_image_from_prompt(prompt)
+
+        # Save the generated image as an Image instance
+        filename = f"generated-{_uuid.uuid4().hex[:8]}.png"
+        content = ContentFile(image_bytes, name=filename)
+        Image.objects.create(item=item, original=content)
+
+        serializer = self.get_serializer(item, context={"request": request})
         return Response(serializer.data)
 
 
