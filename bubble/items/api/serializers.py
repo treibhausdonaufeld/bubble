@@ -81,6 +81,31 @@ class ItemSerializer(serializers.ModelSerializer):
             return ImageSerializer(first_image).data
         return None
 
+    def validate(self, attrs):
+        """
+        Ensure that both sale_price and rental_price are not set at the same time.
+
+        This validator respects partial updates: if one of the fields is not
+        provided in `attrs`, the existing instance value is considered.
+        """
+        sale = attrs.get("sale_price")
+        rental = attrs.get("rental_price")
+
+        # Both non-null is not allowed
+        if sale is not None and rental is not None:
+            raise serializers.ValidationError(
+                {
+                    "sale_price": _(
+                        "Cannot set both sale_price and rental_price. Choose one."
+                    ),
+                    "rental_price": _(
+                        "Cannot set both sale_price and rental_price. Choose one."
+                    ),
+                }
+            )
+
+        return super().validate(attrs)
+
 
 class ItemListSerializer(serializers.ModelSerializer):
     """Lightweight serializer for item lists."""

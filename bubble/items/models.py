@@ -188,6 +188,15 @@ class Item(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+        constraints = [
+            models.CheckConstraint(
+                condition=(
+                    models.Q(sale_price__isnull=True)
+                    | models.Q(rental_price__isnull=True)
+                ),
+                name="items_sale_or_rental_price_not_both",
+            )
+        ]
 
     def __str__(self):
         return f"{self.pk} - {self.name}" or f"Item {self.pk}"
