@@ -28,12 +28,6 @@ class ConditionType(models.IntegerChoices):
     BROKEN = 2, _("Broken")
 
 
-class ItemType(models.IntegerChoices):
-    FOR_SALE = 0, _("For Sale")
-    RENT = 1, _("Rent")
-    BOTH = 2, _("Both")
-
-
 class StatusType(models.IntegerChoices):
     DRAFT = 0, _("Draft")
     PROCESSING = 1, _("Processing")
@@ -45,6 +39,12 @@ class StatusType(models.IntegerChoices):
     @classmethod
     def published(cls):
         return (cls.AVAILABLE, cls.RESERVED, cls.RENTED, cls.SOLD)
+
+
+class RentalPeriodType(models.TextChoices):
+    HOURLY = "h", _("Hourly")
+    DAILY = "d", _("Daily")
+    WEEKLY = "w", _("Weekly")
 
 
 class CategoryType(models.TextChoices):
@@ -142,6 +142,21 @@ class Item(models.Model):
         default_currency=settings.DEFAULT_CURRENCY,
     )
 
+    rental_period = models.CharField(
+        max_length=1,
+        blank=True,
+        choices=RentalPeriodType,
+        default=RentalPeriodType.HOURLY,
+    )
+    rental_self_service = models.BooleanField(
+        default=False,
+        help_text=_("Allow self-service rental without owner approval"),
+    )
+    rental_open_end = models.BooleanField(
+        default=False,
+        help_text=_("Allow open-ended rentals without a return date"),
+    )
+
     payment_enabled = models.BooleanField(
         default=False,
         help_text=_("Enable payment via internal payment system"),
@@ -170,7 +185,6 @@ class Item(models.Model):
 
     # Add class constants for easy access
     CONDITION_CHOICES = ConditionType.choices
-    ITEM_TYPE_CHOICES = ItemType.choices
 
     class Meta:
         ordering = ["-created_at"]
@@ -196,15 +210,6 @@ class Item(models.Model):
             # give all object permission to self.request.user on instance
             assign_perm("change_item", self.user, obj=self)
             assign_perm("delete_item", self.user, obj=self)
-
-    @property
-    def item_type(self) -> ItemType:
-        """Determine item type based on prices."""
-        if self.sale_price and not self.rental_price:
-            return ItemType.FOR_SALE
-        if self.rental_price:
-            return ItemType.RENT
-        return ItemType.BOTH
 
     def is_ready_for_display(self):
         """Check if item has minimum required fields to be displayed."""
