@@ -117,6 +117,8 @@ class ItemViewSet(viewsets.ModelViewSet, ItemBaseViewSet):
         item.category = analyze_response.category
         with contextlib.suppress(DjangoValidationError):
             item.sale_price = analyze_response.price
+            if item.sale_price is not None:
+                item.rental_price = None  # Ensure only one price type is set
         item.save()
 
         serializer = self.get_serializer(item)
