@@ -237,7 +237,10 @@ export const RentalCalendar = ({
 
   const isDaySelected = (day: Date): boolean => {
     if (!selectedStart || !selectedEnd) return false;
-    return isWithinInterval(day, { start: startOfDay(selectedStart), end: selectedEnd });
+    return isWithinInterval(day, {
+      start: startOfDay(selectedStart),
+      end: selectedEnd,
+    });
   };
 
   const isDayInPreview = (day: Date): boolean => {

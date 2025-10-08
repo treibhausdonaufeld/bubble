@@ -100,7 +100,9 @@ export const useDeleteImage = () => {
       });
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['item-images', variables.itemUuid] });
+      queryClient.invalidateQueries({
+        queryKey: ['item-images', variables.itemUuid],
+      });
       queryClient.invalidateQueries({ queryKey: ['items'] });
       toast({
         title: 'Image Deleted',

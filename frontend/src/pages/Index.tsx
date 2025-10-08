@@ -118,8 +118,8 @@ const Index = () => {
                 {searchQuery
                   ? `Search results for "${searchQuery}"`
                   : selectedCategory === 'all'
-                  ? 'All Items'
-                  : `${selectedCategory} Items`}
+                    ? 'All Items'
+                    : `${selectedCategory} Items`}
               </h2>
               <div className="text-sm text-muted-foreground">{pagination.count} items found</div>
             </div>

@@ -17,12 +17,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **CRITICAL**: ALWAYS use `{% trans %}` tags for ALL user-facing text in templates and views. Never hardcode text strings.
 
 ### Template Translation Rules
+
 - **Every** user-facing string must be wrapped in `{% trans "English text" %}`
 - Load i18n at top of templates: `{% load i18n %}`
 - For JavaScript strings that need translation, add them to `locale/de/LC_MESSAGES/django.po`
 - After adding new translations, run: `just manage compilemessages`
 
 ### Common Translation Patterns
+
 ```django
 {# Templates #}
 {% load i18n %}
@@ -46,6 +48,7 @@ const title = gettext('Add to favorites');
 #### Adding New Translatable Strings in JavaScript:
 
 1. **Write JavaScript with gettext():**
+
    ```javascript
    // In any .js file, use gettext() directly:
    const confirmMsg = gettext('Are you sure you want to delete this?');
@@ -54,6 +57,7 @@ const title = gettext('Add to favorites');
    ```
 
 2. **Update Translation Files:**
+
    ```bash
    # Django automatically scans JavaScript files for gettext() calls
    just manage makemessages -l de
@@ -63,12 +67,14 @@ const title = gettext('Add to favorites');
    - Open `/locale/de/LC_MESSAGES/django.po`
    - Find the new English strings (msgid)
    - Add German translations (msgstr)
+
    ```po
    msgid "Are you sure you want to delete this?"
    msgstr "Sind Sie sicher, dass Sie das löschen möchten?"
    ```
 
 4. **Compile Translations:**
+
    ```bash
    just manage compilemessages
    ```
@@ -78,6 +84,7 @@ const title = gettext('Add to favorites');
 **No manual setup required** - the system works automatically for all JavaScript files in the project.
 
 ### Translation File Location
+
 - **File**: `/locale/de/LC_MESSAGES/django.po`
 - **Compile**: `just manage compilemessages` after changes
 - **Format**: Each entry needs msgid (English) and msgstr (German)
@@ -86,11 +93,13 @@ const title = gettext('Add to favorites');
 ## Formatting Guidelines
 
 ### User Mentions
+
 When mentioning user anywhere show like this username (Full Name) according to @bubble/users/models.py
 
 ## Development Commands
 
 ### Docker Environment (Primary)
+
 ```bash
 # Build containers
 just build
@@ -121,6 +130,7 @@ just manage createsuperuser
 ```
 
 ### Frontend Development
+
 ```bash
 # Development server with hot reload
 npm run dev
@@ -130,6 +140,7 @@ npm run build
 ```
 
 ### Python Development (Direct)
+
 ```bash
 # Run tests
 pytest
@@ -161,6 +172,7 @@ celery -A config.celery_app beat
 ## Architecture
 
 ### Django Structure
+
 - **config/**: Project configuration and settings
   - `settings/`: Environment-specific settings (base, local, production, test)
   - `api_router.py`: DRF API URL routing
@@ -174,6 +186,7 @@ celery -A config.celery_app beat
   - `contrib/sites/`: Custom sites framework migrations
 
 ### Key Technologies
+
 - **Backend**: Django 4.x with PostgreSQL database
 - **Frontend**: Bootstrap 5 + Webpack + SASS compilation
 - **API**: Django REST Framework with drf-spectacular for OpenAPI docs
@@ -186,14 +199,17 @@ celery -A config.celery_app beat
 ### Items App (`items.models`)
 
 #### Item Model
+
 Core entity representing physical items users want to share.
 
 **Item Types:**
+
 - **Sell (0)**: Items for sale with optional price
 - **Give Away (1)**: Free items to give away
 - **Borrow (2)**: Items available for borrowing
 
 **Key Fields:**
+
 - `item_type`: Integer field with choices above
 - `name`, `description`: Item details
 - `price`: Required for selling items, empty for others
@@ -206,37 +222,45 @@ Core entity representing physical items users want to share.
 - `active`: Boolean (item is publicly visible)
 
 #### ItemTagRelation Model
+
 Many-to-many relationship between Items and ItemTags.
 
-
-
 #### Image Model
+
 Multiple images per item with ordering support.
 
 ### Categories App (`categories.models`)
 
 #### ItemCategory Model
+
 Hierarchical organization system for items.
+
 - `parent_category`: Self-referential for unlimited nesting
 - `get_hierarchy()`: Returns full path (e.g., "Electronics > Phones")
 
 #### ServiceCategory Model
+
 Flat organization system for future services (no hierarchy).
 
 #### ItemTag Model
+
 Independent labeling system for items.
+
 - Many-to-many relationship with Items via ItemTagRelation
 - Admin-managed only (users can select, not create)
 
 ### Users App (`users.models`)
 
 #### Profile Model
+
 Extended user information linked to Django User.
+
 - `internal`: Boolean (enables admin features like internal/payment_enabled fields)
 - `address`, `phone`: Contact information
 - `email_reminder`: Notification preferences
 
 ### Relationships
+
 - **Item ↔ ItemCategory**: One-to-many (each item has one category)
 - **Item ↔ ItemTag**: Many-to-many via ItemTagRelation
 - **Item ↔ User**: Many-to-one (user owns multiple items)
@@ -245,6 +269,7 @@ Extended user information linked to Django User.
 ## URL Structure
 
 ### Items App URLs (`/items/`)
+
 ```
 /items/                    # All items
 /items/sell/              # Items for sale (shareable)
@@ -259,6 +284,7 @@ Extended user information linked to Django User.
 ```
 
 **Filtering Support:**
+
 - GET parameters: `?search=laptop&category=1&tags=2,3&status=1`
 - URL-based type filtering: `/items/sell/?category=1&tags=2`
 - Shareable filtered links for easy sharing
@@ -266,6 +292,7 @@ Extended user information linked to Django User.
 ## Frontend Features
 
 ### Item Management
+
 - **Complete CRUD operations** with proper permissions
 - **Tag selection** via checkboxes (admin-managed tags)
 - **Category hierarchies** with dropdown selection
@@ -273,6 +300,7 @@ Extended user information linked to Django User.
 - **Responsive design** with Bootstrap 5
 
 ### Filtering & Search
+
 - **Text search** across name and description
 - **Category filtering** with hierarchical support
 - **Tag filtering** with checkbox selection
@@ -281,6 +309,7 @@ Extended user information linked to Django User.
 - **Pagination** with customizable page size
 
 ### User Experience
+
 - **Navigation pills** for quick type switching
 - **Shareable URLs** for specific item types and filters
 - **Owner-only actions** (edit/delete/toggle status)
@@ -288,6 +317,7 @@ Extended user information linked to Django User.
 - **Contact display toggle** per item
 
 ### Security & Permissions
+
 - **Login required** for create/edit/delete operations
 - **Owner verification** for item modifications
 - **Intern field visibility** based on user.profile.internal
@@ -296,7 +326,9 @@ Extended user information linked to Django User.
 ## Code Quality & CI/CD
 
 ### Pre-commit Hooks
+
 This project uses pre-commit hooks that run automatically on GitHub Actions. Key checks include:
+
 - **Trailing whitespace removal**
 - **End-of-file fixing**
 - **Ruff linting** (max line length: 88 characters)
@@ -306,6 +338,7 @@ This project uses pre-commit hooks that run automatically on GitHub Actions. Key
 **IMPORTANT**: Always run `pre-commit run --all-files` before committing to catch formatting issues early.
 
 ### Linter Actions
+
 - **Save findings for passing linter actions next time**
   - Understand common linter issues specific to this project
   - Review specific ruff and pre-commit hook error patterns
@@ -324,6 +357,7 @@ This project uses pre-commit hooks that run automatically on GitHub Actions. Key
 ## Future Services App Structure
 
 ### Planned Architecture
+
 When implementing the services app, follow this structure:
 
 ```
@@ -341,6 +375,7 @@ bubble/services/
 ```
 
 ### Service Model Structure
+
 ```python
 class Service(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -356,6 +391,7 @@ class Service(models.Model):
 ```
 
 ### Services URLs (`/services/`)
+
 ```
 /services/                 # All services
 /services/<category>/      # Services by category (flat structure)
@@ -366,9 +402,13 @@ class Service(models.Model):
 ```
 
 ### Key Differences from Items
+
 - **Flat categories**: ServiceCategory has no hierarchy
 - **Duration-based**: Services have time components
 - **Location-aware**: Services tied to physical locations
 - **Availability scheduling**: When services can be provided
 - **Different pricing model**: Services typically always have prices
+
+```
+
 ```

@@ -372,7 +372,10 @@ const EditItem = () => {
         try {
           await Promise.all(
             merged.map(img =>
-              imagesPartialUpdate({ path: { uuid: img.uuid }, body: { ordering: img.ordering } }),
+              imagesPartialUpdate({
+                path: { uuid: img.uuid },
+                body: { ordering: img.ordering },
+              }),
             ),
           );
         } catch (err) {
@@ -426,7 +429,9 @@ const EditItem = () => {
     setAiProcessing(true);
 
     try {
-      const aiResult = await itemsAiDescribeUpdate({ path: { uuid: editItemUuid } });
+      const aiResult = await itemsAiDescribeUpdate({
+        path: { uuid: editItemUuid },
+      });
       const data = aiResult.data;
 
       // Update form data with AI-generated content
@@ -616,7 +621,8 @@ const EditItem = () => {
                     <div className="flex items-center gap-2">
                       <Badge variant="secondary" className="gap-1">
                         <CheckCircle className="h-3 w-3" />
-                        {images.length} new image{images.length !== 1 ? 's' : ''} ready to upload
+                        {images.length} new image
+                        {images.length !== 1 ? 's' : ''} ready to upload
                       </Badge>
                     </div>
                   )}
@@ -724,7 +730,10 @@ const EditItem = () => {
                   <Select
                     value={formData.condition.toString()}
                     onValueChange={value =>
-                      setFormData({ ...formData, condition: parseInt(value) as ConditionEnum })
+                      setFormData({
+                        ...formData,
+                        condition: parseInt(value) as ConditionEnum,
+                      })
                     }
                     disabled={aiProcessing}
                     required
@@ -754,7 +763,12 @@ const EditItem = () => {
                         step="1.00"
                         placeholder={t('editItem.saleDisabledPlaceholder')}
                         value={formData.sale_price}
-                        onChange={e => setFormData({ ...formData, sale_price: e.target.value })}
+                        onChange={e =>
+                          setFormData({
+                            ...formData,
+                            sale_price: e.target.value,
+                          })
+                        }
                         disabled={aiProcessing || formData.rental_price !== ''}
                       />
                     </TooltipTrigger>
@@ -774,7 +788,12 @@ const EditItem = () => {
                         step="1.00"
                         placeholder={t('editItem.rentalDisabledPlaceholder')}
                         value={formData.rental_price}
-                        onChange={e => setFormData({ ...formData, rental_price: e.target.value })}
+                        onChange={e =>
+                          setFormData({
+                            ...formData,
+                            rental_price: e.target.value,
+                          })
+                        }
                         disabled={aiProcessing || formData.sale_price !== ''}
                       />
                     </TooltipTrigger>
@@ -817,7 +836,10 @@ const EditItem = () => {
                             type="checkbox"
                             checked={formData.rental_self_service}
                             onChange={e =>
-                              setFormData({ ...formData, rental_self_service: e.target.checked })
+                              setFormData({
+                                ...formData,
+                                rental_self_service: e.target.checked,
+                              })
                             }
                             disabled={aiProcessing}
                           />
@@ -829,7 +851,10 @@ const EditItem = () => {
                             type="checkbox"
                             checked={formData.rental_open_end}
                             onChange={e =>
-                              setFormData({ ...formData, rental_open_end: e.target.checked })
+                              setFormData({
+                                ...formData,
+                                rental_open_end: e.target.checked,
+                              })
                             }
                             disabled={aiProcessing}
                           />
@@ -850,7 +875,10 @@ const EditItem = () => {
                   <Select
                     value={formData.status.toString()}
                     onValueChange={value =>
-                      setFormData({ ...formData, status: parseInt(value) as Status402Enum })
+                      setFormData({
+                        ...formData,
+                        status: parseInt(value) as Status402Enum,
+                      })
                     }
                     disabled={aiProcessing}
                   >
@@ -875,8 +903,8 @@ const EditItem = () => {
                     {loading || updateItemMutation.isPending
                       ? t('common.saving')
                       : editItemUuid
-                      ? t('common.save')
-                      : t('editItem.listItem')}
+                        ? t('common.save')
+                        : t('editItem.listItem')}
                   </Button>
 
                   {formData.status === 0 && (

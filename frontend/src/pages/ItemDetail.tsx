@@ -163,7 +163,12 @@ const ItemDetail = () => {
               <h1 className="text-3xl font-bold">{name}</h1>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Calendar className="h-4 w-4" />
-                <span>Listed {formatDistanceToNow(new Date(created_at), { addSuffix: true })}</span>
+                <span>
+                  Listed{' '}
+                  {formatDistanceToNow(new Date(created_at), {
+                    addSuffix: true,
+                  })}
+                </span>
               </div>
             </div>
 

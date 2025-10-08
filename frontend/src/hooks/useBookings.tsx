@@ -64,7 +64,10 @@ export const useUpdateBooking = () => {
 
   return useMutation({
     mutationFn: async ({ uuid, data }: { uuid: string; data: PatchedBooking }) => {
-      const response = await bookingsPartialUpdate({ path: { uuid }, body: data });
+      const response = await bookingsPartialUpdate({
+        path: { uuid },
+        body: data,
+      });
       return response.data;
     },
     onSuccess: () => {
