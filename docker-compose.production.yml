@@ -7,20 +7,24 @@ volumes:
   production_redis_data: {}
 
 services:
-  django: &django
+  frontend:
+    build:
+      context: ./frontend/
+      dockerfile: Dockerfile
+    image: bubble-frontend
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    ports:
+      - '8080:8888'
+
+  backend: &backend
     build:
       context: .
-      dockerfile: ./compose/production/django/Dockerfile
-
-    image: bubble_production_django
-    volumes:
-      - production_django_media:/app/bubble/media
+      dockerfile: ./backend/Dockerfile
+    image: bubble-backend
     depends_on:
       - postgres
       - redis
-    env_file:
-      - ./.envs/.production/.django
-      - ./.envs/.production/.postgres
     command: /start
 
   postgres:
@@ -34,20 +38,6 @@ services:
     env_file:
       - ./.envs/.production/.postgres
 
-  traefik:
-    build:
-      context: .
-      dockerfile: ./compose/production/traefik/Dockerfile
-    image: bubble_production_traefik
-    depends_on:
-      - django
-    volumes:
-      - production_traefik:/etc/traefik/acme
-    ports:
-      - '0.0.0.0:80:80'
-      - '0.0.0.0:443:443'
-      - '0.0.0.0:5555:5555'
-
   redis:
     image: docker.io/redis:6
 
@@ -55,17 +45,17 @@ services:
       - production_redis_data:/data
 
   celeryworker:
-    <<: *django
+    <<: *backend
     image: bubble_production_celeryworker
     command: /start-celeryworker
 
   celerybeat:
-    <<: *django
+    <<: *backend
     image: bubble_production_celerybeat
     command: /start-celerybeat
 
   flower:
-    <<: *django
+    <<: *backend
     image: bubble_production_flower
     command: /start-flower
 
