@@ -6,7 +6,7 @@ services:
   frontend:
     build:
       context: ./frontend/
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     image: bubble-frontend
     environment:
       - API_URL=http://localhost:8000
