@@ -17,10 +17,7 @@ def create_default_groups_and_permissions():
     logger.debug("Creating default groups and permissions...")
 
     for group_name, group_config in DEFAULT_GROUPS_CONFIG.items():
-        group, created = Group.objects.get_or_create(name=group_name)
-
-        if created:
-            logger.debug("Created group: %s", group_name)
+        group, _created = Group.objects.get_or_create(name=group_name)
 
         # Clear existing permissions to ensure clean state
         group.permissions.clear()
@@ -42,11 +39,6 @@ def create_default_groups_and_permissions():
                                 codename=perm_codename, content_type=content_type
                             )
                             group.permissions.add(permission)
-                            logger.debug(
-                                "Added permission %s to group %s",
-                                perm_codename,
-                                group_name,
-                            )
                         except Permission.DoesNotExist:
                             logger.warning(
                                 "Permission %s not found for %s.%s",
@@ -60,16 +52,10 @@ def create_default_groups_and_permissions():
                         "ContentType not found for %s.%s", app_label, model_name
                     )
 
-        logger.debug(
-            "Group '%s' configured with %d permissions",
-            group_name,
-            group.permissions.count(),
-        )
-
 
 @receiver(post_migrate)
 def setup_default_permissions(sender, **kwargs):
     """Set up default groups and permissions after migrations."""
     # Only run for specific apps to avoid running multiple times
-    if sender.name in ["bubble.items", "bubble.users", "bubble.core"]:
+    if sender.name in ["bubble.core"]:
         create_default_groups_and_permissions()
