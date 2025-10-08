@@ -6,10 +6,10 @@ services:
   frontend:
     build:
       context: ./frontend/
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     image: bubble-frontend
     environment:
-      - VITE_API_URL=http://localhost:8000
+      - API_URL=http://localhost:8000
     volumes:
       - ./frontend/src:/app/src:z
     ports:

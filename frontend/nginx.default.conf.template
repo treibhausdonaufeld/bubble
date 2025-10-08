@@ -40,7 +40,7 @@ server {
         add_header Pragma "no-cache";
         add_header Expires "0";
         return 200 'window._env_ = {
-  API_URL: "${VITE_API_URL}"
+  API_URL: "${API_URL}"
 };';
     }
 
