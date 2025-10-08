@@ -12,4 +12,4 @@ if [[ "${AUTO_COLLECTSTATIC:-}" == "true" ]]; then
     python /app/manage.py collectstatic --noinput
 fi
 
-exec gunicorn config.asgi --bind 0.0.0.0:5000 --chdir=/app -k uvicorn_worker.UvicornWorker
+exec gunicorn config.asgi --bind 0.0.0.0:8000 --chdir=/app -k uvicorn_worker.UvicornWorker

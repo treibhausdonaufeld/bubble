@@ -8,6 +8,7 @@ from bubble.users.models import User
 from bubble.users.tests.factories import UserFactory
 
 
+@pytest.mark.django_db
 class TestUserViewSet:
     @pytest.fixture
     def api_rf(self) -> APIRequestFactory:

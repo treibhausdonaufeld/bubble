@@ -1,8 +1,10 @@
+import pytest
 from django.urls import resolve, reverse
 
 from bubble.users.models import User
 
 
+@pytest.mark.django_db
 def test_user_detail(user: User):
     assert (
         reverse("api:user-detail", kwargs={"username": user.username})
