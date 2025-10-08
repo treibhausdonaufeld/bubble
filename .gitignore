@@ -271,8 +271,6 @@ tags
 dump.rdb
 
 ### Project template
-bubble/media/
-
 .pytest_cache/
 .ipython/
 bubble/static/webpack_bundles/
@@ -285,3 +283,5 @@ db.sqlite3
 .envs/.local/.allauth
 
 .ruff_cache
+
+backend/bubble/media/
