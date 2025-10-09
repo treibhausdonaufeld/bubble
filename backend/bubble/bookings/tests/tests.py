@@ -1,5 +1,7 @@
 """Tests for booking API endpoints and auto-confirmation logic."""
 
+from datetime import timedelta
+
 from django.contrib.auth.models import Group
 from django.utils import timezone
 from rest_framework import status
@@ -45,7 +47,7 @@ class BookingAutoConfirmTestCase(APITestCase):
             {
                 "item": str(self.regular_item.uuid),
                 "offer": "20.00",
-                "time_to": timezone.now() + timezone.timedelta(days=1),
+                "time_to": timezone.now() + timedelta(days=1),
             },
             format="json",
         )
@@ -66,7 +68,7 @@ class BookingAutoConfirmTestCase(APITestCase):
             {
                 "item": str(self.self_service_item.uuid),
                 "offer": "15.00",
-                "time_to": timezone.now() + timezone.timedelta(days=1),
+                "time_to": timezone.now() + timedelta(days=1),
             },
             format="json",
         )
@@ -88,7 +90,7 @@ class BookingAutoConfirmTestCase(APITestCase):
             {
                 "item": str(self.self_service_item.uuid),
                 "offer": "15.00",
-                "time_to": timezone.now() + timezone.timedelta(days=1),
+                "time_to": timezone.now() + timedelta(days=1),
             },
             format="json",
         )
@@ -113,7 +115,7 @@ class BookingAutoConfirmTestCase(APITestCase):
             {
                 "item": str(self.regular_item.uuid),
                 "offer": "20.00",
-                "time_to": timezone.now() + timezone.timedelta(days=1),
+                "time_to": timezone.now() + timedelta(days=1),
             },
             format="json",
         )
@@ -359,3 +361,32 @@ class BookingTimeToValidationTestCase(APITestCase):
 
         assert response.status_code == status.HTTP_201_CREATED
         assert response.data["time_to"] is not None
+
+    def test_booking_sale_item_without_time_to_succeeds(self):
+        """Sale-only items should be bookable without a time_to value."""
+        self.client.force_authenticate(user=self.booking_user)
+
+        # Create a sale-only item (no rental price)
+        sale_item = ItemFactory(
+            user=self.item_owner,
+            sale_price="100.00",
+            rental_price=None,
+            rental_self_service=False,
+        )
+
+        response = self.client.post(
+            "/api/bookings/",
+            {
+                "item": str(sale_item.uuid),
+                "offer": "100.00",
+                # No time_to provided
+            },
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert response.data["time_to"] is None
+
+        # Verify in database
+        booking = Booking.objects.get(uuid=response.data["uuid"])
+        assert booking.time_to is None

@@ -41,7 +41,11 @@ class BookingSerializer(serializers.ModelSerializer):
         item = attrs.get("item")
 
         # If time_to is not provided and we're creating/updating
-        if time_to is None and item and not item.rental_open_end:
+        # Allow missing time_to for items that are sale-only. Sale items
+        # don't need an end time, so treat them as exempt.
+        is_sale_item = bool(getattr(item, "sale_price", None))
+
+        if time_to is None and item and not item.rental_open_end and not is_sale_item:
             raise serializers.ValidationError(
                 {
                     "time_to": (
