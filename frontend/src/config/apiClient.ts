@@ -19,9 +19,11 @@ function getCookie(name: string): string | null {
 // Configure the API client
 export const configureApiClient = () => {
   client.setConfig({
-    baseUrl: import.meta.env.VITE_API_URL || window._env_?.API_URL || '',
+    baseUrl: import.meta.env.VITE_API_URL || window._env_?.VITE_API_URL || '',
     credentials: 'include',
   });
+
+  console.log('API Client configured with baseUrl:', client.getConfig().baseUrl);
 
   // Try to add CSRF token interceptor if available
   if (client.interceptors && client.interceptors.request) {

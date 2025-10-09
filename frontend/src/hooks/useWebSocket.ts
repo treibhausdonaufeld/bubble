@@ -35,8 +35,14 @@ export const useWebSocket = (options: UseWebSocketOptions = {}) => {
   const shouldConnectRef = useRef(true);
 
   const getWebSocketUrl = useCallback(() => {
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const host = import.meta.env.VITE_WS_URL || window.location.host;
+    // Get API URL from environment variable or window._env_, fallback to http://localhost:8000
+    const apiUrl = import.meta.env.VITE_API_URL || window._env_?.VITE_API_URL || '';
+
+    // Parse the API URL to extract host
+    const url = new URL(apiUrl);
+    const protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
+    const host = url.host;
+
     return `${protocol}//${host}/api/ws/notifications/`;
   }, []);
 
@@ -90,7 +96,9 @@ export const useWebSocket = (options: UseWebSocketOptions = {}) => {
           reconnectAttempts < maxReconnectAttempts
         ) {
           console.log(
-            `[WebSocket] Reconnecting in ${reconnectInterval}ms (attempt ${reconnectAttempts + 1}/${maxReconnectAttempts})`,
+            `[WebSocket] Reconnecting in ${reconnectInterval}ms (attempt ${
+              reconnectAttempts + 1
+            }/${maxReconnectAttempts})`,
           );
           reconnectTimeoutRef.current = setTimeout(() => {
             setReconnectAttempts(prev => prev + 1);

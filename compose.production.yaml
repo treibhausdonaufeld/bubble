@@ -13,7 +13,7 @@ services:
       dockerfile: Dockerfile
     image: bubble-frontend
     environment:
-      - API_URL=http://localhost:8000
+      - VITE_API_URL=http://localhost:8000
     ports:
       - '8080:8888'
 

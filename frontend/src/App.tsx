@@ -23,7 +23,7 @@ const queryClient = new QueryClient();
 declare global {
   interface Window {
     _env_?: {
-      API_URL?: string;
+      VITE_API_URL?: string;
     };
   }
 }
