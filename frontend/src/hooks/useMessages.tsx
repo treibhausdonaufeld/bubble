@@ -30,10 +30,6 @@ export const useCreateMessage = () => {
     onSuccess: data => {
       // Invalidate messages for this booking
       queryClient.invalidateQueries({ queryKey: ['messages', data.booking] });
-      toast({
-        title: 'Message sent',
-        description: 'Your message has been sent successfully.',
-      });
     },
     onError: (error: Error) => {
       toast({

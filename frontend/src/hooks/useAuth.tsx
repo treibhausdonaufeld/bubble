@@ -87,11 +87,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     checkAuth();
-
-    // Set up periodic auth check (every 5 minutes)
-    const interval = setInterval(checkAuth, 5 * 60 * 1000);
-
-    return () => clearInterval(interval);
   }, []);
 
   const signOut = async () => {

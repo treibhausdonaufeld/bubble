@@ -23,7 +23,9 @@ export const configureApiClient = () => {
     credentials: 'include',
   });
 
-  console.log('API Client configured with baseUrl:', client.getConfig().baseUrl);
+  if (import.meta.env.DEV) {
+    console.log('API Client configured with baseUrl:', client.getConfig().baseUrl);
+  }
 
   // Try to add CSRF token interceptor if available
   if (client.interceptors && client.interceptors.request) {

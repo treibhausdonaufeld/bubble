@@ -42,6 +42,7 @@ const Bookings = () => {
   }, [messagesData]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messageInputRef = useRef<HTMLInputElement>(null);
 
   // Select first booking on load
   useMemo(() => {
@@ -96,6 +97,11 @@ const Bookings = () => {
         message: messageText,
       });
       setMessageText('');
+      // Keep focus in the message input for quick follow-up messages
+      // Use setTimeout to ensure focus happens after React re-render
+      setTimeout(() => {
+        messageInputRef.current?.focus();
+      }, 0);
     } catch (error) {
       console.error('Error sending message:', error);
     }
@@ -566,6 +572,7 @@ const Bookings = () => {
                   <div className="p-4">
                     <div className="flex gap-2">
                       <Input
+                        ref={messageInputRef}
                         placeholder={t('bookings.typeMessage')}
                         value={messageText}
                         onChange={e => setMessageText(e.target.value)}

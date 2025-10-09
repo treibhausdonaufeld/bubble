@@ -15,6 +15,13 @@ export const NotificationProvider = ({ children }: NotificationProviderProps) =>
       console.log('[Notification] Received:', message);
 
       switch (message.type) {
+        case 'connection.established':
+          // Connection confirmation from server
+          if (import.meta.env.DEV) {
+            console.log('[Notification] Connection established:', message.data);
+          }
+          break;
+
         case 'logout':
           toast.error('You have been logged out', {
             description: message.data?.message || 'Your session has ended.',
