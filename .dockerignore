@@ -7,7 +7,12 @@
 .pre-commit-config.yaml
 .readthedocs.yml
 .travis.yml
-.venv
+.venv/
 venv
-.git
+.git/
 .envs/
+node_modules
+bubble/media
+db.sqlite3
+.ruff_cache/
+.ipython/

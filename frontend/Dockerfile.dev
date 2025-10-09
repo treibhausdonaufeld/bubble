@@ -1,0 +1,16 @@
+FROM oven/bun:1-alpine
+
+WORKDIR /app
+
+# Copy package files and bun.lockb
+COPY package.json bun.lockb ./
+
+# Install dependencies with Bun
+RUN bun install
+
+# Copy source code
+COPY . .
+
+EXPOSE 8080
+
+CMD ["bun", "run", "dev", "--host", "0.0.0.0"]

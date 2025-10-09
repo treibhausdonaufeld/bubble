@@ -11,7 +11,7 @@ def main():
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.local")
 
     try:
-        from django.core.management import execute_from_command_line
+        from django.core.management import execute_from_command_line  # noqa: PLC0415
     except ImportError as exc:
         raise ImportError(  # noqa: TRY003
             "Couldn't import Django. Are you sure it's installed and "  # noqa: EM101
@@ -22,7 +22,8 @@ def main():
     # This allows easy placement of apps within the interior
     # bubble directory.
     current_path = Path(__file__).parent.resolve()
-    sys.path.append(str(current_path / "bubble"))
+    sys.path.append(str(current_path / "backend"))
+    sys.path.append(str(current_path / "backend" / "bubble"))
 
     execute_from_command_line(sys.argv)
 

@@ -1,0 +1,128 @@
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useProfile, useUpdateProfile } from '@/hooks/useProfile';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Loader2 } from 'lucide-react';
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+
+const profileSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  bio: z.string().optional(),
+  phone: z.string().optional(),
+});
+
+type ProfileFormData = z.infer<typeof profileSchema>;
+
+export const ProfileForm = () => {
+  const { data: profile, isLoading } = useProfile();
+  const updateProfile = useUpdateProfile();
+
+  const form = useForm<ProfileFormData>({
+    resolver: zodResolver(profileSchema),
+    defaultValues: {
+      name: profile?.name || '',
+      bio: profile?.bio || '',
+      phone: profile?.phone || '',
+    },
+  });
+
+  // Update form when profile data loads
+  React.useEffect(() => {
+    if (profile) {
+      form.reset({
+        name: profile.name || '',
+        bio: profile.bio || '',
+        phone: profile.phone || '',
+      });
+    }
+  }, [profile, form]);
+
+  const onSubmit = (data: ProfileFormData) => {
+    updateProfile.mutate(data);
+  };
+
+  const { t } = useLanguage();
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardContent className="flex justify-center items-center py-8">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('profile.title')}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('profile.name')}</FormLabel>
+                  <FormControl>
+                    <Input placeholder={t('profile.name')} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="bio"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('profile.bio')}</FormLabel>
+                  <FormControl>
+                    <Textarea placeholder={t('profile.bio')} className="min-h-[100px]" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('profile.phone')}</FormLabel>
+                  <FormControl>
+                    <Input placeholder={t('profile.phone')} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Button type="submit" disabled={updateProfile.isPending} className="w-full">
+              {updateProfile.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {t('profile.update')}
+            </Button>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
+  );
+};

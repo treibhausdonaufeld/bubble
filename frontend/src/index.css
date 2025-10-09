@@ -1,0 +1,159 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Local Goods Network - Community Sharing Design System
+   Warm, trustworthy colors that evoke community and sustainability
+   All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Community-focused warm palette */
+    --background: 45 15% 98%;
+    --foreground: 25 25% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 25 25% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 25 25% 15%;
+
+    /* Primary: Subtle sage green inspired by logo - calm, natural */
+    --primary: 120 25% 35%;
+    --primary-foreground: 0 0% 98%;
+    --primary-glow: 120 35% 45%;
+
+    /* Secondary: Very soft blush - gentle, welcoming */
+    --secondary: 340 15% 92%;
+    --secondary-foreground: 340 25% 25%;
+
+    --muted: 45 20% 94%;
+    --muted-foreground: 25 15% 45%;
+
+    /* Accent: Muted lavender inspired by logo - subtle sophistication */
+    --accent: 120 45% 90%;
+    --accent-foreground: 0 0% 2%;
+
+    /* Success: Natural green */
+    --success: 120 45% 50%;
+    --success-foreground: 0 0% 98%;
+
+    /* Warning: Sunset orange */
+    --warning: 30 85% 60%;
+    --warning-foreground: 25 35% 15%;
+
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 45 25% 88%;
+    --input: 45 25% 92%;
+    --ring: 140 35% 25%;
+
+    /* Enhanced design tokens */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-warm: linear-gradient(135deg, hsl(var(--accent)), hsl(120 35% 45%));
+    --gradient-logo: linear-gradient(135deg, hsl(120 25% 35%), hsl(270 25% 55%));
+    --gradient-subtle: linear-gradient(180deg, hsl(var(--background)), hsl(var(--muted)));
+
+    /* Elegant shadows using brand colors */
+    --shadow-soft: 0 2px 8px hsl(var(--primary) / 0.08);
+    --shadow-medium: 0 4px 16px hsl(var(--primary) / 0.12);
+    --shadow-strong: 0 8px 32px hsl(var(--primary) / 0.16);
+    --shadow-glow: 0 0 24px hsl(var(--accent) / 0.25);
+
+    /* Smooth transitions */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    /* Dark mode with warmer, community-friendly tones */
+    --background: 25 15% 8%;
+    --foreground: 45 25% 92%;
+
+    --card: 25 20% 12%;
+    --card-foreground: 45 25% 92%;
+
+    --popover: 25 20% 12%;
+    --popover-foreground: 45 25% 92%;
+
+    /* Primary: Brighter sage green for dark mode */
+    --primary: 120 35% 55%;
+    --primary-foreground: 25 15% 8%;
+    --primary-glow: 120 45% 65%;
+
+    /* Secondary: Soft dark blush for dark mode */
+    --secondary: 340 20% 22%;
+    --secondary-foreground: 340 15% 85%;
+
+    --muted: 25 20% 16%;
+    --muted-foreground: 45 15% 60%;
+
+    /* Accent: Brighter lavender for dark mode */
+    --accent: 120 55% 10%;
+    --accent-foreground: 25 15% 88%;
+
+    /* Success: Bright natural green */
+    --success: 120 55% 60%;
+    --success-foreground: 25 15% 8%;
+
+    /* Warning: Bright sunset orange */
+    --warning: 30 85% 65%;
+    --warning-foreground: 25 25% 15%;
+
+    --destructive: 0 75% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 25 25% 22%;
+    --input: 25 25% 18%;
+    --ring: 140 45% 65%;
+
+    /* Dark mode gradients and shadows */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-warm: linear-gradient(135deg, hsl(var(--accent)), hsl(120 45% 65%));
+    --gradient-logo: linear-gradient(135deg, hsl(120 35% 55%), hsl(270 35% 65%));
+    --gradient-subtle: linear-gradient(180deg, hsl(var(--background)), hsl(var(--muted)));
+
+    --shadow-soft: 0 2px 8px hsl(0 0% 0% / 0.3);
+    --shadow-medium: 0 4px 16px hsl(0 0% 0% / 0.4);
+    --shadow-strong: 0 8px 32px hsl(0 0% 0% / 0.5);
+    --shadow-glow: 0 0 24px hsl(var(--accent) / 0.3);
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
