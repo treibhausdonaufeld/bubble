@@ -22,7 +22,7 @@ export const useWebSocket = (options: UseWebSocketOptions = {}) => {
     onConnect,
     onDisconnect,
     onError,
-    reconnectInterval = 3000,
+    reconnectInterval = 5000,
     maxReconnectAttempts = 5,
   } = options;
 

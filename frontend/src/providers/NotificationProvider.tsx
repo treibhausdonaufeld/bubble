@@ -73,7 +73,7 @@ export const NotificationProvider = ({ children }: NotificationProviderProps) =>
     onConnect: handleConnect,
     onDisconnect: handleDisconnect,
     onError: handleError,
-    reconnectInterval: 3000,
+    reconnectInterval: 5000,
     maxReconnectAttempts: 5,
   });
 

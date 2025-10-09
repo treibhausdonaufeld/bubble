@@ -10,4 +10,4 @@ cd /app
 # Run Django commands using the virtual environment directly
 python3 manage.py migrate
 python3 manage.py createsuperuser --noinput --username admin --email admin@example.com || echo "Superuser already exists"
-exec uvicorn config.asgi:application --host 0.0.0.0 --reload --reload-include '*.html'
+exec uvicorn config.asgi:application --host 0.0.0.0 --reload
