@@ -55,7 +55,7 @@ def notify_session_delete(sender, instance, **kwargs):
         logger.exception("Error sending session delete notification")
 
 
-def send_message_notification(user_id, message_data):
+def send_user_notification(user_id: int, message: str, title: str | None = None):
     """
     Send a message notification to a specific user's WebSocket.
 
@@ -66,13 +66,39 @@ def send_message_notification(user_id, message_data):
     channel_layer = get_channel_layer()
     user_channel = f"user_{user_id}"
 
-    async_to_sync(channel_layer.group_send)(
-        user_channel,
-        {
-            "type": "notification.message",
-            "data": {
-                "type": "new_message",
-                "message": message_data,
-            },
+    payload = {
+        "type": "user.notification",
+        "data": {
+            "type": "notification",
+            "data": {"message": message},
         },
-    )
+    }
+    if title is not None:
+        payload["data"]["title"] = title
+
+    async_to_sync(channel_layer.group_send)(user_channel, payload)
+
+
+def send_message_notification(
+    user_id: int, message: str, booking_uuid: str | None = None
+):
+    """
+    Send a message notification to a specific user's WebSocket.
+
+    Args:
+        user_id: The ID of the user to notify
+        message: The message text to display
+        booking_uuid: Optional booking UUID to include in the notification
+    """
+    channel_layer = get_channel_layer()
+    user_channel = f"user_{user_id}"
+
+    data = {"message": message}
+    if booking_uuid:
+        data["booking"] = booking_uuid
+
+    payload = {
+        "type": "notification.message",
+        "data": {"type": "new_message", "data": data},
+    }
+    async_to_sync(channel_layer.group_send)(user_channel, payload)

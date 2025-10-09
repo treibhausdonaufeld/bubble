@@ -5,6 +5,8 @@ export interface WebSocketMessage {
   type: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data?: any;
+  title?: string;
+  message?: string;
 }
 
 interface UseWebSocketOptions {
@@ -34,6 +36,7 @@ export const useWebSocket = (options: UseWebSocketOptions = {}) => {
   const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const shouldConnectRef = useRef(true);
   const isConnectingRef = useRef(false);
+  const connectionIdRef = useRef(0); // Track connection attempts to prevent race conditions
 
   // Store callbacks in refs to avoid reconnection when they change
   const onMessageRef = useRef(onMessage);
@@ -69,18 +72,37 @@ export const useWebSocket = (options: UseWebSocketOptions = {}) => {
     // Prevent multiple simultaneous connection attempts
     isConnectingRef.current = true;
 
-    // Clean up existing connection
+    // Increment connection ID to track this specific connection attempt
+    const currentConnectionId = ++connectionIdRef.current;
+
+    // Clean up existing connection before creating new one
     if (wsRef.current) {
-      if (
-        wsRef.current.readyState === WebSocket.OPEN ||
-        wsRef.current.readyState === WebSocket.CONNECTING
-      ) {
+      const existingWs = wsRef.current;
+      const readyState = existingWs.readyState;
+
+      if (readyState === WebSocket.OPEN || readyState === WebSocket.CONNECTING) {
         console.log('[WebSocket] Already connected or connecting, skipping...');
         isConnectingRef.current = false;
         return;
       }
-      wsRef.current.close();
+
+      // Force close any existing connection
+      try {
+        existingWs.onopen = null;
+        existingWs.onmessage = null;
+        existingWs.onerror = null;
+        existingWs.onclose = null;
+        existingWs.close();
+      } catch (error) {
+        console.error('[WebSocket] Error closing existing connection:', error);
+      }
       wsRef.current = null;
+    }
+
+    // Clear any pending reconnection attempts
+    if (reconnectTimeoutRef.current) {
+      clearTimeout(reconnectTimeoutRef.current);
+      reconnectTimeoutRef.current = null;
     }
 
     try {
@@ -88,6 +110,13 @@ export const useWebSocket = (options: UseWebSocketOptions = {}) => {
       wsRef.current = ws;
 
       ws.onopen = () => {
+        // Check if this is still the current connection attempt
+        if (currentConnectionId !== connectionIdRef.current) {
+          console.log('[WebSocket] Stale connection opened, closing...');
+          ws.close();
+          return;
+        }
+
         setIsConnected(true);
         setReconnectAttempts(0);
         isConnectingRef.current = false;
@@ -95,6 +124,11 @@ export const useWebSocket = (options: UseWebSocketOptions = {}) => {
       };
 
       ws.onmessage = event => {
+        // Check if this is still the current connection
+        if (currentConnectionId !== connectionIdRef.current) {
+          return;
+        }
+
         try {
           const message = JSON.parse(event.data) as WebSocketMessage;
           onMessageRef.current?.(message);
@@ -104,12 +138,22 @@ export const useWebSocket = (options: UseWebSocketOptions = {}) => {
       };
 
       ws.onerror = event => {
+        // Check if this is still the current connection
+        if (currentConnectionId !== connectionIdRef.current) {
+          return;
+        }
+
         console.error('[WebSocket] Error:', event);
         isConnectingRef.current = false;
         onErrorRef.current?.(event);
       };
 
       ws.onclose = event => {
+        // Check if this is still the current connection
+        if (currentConnectionId !== connectionIdRef.current) {
+          return;
+        }
+
         console.log('[WebSocket] Disconnected:', event.code, event.reason);
         setIsConnected(false);
         wsRef.current = null;
@@ -150,18 +194,31 @@ export const useWebSocket = (options: UseWebSocketOptions = {}) => {
   const disconnect = useCallback(() => {
     shouldConnectRef.current = false;
 
+    // Increment connection ID to invalidate any in-flight connections
+    connectionIdRef.current++;
+
     if (reconnectTimeoutRef.current) {
       clearTimeout(reconnectTimeoutRef.current);
       reconnectTimeoutRef.current = null;
     }
 
     if (wsRef.current) {
-      wsRef.current.close();
+      try {
+        // Remove event handlers to prevent reconnection
+        wsRef.current.onopen = null;
+        wsRef.current.onmessage = null;
+        wsRef.current.onerror = null;
+        wsRef.current.onclose = null;
+        wsRef.current.close();
+      } catch (error) {
+        console.error('[WebSocket] Error during disconnect:', error);
+      }
       wsRef.current = null;
     }
 
     setIsConnected(false);
     setReconnectAttempts(0);
+    isConnectingRef.current = false;
   }, []);
 
   const sendMessage = useCallback((message: WebSocketMessage) => {
@@ -178,7 +235,11 @@ export const useWebSocket = (options: UseWebSocketOptions = {}) => {
       shouldConnectRef.current = true;
 
       // Only connect if not already connected or connecting
-      if (!wsRef.current || wsRef.current.readyState === WebSocket.CLOSED) {
+      if (
+        !wsRef.current ||
+        wsRef.current.readyState === WebSocket.CLOSED ||
+        wsRef.current.readyState === WebSocket.CLOSING
+      ) {
         connect();
       }
     } else {
@@ -186,15 +247,29 @@ export const useWebSocket = (options: UseWebSocketOptions = {}) => {
     }
 
     return () => {
+      // Cleanup on unmount or when authentication changes
       shouldConnectRef.current = false;
+      connectionIdRef.current++;
+
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current);
         reconnectTimeoutRef.current = null;
       }
+
       if (wsRef.current) {
-        wsRef.current.close();
+        try {
+          wsRef.current.onopen = null;
+          wsRef.current.onmessage = null;
+          wsRef.current.onerror = null;
+          wsRef.current.onclose = null;
+          wsRef.current.close();
+        } catch (error) {
+          console.error('[WebSocket] Error during cleanup:', error);
+        }
         wsRef.current = null;
       }
+
+      isConnectingRef.current = false;
     };
     // Only re-run when authentication status changes
     // eslint-disable-next-line react-hooks/exhaustive-deps

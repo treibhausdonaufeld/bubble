@@ -1,5 +1,6 @@
 import { useAuth } from '@/hooks/useAuth';
 import { useWebSocket, WebSocketMessage } from '@/hooks/useWebSocket';
+import { useQueryClient } from '@tanstack/react-query';
 import { ReactNode, useCallback, useEffect } from 'react';
 import { toast } from 'sonner';
 
@@ -9,6 +10,7 @@ interface NotificationProviderProps {
 
 export const NotificationProvider = ({ children }: NotificationProviderProps) => {
   const { signOut } = useAuth();
+  const queryClient = useQueryClient();
 
   const handleMessage = useCallback(
     (message: WebSocketMessage) => {
@@ -47,6 +49,14 @@ export const NotificationProvider = ({ children }: NotificationProviderProps) =>
           toast.info('New Message', {
             description: message.data?.message || 'You have a new message.',
           });
+          // Invalidate bookings to update unread message counts
+          queryClient.invalidateQueries({ queryKey: ['bookings'] });
+          // Invalidate unread messages to update the header badge
+          queryClient.invalidateQueries({ queryKey: ['unread-messages'] });
+          // Invalidate the specific booking's messages if we have the booking UUID
+          if (message.data?.booking) {
+            queryClient.invalidateQueries({ queryKey: ['messages', message.data.booking] });
+          }
           break;
 
         case 'notification':
@@ -60,7 +70,7 @@ export const NotificationProvider = ({ children }: NotificationProviderProps) =>
           console.warn('[Notification] Unknown message type:', message.type);
       }
     },
-    [signOut],
+    [signOut, queryClient],
   );
 
   const handleConnect = useCallback(() => {
