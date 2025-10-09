@@ -283,3 +283,5 @@ db.sqlite3
 .ruff_cache
 
 backend/bubble/media/
+
+compose.override.yaml
