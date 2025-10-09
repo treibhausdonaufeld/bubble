@@ -177,7 +177,7 @@ export const ItemCard = ({
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <div class="flex flex-1 gap-2">
+              <div className="flex flex-1 gap-2">
                 <BookingDialog
                   itemUuid={id}
                   itemName={title}
