@@ -3,7 +3,11 @@ from django.utils.translation import gettext as _
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
 from rest_framework.exceptions import ValidationError
-from rest_framework.permissions import DjangoModelPermissions, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import (
+    DjangoModelPermissions,
+    IsAuthenticated,
+    IsAuthenticatedOrReadOnly,
+)
 
 from bubble.bookings.api.filters import BookingFilter, MessageFilter
 from bubble.bookings.api.serializers import (
@@ -58,7 +62,9 @@ class BookingViewSet(viewsets.ModelViewSet, PublicBookingViewSet):
             .select_related("item", "user", "accepted_by")
             .annotate(
                 unread_messages_count=Count(
-                    "messages", filter=Q(messages__is_read=False)
+                    "messages",
+                    filter=Q(messages__is_read=False)
+                    & ~Q(messages__sender=self.request.user),
                 )
             )
         )
@@ -102,7 +108,7 @@ class MessageViewSet(viewsets.ModelViewSet):
     filterset_class = MessageFilter
     ordering_fields = ["created_at", "sender"]
     ordering = ["-created_at"]
-    permission_classes = [DjangoModelPermissions]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         bookings_for_user = Booking.objects.get_for_user(self.request.user)
@@ -110,3 +116,13 @@ class MessageViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(sender=self.request.user)
+
+    def perform_update(self, serializer):
+        if serializer.validated_data.get("is_read"):
+            # Only allow marking as read, not un-reading
+            if serializer.instance.is_read:
+                return
+            serializer.save(is_read=True)
+        else:
+            msg = _("Only 'is_read' field can be updated.")
+            raise ValidationError(msg)

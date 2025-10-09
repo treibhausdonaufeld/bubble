@@ -37,7 +37,10 @@ export type Booking = {
     accepted_by?: number | null;
     readonly created_at: string;
     readonly updated_at: string;
-    readonly unread_messages_count: string;
+    /**
+     * Return unread_messages_count if it exists as an annotated field.
+     */
+    readonly unread_messages_count: number | null;
 };
 
 /**
@@ -55,7 +58,10 @@ export type BookingList = {
     readonly created_at: string;
     time_from?: string | null;
     time_to?: string | null;
-    readonly unread_messages_count: string;
+    /**
+     * Return unread_messages_count if it exists as an annotated field.
+     */
+    readonly unread_messages_count: number | null;
 };
 
 /**
@@ -264,6 +270,7 @@ export type Message = {
     readonly sender: string;
     readonly created_at: string;
     message: string;
+    is_read?: boolean;
 };
 
 export type PaginatedBookingListList = {
@@ -333,7 +340,10 @@ export type PatchedBooking = {
     accepted_by?: number | null;
     readonly created_at?: string;
     readonly updated_at?: string;
-    readonly unread_messages_count?: string;
+    /**
+     * Return unread_messages_count if it exists as an annotated field.
+     */
+    readonly unread_messages_count?: number | null;
 };
 
 /**
@@ -434,6 +444,7 @@ export type PatchedMessage = {
     readonly sender?: string;
     readonly created_at?: string;
     message?: string;
+    is_read?: boolean;
 };
 
 export type PatchedProfile = {
@@ -684,6 +695,7 @@ export type ItemMinimalWritable = {
 export type MessageWritable = {
     booking: string;
     message: string;
+    is_read?: boolean;
 };
 
 /**
@@ -785,6 +797,7 @@ export type PatchedItemWritable = {
 export type PatchedMessageWritable = {
     booking?: string;
     message?: string;
+    is_read?: boolean;
 };
 
 export type PatchedProfileWritable = {
@@ -1217,6 +1230,7 @@ export type MessagesListData = {
         booking?: string;
         created_at_after?: string;
         created_at_before?: string;
+        is_read?: boolean;
         /**
          * Which field to use when ordering the results.
          */

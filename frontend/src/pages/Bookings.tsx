@@ -9,7 +9,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/hooks/useAuth';
 import { useBooking, useBookings, useUpdateBooking } from '@/hooks/useBookings';
-import { useCreateMessage, useMessages } from '@/hooks/useMessages';
+import { useCreateMessage, useMarkMessageAsRead, useMessages } from '@/hooks/useMessages';
 import { formatPrice } from '@/lib/currency';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
@@ -30,6 +30,7 @@ const Bookings = () => {
     isFetching: isFetchingMessages,
   } = useMessages(selectedBookingId || undefined);
   const createMessageMutation = useCreateMessage();
+  const markMessageAsReadMutation = useMarkMessageAsRead();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const selectedBooking = selectedBookingDetails;
@@ -43,6 +44,7 @@ const Bookings = () => {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messageInputRef = useRef<HTMLInputElement>(null);
+  const markedAsReadRef = useRef<Set<string>>(new Set());
 
   // Select first booking on load
   useMemo(() => {
@@ -57,6 +59,32 @@ const Bookings = () => {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages, selectedBookingId]);
+
+  // Auto-mark unread messages as read when displayed
+  useEffect(() => {
+    if (!messages || !user) return;
+
+    // Find messages that need to be marked as read:
+    // - is_read is false
+    // - sender is not the current user
+    // - not already marked in this session
+    const unreadMessages = messages.filter(
+      message =>
+        message.is_read === false &&
+        message.sender !== user.username &&
+        message.uuid &&
+        !markedAsReadRef.current.has(message.uuid),
+    );
+
+    // Mark each unread message as read
+    unreadMessages.forEach(message => {
+      if (message.uuid) {
+        // Add to marked set immediately to prevent duplicate requests
+        markedAsReadRef.current.add(message.uuid);
+        markMessageAsReadMutation.mutate(message.uuid);
+      }
+    });
+  }, [messages, user, markMessageAsReadMutation]);
 
   const getStatusBadge = (status?: number) => {
     switch (status) {
@@ -186,15 +214,14 @@ const Bookings = () => {
                                         {itemTitle}
                                       </span>
                                       <div className="flex items-center gap-1">
-                                        {booking.unread_messages_count &&
-                                          Number(booking.unread_messages_count) > 0 && (
-                                            <Badge
-                                              variant="destructive"
-                                              className="h-5 min-w-[20px] px-1 text-xs"
-                                            >
-                                              {booking.unread_messages_count}
-                                            </Badge>
-                                          )}
+                                        {booking.unread_messages_count > 0 && (
+                                          <Badge
+                                            variant="destructive"
+                                            className="h-5 min-w-[20px] px-1 text-xs"
+                                          >
+                                            {booking.unread_messages_count}
+                                          </Badge>
+                                        )}
                                         {getStatusBadge(booking.status)}
                                       </div>
                                     </div>
@@ -278,15 +305,14 @@ const Bookings = () => {
                                       {itemTitle}
                                     </span>
                                     <div className="flex items-center gap-1">
-                                      {booking.unread_messages_count &&
-                                        Number(booking.unread_messages_count) > 0 && (
-                                          <Badge
-                                            variant="destructive"
-                                            className="h-5 min-w-[20px] px-1 text-xs"
-                                          >
-                                            {booking.unread_messages_count}
-                                          </Badge>
-                                        )}
+                                      {booking.unread_messages_count > 0 && (
+                                        <Badge
+                                          variant="destructive"
+                                          className="h-5 min-w-[20px] px-1 text-xs"
+                                        >
+                                          {booking.unread_messages_count}
+                                        </Badge>
+                                      )}
                                       {getStatusBadge(booking.status)}
                                     </div>
                                   </div>

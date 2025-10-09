@@ -35,7 +35,7 @@ class BookingSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["uuid", "user", "created_at", "updated_at"]
 
-    def get_unread_messages_count(self, obj):
+    def get_unread_messages_count(self, obj) -> int | None:
         """Return unread_messages_count if it exists as an annotated field."""
         return getattr(obj, "unread_messages_count", None)
 

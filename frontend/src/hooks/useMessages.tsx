@@ -1,5 +1,10 @@
 import { useToast } from '@/hooks/use-toast';
-import { messagesCreate, messagesList, type MessageWritable } from '@/services/django';
+import {
+  messagesCreate,
+  messagesList,
+  messagesPartialUpdate,
+  type MessageWritable,
+} from '@/services/django';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export const useMessages = (bookingUuid?: string) => {
@@ -37,6 +42,29 @@ export const useCreateMessage = () => {
         title: 'Failed to send message',
         description: error?.message || 'Failed to send message. Please try again.',
       });
+    },
+  });
+};
+
+export const useMarkMessageAsRead = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (messageUuid: string) => {
+      const response = await messagesPartialUpdate({
+        path: { uuid: messageUuid },
+        body: { is_read: true },
+      });
+      return response.data;
+    },
+    onSuccess: data => {
+      // Invalidate messages for this booking to refresh the list
+      queryClient.invalidateQueries({ queryKey: ['messages', data.booking] });
+      // Also invalidate bookings to update unread count
+      queryClient.invalidateQueries({ queryKey: ['bookings'] });
+    },
+    onError: (error: Error) => {
+      console.error('Failed to mark message as read:', error);
     },
   });
 };
