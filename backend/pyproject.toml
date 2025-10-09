@@ -8,6 +8,7 @@ dependencies = [
     "anthropic>=0.57.1",
     "argon2-cffi",
     "celery",
+    "channels[daphne,redis]",
     "django",
     "django-allauth[mfa,socialaccount]",
     "django-allow-cidr>=0.8.0",

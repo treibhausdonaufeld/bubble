@@ -1,13 +1,21 @@
-async def websocket_application(scope, receive, send):
-    while True:
-        event = await receive()
+"""WebSocket routing configuration."""
 
-        if event["type"] == "websocket.connect":
-            await send({"type": "websocket.accept"})
+from channels.auth import AuthMiddlewareStack
+from channels.routing import ProtocolTypeRouter, URLRouter
+from django.core.asgi import get_asgi_application
+from django.urls import path
 
-        if event["type"] == "websocket.disconnect":
-            break
+from bubble.core.consumers import NotificationConsumer
 
-        if event["type"] == "websocket.receive":
-            if event["text"] == "ping":
-                await send({"type": "websocket.send", "text": "pong!"})
+# Define WebSocket URL patterns
+websocket_urlpatterns = [
+    path("api/ws/notifications/", NotificationConsumer.as_asgi()),
+]
+
+# Application router that handles both HTTP and WebSocket
+application = ProtocolTypeRouter(
+    {
+        "http": get_asgi_application(),
+        "websocket": AuthMiddlewareStack(URLRouter(websocket_urlpatterns)),
+    }
+)

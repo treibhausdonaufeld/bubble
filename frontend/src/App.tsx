@@ -3,6 +3,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { AuthProvider } from '@/hooks/useAuth';
+import { NotificationProvider } from '@/providers/NotificationProvider';
 import { ThemeProvider } from '@/providers/theme-provider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
@@ -35,24 +36,26 @@ const App = () => (
     <ThemeProvider defaultTheme="system" storageKey="bubble-theme">
       <LanguageProvider>
         <AuthProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/create-item" element={<CreateItem />} />
-                <Route path="/edit-item/:itemUuid" element={<EditItem />} />
-                <Route path="/item/:itemUuid" element={<ItemDetail />} />
-                <Route path="/my-items" element={<MyItems />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/bookings" element={<Bookings />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
-          </TooltipProvider>
+          <NotificationProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/auth" element={<Auth />} />
+                  <Route path="/create-item" element={<CreateItem />} />
+                  <Route path="/edit-item/:itemUuid" element={<EditItem />} />
+                  <Route path="/item/:itemUuid" element={<ItemDetail />} />
+                  <Route path="/my-items" element={<MyItems />} />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/bookings" element={<Bookings />} />
+                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </BrowserRouter>
+            </TooltipProvider>
+          </NotificationProvider>
         </AuthProvider>
       </LanguageProvider>
     </ThemeProvider>

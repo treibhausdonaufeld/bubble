@@ -91,6 +91,7 @@ THIRD_PARTY_APPS = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.openid_connect",
     "allauth.socialaccount.providers.nextcloud",
+    "channels",
     "rest_framework",
     "rest_framework.authtoken",
     "django_filters",
@@ -301,6 +302,16 @@ LOGGING = {
 
 REDIS_URL = env("REDIS_URL", default="redis://redis:6379/0")
 REDIS_SSL = REDIS_URL.startswith("rediss://")
+
+# Channels
+# ------------------------------------------------------------------------------
+ASGI_APPLICATION = "config.asgi.application"
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    },
+}
 
 # Celery
 # ------------------------------------------------------------------------------
