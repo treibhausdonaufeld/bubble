@@ -32,7 +32,32 @@ class MessageFilter(django_filters.FilterSet):
         field_name="created_at", lookup_expr="lte"
     )
     is_read = django_filters.BooleanFilter(field_name="is_read")
+    unread_received = django_filters.BooleanFilter(
+        method="filter_unread_received",
+        label="Unread messages received by current user",
+    )
 
     class Meta:
         model = Message
         fields = ["booking", "sender", "created_at_after", "created_at_before"]
+
+    def filter_unread_received(self, queryset, name, value):
+        """
+        Filter messages that are unread and not sent by the current user.
+        When value is True, returns unread messages from other users.
+        When value is False, returns all other messages (read or sent by user).
+        """
+        if not value:
+            # If False, don't apply this filter (return all messages)
+            return queryset
+
+        # Get the current user from the request
+        request = self.request
+        if not request or not request.user or not request.user.is_authenticated:
+            # If no authenticated user, return empty queryset
+            return queryset.none()
+
+        # Filter for messages that are:
+        # 1. Not sent by the current user
+        # 2. Marked as unread
+        return queryset.exclude(sender=request.user).filter(is_read=False)

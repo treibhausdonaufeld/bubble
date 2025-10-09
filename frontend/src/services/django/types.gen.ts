@@ -1240,6 +1240,10 @@ export type MessagesListData = {
          */
         page?: number;
         sender?: number;
+        /**
+         * Unread messages received by current user
+         */
+        unread_received?: boolean;
     };
     url: '/api/messages/';
 };

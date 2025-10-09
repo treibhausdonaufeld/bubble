@@ -62,9 +62,27 @@ export const useMarkMessageAsRead = () => {
       queryClient.invalidateQueries({ queryKey: ['messages', data.booking] });
       // Also invalidate bookings to update unread count
       queryClient.invalidateQueries({ queryKey: ['bookings'] });
+      // Also invalidate unread messages count
+      queryClient.invalidateQueries({ queryKey: ['unread-messages'] });
     },
     onError: (error: Error) => {
       console.error('Failed to mark message as read:', error);
     },
   });
+};
+
+export const useUnreadMessages = () => {
+  const query = useQuery({
+    queryKey: ['unread-messages'],
+    queryFn: async () => {
+      const response = await messagesList({
+        query: { unread_received: true },
+      });
+      return response.data;
+    },
+    // Refetch every 300 seconds to keep count updated
+    refetchInterval: 300000,
+  });
+
+  return query;
 };

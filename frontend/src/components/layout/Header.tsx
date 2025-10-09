@@ -1,4 +1,5 @@
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -10,6 +11,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/hooks/useAuth';
+import { useUnreadMessages } from '@/hooks/useMessages';
 
 import { cn } from '@/lib/utils';
 import { useTheme } from '@/providers/theme-provider';
@@ -23,8 +25,11 @@ export const Header = () => {
   const { user, signOut, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const { data: unreadMessages } = useUnreadMessages();
 
   const { language, setLanguage, t } = useLanguage();
+
+  const unreadCount = unreadMessages?.count || 0;
 
   const toggleTheme = () => {
     setTheme(theme === 'dark' ? 'light' : 'dark');
@@ -154,10 +159,18 @@ export const Header = () => {
                   variant="ghost"
                   size="icon"
                   onClick={() => navigate('/bookings')}
-                  className="hover:scale-110 transition-transform"
+                  className="hover:scale-110 transition-transform relative"
                   title={t('header.myBookings')}
                 >
                   <NotebookPen className="h-5 w-5" />
+                  {unreadCount > 0 && (
+                    <Badge
+                      variant="destructive"
+                      className="absolute -top-1 -right-1 h-5 min-w-[20px] px-1 text-xs"
+                    >
+                      {unreadCount}
+                    </Badge>
+                  )}
                 </Button>
 
                 {/* Add Item */}

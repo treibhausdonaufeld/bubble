@@ -342,11 +342,11 @@ const Bookings = () => {
             </Card>
 
             {/* Booking Details & Messages - Right Side */}
-            <Card className="col-span-1 md:col-span-2 flex flex-col">
+            <Card className="col-span-1 md:col-span-2 flex flex-col h-[calc(100vh-12rem)]">
               {selectedBooking ? (
                 <>
                   {/* Booking Header */}
-                  <div className="p-4 border-b">
+                  <div className="p-4 border-b flex-shrink-0">
                     <div className="flex items-start gap-4 mb-4">
                       {/* Item Thumbnail */}
                       <a
@@ -562,9 +562,9 @@ const Bookings = () => {
                   </div>
 
                   {/* Messages Area */}
-                  <div className="flex-1 flex flex-col">
-                    <ScrollArea className="flex-1 p-4">
-                      <div className="space-y-4">
+                  <div className="flex-1 flex flex-col min-h-0">
+                    <ScrollArea className="flex-1">
+                      <div className="space-y-4 p-4">
                         {messages.length === 0 ? (
                           <div className="text-center py-8 text-muted-foreground">
                             <p className="text-sm">{t('bookings.noMessages')}</p>
@@ -617,7 +617,7 @@ const Bookings = () => {
 
                   {/* Message Input */}
                   <Separator />
-                  <div className="p-4">
+                  <div className="p-4 flex-shrink-0">
                     <div className="flex gap-2">
                       <Input
                         ref={messageInputRef}
