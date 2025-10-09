@@ -140,7 +140,7 @@ const ItemDetail = () => {
                 {images.map((image, index) => (
                   <CarouselItem key={index}>
                     <img
-                      src={image.original}
+                      src={image.preview || image.original}
                       alt={`${name} ${index + 1}`}
                       className="w-full h-auto object-cover rounded-lg cursor-pointer"
                       onClick={() => setShowAllImages(true)}
@@ -285,7 +285,7 @@ const ItemDetail = () => {
                       onClick={() => setShowAllImages(false)}
                     >
                       <img
-                        src={image.original}
+                        src={image.preview || image.original}
                         alt={`${name} ${index + 1}`}
                         className="max-w-full max-h-full object-contain"
                       />
