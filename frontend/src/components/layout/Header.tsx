@@ -13,7 +13,7 @@ import { useAuth } from '@/hooks/useAuth';
 
 import { cn } from '@/lib/utils';
 import { useTheme } from '@/providers/theme-provider';
-import { Calendar, Languages, LogOut, Moon, Plus, Search, Sun, User } from 'lucide-react';
+import { Languages, LogOut, Moon, NotebookPen, Plus, Search, Sun, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -157,7 +157,7 @@ export const Header = () => {
                   className="hover:scale-110 transition-transform"
                   title={t('header.myBookings')}
                 >
-                  <Calendar className="h-5 w-5" />
+                  <NotebookPen className="h-5 w-5" />
                 </Button>
 
                 {/* Add Item */}

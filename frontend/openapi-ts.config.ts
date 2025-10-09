@@ -1,7 +1,9 @@
 import { defineConfig } from '@hey-api/openapi-ts';
 
+const apiBase = process.env.OPENAPI_URL || process.env.VITE_API_URL || 'http://localhost:8000';
+
 export default defineConfig({
-  input: 'http://localhost:8000/api/schema/',
+  input: `${apiBase.replace(/\/$/, '')}/api/schema/`,
   output: 'src/services/django',
   plugins: [
     {

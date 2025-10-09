@@ -185,7 +185,18 @@ const Bookings = () => {
                                       <span className="font-semibold text-sm line-clamp-1">
                                         {itemTitle}
                                       </span>
-                                      {getStatusBadge(booking.status)}
+                                      <div className="flex items-center gap-1">
+                                        {booking.unread_messages_count &&
+                                          Number(booking.unread_messages_count) > 0 && (
+                                            <Badge
+                                              variant="destructive"
+                                              className="h-5 min-w-[20px] px-1 text-xs"
+                                            >
+                                              {booking.unread_messages_count}
+                                            </Badge>
+                                          )}
+                                        {getStatusBadge(booking.status)}
+                                      </div>
                                     </div>
                                     <div className="flex items-center gap-1 text-xs text-muted-foreground mb-1">
                                       <User className="h-3 w-3" />
@@ -266,7 +277,18 @@ const Bookings = () => {
                                     <span className="font-semibold text-sm line-clamp-1">
                                       {itemTitle}
                                     </span>
-                                    {getStatusBadge(booking.status)}
+                                    <div className="flex items-center gap-1">
+                                      {booking.unread_messages_count &&
+                                        Number(booking.unread_messages_count) > 0 && (
+                                          <Badge
+                                            variant="destructive"
+                                            className="h-5 min-w-[20px] px-1 text-xs"
+                                          >
+                                            {booking.unread_messages_count}
+                                          </Badge>
+                                        )}
+                                      {getStatusBadge(booking.status)}
+                                    </div>
                                   </div>
                                   <div className="flex items-center gap-1 text-xs text-muted-foreground mb-1">
                                     <User className="h-3 w-3" />

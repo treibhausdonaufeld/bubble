@@ -1,3 +1,4 @@
+from django.db.models import Count, Q
 from django.utils.translation import gettext as _
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
@@ -52,8 +53,14 @@ class BookingViewSet(viewsets.ModelViewSet, PublicBookingViewSet):
     permission_classes = [DjangoModelPermissions]
 
     def get_queryset(self):
-        return Booking.objects.get_for_user(self.request.user).select_related(
-            "item", "user", "accepted_by"
+        return (
+            Booking.objects.get_for_user(self.request.user)
+            .select_related("item", "user", "accepted_by")
+            .annotate(
+                unread_messages_count=Count(
+                    "messages", filter=Q(messages__is_read=False)
+                )
+            )
         )
 
     def perform_create(self, serializer):

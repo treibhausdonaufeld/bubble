@@ -31,6 +31,7 @@ class MessageFilter(django_filters.FilterSet):
     created_at_before = django_filters.IsoDateTimeFilter(
         field_name="created_at", lookup_expr="lte"
     )
+    is_read = django_filters.BooleanFilter(field_name="is_read")
 
     class Meta:
         model = Message

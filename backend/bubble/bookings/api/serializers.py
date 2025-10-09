@@ -14,6 +14,7 @@ class BookingSerializer(serializers.ModelSerializer):
     )
     item_details = ItemMinimalSerializer(read_only=True, source="item")
     user = UserSerializer(read_only=True)
+    unread_messages_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Booking
@@ -30,8 +31,13 @@ class BookingSerializer(serializers.ModelSerializer):
             "accepted_by",
             "created_at",
             "updated_at",
+            "unread_messages_count",
         ]
         read_only_fields = ["uuid", "user", "created_at", "updated_at"]
+
+    def get_unread_messages_count(self, obj):
+        """Return unread_messages_count if it exists as an annotated field."""
+        return getattr(obj, "unread_messages_count", None)
 
     def validate(self, attrs):
         """
@@ -72,6 +78,7 @@ class BookingListSerializer(BookingSerializer):
             "created_at",
             "time_from",
             "time_to",
+            "unread_messages_count",
         ]
 
 
@@ -91,5 +98,6 @@ class MessageSerializer(serializers.ModelSerializer):
             "sender",
             "created_at",
             "message",
+            "is_read",
         ]
         read_only_fields = ["uuid", "sender", "created_at"]

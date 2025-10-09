@@ -88,7 +88,6 @@ export const useWebSocket = (options: UseWebSocketOptions = {}) => {
       wsRef.current = ws;
 
       ws.onopen = () => {
-        console.log('[WebSocket] Connected');
         setIsConnected(true);
         setReconnectAttempts(0);
         isConnectingRef.current = false;
@@ -98,7 +97,6 @@ export const useWebSocket = (options: UseWebSocketOptions = {}) => {
       ws.onmessage = event => {
         try {
           const message = JSON.parse(event.data) as WebSocketMessage;
-          console.log('[WebSocket] Message received:', message);
           onMessageRef.current?.(message);
         } catch (error) {
           console.error('[WebSocket] Failed to parse message:', error);
