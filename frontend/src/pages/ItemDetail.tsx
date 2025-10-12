@@ -130,7 +130,7 @@ const ItemDetail = () => {
       <div className="container mx-auto max-w-4xl px-4 py-8">
         <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Back
+          {t('common.back')}
         </Button>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -165,7 +165,7 @@ const ItemDetail = () => {
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Calendar className="h-4 w-4" />
                 <span>
-                  Listed{' '}
+                  {t('itemDetail.listed')}{' '}
                   {formatDistanceToNow(new Date(created_at), {
                     addSuffix: true,
                   })}
@@ -196,7 +196,7 @@ const ItemDetail = () => {
                 <>
                   <Button asChild variant="outline">
                     <Link to={`/edit-item/${item.uuid}`}>
-                      <Edit3 className="mr-2 h-4 w-4" /> Edit
+                      <Edit3 className="mr-2 h-4 w-4" /> {t('common.edit')}
                     </Link>
                   </Button>
                   <AlertDialog>
@@ -207,14 +207,16 @@ const ItemDetail = () => {
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogTitle>{t('itemDetail.deleteConfirmTitle')}</AlertDialogTitle>
                         <AlertDialogDescription>
-                          This action cannot be undone. This will permanently delete your item.
+                          {t('itemDetail.deleteConfirmDescription')}
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
+                        <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleDelete}>
+                          {t('common.delete')}
+                        </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>

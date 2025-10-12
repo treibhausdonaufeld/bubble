@@ -1,3 +1,4 @@
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useToast } from '@/hooks/use-toast';
 import {
   bookingsCreate,
@@ -33,6 +34,7 @@ export const useBooking = (uuid?: string) => {
 
 export const useCreateBooking = () => {
   const { toast } = useToast();
+  const { t } = useLanguage();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -43,15 +45,15 @@ export const useCreateBooking = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['bookings'] });
       toast({
-        title: 'Success',
-        description: 'Booking request created successfully!',
+        title: t('booking.successTitle'),
+        description: t('booking.successCreated'),
       });
     },
     onError: (error: any) => {
       console.error('Error creating booking:', error);
       toast({
-        title: 'Error',
-        description: error?.message || 'Failed to create booking request. Please try again.',
+        title: t('common.error'),
+        description: error?.non_field_errors[0] || t('booking.errorCreate'),
         variant: 'destructive',
       });
     },
@@ -60,6 +62,7 @@ export const useCreateBooking = () => {
 
 export const useUpdateBooking = () => {
   const { toast } = useToast();
+  const { t } = useLanguage();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -73,15 +76,15 @@ export const useUpdateBooking = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['bookings'] });
       toast({
-        title: 'Success',
-        description: 'Booking updated successfully!',
+        title: t('booking.successTitle'),
+        description: t('booking.successUpdated'),
       });
     },
     onError: (error: any) => {
       console.error('Error updating booking:', error);
       toast({
-        title: 'Error',
-        description: error?.message || 'Failed to update booking. Please try again.',
+        title: t('common.error'),
+        description: error?.message || t('booking.errorUpdate'),
         variant: 'destructive',
       });
     },

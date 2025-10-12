@@ -168,6 +168,11 @@ const translations = {
     'booking.rentalStart': 'Rental Start Date & Time',
     'booking.rentalEnd': 'Rental End Date & Time',
     'booking.submitRequest': 'Submit Request',
+    'booking.successTitle': 'Success',
+    'booking.successCreated': 'Booking request created successfully!',
+    'booking.errorCreate': 'Failed to create booking request. Please try again.',
+    'booking.successUpdated': 'Booking updated successfully!',
+    'booking.errorUpdate': 'Failed to update booking. Please try again.',
 
     // Calendar
     'calendar.selectRentalPeriod': 'Select Rental Period',
@@ -226,7 +231,11 @@ const translations = {
     'itemDetail.rentNow': 'Rent Now',
     'itemDetail.itemDetails': 'Item Details',
     'itemDetail.description': 'Description',
+    'itemDetail.listed': 'Listed',
     'itemDetail.ownerInfo': 'Owner Information',
+    'itemDetail.deleteConfirmTitle': 'Are you sure?',
+    'itemDetail.deleteConfirmDescription':
+      'This action cannot be undone. This will permanently delete your item.',
     'itemDetail.notFound': 'Item not found',
     'itemDetail.availability': 'Availability',
 
@@ -426,6 +435,12 @@ const translations = {
     'booking.rentalStart': 'Mietbeginn Datum & Uhrzeit',
     'booking.rentalEnd': 'Mietende Datum & Uhrzeit',
     'booking.submitRequest': 'Anfrage senden',
+    'booking.successTitle': 'Erfolg',
+    'booking.successCreated': 'Buchungsanfrage erfolgreich erstellt!',
+    'booking.errorCreate':
+      'Erstellen der Buchungsanfrage fehlgeschlagen. Bitte versuche es erneut.',
+    'booking.successUpdated': 'Buchung erfolgreich aktualisiert!',
+    'booking.errorUpdate': 'Aktualisierung der Buchung fehlgeschlagen. Bitte versuche es erneut.',
 
     // Calendar
     'calendar.selectRentalPeriod': 'Mietzeitraum auswählen',
@@ -484,7 +499,11 @@ const translations = {
     'itemDetail.rentNow': 'Jetzt mieten',
     'itemDetail.itemDetails': 'Artikel Details',
     'itemDetail.description': 'Beschreibung',
+    'itemDetail.listed': 'Gelistet',
     'itemDetail.ownerInfo': 'Besitzer Informationen',
+    'itemDetail.deleteConfirmTitle': 'Bist du sicher?',
+    'itemDetail.deleteConfirmDescription':
+      'Diese Aktion kann nicht rückgängig gemacht werden. Dieser Artikel wird dauerhaft gelöscht.',
     'itemDetail.notFound': 'Artikel nicht gefunden',
     'itemDetail.availability': 'Verfügbarkeit',
 

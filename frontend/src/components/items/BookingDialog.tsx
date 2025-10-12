@@ -14,6 +14,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useCreateBooking } from '@/hooks/useBookings';
 import { formatPrice } from '@/lib/currency';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface BookingDialogProps {
   itemUuid: string;
@@ -50,6 +51,7 @@ export const BookingDialog = ({
 }: BookingDialogProps) => {
   const { t } = useLanguage();
   const createBookingMutation = useCreateBooking();
+  const navigate = useNavigate();
   const [internalOpen, setInternalOpen] = useState(false);
   const isRental = rentalPrice != null;
   const isControlled =
@@ -126,31 +128,25 @@ export const BookingDialog = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validation
-    if (offerPrice === '' || offerPrice === null) {
-      return;
-    }
+    // Allow empty / null values — backend accepts nulls for offer/time fields
 
-    if (isRental && (!timeFrom || !timeTo)) {
-      return;
-    }
+    const booking = await createBookingMutation.mutateAsync({
+      item: itemUuid,
+      offer: offerPrice === '' ? null : offerPrice,
+      time_from: timeFrom === '' ? null : timeFrom,
+      time_to: timeTo === '' ? null : timeTo,
+      status: 1, // Pending status
+    });
 
-    try {
-      await createBookingMutation.mutateAsync({
-        item: itemUuid,
-        offer: offerPrice,
-        time_from: isRental ? timeFrom : null,
-        time_to: isRental ? timeTo : null,
-        status: 1, // Pending status
-      });
+    // Reset form and close dialog
+    setOfferPrice('');
+    setTimeFrom('');
+    setTimeTo('');
+    setDialogOpen(false);
 
-      // Reset form and close dialog
-      setOfferPrice('');
-      setTimeFrom('');
-      setTimeTo('');
-      setDialogOpen(false);
-    } catch (error) {
-      // Error is handled by the mutation hook
+    // If backend returned the created booking with a UUID, navigate to it
+    if (booking && (booking as any).uuid) {
+      navigate(`/bookings`);
     }
   };
   return (
@@ -204,7 +200,6 @@ export const BookingDialog = ({
                     step="3600"
                     value={timeFrom}
                     onChange={e => setTimeFrom(e.target.value)}
-                    required
                   />
                 </div>
 
@@ -219,7 +214,6 @@ export const BookingDialog = ({
                     step="3600"
                     value={timeTo}
                     onChange={e => setTimeTo(e.target.value)}
-                    required
                     min={timeFrom}
                   />
                 </div>
@@ -254,7 +248,6 @@ export const BookingDialog = ({
                 placeholder={t('booking.enterYourOffer')}
                 value={offerPrice}
                 onChange={e => setOfferPrice(e.target.value)}
-                required
               />
             </div>
           </div>

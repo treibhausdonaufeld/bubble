@@ -1,6 +1,7 @@
+from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
-from bubble.bookings.models import Booking, Message
+from bubble.bookings.models import Booking, BookingStatus, Message
 from bubble.items.api.serializers import ItemMinimalSerializer
 from bubble.items.models import Item
 from bubble.users.api.serializers import UserSerializer
@@ -59,6 +60,18 @@ class BookingSerializer(serializers.ModelSerializer):
                         "The item does not allow open-ended rentals."
                     )
                 }
+            )
+
+        # check that no pending booking request for the same item and user exists
+        user = self.context["request"].user
+        if (
+            not self.instance
+            and Booking.objects.filter(
+                item=item, user=user, status=BookingStatus.PENDING
+            ).exists()
+        ):
+            raise serializers.ValidationError(
+                _("You already have a pending booking request for this item.")
             )
 
         return super().validate(attrs)
