@@ -84,7 +84,7 @@ export const useUpdateBooking = () => {
       console.error('Error updating booking:', error);
       toast({
         title: t('common.error'),
-        description: error?.message || t('booking.errorUpdate'),
+        description: JSON.stringify(error) || t('booking.errorUpdate'),
         variant: 'destructive',
       });
     },

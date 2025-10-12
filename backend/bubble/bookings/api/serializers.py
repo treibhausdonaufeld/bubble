@@ -74,7 +74,60 @@ class BookingSerializer(serializers.ModelSerializer):
                 _("You already have a pending booking request for this item.")
             )
 
+        # validate offer and counter_offer logic
+        offer = attrs.get("offer", None)
+        booking_status = attrs.get("status", None) or getattr(
+            self.instance, "status", None
+        )
+        if offer is not None and booking_status != BookingStatus.PENDING:
+            raise serializers.ValidationError(
+                {"offer": _("Offer can only be set for pending bookings.")}
+            )
+        counter_offer = attrs.get("counter_offer", None)
+        if counter_offer is not None and booking_status != BookingStatus.PENDING:
+            raise serializers.ValidationError(
+                {
+                    "counter_offer": _(
+                        "Counter-offer can only be set for pending bookings."
+                    )
+                }
+            )
+
         return super().validate(attrs)
+
+    def validate_status(self, value):
+        """Ensure that status is a valid BookingStatus."""
+        user = self.context["request"].user
+
+        if (
+            self.instance
+            and user == self.instance.user
+            and value not in (BookingStatus.CANCELLED, BookingStatus.PENDING)
+        ):
+            msg = _("Invalid status change.")
+            raise serializers.ValidationError(msg)
+
+        return value
+
+    def validate_offer(self, value):
+        """Ensure that offer can only be updated for pending items"""
+        user = self.context["request"].user
+
+        if self.instance and user != self.instance.user:
+            msg = _("You cannot set an offer if you're not the owner.")
+            raise serializers.ValidationError(msg)
+
+        return value
+
+    def validate_counter_offer(self, value):
+        """Ensure that counter_offer can only be changed by the item owner."""
+        user = self.context["request"].user
+
+        if self.instance and user == self.instance.user:
+            msg = _("You cannot set a counter-offer on your own booking.")
+            raise serializers.ValidationError(msg)
+
+        return value
 
 
 class BookingListSerializer(BookingSerializer):

@@ -1,3 +1,5 @@
+import BookingCounterOfferDialog from '@/components/bookings/BookingCounterOfferDialog';
+import BookingEditDialog from '@/components/bookings/BookingEditDialog';
 import { Header } from '@/components/layout/Header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -398,6 +400,13 @@ const Bookings = () => {
                       </div>
 
                       {/* Status Badge */}
+                      {/* Edit booking if current user is the booking owner */}
+                      {user &&
+                        selectedBooking.user &&
+                        selectedBooking.status == 1 &&
+                        user.username === selectedBooking.user.username && (
+                          <BookingEditDialog booking={selectedBooking} />
+                        )}
                       <div className="flex-shrink-0">{getStatusBadge(selectedBooking.status)}</div>
                     </div>
 
@@ -463,44 +472,47 @@ const Bookings = () => {
                           ) : (
                             // Item owner can accept or reject
                             <>
-                              <Button
-                                size="sm"
-                                className="bg-green-500 hover:bg-green-600"
-                                onClick={async () => {
-                                  try {
-                                    await updateBookingMutation.mutateAsync({
-                                      uuid: selectedBooking.uuid,
-                                      data: { status: 3 }, // Confirmed
-                                    });
-                                  } catch (error) {
-                                    console.error('Error accepting booking:', error);
-                                  }
-                                }}
-                                disabled={updateBookingMutation.isPending}
-                              >
-                                {updateBookingMutation.isPending
-                                  ? t('common.submitting')
-                                  : t('bookings.accept')}
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="destructive"
-                                onClick={async () => {
-                                  try {
-                                    await updateBookingMutation.mutateAsync({
-                                      uuid: selectedBooking.uuid,
-                                      data: { status: 5 }, // Rejected
-                                    });
-                                  } catch (error) {
-                                    console.error('Error rejecting booking:', error);
-                                  }
-                                }}
-                                disabled={updateBookingMutation.isPending}
-                              >
-                                {updateBookingMutation.isPending
-                                  ? t('common.submitting')
-                                  : t('bookings.reject')}
-                              </Button>
+                              <div className="flex items-center">
+                                <BookingCounterOfferDialog booking={selectedBooking} />
+                                <Button
+                                  size="sm"
+                                  className="bg-green-500 hover:bg-green-600"
+                                  onClick={async () => {
+                                    try {
+                                      await updateBookingMutation.mutateAsync({
+                                        uuid: selectedBooking.uuid,
+                                        data: { status: 3 }, // Confirmed
+                                      });
+                                    } catch (error) {
+                                      console.error('Error accepting booking:', error);
+                                    }
+                                  }}
+                                  disabled={updateBookingMutation.isPending}
+                                >
+                                  {updateBookingMutation.isPending
+                                    ? t('common.submitting')
+                                    : t('bookings.accept')}
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="destructive"
+                                  onClick={async () => {
+                                    try {
+                                      await updateBookingMutation.mutateAsync({
+                                        uuid: selectedBooking.uuid,
+                                        data: { status: 5 }, // Rejected
+                                      });
+                                    } catch (error) {
+                                      console.error('Error rejecting booking:', error);
+                                    }
+                                  }}
+                                  disabled={updateBookingMutation.isPending}
+                                >
+                                  {updateBookingMutation.isPending
+                                    ? t('common.submitting')
+                                    : t('bookings.reject')}
+                                </Button>
+                              </div>
                             </>
                           )}
                         </div>

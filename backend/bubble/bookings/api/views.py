@@ -81,18 +81,6 @@ class BookingViewSet(viewsets.ModelViewSet, PublicBookingViewSet):
         else:
             serializer.save(user=self.request.user)
 
-    def perform_update(self, serializer):
-        """Make sure that the user can only set status to certain values"""
-        if (
-            self.request.user == serializer.instance.user
-            and serializer.validated_data.get("status")
-            not in (BookingStatus.CANCELLED, BookingStatus.PENDING)
-        ):
-            msg = _("Invalid status change.")
-            raise ValidationError(msg)
-
-        serializer.save()
-
 
 class MessageViewSet(viewsets.ModelViewSet):
     """ViewSet for messages related to bookings.
