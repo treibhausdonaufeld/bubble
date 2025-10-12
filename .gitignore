@@ -15,8 +15,6 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
-lib64/
 parts/
 sdist/
 var/
@@ -271,8 +269,6 @@ tags
 dump.rdb
 
 ### Project template
-bubble/media/
-
 .pytest_cache/
 .ipython/
 bubble/static/webpack_bundles/
@@ -283,3 +279,9 @@ webpack-stats.json
 
 db.sqlite3
 .envs/.local/.allauth
+
+.ruff_cache
+
+backend/bubble/media/
+
+compose.override.yaml

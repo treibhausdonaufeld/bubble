@@ -1,0 +1,52 @@
+
+server {
+    include mime.types;
+    types {
+        text/javascript js mjs;
+    }
+
+    listen 8888 default_server;
+    listen [::]:8888 default_server;
+
+    server_name  "~^(?<subdomain>[^\.]*)\.?(?<domain>.*)$";
+
+    client_max_body_size 500m;
+    index index.html index.htm;
+
+    server_tokens off;
+
+    # add default headers
+    # add_header Content-Security-Policy $csp always;
+    # add_header X-XSS-Protection "1; mode=block";
+    # add_header Referrer-Policy 'strict-origin-when-cross-origin';
+    # add_header Permissions-Policy "geolocation=(),midi=(),sync-xhr=(),microphone=(),camera=(),magnetometer=(),gyroscope=(),fullscreen=(self),payment=()";
+    # add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+    # add_header X-Content-Type-Options  "nosniff";
+    # add_header Cache-Control "no-cache, no-store, max-age=0, must-revalidate";
+    # add_header Expires "0";
+    # add_header Pragma "no-cache";
+
+    root /usr/share/nginx/html;
+
+    location / {
+        index index.html index.htm;
+        try_files $uri $uri/ /index.html;
+    }
+
+    # Environment configuration endpoint
+    location = /env-config.js {
+        add_header Content-Type "application/javascript";
+        add_header Cache-Control "no-cache, no-store, must-revalidate";
+        add_header Pragma "no-cache";
+        add_header Expires "0";
+        return 200 'window._env_ = {
+  VITE_API_URL: "${VITE_API_URL}"
+};';
+    }
+
+    # Cache static assets
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+}
