@@ -107,10 +107,7 @@ export type Image = {
  */
 export type Item = {
     readonly images: Array<Image>;
-    /**
-     * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
-     */
-    readonly username: string;
+    readonly user: string;
     readonly first_image: string;
     sale_price?: string | null;
     rental_price?: string | null;
@@ -173,17 +170,13 @@ export type Item = {
     condition?: ConditionEnum;
     active?: boolean;
     status?: Status402Enum;
-    readonly user: number;
 };
 
 /**
  * Lightweight serializer for item lists.
  */
 export type ItemList = {
-    /**
-     * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
-     */
-    readonly username: string;
+    readonly user: string;
     readonly first_image: string;
     sale_price?: string | null;
     rental_price?: string | null;
@@ -246,7 +239,6 @@ export type ItemList = {
     condition?: ConditionEnum;
     active?: boolean;
     status?: Status402Enum;
-    readonly user: number;
 };
 
 /**
@@ -366,10 +358,7 @@ export type PatchedImage = {
  */
 export type PatchedItem = {
     readonly images?: Array<Image>;
-    /**
-     * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
-     */
-    readonly username?: string;
+    readonly user?: string;
     readonly first_image?: string;
     sale_price?: string | null;
     rental_price?: string | null;
@@ -432,7 +421,6 @@ export type PatchedItem = {
     condition?: ConditionEnum;
     active?: boolean;
     status?: Status402Enum;
-    readonly user?: number;
 };
 
 /**
@@ -457,6 +445,7 @@ export type PatchedProfile = {
 };
 
 export type PatchedUser = {
+    readonly uuid?: string;
     /**
      * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
      */
@@ -507,6 +496,7 @@ export type Status402Enum = 0 | 1 | 2 | 3 | 4 | 5;
 export type StatusE2dEnum = 1 | 2 | 3 | 4 | 5;
 
 export type User = {
+    readonly uuid: string;
     /**
      * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
      */
@@ -806,10 +796,40 @@ export type PatchedProfileWritable = {
     profile_image?: string | null;
 };
 
+export type PatchedUserWritable = {
+    /**
+     * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
+     */
+    username?: string;
+    /**
+     * Name of User
+     */
+    name?: string;
+    /**
+     * Email address
+     */
+    email?: string;
+};
+
 export type ProfileWritable = {
     phone?: string;
     bio?: string;
     profile_image?: string | null;
+};
+
+export type UserWritable = {
+    /**
+     * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
+     */
+    username: string;
+    /**
+     * Name of User
+     */
+    name?: string;
+    /**
+     * Email address
+     */
+    email?: string;
 };
 
 export type AuthTokenCreateData = {
@@ -1559,13 +1579,10 @@ export type UsersListResponse = UsersListResponses[keyof UsersListResponses];
 export type UsersRetrieveData = {
     body?: never;
     path: {
-        /**
-         * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
-         */
-        username: string;
+        uuid: string;
     };
     query?: never;
-    url: '/api/users/{username}/';
+    url: '/api/users/{uuid}/';
 };
 
 export type UsersRetrieveResponses = {
@@ -1575,15 +1592,12 @@ export type UsersRetrieveResponses = {
 export type UsersRetrieveResponse = UsersRetrieveResponses[keyof UsersRetrieveResponses];
 
 export type UsersPartialUpdateData = {
-    body?: PatchedUser;
+    body?: PatchedUserWritable;
     path: {
-        /**
-         * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
-         */
-        username: string;
+        uuid: string;
     };
     query?: never;
-    url: '/api/users/{username}/';
+    url: '/api/users/{uuid}/';
 };
 
 export type UsersPartialUpdateResponses = {
@@ -1593,15 +1607,12 @@ export type UsersPartialUpdateResponses = {
 export type UsersPartialUpdateResponse = UsersPartialUpdateResponses[keyof UsersPartialUpdateResponses];
 
 export type UsersUpdateData = {
-    body: User;
+    body: UserWritable;
     path: {
-        /**
-         * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
-         */
-        username: string;
+        uuid: string;
     };
     query?: never;
-    url: '/api/users/{username}/';
+    url: '/api/users/{uuid}/';
 };
 
 export type UsersUpdateResponses = {

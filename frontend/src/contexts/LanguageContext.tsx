@@ -260,6 +260,9 @@ const translations = {
     'rentalPeriod.h': 'Hourly',
     'rentalPeriod.d': 'Daily',
     'rentalPeriod.w': 'Weekly',
+    // User labels
+    'user.name': 'Name',
+    'user.email': 'Email',
   },
   de: {
     // Header
@@ -515,6 +518,9 @@ const translations = {
     'rentalPeriod.h': 'Stündlich',
     'rentalPeriod.d': 'Täglich',
     'rentalPeriod.w': 'Wöchentlich',
+    // User labels
+    'user.name': 'Name',
+    'user.email': 'E-Mail',
   },
 };
 

@@ -57,9 +57,7 @@ class ItemSerializer(serializers.ModelSerializer):
     """Serializer for Item model."""
 
     images = ImageSerializer(many=True, read_only=True)
-    username = serializers.SlugRelatedField(
-        read_only=True, source="user", slug_field="username"
-    )
+    user = serializers.SlugRelatedField(read_only=True, slug_field="uuid")
     first_image = serializers.SerializerMethodField()
     sale_price = MoneyField(**money_defaults, required=False, allow_null=True)
     rental_price = MoneyField(**money_defaults, required=False, allow_null=True)

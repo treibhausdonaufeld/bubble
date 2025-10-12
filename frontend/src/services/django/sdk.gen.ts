@@ -938,7 +938,7 @@ export const usersRetrieve = <ThrowOnError extends boolean = true>(options: Opti
                 type: 'apiKey'
             }
         ],
-        url: '/api/users/{username}/',
+        url: '/api/users/{uuid}/',
         ...options
     });
 };
@@ -956,7 +956,7 @@ export const usersPartialUpdate = <ThrowOnError extends boolean = true>(options:
                 type: 'apiKey'
             }
         ],
-        url: '/api/users/{username}/',
+        url: '/api/users/{uuid}/',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -978,7 +978,7 @@ export const usersUpdate = <ThrowOnError extends boolean = true>(options: Option
                 type: 'apiKey'
             }
         ],
-        url: '/api/users/{username}/',
+        url: '/api/users/{uuid}/',
         ...options,
         headers: {
             'Content-Type': 'application/json',

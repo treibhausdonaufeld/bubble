@@ -1,3 +1,5 @@
+import uuid
+
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import CharField
@@ -17,6 +19,8 @@ class User(AbstractUser):
     """
 
     # First and last name do not cover name patterns around the globe
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+
     name = CharField(_("Name of User"), blank=True, max_length=255)
     first_name = None  # type: ignore[assignment]
     last_name = None  # type: ignore[assignment]
@@ -44,9 +48,6 @@ class Profile(models.Model):
     bio = models.TextField(blank=True)
     profile_image = models.ImageField(upload_to="users/", blank=True, null=True)
     profile_image_alt = models.CharField(max_length=255, blank=True)
-    is_superuser = models.BooleanField(default=False)
-    last_login = models.DateTimeField(blank=True, null=True)
-    date_joined = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.user.username}'s Profile"

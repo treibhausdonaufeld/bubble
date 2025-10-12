@@ -22,6 +22,7 @@ import {
   CarouselPrevious,
 } from '@/components/ui/carousel';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import UserInfoBox from '@/components/users/UserInfoBox';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/hooks/useAuth';
 import { useItem } from '@/hooks/useItem';
@@ -184,6 +185,9 @@ const ItemDetail = () => {
             </div>
 
             <p className="text-muted-foreground">{description}</p>
+
+            {/* Show owner details to logged-in users */}
+            {user && <UserInfoBox userUuid={item.user} />}
 
             {/* Action Buttons */}
             <div className="flex items-center gap-2 pt-4">
