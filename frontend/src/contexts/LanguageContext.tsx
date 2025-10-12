@@ -80,6 +80,7 @@ const translations = {
     'editItem.aiMagicWarningCancel': 'Cancel',
     'editItem.aiMagicWarningContinue': 'Continue',
     'editItem.aiMagicImage': 'Generate Image',
+    'editItem.scanIsbn': 'Scan ISBN',
 
     // Categories
     'categories.all': 'All Categories',
@@ -302,6 +303,14 @@ const translations = {
     // User labels
     'user.name': 'Name',
     'user.email': 'Email',
+    // Scanner
+    'scanner.open': 'Open scanner',
+    'scanner.title': 'Scan Barcode',
+    'scanner.description': 'Position the barcode within the camera view to scan',
+    'scanner.usingNative': 'Using native BarcodeDetector',
+    'scanner.usingPolyfill': 'Using barcode-detector polyfill',
+    'scanner.initializingCamera': 'Initializing camera...',
+    'scanner.detected': 'Detected',
   },
   de: {
     // Header
@@ -377,6 +386,7 @@ const translations = {
     'editItem.aiMagicWarningCancel': 'Abbrechen',
     'editItem.aiMagicWarningContinue': 'Fortfahren',
     'editItem.aiMagicImage': 'Bild generieren',
+    'editItem.scanIsbn': 'ISBN scannen',
 
     // Categories
     'categories.all': 'Alle Kategorien',
@@ -598,6 +608,14 @@ const translations = {
     // User labels
     'user.name': 'Name',
     'user.email': 'E-Mail',
+    // Scanner
+    'scanner.open': 'Scanner öffnen',
+    'scanner.title': 'Barcode scannen',
+    'scanner.description': 'Positioniere den Barcode im Kamerabereich, um zu scannen',
+    'scanner.usingNative': 'Verwendet native BarcodeDetector-API',
+    'scanner.usingPolyfill': 'Verwendet barcode-detector Polyfill',
+    'scanner.initializingCamera': 'Kamera wird initialisiert...',
+    'scanner.detected': 'Erkannt',
   },
 };
 

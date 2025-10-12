@@ -1,3 +1,4 @@
+import { BarcodeScanner } from '@/components/items/BarcodeScanner';
 import { ImageManager } from '@/components/items/ImageManager';
 import {
   BasicFields,
@@ -423,17 +424,25 @@ const EditBook = () => {
               />
 
               {/* Book-specific fields */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* ISBN, Year, Topic - compact row */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="isbn">{t('editItem.isbn')}</Label>
-                  <Input
-                    id="isbn"
-                    type="text"
-                    placeholder={t('editItem.enterIsbn')}
-                    value={formData.isbn}
-                    onChange={e => setFormData({ ...formData, isbn: e.target.value })}
-                    disabled={aiProcessing}
-                  />
+                  <div className="flex gap-2">
+                    <Input
+                      id="isbn"
+                      type="text"
+                      placeholder={t('editItem.enterIsbn')}
+                      value={formData.isbn}
+                      onChange={e => setFormData({ ...formData, isbn: e.target.value })}
+                      disabled={aiProcessing}
+                      className="flex-1"
+                    />
+                    <BarcodeScanner
+                      onScan={code => setFormData({ ...formData, isbn: code })}
+                      title={t('editItem.scanIsbn')}
+                    />
+                  </div>
                 </div>
 
                 <div className="space-y-2">
@@ -447,66 +456,70 @@ const EditBook = () => {
                     disabled={aiProcessing}
                   />
                 </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="topic">{t('editItem.topic')}</Label>
+                  <Input
+                    id="topic"
+                    type="text"
+                    placeholder={t('editItem.enterTopic')}
+                    value={formData.topic}
+                    onChange={e => setFormData({ ...formData, topic: e.target.value })}
+                    disabled={aiProcessing}
+                  />
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="topic">{t('editItem.topic')}</Label>
-                <Input
-                  id="topic"
-                  type="text"
-                  placeholder={t('editItem.enterTopic')}
-                  value={formData.topic}
-                  onChange={e => setFormData({ ...formData, topic: e.target.value })}
-                  disabled={aiProcessing}
-                />
+              {/* Authors and Genres - 2 column row */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="authors">{t('editItem.authors')}</Label>
+                  <Select
+                    value={formData.author_uuids.join(',')}
+                    onValueChange={value => {
+                      const uuids = value ? value.split(',').filter(Boolean) : [];
+                      setFormData({ ...formData, author_uuids: uuids });
+                    }}
+                    disabled={aiProcessing}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder={t('editItem.selectAuthors')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {authors?.map((author: Author) => (
+                        <SelectItem key={author.uuid} value={author.uuid}>
+                          {author.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="genres">{t('editItem.genres')}</Label>
+                  <Select
+                    value={formData.genre_uuids.join(',')}
+                    onValueChange={value => {
+                      const uuids = value ? value.split(',').filter(Boolean) : [];
+                      setFormData({ ...formData, genre_uuids: uuids });
+                    }}
+                    disabled={aiProcessing}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder={t('editItem.selectGenres')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {genres?.map((genre: Genre) => (
+                        <SelectItem key={genre.uuid} value={genre.uuid}>
+                          {genre.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="authors">{t('editItem.authors')}</Label>
-                <Select
-                  value={formData.author_uuids.join(',')}
-                  onValueChange={value => {
-                    const uuids = value ? value.split(',').filter(Boolean) : [];
-                    setFormData({ ...formData, author_uuids: uuids });
-                  }}
-                  disabled={aiProcessing}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder={t('editItem.selectAuthors')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {authors?.map((author: Author) => (
-                      <SelectItem key={author.uuid} value={author.uuid}>
-                        {author.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="genres">{t('editItem.genres')}</Label>
-                <Select
-                  value={formData.genre_uuids.join(',')}
-                  onValueChange={value => {
-                    const uuids = value ? value.split(',').filter(Boolean) : [];
-                    setFormData({ ...formData, genre_uuids: uuids });
-                  }}
-                  disabled={aiProcessing}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder={t('editItem.selectGenres')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {genres?.map((genre: Genre) => (
-                      <SelectItem key={genre.uuid} value={genre.uuid}>
-                        {genre.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
+              {/* Publisher and Shelf - 2 column row */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="publisher">{t('editItem.publisher')}</Label>
