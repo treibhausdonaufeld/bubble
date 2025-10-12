@@ -7,10 +7,10 @@ from bubble.users.models import User
 @pytest.mark.django_db
 def test_user_detail(user: User):
     assert (
-        reverse("api:user-detail", kwargs={"username": user.username})
-        == f"/api/users/{user.username}/"
+        reverse("api:user-detail", kwargs={"uuid": user.uuid})
+        == f"/api/users/{user.uuid}/"
     )
-    assert resolve(f"/api/users/{user.username}/").view_name == "api:user-detail"
+    assert resolve(f"/api/users/{user.uuid}/").view_name == "api:user-detail"
 
 
 def test_user_list():

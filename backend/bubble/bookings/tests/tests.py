@@ -52,7 +52,7 @@ class BookingAutoConfirmTestCase(APITestCase):
             format="json",
         )
 
-        assert response.status_code == status.HTTP_201_CREATED
+        assert response.status_code == status.HTTP_201_CREATED, response.content
         assert response.data["status"] == BookingStatus.PENDING
 
         # Verify in database

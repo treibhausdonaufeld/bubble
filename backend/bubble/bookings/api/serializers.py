@@ -79,12 +79,20 @@ class BookingSerializer(serializers.ModelSerializer):
         booking_status = attrs.get("status", None) or getattr(
             self.instance, "status", None
         )
-        if offer is not None and booking_status != BookingStatus.PENDING:
+        if (
+            self.instance
+            and offer is not None
+            and booking_status != BookingStatus.PENDING
+        ):
             raise serializers.ValidationError(
                 {"offer": _("Offer can only be set for pending bookings.")}
             )
         counter_offer = attrs.get("counter_offer", None)
-        if counter_offer is not None and booking_status != BookingStatus.PENDING:
+        if (
+            self.instance
+            and counter_offer is not None
+            and booking_status != BookingStatus.PENDING
+        ):
             raise serializers.ValidationError(
                 {
                     "counter_offer": _(
