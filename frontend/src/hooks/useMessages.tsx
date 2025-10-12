@@ -1,4 +1,5 @@
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 import {
   messagesCreate,
   messagesList,
@@ -72,6 +73,8 @@ export const useMarkMessageAsRead = () => {
 };
 
 export const useUnreadMessages = () => {
+  const { user, loading: authLoading } = useAuth();
+
   const query = useQuery({
     queryKey: ['unread-messages'],
     queryFn: async () => {
@@ -80,6 +83,8 @@ export const useUnreadMessages = () => {
       });
       return response.data;
     },
+    // Only enable when auth finished loading and we have a user
+    enabled: !authLoading && !!user,
     // Refetch every 300 seconds to keep count updated
     refetchInterval: 300000,
   });
