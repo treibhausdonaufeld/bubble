@@ -7,6 +7,16 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: '::',
     port: 8080,
+    allowedHosts: ['fabian-local-dev.treibhausdonaufeld.at'],
+    // Proxy API requests to Django backend
+    proxy: {
+      '^/(api|static|admin|accounts|media)/.*': {
+        target: process.env.VITE_API_URL || 'http://localhost:9000',
+        changeOrigin: false,
+        secure: false,
+      },
+    },
+
     // Prevent watching Docker-mounted DB/storage volumes that can’t be watched (EINVAL)
     watch: {
       ignored: ['**/volumes/**'],
