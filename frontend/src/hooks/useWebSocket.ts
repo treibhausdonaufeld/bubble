@@ -54,7 +54,8 @@ export const useWebSocket = (options: UseWebSocketOptions = {}) => {
 
   const getWebSocketUrl = useCallback(() => {
     // Get API URL from environment variable or window._env_, fallback to http://localhost:8000
-    const apiUrl = import.meta.env.VITE_API_URL || window._env_?.VITE_API_URL || '';
+    const apiUrl =
+      import.meta.env.VITE_API_URL || window._env_?.VITE_API_URL || window.location.origin;
 
     // Parse the API URL to extract host
     const url = new URL(apiUrl);

@@ -10,8 +10,14 @@ export default defineConfig(({ mode }) => ({
     allowedHosts: ['fabian-local-dev.treibhausdonaufeld.at'],
     // Proxy API requests to Django backend
     proxy: {
+      '/api/ws/': {
+        target: process.env.VITE_PROXY_URL || 'http://localhost:8000',
+        changeOrigin: false,
+        ws: true,
+        secure: false,
+      },
       '^/(api|static|admin|accounts|media)/.*': {
-        target: process.env.VITE_API_URL || 'http://localhost:9000',
+        target: process.env.VITE_PROXY_URL || 'http://localhost:8000',
         changeOrigin: false,
         secure: false,
       },
