@@ -2,8 +2,9 @@ import uuid
 
 from django.db import models
 from django.utils.translation import gettext as _
+from simple_history.models import HistoricalRecords
 
-from bubble.items.models import Item
+from bubble.items.models import Item, ItemManager
 
 
 class Author(models.Model):
@@ -86,6 +87,9 @@ class Book(Item):
     authors = models.ManyToManyField(
         Author, related_name="books", help_text=_("Book authors")
     )
+    language = models.CharField(
+        max_length=50, blank=True, help_text=_("Language of the book")
+    )
     year = models.PositiveIntegerField(
         blank=True, null=True, help_text=_("Publication year")
     )
@@ -103,6 +107,8 @@ class Book(Item):
     genres = models.ManyToManyField(
         Genre, related_name="books", blank=True, help_text=_("Book genres")
     )
+
+    # location management
     shelf = models.ForeignKey(
         Shelf,
         on_delete=models.SET_NULL,
@@ -111,3 +117,7 @@ class Book(Item):
         null=True,
         help_text=_("Shelf location"),
     )
+
+    history = HistoricalRecords()
+
+    objects = ItemManager()

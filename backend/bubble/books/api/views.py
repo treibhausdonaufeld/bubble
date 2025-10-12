@@ -1,8 +1,12 @@
 """API views for books."""
 
+from django.http import Http404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
-from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
+from rest_framework.permissions import (
+    DjangoModelPermissions,
+    DjangoModelPermissionsOrAnonReadOnly,
+)
 
 from bubble.books.api.filters import (
     AuthorFilter,
@@ -20,6 +24,7 @@ from bubble.books.api.serializers import (
     ShelfSerializer,
 )
 from bubble.books.models import Author, Book, Genre, Publisher, Shelf
+from bubble.items.models import Item
 
 
 class AuthorViewSet(viewsets.ModelViewSet):
@@ -134,6 +139,10 @@ class BookViewSet(viewsets.ModelViewSet):
     """
     ViewSet for managing books.
 
+    Dynamically includes both Book instances and Items with category='books'.
+    When an Item with category='books' is accessed, it's automatically promoted
+    to a Book instance via signals.
+
     list: Get all books
     retrieve: Get a specific book by UUID
     create: Create a new book
@@ -142,13 +151,8 @@ class BookViewSet(viewsets.ModelViewSet):
     destroy: Delete a book
     """
 
-    queryset = (
-        Book.objects.all()
-        .select_related("user", "verlag", "shelf")
-        .prefetch_related("authors", "genres", "images")
-    )
     serializer_class = BookSerializer
-    permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
+    permission_classes = [DjangoModelPermissions]
     lookup_field = "uuid"
     filterset_class = BookFilter
     filter_backends = [
@@ -160,8 +164,41 @@ class BookViewSet(viewsets.ModelViewSet):
     ordering_fields = ["created_at", "updated_at", "year", "name"]
     ordering = ["-created_at"]
 
+    def get_queryset(self):
+        return (
+            Book.objects.get_for_user(self.request.user)
+            .select_related("user", "verlag", "shelf")
+            .prefetch_related("authors", "genres", "images")
+        )
+
     def get_serializer_class(self):
         """Return appropriate serializer class based on action."""
         if self.action == "list":
             return BookListSerializer
         return BookSerializer
+
+    def get_object(self):
+        """
+        Returns the object the view is displaying.
+
+        You may want to override this if you need to provide non-standard
+        queryset lookups.  Eg if objects are referenced using multiple
+        keyword arguments in the url conf.
+        """
+        # Perform the lookup filtering.
+        lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
+
+        try:
+            obj = super().get_object()
+        except Http404:
+            try:
+                item = Item.objects.get(uuid=self.kwargs[lookup_url_kwarg])
+                # Create temporary book instance for response
+                obj = Book(item_ptr_id=item.pk)
+                obj.__dict__.update(item.__dict__)
+                self.check_object_permissions(self.request, obj)
+            except Item.DoesNotExist:
+                msg = "No Book or Item matches the given query."
+                raise Http404(msg) from None
+
+        return obj

@@ -71,8 +71,7 @@ class ItemManager(models.Manager):
         """Return a queryset filtered by user permissions."""
         items_with_change_permission = get_objects_for_user(
             user,
-            "items.change_item",
-            klass=Item,
+            f"{self.model._meta.app_label}.change_{self.model._meta.model_name}",  # noqa: SLF001
             accept_global_perms=False,
         )
         return self.filter(pk__in=items_with_change_permission)
@@ -221,8 +220,10 @@ class Item(models.Model):
 
         if self.user:
             # give all object permission to self.request.user on instance
-            assign_perm("change_item", self.user, obj=self)
-            assign_perm("delete_item", self.user, obj=self)
+            app_label = self._meta.model._meta.app_label  # noqa: SLF001
+            model_name = self._meta.model._meta.model_name  # noqa: SLF001
+            assign_perm(f"{app_label}.change_{model_name}", self.user, obj=self)
+            assign_perm(f"{app_label}.delete_{model_name}", self.user, obj=self)
 
     def is_ready_for_display(self):
         """Check if item has minimum required fields to be displayed."""

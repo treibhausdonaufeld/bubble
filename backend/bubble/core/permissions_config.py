@@ -33,6 +33,13 @@ DEFAULT_GROUPS_CONFIG = {
                 "booking": ["add", "view", "change"],
                 "message": ["add", "view"],
             },
+            "books": {
+                "book": ["add", "view", "change", "delete"],
+                "genre": ["add", "view", "change", "delete"],
+                "author": ["add", "view", "change", "delete"],
+                "publisher": ["add", "view", "change", "delete"],
+                "shelf": ["add", "view", "change", "delete"],
+            },
         },
     },
     DefaultGroup.INTERNAL: {

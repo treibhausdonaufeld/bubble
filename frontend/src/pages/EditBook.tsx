@@ -164,7 +164,20 @@ const EditBook = () => {
     shelf_uuid: '',
   });
 
-  const categories: CategoryEnum[] = ['books'];
+  const categories: CategoryEnum[] = [
+    'electronics',
+    'furniture',
+    'clothing',
+    'books',
+    'sports',
+    'tools',
+    'kitchen',
+    'garden',
+    'toys',
+    'vehicles',
+    'rooms',
+    'other',
+  ];
 
   // Load existing book data
   useEffect(() => {
@@ -406,7 +419,6 @@ const EditBook = () => {
               <CategoryConditionFields
                 formData={formData}
                 setFormData={setFormData}
-                disabled={true} // Category is fixed to "books"
                 categories={categories}
               />
 
