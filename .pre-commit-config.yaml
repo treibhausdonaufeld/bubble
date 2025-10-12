@@ -27,8 +27,6 @@ repos:
       - id: prettier
         args: ['--tab-width', '2', '--single-quote']
         exclude: 'backend/bubble/.*/templates/|frontend/src/services/django/'
-        types_or: [javascript, jsx, ts, tsx, json, yaml, css, scss, html, markdown]
-        files: \.(js|jsx|ts|tsx|json|ya?ml|css|scss|html|md)$
 
   - repo: https://github.com/adamchainz/django-upgrade
     rev: '1.29.0'

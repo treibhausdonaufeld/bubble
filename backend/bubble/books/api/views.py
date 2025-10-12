@@ -27,7 +27,7 @@ class AuthorViewSet(viewsets.ModelViewSet):
     ViewSet for managing authors.
 
     list: Get all authors
-    retrieve: Get a specific author by ID
+    retrieve: Get a specific author by UUID
     create: Create a new author
     update: Update an author
     partial_update: Partially update an author
@@ -37,6 +37,7 @@ class AuthorViewSet(viewsets.ModelViewSet):
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
     permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
+    lookup_field = "uuid"
     filterset_class = AuthorFilter
     filter_backends = [
         DjangoFilterBackend,
@@ -53,7 +54,7 @@ class GenreViewSet(viewsets.ModelViewSet):
     ViewSet for managing genres.
 
     list: Get all genres
-    retrieve: Get a specific genre by ID
+    retrieve: Get a specific genre by UUID
     create: Create a new genre
     update: Update a genre
     partial_update: Partially update a genre
@@ -63,6 +64,7 @@ class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all().select_related("parent_genre")
     serializer_class = GenreSerializer
     permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
+    lookup_field = "uuid"
     filterset_class = GenreFilter
     filter_backends = [
         DjangoFilterBackend,
@@ -79,7 +81,7 @@ class PublisherViewSet(viewsets.ModelViewSet):
     ViewSet for managing publishers.
 
     list: Get all publishers
-    retrieve: Get a specific publisher by ID
+    retrieve: Get a specific publisher by UUID
     create: Create a new publisher
     update: Update a publisher
     partial_update: Partially update a publisher
@@ -89,6 +91,7 @@ class PublisherViewSet(viewsets.ModelViewSet):
     queryset = Publisher.objects.all()
     serializer_class = PublisherSerializer
     permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
+    lookup_field = "uuid"
     filterset_class = PublisherFilter
     filter_backends = [
         DjangoFilterBackend,
@@ -105,7 +108,7 @@ class ShelfViewSet(viewsets.ModelViewSet):
     ViewSet for managing shelves.
 
     list: Get all shelves
-    retrieve: Get a specific shelf by ID
+    retrieve: Get a specific shelf by UUID
     create: Create a new shelf
     update: Update a shelf
     partial_update: Partially update a shelf
@@ -115,6 +118,7 @@ class ShelfViewSet(viewsets.ModelViewSet):
     queryset = Shelf.objects.all()
     serializer_class = ShelfSerializer
     permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
+    lookup_field = "uuid"
     filterset_class = ShelfFilter
     filter_backends = [
         DjangoFilterBackend,

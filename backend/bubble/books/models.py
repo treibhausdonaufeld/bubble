@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 from django.utils.translation import gettext as _
 
@@ -5,6 +7,7 @@ from bubble.items.models import Item
 
 
 class Author(models.Model):
+    uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255, unique=True)
     website = models.URLField(blank=True)
     bio = models.TextField(blank=True)
@@ -19,6 +22,7 @@ class Author(models.Model):
 
 
 class Genre(models.Model):
+    uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True)
     parent_genre = models.ForeignKey(
@@ -47,6 +51,7 @@ class Genre(models.Model):
 class Publisher(models.Model):
     """Publisher model"""
 
+    uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField(blank=True)
 
@@ -62,6 +67,7 @@ class Publisher(models.Model):
 class Shelf(models.Model):
     """Shelf model for book storage location"""
 
+    uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField(blank=True)
 

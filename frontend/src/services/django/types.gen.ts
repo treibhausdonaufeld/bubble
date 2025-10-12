@@ -10,7 +10,199 @@ export type AuthToken = {
     readonly token: string;
 };
 
+/**
+ * Serializer for Author model.
+ */
+export type Author = {
+    readonly uuid: string;
+    name: string;
+    website?: string;
+    bio?: string;
+    readonly books_count: string;
+};
+
 export type BlankEnum = '';
+
+/**
+ * Serializer for Book detail view.
+ */
+export type Book = {
+    readonly images: Array<Image>;
+    /**
+     * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
+     */
+    readonly username: string;
+    readonly first_image: string;
+    sale_price?: string | null;
+    rental_price?: string | null;
+    readonly authors: Array<Author>;
+    readonly genres: Array<Genre>;
+    verlag: Publisher;
+    shelf: Shelf;
+    /**
+     * Category of the item
+     *
+     * * `books` - Books
+     * * `clothing` - Clothing
+     * * `electronics` - Electronics
+     * * `furniture` - Furniture
+     * * `garden` - Garden
+     * * `kitchen` - Kitchen
+     * * `other` - Other
+     * * `rooms` - Rooms
+     * * `sports` - Sports
+     * * `tools` - Tools
+     * * `toys` - Toys
+     * * `vehicles` - Vehicles
+     */
+    category?: CategoryEnum | BlankEnum;
+    /**
+     * Unique identifier for the item
+     */
+    readonly uuid: string;
+    name?: string;
+    slug?: string;
+    description?: string;
+    /**
+     * Internal item, not for public display
+     */
+    internal?: boolean;
+    /**
+     * Display your contact information public
+     */
+    display_contact?: boolean;
+    readonly sale_price_currency: string | null;
+    readonly rental_price_currency: string | null;
+    rental_period?: RentalPeriodEnum | BlankEnum;
+    /**
+     * Allow self-service rental without owner approval
+     */
+    rental_self_service?: boolean;
+    /**
+     * Allow open-ended rentals without a return date
+     */
+    rental_open_end?: boolean;
+    /**
+     * Enable payment via internal payment system
+     */
+    payment_enabled?: boolean;
+    readonly created_at: string;
+    readonly updated_at: string;
+    /**
+     * Condition of the item
+     *
+     * * `0` - New
+     * * `1` - Used
+     * * `2` - Broken
+     */
+    condition?: ConditionEnum;
+    active?: boolean;
+    status?: Status402Enum;
+    isbn?: string;
+    /**
+     * Publication year
+     */
+    year?: number | null;
+    /**
+     * Main topic or subject
+     */
+    topic?: string;
+    readonly user: number;
+};
+
+/**
+ * Serializer for Book list view.
+ */
+export type BookList = {
+    /**
+     * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
+     */
+    readonly username: string;
+    readonly first_image: string;
+    sale_price?: string | null;
+    rental_price?: string | null;
+    readonly authors: Array<string>;
+    readonly genres: Array<string>;
+    readonly verlag_name: string;
+    readonly shelf_name: string;
+    /**
+     * Category of the item
+     *
+     * * `books` - Books
+     * * `clothing` - Clothing
+     * * `electronics` - Electronics
+     * * `furniture` - Furniture
+     * * `garden` - Garden
+     * * `kitchen` - Kitchen
+     * * `other` - Other
+     * * `rooms` - Rooms
+     * * `sports` - Sports
+     * * `tools` - Tools
+     * * `toys` - Toys
+     * * `vehicles` - Vehicles
+     */
+    category?: CategoryEnum | BlankEnum;
+    /**
+     * Unique identifier for the item
+     */
+    readonly uuid: string;
+    name?: string;
+    slug?: string;
+    description?: string;
+    /**
+     * Internal item, not for public display
+     */
+    internal?: boolean;
+    /**
+     * Display your contact information public
+     */
+    display_contact?: boolean;
+    readonly sale_price_currency: string | null;
+    readonly rental_price_currency: string | null;
+    rental_period?: RentalPeriodEnum | BlankEnum;
+    /**
+     * Allow self-service rental without owner approval
+     */
+    rental_self_service?: boolean;
+    /**
+     * Allow open-ended rentals without a return date
+     */
+    rental_open_end?: boolean;
+    /**
+     * Enable payment via internal payment system
+     */
+    payment_enabled?: boolean;
+    readonly created_at: string;
+    readonly updated_at: string;
+    /**
+     * Condition of the item
+     *
+     * * `0` - New
+     * * `1` - Used
+     * * `2` - Broken
+     */
+    condition?: ConditionEnum;
+    active?: boolean;
+    status?: Status402Enum;
+    isbn?: string;
+    /**
+     * Publication year
+     */
+    year?: number | null;
+    /**
+     * Main topic or subject
+     */
+    topic?: string;
+    readonly user: number;
+    /**
+     * Publisher
+     */
+    verlag?: number | null;
+    /**
+     * Shelf location
+     */
+    shelf?: number | null;
+};
 
 /**
  * Detailed serializer for Booking where `item` is represented only by UUID.
@@ -86,6 +278,20 @@ export type CategoryEnum = 'books' | 'clothing' | 'electronics' | 'furniture' | 
  * * `2` - Broken
  */
 export type ConditionEnum = 0 | 1 | 2;
+
+/**
+ * Serializer for Genre model.
+ */
+export type Genre = {
+    readonly uuid: string;
+    name: string;
+    description?: string;
+    parent_genre?: number | null;
+    readonly parent_genre_name: string | null;
+    readonly parent_genre_uuid: string | null;
+    readonly hierarchy: string;
+    readonly books_count: string;
+};
 
 /**
  * Serializer for Image model.
@@ -265,11 +471,32 @@ export type Message = {
     is_read?: boolean;
 };
 
+export type PaginatedAuthorList = {
+    count: number;
+    next?: string | null;
+    previous?: string | null;
+    results: Array<Author>;
+};
+
+export type PaginatedBookListList = {
+    count: number;
+    next?: string | null;
+    previous?: string | null;
+    results: Array<BookList>;
+};
+
 export type PaginatedBookingListList = {
     count: number;
     next?: string | null;
     previous?: string | null;
     results: Array<BookingList>;
+};
+
+export type PaginatedGenreList = {
+    count: number;
+    next?: string | null;
+    previous?: string | null;
+    results: Array<Genre>;
 };
 
 export type PaginatedImageList = {
@@ -300,11 +527,123 @@ export type PaginatedProfileList = {
     results: Array<Profile>;
 };
 
+export type PaginatedPublisherList = {
+    count: number;
+    next?: string | null;
+    previous?: string | null;
+    results: Array<Publisher>;
+};
+
+export type PaginatedShelfList = {
+    count: number;
+    next?: string | null;
+    previous?: string | null;
+    results: Array<Shelf>;
+};
+
 export type PaginatedUserList = {
     count: number;
     next?: string | null;
     previous?: string | null;
     results: Array<User>;
+};
+
+/**
+ * Serializer for Author model.
+ */
+export type PatchedAuthor = {
+    readonly uuid?: string;
+    name?: string;
+    website?: string;
+    bio?: string;
+    readonly books_count?: string;
+};
+
+/**
+ * Serializer for Book detail view.
+ */
+export type PatchedBook = {
+    readonly images?: Array<Image>;
+    /**
+     * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
+     */
+    readonly username?: string;
+    readonly first_image?: string;
+    sale_price?: string | null;
+    rental_price?: string | null;
+    readonly authors?: Array<Author>;
+    readonly genres?: Array<Genre>;
+    verlag?: Publisher;
+    shelf?: Shelf;
+    /**
+     * Category of the item
+     *
+     * * `books` - Books
+     * * `clothing` - Clothing
+     * * `electronics` - Electronics
+     * * `furniture` - Furniture
+     * * `garden` - Garden
+     * * `kitchen` - Kitchen
+     * * `other` - Other
+     * * `rooms` - Rooms
+     * * `sports` - Sports
+     * * `tools` - Tools
+     * * `toys` - Toys
+     * * `vehicles` - Vehicles
+     */
+    category?: CategoryEnum | BlankEnum;
+    /**
+     * Unique identifier for the item
+     */
+    readonly uuid?: string;
+    name?: string;
+    slug?: string;
+    description?: string;
+    /**
+     * Internal item, not for public display
+     */
+    internal?: boolean;
+    /**
+     * Display your contact information public
+     */
+    display_contact?: boolean;
+    readonly sale_price_currency?: string | null;
+    readonly rental_price_currency?: string | null;
+    rental_period?: RentalPeriodEnum | BlankEnum;
+    /**
+     * Allow self-service rental without owner approval
+     */
+    rental_self_service?: boolean;
+    /**
+     * Allow open-ended rentals without a return date
+     */
+    rental_open_end?: boolean;
+    /**
+     * Enable payment via internal payment system
+     */
+    payment_enabled?: boolean;
+    readonly created_at?: string;
+    readonly updated_at?: string;
+    /**
+     * Condition of the item
+     *
+     * * `0` - New
+     * * `1` - Used
+     * * `2` - Broken
+     */
+    condition?: ConditionEnum;
+    active?: boolean;
+    status?: Status402Enum;
+    isbn?: string;
+    /**
+     * Publication year
+     */
+    year?: number | null;
+    /**
+     * Main topic or subject
+     */
+    topic?: string;
+    readonly user?: number;
 };
 
 /**
@@ -336,6 +675,20 @@ export type PatchedBooking = {
      * Return unread_messages_count if it exists as an annotated field.
      */
     readonly unread_messages_count?: number | null;
+};
+
+/**
+ * Serializer for Genre model.
+ */
+export type PatchedGenre = {
+    readonly uuid?: string;
+    name?: string;
+    description?: string;
+    parent_genre?: number | null;
+    readonly parent_genre_name?: string | null;
+    readonly parent_genre_uuid?: string | null;
+    readonly hierarchy?: string;
+    readonly books_count?: string;
 };
 
 /**
@@ -444,6 +797,26 @@ export type PatchedProfile = {
     profile_image?: string | null;
 };
 
+/**
+ * Serializer for Publisher model.
+ */
+export type PatchedPublisher = {
+    readonly uuid?: string;
+    name?: string;
+    description?: string;
+    readonly books_count?: string;
+};
+
+/**
+ * Serializer for Shelf model.
+ */
+export type PatchedShelf = {
+    readonly uuid?: string;
+    name?: string;
+    description?: string;
+    readonly books_count?: string;
+};
+
 export type PatchedUser = {
     readonly uuid?: string;
     /**
@@ -470,11 +843,31 @@ export type Profile = {
 };
 
 /**
+ * Serializer for Publisher model.
+ */
+export type Publisher = {
+    readonly uuid: string;
+    name: string;
+    description?: string;
+    readonly books_count: string;
+};
+
+/**
  * * `h` - Hourly
  * * `d` - Daily
  * * `w` - Weekly
  */
 export type RentalPeriodEnum = 'h' | 'd' | 'w';
+
+/**
+ * Serializer for Shelf model.
+ */
+export type Shelf = {
+    readonly uuid: string;
+    name: string;
+    description?: string;
+    readonly books_count: string;
+};
 
 /**
  * * `0` - Draft
@@ -512,6 +905,163 @@ export type User = {
 };
 
 /**
+ * Serializer for Author model.
+ */
+export type AuthorWritable = {
+    name: string;
+    website?: string;
+    bio?: string;
+};
+
+/**
+ * Serializer for Book detail view.
+ */
+export type BookWritable = {
+    sale_price?: string | null;
+    rental_price?: string | null;
+    author_uuids?: Array<string>;
+    genre_uuids?: Array<string>;
+    verlag_uuid?: string | null;
+    shelf_uuid?: string | null;
+    /**
+     * Category of the item
+     *
+     * * `books` - Books
+     * * `clothing` - Clothing
+     * * `electronics` - Electronics
+     * * `furniture` - Furniture
+     * * `garden` - Garden
+     * * `kitchen` - Kitchen
+     * * `other` - Other
+     * * `rooms` - Rooms
+     * * `sports` - Sports
+     * * `tools` - Tools
+     * * `toys` - Toys
+     * * `vehicles` - Vehicles
+     */
+    category?: CategoryEnum | BlankEnum;
+    name?: string;
+    slug?: string;
+    description?: string;
+    /**
+     * Internal item, not for public display
+     */
+    internal?: boolean;
+    /**
+     * Display your contact information public
+     */
+    display_contact?: boolean;
+    rental_period?: RentalPeriodEnum | BlankEnum;
+    /**
+     * Allow self-service rental without owner approval
+     */
+    rental_self_service?: boolean;
+    /**
+     * Allow open-ended rentals without a return date
+     */
+    rental_open_end?: boolean;
+    /**
+     * Enable payment via internal payment system
+     */
+    payment_enabled?: boolean;
+    /**
+     * Condition of the item
+     *
+     * * `0` - New
+     * * `1` - Used
+     * * `2` - Broken
+     */
+    condition?: ConditionEnum;
+    active?: boolean;
+    status?: Status402Enum;
+    isbn?: string;
+    /**
+     * Publication year
+     */
+    year?: number | null;
+    /**
+     * Main topic or subject
+     */
+    topic?: string;
+};
+
+/**
+ * Serializer for Book list view.
+ */
+export type BookListWritable = {
+    sale_price?: string | null;
+    rental_price?: string | null;
+    /**
+     * Category of the item
+     *
+     * * `books` - Books
+     * * `clothing` - Clothing
+     * * `electronics` - Electronics
+     * * `furniture` - Furniture
+     * * `garden` - Garden
+     * * `kitchen` - Kitchen
+     * * `other` - Other
+     * * `rooms` - Rooms
+     * * `sports` - Sports
+     * * `tools` - Tools
+     * * `toys` - Toys
+     * * `vehicles` - Vehicles
+     */
+    category?: CategoryEnum | BlankEnum;
+    name?: string;
+    slug?: string;
+    description?: string;
+    /**
+     * Internal item, not for public display
+     */
+    internal?: boolean;
+    /**
+     * Display your contact information public
+     */
+    display_contact?: boolean;
+    rental_period?: RentalPeriodEnum | BlankEnum;
+    /**
+     * Allow self-service rental without owner approval
+     */
+    rental_self_service?: boolean;
+    /**
+     * Allow open-ended rentals without a return date
+     */
+    rental_open_end?: boolean;
+    /**
+     * Enable payment via internal payment system
+     */
+    payment_enabled?: boolean;
+    /**
+     * Condition of the item
+     *
+     * * `0` - New
+     * * `1` - Used
+     * * `2` - Broken
+     */
+    condition?: ConditionEnum;
+    active?: boolean;
+    status?: Status402Enum;
+    isbn?: string;
+    /**
+     * Publication year
+     */
+    year?: number | null;
+    /**
+     * Main topic or subject
+     */
+    topic?: string;
+    /**
+     * Publisher
+     */
+    verlag?: number | null;
+    /**
+     * Shelf location
+     */
+    shelf?: number | null;
+};
+
+/**
  * Detailed serializer for Booking where `item` is represented only by UUID.
  */
 export type BookingWritable = {
@@ -540,6 +1090,15 @@ export type BookingListWritable = {
     status?: StatusE2dEnum;
     time_from?: string | null;
     time_to?: string | null;
+};
+
+/**
+ * Serializer for Genre model.
+ */
+export type GenreWritable = {
+    name: string;
+    description?: string;
+    parent_genre?: number | null;
 };
 
 /**
@@ -689,6 +1248,87 @@ export type MessageWritable = {
 };
 
 /**
+ * Serializer for Author model.
+ */
+export type PatchedAuthorWritable = {
+    name?: string;
+    website?: string;
+    bio?: string;
+};
+
+/**
+ * Serializer for Book detail view.
+ */
+export type PatchedBookWritable = {
+    sale_price?: string | null;
+    rental_price?: string | null;
+    author_uuids?: Array<string>;
+    genre_uuids?: Array<string>;
+    verlag_uuid?: string | null;
+    shelf_uuid?: string | null;
+    /**
+     * Category of the item
+     *
+     * * `books` - Books
+     * * `clothing` - Clothing
+     * * `electronics` - Electronics
+     * * `furniture` - Furniture
+     * * `garden` - Garden
+     * * `kitchen` - Kitchen
+     * * `other` - Other
+     * * `rooms` - Rooms
+     * * `sports` - Sports
+     * * `tools` - Tools
+     * * `toys` - Toys
+     * * `vehicles` - Vehicles
+     */
+    category?: CategoryEnum | BlankEnum;
+    name?: string;
+    slug?: string;
+    description?: string;
+    /**
+     * Internal item, not for public display
+     */
+    internal?: boolean;
+    /**
+     * Display your contact information public
+     */
+    display_contact?: boolean;
+    rental_period?: RentalPeriodEnum | BlankEnum;
+    /**
+     * Allow self-service rental without owner approval
+     */
+    rental_self_service?: boolean;
+    /**
+     * Allow open-ended rentals without a return date
+     */
+    rental_open_end?: boolean;
+    /**
+     * Enable payment via internal payment system
+     */
+    payment_enabled?: boolean;
+    /**
+     * Condition of the item
+     *
+     * * `0` - New
+     * * `1` - Used
+     * * `2` - Broken
+     */
+    condition?: ConditionEnum;
+    active?: boolean;
+    status?: Status402Enum;
+    isbn?: string;
+    /**
+     * Publication year
+     */
+    year?: number | null;
+    /**
+     * Main topic or subject
+     */
+    topic?: string;
+};
+
+/**
  * Detailed serializer for Booking where `item` is represented only by UUID.
  */
 export type PatchedBookingWritable = {
@@ -708,6 +1348,15 @@ export type PatchedBookingWritable = {
      */
     counter_offer?: string | null;
     accepted_by?: number | null;
+};
+
+/**
+ * Serializer for Genre model.
+ */
+export type PatchedGenreWritable = {
+    name?: string;
+    description?: string;
+    parent_genre?: number | null;
 };
 
 /**
@@ -796,19 +1445,20 @@ export type PatchedProfileWritable = {
     profile_image?: string | null;
 };
 
-export type PatchedUserWritable = {
-    /**
-     * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
-     */
-    username?: string;
-    /**
-     * Name of User
-     */
+/**
+ * Serializer for Publisher model.
+ */
+export type PatchedPublisherWritable = {
     name?: string;
-    /**
-     * Email address
-     */
-    email?: string;
+    description?: string;
+};
+
+/**
+ * Serializer for Shelf model.
+ */
+export type PatchedShelfWritable = {
+    name?: string;
+    description?: string;
 };
 
 export type ProfileWritable = {
@@ -817,19 +1467,20 @@ export type ProfileWritable = {
     profile_image?: string | null;
 };
 
-export type UserWritable = {
-    /**
-     * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
-     */
-    username: string;
-    /**
-     * Name of User
-     */
-    name?: string;
-    /**
-     * Email address
-     */
-    email?: string;
+/**
+ * Serializer for Publisher model.
+ */
+export type PublisherWritable = {
+    name: string;
+    description?: string;
+};
+
+/**
+ * Serializer for Shelf model.
+ */
+export type ShelfWritable = {
+    name: string;
+    description?: string;
 };
 
 export type AuthTokenCreateData = {
@@ -844,6 +1495,109 @@ export type AuthTokenCreateResponses = {
 };
 
 export type AuthTokenCreateResponse = AuthTokenCreateResponses[keyof AuthTokenCreateResponses];
+
+export type AuthorsListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        name?: string;
+        /**
+         * Which field to use when ordering the results.
+         */
+        ordering?: string;
+        /**
+         * A page number within the paginated result set.
+         */
+        page?: number;
+        /**
+         * A search term.
+         */
+        search?: string;
+    };
+    url: '/api/authors/';
+};
+
+export type AuthorsListResponses = {
+    200: PaginatedAuthorList;
+};
+
+export type AuthorsListResponse = AuthorsListResponses[keyof AuthorsListResponses];
+
+export type AuthorsCreateData = {
+    body: AuthorWritable;
+    path?: never;
+    query?: never;
+    url: '/api/authors/';
+};
+
+export type AuthorsCreateResponses = {
+    201: Author;
+};
+
+export type AuthorsCreateResponse = AuthorsCreateResponses[keyof AuthorsCreateResponses];
+
+export type AuthorsDestroyData = {
+    body?: never;
+    path: {
+        uuid: string;
+    };
+    query?: never;
+    url: '/api/authors/{uuid}/';
+};
+
+export type AuthorsDestroyResponses = {
+    /**
+     * No response body
+     */
+    204: void;
+};
+
+export type AuthorsDestroyResponse = AuthorsDestroyResponses[keyof AuthorsDestroyResponses];
+
+export type AuthorsRetrieveData = {
+    body?: never;
+    path: {
+        uuid: string;
+    };
+    query?: never;
+    url: '/api/authors/{uuid}/';
+};
+
+export type AuthorsRetrieveResponses = {
+    200: Author;
+};
+
+export type AuthorsRetrieveResponse = AuthorsRetrieveResponses[keyof AuthorsRetrieveResponses];
+
+export type AuthorsPartialUpdateData = {
+    body?: PatchedAuthorWritable;
+    path: {
+        uuid: string;
+    };
+    query?: never;
+    url: '/api/authors/{uuid}/';
+};
+
+export type AuthorsPartialUpdateResponses = {
+    200: Author;
+};
+
+export type AuthorsPartialUpdateResponse = AuthorsPartialUpdateResponses[keyof AuthorsPartialUpdateResponses];
+
+export type AuthorsUpdateData = {
+    body: AuthorWritable;
+    path: {
+        uuid: string;
+    };
+    query?: never;
+    url: '/api/authors/{uuid}/';
+};
+
+export type AuthorsUpdateResponses = {
+    200: Author;
+};
+
+export type AuthorsUpdateResponse = AuthorsUpdateResponses[keyof AuthorsUpdateResponses];
 
 export type BookingsListData = {
     body?: never;
@@ -946,6 +1700,238 @@ export type BookingsUpdateResponses = {
 };
 
 export type BookingsUpdateResponse = BookingsUpdateResponses[keyof BookingsUpdateResponses];
+
+export type BooksListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        author?: number;
+        author_name?: string;
+        genre?: number;
+        genre_name?: string;
+        isbn?: string;
+        /**
+         * Which field to use when ordering the results.
+         */
+        ordering?: string;
+        /**
+         * A page number within the paginated result set.
+         */
+        page?: number;
+        publisher?: number;
+        publisher_name?: string;
+        /**
+         * A search term.
+         */
+        search?: string;
+        shelf?: number;
+        shelf_name?: string;
+        topic?: string;
+        year?: number;
+        year_max?: number;
+        year_min?: number;
+    };
+    url: '/api/books/';
+};
+
+export type BooksListResponses = {
+    200: PaginatedBookListList;
+};
+
+export type BooksListResponse = BooksListResponses[keyof BooksListResponses];
+
+export type BooksCreateData = {
+    body?: BookWritable;
+    path?: never;
+    query?: never;
+    url: '/api/books/';
+};
+
+export type BooksCreateResponses = {
+    201: Book;
+};
+
+export type BooksCreateResponse = BooksCreateResponses[keyof BooksCreateResponses];
+
+export type BooksDestroyData = {
+    body?: never;
+    path: {
+        /**
+         * Unique identifier for the item
+         */
+        uuid: string;
+    };
+    query?: never;
+    url: '/api/books/{uuid}/';
+};
+
+export type BooksDestroyResponses = {
+    /**
+     * No response body
+     */
+    204: void;
+};
+
+export type BooksDestroyResponse = BooksDestroyResponses[keyof BooksDestroyResponses];
+
+export type BooksRetrieveData = {
+    body?: never;
+    path: {
+        /**
+         * Unique identifier for the item
+         */
+        uuid: string;
+    };
+    query?: never;
+    url: '/api/books/{uuid}/';
+};
+
+export type BooksRetrieveResponses = {
+    200: Book;
+};
+
+export type BooksRetrieveResponse = BooksRetrieveResponses[keyof BooksRetrieveResponses];
+
+export type BooksPartialUpdateData = {
+    body?: PatchedBookWritable;
+    path: {
+        /**
+         * Unique identifier for the item
+         */
+        uuid: string;
+    };
+    query?: never;
+    url: '/api/books/{uuid}/';
+};
+
+export type BooksPartialUpdateResponses = {
+    200: Book;
+};
+
+export type BooksPartialUpdateResponse = BooksPartialUpdateResponses[keyof BooksPartialUpdateResponses];
+
+export type BooksUpdateData = {
+    body?: BookWritable;
+    path: {
+        /**
+         * Unique identifier for the item
+         */
+        uuid: string;
+    };
+    query?: never;
+    url: '/api/books/{uuid}/';
+};
+
+export type BooksUpdateResponses = {
+    200: Book;
+};
+
+export type BooksUpdateResponse = BooksUpdateResponses[keyof BooksUpdateResponses];
+
+export type GenresListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        has_parent?: boolean;
+        name?: string;
+        /**
+         * Which field to use when ordering the results.
+         */
+        ordering?: string;
+        /**
+         * A page number within the paginated result set.
+         */
+        page?: number;
+        parent_genre?: number;
+        /**
+         * A search term.
+         */
+        search?: string;
+    };
+    url: '/api/genres/';
+};
+
+export type GenresListResponses = {
+    200: PaginatedGenreList;
+};
+
+export type GenresListResponse = GenresListResponses[keyof GenresListResponses];
+
+export type GenresCreateData = {
+    body: GenreWritable;
+    path?: never;
+    query?: never;
+    url: '/api/genres/';
+};
+
+export type GenresCreateResponses = {
+    201: Genre;
+};
+
+export type GenresCreateResponse = GenresCreateResponses[keyof GenresCreateResponses];
+
+export type GenresDestroyData = {
+    body?: never;
+    path: {
+        uuid: string;
+    };
+    query?: never;
+    url: '/api/genres/{uuid}/';
+};
+
+export type GenresDestroyResponses = {
+    /**
+     * No response body
+     */
+    204: void;
+};
+
+export type GenresDestroyResponse = GenresDestroyResponses[keyof GenresDestroyResponses];
+
+export type GenresRetrieveData = {
+    body?: never;
+    path: {
+        uuid: string;
+    };
+    query?: never;
+    url: '/api/genres/{uuid}/';
+};
+
+export type GenresRetrieveResponses = {
+    200: Genre;
+};
+
+export type GenresRetrieveResponse = GenresRetrieveResponses[keyof GenresRetrieveResponses];
+
+export type GenresPartialUpdateData = {
+    body?: PatchedGenreWritable;
+    path: {
+        uuid: string;
+    };
+    query?: never;
+    url: '/api/genres/{uuid}/';
+};
+
+export type GenresPartialUpdateResponses = {
+    200: Genre;
+};
+
+export type GenresPartialUpdateResponse = GenresPartialUpdateResponses[keyof GenresPartialUpdateResponses];
+
+export type GenresUpdateData = {
+    body: GenreWritable;
+    path: {
+        uuid: string;
+    };
+    query?: never;
+    url: '/api/genres/{uuid}/';
+};
+
+export type GenresUpdateResponses = {
+    200: Genre;
+};
+
+export type GenresUpdateResponse = GenresUpdateResponses[keyof GenresUpdateResponses];
 
 export type ImagesListData = {
     body?: never;
@@ -1540,6 +2526,109 @@ export type PublicItemsRetrieveResponses = {
 
 export type PublicItemsRetrieveResponse = PublicItemsRetrieveResponses[keyof PublicItemsRetrieveResponses];
 
+export type PublishersListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        name?: string;
+        /**
+         * Which field to use when ordering the results.
+         */
+        ordering?: string;
+        /**
+         * A page number within the paginated result set.
+         */
+        page?: number;
+        /**
+         * A search term.
+         */
+        search?: string;
+    };
+    url: '/api/publishers/';
+};
+
+export type PublishersListResponses = {
+    200: PaginatedPublisherList;
+};
+
+export type PublishersListResponse = PublishersListResponses[keyof PublishersListResponses];
+
+export type PublishersCreateData = {
+    body: PublisherWritable;
+    path?: never;
+    query?: never;
+    url: '/api/publishers/';
+};
+
+export type PublishersCreateResponses = {
+    201: Publisher;
+};
+
+export type PublishersCreateResponse = PublishersCreateResponses[keyof PublishersCreateResponses];
+
+export type PublishersDestroyData = {
+    body?: never;
+    path: {
+        uuid: string;
+    };
+    query?: never;
+    url: '/api/publishers/{uuid}/';
+};
+
+export type PublishersDestroyResponses = {
+    /**
+     * No response body
+     */
+    204: void;
+};
+
+export type PublishersDestroyResponse = PublishersDestroyResponses[keyof PublishersDestroyResponses];
+
+export type PublishersRetrieveData = {
+    body?: never;
+    path: {
+        uuid: string;
+    };
+    query?: never;
+    url: '/api/publishers/{uuid}/';
+};
+
+export type PublishersRetrieveResponses = {
+    200: Publisher;
+};
+
+export type PublishersRetrieveResponse = PublishersRetrieveResponses[keyof PublishersRetrieveResponses];
+
+export type PublishersPartialUpdateData = {
+    body?: PatchedPublisherWritable;
+    path: {
+        uuid: string;
+    };
+    query?: never;
+    url: '/api/publishers/{uuid}/';
+};
+
+export type PublishersPartialUpdateResponses = {
+    200: Publisher;
+};
+
+export type PublishersPartialUpdateResponse = PublishersPartialUpdateResponses[keyof PublishersPartialUpdateResponses];
+
+export type PublishersUpdateData = {
+    body: PublisherWritable;
+    path: {
+        uuid: string;
+    };
+    query?: never;
+    url: '/api/publishers/{uuid}/';
+};
+
+export type PublishersUpdateResponses = {
+    200: Publisher;
+};
+
+export type PublishersUpdateResponse = PublishersUpdateResponses[keyof PublishersUpdateResponses];
+
 export type SchemaRetrieveData = {
     body?: never;
     path?: never;
@@ -1557,6 +2646,109 @@ export type SchemaRetrieveResponses = {
 };
 
 export type SchemaRetrieveResponse = SchemaRetrieveResponses[keyof SchemaRetrieveResponses];
+
+export type ShelvesListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        name?: string;
+        /**
+         * Which field to use when ordering the results.
+         */
+        ordering?: string;
+        /**
+         * A page number within the paginated result set.
+         */
+        page?: number;
+        /**
+         * A search term.
+         */
+        search?: string;
+    };
+    url: '/api/shelves/';
+};
+
+export type ShelvesListResponses = {
+    200: PaginatedShelfList;
+};
+
+export type ShelvesListResponse = ShelvesListResponses[keyof ShelvesListResponses];
+
+export type ShelvesCreateData = {
+    body: ShelfWritable;
+    path?: never;
+    query?: never;
+    url: '/api/shelves/';
+};
+
+export type ShelvesCreateResponses = {
+    201: Shelf;
+};
+
+export type ShelvesCreateResponse = ShelvesCreateResponses[keyof ShelvesCreateResponses];
+
+export type ShelvesDestroyData = {
+    body?: never;
+    path: {
+        uuid: string;
+    };
+    query?: never;
+    url: '/api/shelves/{uuid}/';
+};
+
+export type ShelvesDestroyResponses = {
+    /**
+     * No response body
+     */
+    204: void;
+};
+
+export type ShelvesDestroyResponse = ShelvesDestroyResponses[keyof ShelvesDestroyResponses];
+
+export type ShelvesRetrieveData = {
+    body?: never;
+    path: {
+        uuid: string;
+    };
+    query?: never;
+    url: '/api/shelves/{uuid}/';
+};
+
+export type ShelvesRetrieveResponses = {
+    200: Shelf;
+};
+
+export type ShelvesRetrieveResponse = ShelvesRetrieveResponses[keyof ShelvesRetrieveResponses];
+
+export type ShelvesPartialUpdateData = {
+    body?: PatchedShelfWritable;
+    path: {
+        uuid: string;
+    };
+    query?: never;
+    url: '/api/shelves/{uuid}/';
+};
+
+export type ShelvesPartialUpdateResponses = {
+    200: Shelf;
+};
+
+export type ShelvesPartialUpdateResponse = ShelvesPartialUpdateResponses[keyof ShelvesPartialUpdateResponses];
+
+export type ShelvesUpdateData = {
+    body: ShelfWritable;
+    path: {
+        uuid: string;
+    };
+    query?: never;
+    url: '/api/shelves/{uuid}/';
+};
+
+export type ShelvesUpdateResponses = {
+    200: Shelf;
+};
+
+export type ShelvesUpdateResponse = ShelvesUpdateResponses[keyof ShelvesUpdateResponses];
 
 export type UsersListData = {
     body?: never;
