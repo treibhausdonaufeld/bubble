@@ -1,13 +1,12 @@
 import { BookingDialog } from '@/components/items/BookingDialog';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/hooks/useAuth';
 import { formatPrice } from '@/lib/currency';
 import { cn } from '@/lib/utils';
-import { Clock, MessageCircle, ShoppingCart } from 'lucide-react';
+import { Clock, ShoppingCart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface ItemCardProps {
@@ -192,20 +191,6 @@ export const ItemCard = ({
                   }
                   disabled={(isOwner && !!salePrice) || !user}
                 />
-
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex-1 gap-2"
-                  onClick={e => {
-                    e.stopPropagation();
-                    handleMessageOwner();
-                  }}
-                  disabled={isOwner || !user}
-                >
-                  <MessageCircle className="h-4 w-4" />
-                  {t('item.messageOwner')}
-                </Button>
               </div>
             </TooltipTrigger>
             {(!user || isOwner) && (
