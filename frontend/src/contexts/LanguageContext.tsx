@@ -53,7 +53,9 @@ const translations = {
     'editItem.name': 'Edit Item',
     'editItem.itemName': 'Item Name',
     'editItem.itemNamePlaceholder': 'Enter the name of your item...',
+    'editItem.enterName': 'Enter the item name...',
     'editItem.description': 'Description',
+    'editItem.enterDescription': 'Enter a description for your item...',
     'editItem.descriptionPlaceholder': 'Describe your item, its condition, and any details...',
     'editItem.category': 'Category',
     'editItem.condition': 'Condition',
@@ -360,11 +362,13 @@ const translations = {
     'editItem.name': 'Artikel bearbeiten',
     'editItem.itemName': 'Artikelname',
     'editItem.itemNamePlaceholder': 'Gib den Namen deines Artikels ein...',
+    'editItem.enterName': 'Artikelnamen eingeben...',
     'editItem.description': 'Beschreibung',
     'editItem.saleDisablesRental':
       'Wenn du einen Verkaufspreis setzt, ist der Mietpreis deaktiviert',
     'editItem.rentalDisablesSale':
       'Wenn du einen Mietpreis setzt, ist der Verkaufspreis deaktiviert',
+    'editItem.enterDescription': 'Beschreibung für den Artikel...',
     'editItem.descriptionPlaceholder':
       'Beschreibe deinen Artikel, seinen Zustand und weitere Details...',
     'editItem.category': 'Kategorie',

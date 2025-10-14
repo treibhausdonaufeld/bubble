@@ -1,5 +1,5 @@
 import { ImageManager } from '@/components/items/ImageManager';
-import { CategoryConditionFields } from '@/components/items/ItemFormFields';
+import { BasicFields, CategoryConditionFields } from '@/components/items/ItemFormFields';
 import { Header } from '@/components/layout/Header';
 import {
   AlertDialog,
@@ -25,7 +25,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useToast } from '@/hooks/use-toast';
@@ -672,35 +671,12 @@ const EditItem = () => {
                 </CardContent>
               </Card>
 
-              <div className="space-y-2">
-                <Label htmlFor="name">{t('editItem.itemName')} *</Label>
-                <Input
-                  id="name"
-                  type="text"
-                  placeholder={t('editItem.itemNamePlaceholder')}
-                  value={formData.name}
-                  onChange={e => setFormData({ ...formData, name: e.target.value })}
-                  disabled={aiProcessing}
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="description">{t('editItem.description')}</Label>
-                <Textarea
-                  id="description"
-                  placeholder={t('editItem.descriptionPlaceholder')}
-                  value={formData.description}
-                  onChange={e => {
-                    setFormData({ ...formData, description: e.target.value });
-                    adjustDescriptionHeight();
-                  }}
-                  onInput={() => adjustDescriptionHeight()}
-                  disabled={aiProcessing}
-                  ref={descriptionRef}
-                  className="min-h-[100px]"
-                />
-              </div>
+              <BasicFields
+                formData={formData}
+                setFormData={setFormData}
+                disabled={aiProcessing}
+                descriptionRef={descriptionRef}
+              />
 
               <CategoryConditionFields
                 formData={formData}
