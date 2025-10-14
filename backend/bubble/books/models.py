@@ -108,6 +108,12 @@ class Book(Item):
         Genre, related_name="books", blank=True, help_text=_("Book genres")
     )
 
+    metadata = models.JSONField(
+        blank=True,
+        null=True,
+        help_text=_("Raw metadata fetched from external sources like ISBN databases"),
+    )
+
     # location management
     shelf = models.ForeignKey(
         Shelf,

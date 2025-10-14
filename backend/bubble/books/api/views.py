@@ -1,6 +1,5 @@
 """API views for books."""
 
-import requests
 from django.http import Http404
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
@@ -245,13 +244,7 @@ class BookViewSet(viewsets.ModelViewSet):
             )
 
         service = OpenLibraryService()
-        try:
-            service.update_book_from_isbn(book, isbn=isbn)
-        except requests.RequestException as e:
-            return Response(
-                {"error": f"Failed to fetch data from OpenLibrary: {e}"},
-                status=status.HTTP_502_BAD_GATEWAY,
-            )
+        service.update_book_from_isbn(book, isbn=isbn)
 
         serializer = self.get_serializer(book)
         return Response(serializer.data)

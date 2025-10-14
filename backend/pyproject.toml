@@ -32,6 +32,7 @@ dependencies = [
     "gunicorn",
     "hiredis",
     "httpx>=0.28.1",
+    "isbnlib>=3.10.14",
     "pgvector>=0.3.6",
     "pillow",
     "psycopg[binary]",
