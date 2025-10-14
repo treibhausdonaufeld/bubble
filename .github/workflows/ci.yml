@@ -79,7 +79,7 @@ jobs:
         run: docker compose run --rm backend python manage.py migrate
 
       - name: Run Django Tests
-        run: docker compose run backend pytest
+        run: docker compose run backend uv run pytest
 
       - name: Tear down the Stack
         run: docker compose down

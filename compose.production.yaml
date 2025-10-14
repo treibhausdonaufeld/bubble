@@ -28,21 +28,15 @@ services:
     command: /start
 
   postgres:
-    build:
-      context: .
-      dockerfile: ./compose/production/postgres/Dockerfile
-    image: bubble_production_postgres
+    image: docker.io/pgvector/pgvector:pg17
     volumes:
       - production_postgres_data:/var/lib/postgresql/data
       - production_postgres_data_backups:/backups
     env_file:
-      - ./.envs/.production/.postgres
+      - ./backend/.env-docker.local
 
   redis:
-    image: docker.io/redis:6
-
-    volumes:
-      - production_redis_data:/data
+    image: ghcr.io/dragonflydb/dragonfly:latest
 
   celeryworker:
     <<: *backend

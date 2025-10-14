@@ -65,7 +65,7 @@ RUN --mount=type=cache,target=/home/django/.cache/uv,uid=1000 \
 # Place executables in the environment at the front of the path
 ENV PATH="$UV_PROJECT_ENVIRONMENT/bin:$PATH"
 
-COPY . ${APP_HOME}
+COPY --chown=django:django . ${APP_HOME}
 
 RUN DATABASE_URL="" \
   DJANGO_SETTINGS_MODULE="config.settings.test" \

@@ -27,8 +27,8 @@ services:
       - postgres
       - redis
       - mailpit
-    volumes:
-      - ./backend:/app:z
+    # volumes:
+    #   - ./backend:/app:z
     env_file:
       - ./backend/.env-docker.local
     environment:
