@@ -73,13 +73,13 @@ jobs:
       #       docs.cache-to=type=gha,scope=cached-docs,mode=max
 
       - name: Check DB Migrations
-        run: docker compose run --rm -e DJANGO_SETTINGS_MODULE=config.settings.production backend python manage.py makemigrations --check
+        run: docker compose run --rm -e DJANGO_SETTINGS_MODULE=config.settings.test backend python manage.py makemigrations --check
 
       - name: Run DB Migrations
-        run: docker compose run --rm -e DJANGO_SETTINGS_MODULE=config.settings.production backend python manage.py migrate
+        run: docker compose run --rm -e DJANGO_SETTINGS_MODULE=config.settings.test backend python manage.py migrate
 
       - name: Run Django Tests
-        run: docker compose run backend uv run pytest
+        run: docker compose run --rm -e DJANGO_SETTINGS_MODULE=config.settings.test backend uv run pytest
 
       - name: Tear down the Stack
         run: docker compose down
