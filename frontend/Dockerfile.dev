@@ -1,15 +1,17 @@
 FROM oven/bun:1-alpine
 
+USER bun
+
 WORKDIR /app
 
 # Copy package files and bun.lockb
-COPY package.json bun.lockb ./
+COPY --chown=bun:bun package.json bun.lockb ./
 
 # Install dependencies with Bun
 RUN bun install
 
 # Copy source code
-COPY . .
+COPY --chown=bun:bun . .
 
 EXPOSE 8080
 

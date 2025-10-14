@@ -46,18 +46,15 @@ services:
 
   celeryworker:
     <<: *backend
-    image: bubble_production_celeryworker
     command: /start-celeryworker
 
   celerybeat:
     <<: *backend
-    image: bubble_production_celerybeat
     command: /start-celerybeat
 
-  flower:
-    <<: *backend
-    image: bubble_production_flower
-    command: /start-flower
+  # flower:
+  #   <<: *backend
+  #   command: /start-flower
 
   nginx:
     build:
