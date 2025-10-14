@@ -28,7 +28,7 @@ def notify_new_message(sender, instance: Message, created, **kwargs):
 
     if instance.booking.user != instance.sender:
         send_message_notification(
-            instance.booking.user.id,  # type: ignore[union-attr]
+            instance.booking.user_id,  # type: ignore[union-attr]
             message=instance.message,
             booking_uuid=str(instance.booking.uuid),
         )
@@ -40,7 +40,7 @@ def notify_new_message(sender, instance: Message, created, **kwargs):
     else:
         # Send notification to each user with change permission (except the sender)
         for user in users_with_perms:
-            if user.id != instance.sender.id:  # type: ignore[union-attr]
+            if user.id != instance.sender_id:  # type: ignore[union-attr]
                 send_message_notification(
                     user.id,  # type: ignore[union-attr]
                     message=instance.message,
@@ -69,7 +69,7 @@ def notify_new_booking(sender, instance: Booking, created, **kwargs):
 
     # Send notification to each user with change permission (except the booking creator)
     for user in users_with_perms:
-        if user.id != instance.user.id:  # type: ignore[union-attr]
+        if user.id != instance.user_id:  # type: ignore[union-attr]
             send_message_notification(
                 user.id,  # type: ignore[union-attr]
                 message=_("A new booking has been created for your item."),
