@@ -1,11 +1,7 @@
 # Build stage
 FROM oven/bun:1-alpine AS build
 
-# Create an unprivileged runtime user and ensure nginx serves files from correct owner
-RUN addgroup --system appuser && adduser --system --ingroup appuser --no-create-home --shell /usr/sbin/nologin appuser \
-	&& chown -R appuser:appuser /usr/share/nginx/html
-
-USER appuser
+USER bun
 
 WORKDIR /app
 
