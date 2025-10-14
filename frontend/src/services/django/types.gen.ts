@@ -28,10 +28,7 @@ export type BlankEnum = '';
  */
 export type Book = {
     readonly images: Array<Image>;
-    /**
-     * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
-     */
-    readonly username: string;
+    readonly user: string;
     readonly first_image: string;
     sale_price?: string | null;
     rental_price?: string | null;
@@ -100,6 +97,10 @@ export type Book = {
     status?: Status402Enum;
     isbn?: string;
     /**
+     * Language of the book
+     */
+    language?: string;
+    /**
      * Publication year
      */
     year?: number | null;
@@ -107,17 +108,13 @@ export type Book = {
      * Main topic or subject
      */
     topic?: string;
-    readonly user: number;
 };
 
 /**
  * Serializer for Book list view.
  */
 export type BookList = {
-    /**
-     * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
-     */
-    readonly username: string;
+    readonly user: string;
     readonly first_image: string;
     sale_price?: string | null;
     rental_price?: string | null;
@@ -186,6 +183,10 @@ export type BookList = {
     status?: Status402Enum;
     isbn?: string;
     /**
+     * Language of the book
+     */
+    language?: string;
+    /**
      * Publication year
      */
     year?: number | null;
@@ -193,7 +194,6 @@ export type BookList = {
      * Main topic or subject
      */
     topic?: string;
-    readonly user: number;
     /**
      * Publisher
      */
@@ -564,10 +564,7 @@ export type PatchedAuthor = {
  */
 export type PatchedBook = {
     readonly images?: Array<Image>;
-    /**
-     * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
-     */
-    readonly username?: string;
+    readonly user?: string;
     readonly first_image?: string;
     sale_price?: string | null;
     rental_price?: string | null;
@@ -636,6 +633,10 @@ export type PatchedBook = {
     status?: Status402Enum;
     isbn?: string;
     /**
+     * Language of the book
+     */
+    language?: string;
+    /**
      * Publication year
      */
     year?: number | null;
@@ -643,7 +644,6 @@ export type PatchedBook = {
      * Main topic or subject
      */
     topic?: string;
-    readonly user?: number;
 };
 
 /**
@@ -976,6 +976,10 @@ export type BookWritable = {
     status?: Status402Enum;
     isbn?: string;
     /**
+     * Language of the book
+     */
+    language?: string;
+    /**
      * Publication year
      */
     year?: number | null;
@@ -1043,6 +1047,10 @@ export type BookListWritable = {
     active?: boolean;
     status?: Status402Enum;
     isbn?: string;
+    /**
+     * Language of the book
+     */
+    language?: string;
     /**
      * Publication year
      */
@@ -1319,6 +1327,10 @@ export type PatchedBookWritable = {
     status?: Status402Enum;
     isbn?: string;
     /**
+     * Language of the book
+     */
+    language?: string;
+    /**
      * Publication year
      */
     year?: number | null;
@@ -1461,6 +1473,21 @@ export type PatchedShelfWritable = {
     description?: string;
 };
 
+export type PatchedUserWritable = {
+    /**
+     * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
+     */
+    username?: string;
+    /**
+     * Name of User
+     */
+    name?: string;
+    /**
+     * Email address
+     */
+    email?: string;
+};
+
 export type ProfileWritable = {
     phone?: string;
     bio?: string;
@@ -1481,6 +1508,21 @@ export type PublisherWritable = {
 export type ShelfWritable = {
     name: string;
     description?: string;
+};
+
+export type UserWritable = {
+    /**
+     * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
+     */
+    username: string;
+    /**
+     * Name of User
+     */
+    name?: string;
+    /**
+     * Email address
+     */
+    email?: string;
 };
 
 export type AuthTokenCreateData = {
@@ -1827,6 +1869,29 @@ export type BooksUpdateResponses = {
 };
 
 export type BooksUpdateResponse = BooksUpdateResponses[keyof BooksUpdateResponses];
+
+export type BooksIsbnUpdateUpdateData = {
+    body?: {
+        /**
+         * ISBN number to fetch book details from OpenLibrary API. If not provided, uses the book's existing ISBN.
+         */
+        isbn?: string;
+    };
+    path: {
+        /**
+         * Unique identifier for the item
+         */
+        uuid: string;
+    };
+    query?: never;
+    url: '/api/books/{uuid}/isbn_update/';
+};
+
+export type BooksIsbnUpdateUpdateResponses = {
+    200: Book;
+};
+
+export type BooksIsbnUpdateUpdateResponse = BooksIsbnUpdateUpdateResponses[keyof BooksIsbnUpdateUpdateResponses];
 
 export type GenresListData = {
     body?: never;

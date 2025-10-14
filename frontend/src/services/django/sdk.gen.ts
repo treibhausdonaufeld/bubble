@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { AuthorsCreateData, AuthorsCreateResponses, AuthorsDestroyData, AuthorsDestroyResponses, AuthorsListData, AuthorsListResponses, AuthorsPartialUpdateData, AuthorsPartialUpdateResponses, AuthorsRetrieveData, AuthorsRetrieveResponses, AuthorsUpdateData, AuthorsUpdateResponses, AuthTokenCreateData, AuthTokenCreateResponses, BookingsCreateData, BookingsCreateResponses, BookingsDestroyData, BookingsDestroyResponses, BookingsListData, BookingsListResponses, BookingsPartialUpdateData, BookingsPartialUpdateResponses, BookingsRetrieveData, BookingsRetrieveResponses, BookingsUpdateData, BookingsUpdateResponses, BooksCreateData, BooksCreateResponses, BooksDestroyData, BooksDestroyResponses, BooksListData, BooksListResponses, BooksPartialUpdateData, BooksPartialUpdateResponses, BooksRetrieveData, BooksRetrieveResponses, BooksUpdateData, BooksUpdateResponses, GenresCreateData, GenresCreateResponses, GenresDestroyData, GenresDestroyResponses, GenresListData, GenresListResponses, GenresPartialUpdateData, GenresPartialUpdateResponses, GenresRetrieveData, GenresRetrieveResponses, GenresUpdateData, GenresUpdateResponses, ImagesCreateData, ImagesCreateResponses, ImagesDestroyData, ImagesDestroyResponses, ImagesListData, ImagesListResponses, ImagesPartialUpdateData, ImagesPartialUpdateResponses, ImagesRetrieveData, ImagesRetrieveResponses, ImagesUpdateData, ImagesUpdateResponses, ItemsAiDescribeUpdateData, ItemsAiDescribeUpdateResponses, ItemsAiImageUpdateData, ItemsAiImageUpdateResponses, ItemsCreateData, ItemsCreateResponses, ItemsDestroyData, ItemsDestroyResponses, ItemsListData, ItemsListResponses, ItemsPartialUpdateData, ItemsPartialUpdateResponses, ItemsReorderImagesUpdateData, ItemsReorderImagesUpdateResponses, ItemsRetrieveData, ItemsRetrieveResponses, ItemsUpdateData, ItemsUpdateResponses, MessagesCreateData, MessagesCreateResponses, MessagesDestroyData, MessagesDestroyResponses, MessagesListData, MessagesListResponses, MessagesPartialUpdateData, MessagesPartialUpdateResponses, MessagesRetrieveData, MessagesRetrieveResponses, MessagesUpdateData, MessagesUpdateResponses, ProfilesListData, ProfilesListResponses, ProfilesMePartialUpdateData, ProfilesMePartialUpdateResponses, ProfilesMeRetrieveData, ProfilesMeRetrieveResponses, ProfilesRetrieveData, ProfilesRetrieveResponses, PublicBookingsListData, PublicBookingsListResponses, PublicBookingsRetrieveData, PublicBookingsRetrieveResponses, PublicItemsListData, PublicItemsListResponses, PublicItemsRetrieveData, PublicItemsRetrieveResponses, PublishersCreateData, PublishersCreateResponses, PublishersDestroyData, PublishersDestroyResponses, PublishersListData, PublishersListResponses, PublishersPartialUpdateData, PublishersPartialUpdateResponses, PublishersRetrieveData, PublishersRetrieveResponses, PublishersUpdateData, PublishersUpdateResponses, SchemaRetrieveData, SchemaRetrieveResponses, ShelvesCreateData, ShelvesCreateResponses, ShelvesDestroyData, ShelvesDestroyResponses, ShelvesListData, ShelvesListResponses, ShelvesPartialUpdateData, ShelvesPartialUpdateResponses, ShelvesRetrieveData, ShelvesRetrieveResponses, ShelvesUpdateData, ShelvesUpdateResponses, UsersListData, UsersListResponses, UsersMeRetrieveData, UsersMeRetrieveResponses, UsersPartialUpdateData, UsersPartialUpdateResponses, UsersRetrieveData, UsersRetrieveResponses, UsersUpdateData, UsersUpdateResponses } from './types.gen';
+import type { AuthorsCreateData, AuthorsCreateResponses, AuthorsDestroyData, AuthorsDestroyResponses, AuthorsListData, AuthorsListResponses, AuthorsPartialUpdateData, AuthorsPartialUpdateResponses, AuthorsRetrieveData, AuthorsRetrieveResponses, AuthorsUpdateData, AuthorsUpdateResponses, AuthTokenCreateData, AuthTokenCreateResponses, BookingsCreateData, BookingsCreateResponses, BookingsDestroyData, BookingsDestroyResponses, BookingsListData, BookingsListResponses, BookingsPartialUpdateData, BookingsPartialUpdateResponses, BookingsRetrieveData, BookingsRetrieveResponses, BookingsUpdateData, BookingsUpdateResponses, BooksCreateData, BooksCreateResponses, BooksDestroyData, BooksDestroyResponses, BooksIsbnUpdateUpdateData, BooksIsbnUpdateUpdateResponses, BooksListData, BooksListResponses, BooksPartialUpdateData, BooksPartialUpdateResponses, BooksRetrieveData, BooksRetrieveResponses, BooksUpdateData, BooksUpdateResponses, GenresCreateData, GenresCreateResponses, GenresDestroyData, GenresDestroyResponses, GenresListData, GenresListResponses, GenresPartialUpdateData, GenresPartialUpdateResponses, GenresRetrieveData, GenresRetrieveResponses, GenresUpdateData, GenresUpdateResponses, ImagesCreateData, ImagesCreateResponses, ImagesDestroyData, ImagesDestroyResponses, ImagesListData, ImagesListResponses, ImagesPartialUpdateData, ImagesPartialUpdateResponses, ImagesRetrieveData, ImagesRetrieveResponses, ImagesUpdateData, ImagesUpdateResponses, ItemsAiDescribeUpdateData, ItemsAiDescribeUpdateResponses, ItemsAiImageUpdateData, ItemsAiImageUpdateResponses, ItemsCreateData, ItemsCreateResponses, ItemsDestroyData, ItemsDestroyResponses, ItemsListData, ItemsListResponses, ItemsPartialUpdateData, ItemsPartialUpdateResponses, ItemsReorderImagesUpdateData, ItemsReorderImagesUpdateResponses, ItemsRetrieveData, ItemsRetrieveResponses, ItemsUpdateData, ItemsUpdateResponses, MessagesCreateData, MessagesCreateResponses, MessagesDestroyData, MessagesDestroyResponses, MessagesListData, MessagesListResponses, MessagesPartialUpdateData, MessagesPartialUpdateResponses, MessagesRetrieveData, MessagesRetrieveResponses, MessagesUpdateData, MessagesUpdateResponses, ProfilesListData, ProfilesListResponses, ProfilesMePartialUpdateData, ProfilesMePartialUpdateResponses, ProfilesMeRetrieveData, ProfilesMeRetrieveResponses, ProfilesRetrieveData, ProfilesRetrieveResponses, PublicBookingsListData, PublicBookingsListResponses, PublicBookingsRetrieveData, PublicBookingsRetrieveResponses, PublicItemsListData, PublicItemsListResponses, PublicItemsRetrieveData, PublicItemsRetrieveResponses, PublishersCreateData, PublishersCreateResponses, PublishersDestroyData, PublishersDestroyResponses, PublishersListData, PublishersListResponses, PublishersPartialUpdateData, PublishersPartialUpdateResponses, PublishersRetrieveData, PublishersRetrieveResponses, PublishersUpdateData, PublishersUpdateResponses, SchemaRetrieveData, SchemaRetrieveResponses, ShelvesCreateData, ShelvesCreateResponses, ShelvesDestroyData, ShelvesDestroyResponses, ShelvesListData, ShelvesListResponses, ShelvesPartialUpdateData, ShelvesPartialUpdateResponses, ShelvesRetrieveData, ShelvesRetrieveResponses, ShelvesUpdateData, ShelvesUpdateResponses, UsersListData, UsersListResponses, UsersMeRetrieveData, UsersMeRetrieveResponses, UsersPartialUpdateData, UsersPartialUpdateResponses, UsersRetrieveData, UsersRetrieveResponses, UsersUpdateData, UsersUpdateResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -361,6 +361,10 @@ export const bookingsUpdate = <ThrowOnError extends boolean = true>(options: Opt
 /**
  * ViewSet for managing books.
  *
+ * Dynamically includes both Book instances and Items with category='books'.
+ * When an Item with category='books' is accessed, it's automatically promoted
+ * to a Book instance via signals.
+ *
  * list: Get all books
  * retrieve: Get a specific book by UUID
  * create: Create a new book
@@ -388,6 +392,10 @@ export const booksList = <ThrowOnError extends boolean = true>(options?: Options
 
 /**
  * ViewSet for managing books.
+ *
+ * Dynamically includes both Book instances and Items with category='books'.
+ * When an Item with category='books' is accessed, it's automatically promoted
+ * to a Book instance via signals.
  *
  * list: Get all books
  * retrieve: Get a specific book by UUID
@@ -421,6 +429,10 @@ export const booksCreate = <ThrowOnError extends boolean = true>(options?: Optio
 /**
  * ViewSet for managing books.
  *
+ * Dynamically includes both Book instances and Items with category='books'.
+ * When an Item with category='books' is accessed, it's automatically promoted
+ * to a Book instance via signals.
+ *
  * list: Get all books
  * retrieve: Get a specific book by UUID
  * create: Create a new book
@@ -449,6 +461,10 @@ export const booksDestroy = <ThrowOnError extends boolean = true>(options: Optio
 /**
  * ViewSet for managing books.
  *
+ * Dynamically includes both Book instances and Items with category='books'.
+ * When an Item with category='books' is accessed, it's automatically promoted
+ * to a Book instance via signals.
+ *
  * list: Get all books
  * retrieve: Get a specific book by UUID
  * create: Create a new book
@@ -476,6 +492,10 @@ export const booksRetrieve = <ThrowOnError extends boolean = true>(options: Opti
 
 /**
  * ViewSet for managing books.
+ *
+ * Dynamically includes both Book instances and Items with category='books'.
+ * When an Item with category='books' is accessed, it's automatically promoted
+ * to a Book instance via signals.
  *
  * list: Get all books
  * retrieve: Get a specific book by UUID
@@ -509,6 +529,10 @@ export const booksPartialUpdate = <ThrowOnError extends boolean = true>(options:
 /**
  * ViewSet for managing books.
  *
+ * Dynamically includes both Book instances and Items with category='books'.
+ * When an Item with category='books' is accessed, it's automatically promoted
+ * to a Book instance via signals.
+ *
  * list: Get all books
  * retrieve: Get a specific book by UUID
  * create: Create a new book
@@ -530,6 +554,34 @@ export const booksUpdate = <ThrowOnError extends boolean = true>(options: Option
             }
         ],
         url: '/api/books/{uuid}/',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+/**
+ * Update book details from OpenLibrary based on ISBN.
+ *
+ * Optionally provide an ISBN in the request body to update the book with data
+ * from OpenLibrary. If no ISBN is provided, the book's existing ISBN will be used.
+ */
+export const booksIsbnUpdateUpdate = <ThrowOnError extends boolean = true>(options: Options<BooksIsbnUpdateUpdateData, ThrowOnError>) => {
+    return (options.client ?? client).put<BooksIsbnUpdateUpdateResponses, unknown, ThrowOnError>({
+        security: [
+            {
+                in: 'cookie',
+                name: 'sessionid',
+                type: 'apiKey'
+            },
+            {
+                name: 'Authorization',
+                type: 'apiKey'
+            }
+        ],
+        url: '/api/books/{uuid}/isbn_update/',
         ...options,
         headers: {
             'Content-Type': 'application/json',
