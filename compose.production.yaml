@@ -19,13 +19,17 @@ services:
 
   backend: &backend
     build:
-      context: .
-      dockerfile: ./backend/Dockerfile
+      context: ./backend/
+      dockerfile: Dockerfile
     image: bubble-backend
     depends_on:
       - postgres
       - redis
     command: /start
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.settings.production
+    env_file:
+      - ./backend/.env-docker.local
 
   postgres:
     image: docker.io/pgvector/pgvector:pg17
