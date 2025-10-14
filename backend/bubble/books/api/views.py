@@ -1,12 +1,16 @@
 """API views for books."""
 
+import requests
 from django.http import Http404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, viewsets
+from drf_spectacular.utils import extend_schema
+from rest_framework import filters, status, viewsets
+from rest_framework.decorators import action
 from rest_framework.permissions import (
     DjangoModelPermissions,
     DjangoModelPermissionsOrAnonReadOnly,
 )
+from rest_framework.response import Response
 
 from bubble.books.api.filters import (
     AuthorFilter,
@@ -24,6 +28,7 @@ from bubble.books.api.serializers import (
     ShelfSerializer,
 )
 from bubble.books.models import Author, Book, Genre, Publisher, Shelf
+from bubble.books.services import OpenLibraryService
 from bubble.items.models import Item
 
 
@@ -202,3 +207,51 @@ class BookViewSet(viewsets.ModelViewSet):
                 raise Http404(msg) from None
 
         return obj
+
+    @extend_schema(
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "isbn": {
+                        "type": "string",
+                        "description": (
+                            "ISBN number to fetch book details from "
+                            "OpenLibrary API. If not provided, uses the "
+                            "book's existing ISBN."
+                        ),
+                        "example": "9780980200447",
+                    }
+                },
+            }
+        },
+        responses={200: BookSerializer},
+    )
+    @action(detail=True, methods=["put"])
+    def isbn_update(self, request, uuid=None):
+        """
+        Update book details from OpenLibrary based on ISBN.
+
+        Optionally provide an ISBN in the request body to update the book with data
+        from OpenLibrary. If no ISBN is provided, the book's existing ISBN will be used.
+        """
+        book = self.get_object()
+        isbn = request.data.get("isbn")
+
+        if not isbn and not book.isbn:
+            return Response(
+                {"error": "Book does not have an ISBN and none was provided."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        service = OpenLibraryService()
+        try:
+            service.update_book_from_isbn(book, isbn=isbn)
+        except requests.RequestException as e:
+            return Response(
+                {"error": f"Failed to fetch data from OpenLibrary: {e}"},
+                status=status.HTTP_502_BAD_GATEWAY,
+            )
+
+        serializer = self.get_serializer(book)
+        return Response(serializer.data)
