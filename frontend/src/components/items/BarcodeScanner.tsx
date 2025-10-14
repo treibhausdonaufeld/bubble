@@ -45,7 +45,6 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScan, title })
     // Initialize detector when component mounts
     const initDetector = async () => {
       try {
-        console.log('[BarcodeScanner] Initializing detector...');
         detectorRef.current = new BarcodeDetector({
           formats: [
             'ean_13', // ISBN-13 is encoded as EAN-13
@@ -57,10 +56,8 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScan, title })
             'code_93',
           ],
         });
-        console.log('[BarcodeScanner] Detector initialized successfully');
         setIsInitialized(true);
       } catch (err) {
-        console.error('[BarcodeScanner] Failed to initialize barcode detector:', err);
         setError('Failed to initialize barcode detector');
       }
     };
@@ -68,35 +65,25 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScan, title })
   }, []);
 
   const startScanning = async () => {
-    console.log('[BarcodeScanner] startScanning called');
-    console.log('[BarcodeScanner] isInitialized:', isInitialized);
-    console.log('[BarcodeScanner] videoRef.current:', videoRef.current);
-    console.log('[BarcodeScanner] detectorRef.current:', detectorRef.current);
-
     // Wait for detector to be initialized
     if (!detectorRef.current) {
-      console.log('[BarcodeScanner] Detector not ready, waiting...');
       // Retry after a short delay
       await new Promise(resolve => setTimeout(resolve, 100));
 
       if (!detectorRef.current) {
-        console.error('[BarcodeScanner] Detector still not initialized after wait');
         setError('Barcode detector failed to initialize. Please refresh the page.');
         return;
       }
     }
 
     if (!videoRef.current) {
-      console.error('[BarcodeScanner] Missing videoRef');
       setError('Video element not available');
       return;
     }
 
     try {
-      console.log('[BarcodeScanner] Clearing error state');
       setError(null);
 
-      console.log('[BarcodeScanner] Requesting camera access...');
       // Request camera access
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
@@ -106,20 +93,14 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScan, title })
         },
       });
 
-      console.log('[BarcodeScanner] Camera access granted, stream:', stream);
-      console.log('[BarcodeScanner] Stream tracks:', stream.getTracks());
-
       streamRef.current = stream;
       videoRef.current.srcObject = stream;
 
-      console.log('[BarcodeScanner] Video srcObject set, waiting for play...');
       await videoRef.current.play();
-      console.log('[BarcodeScanner] Video playing successfully');
 
       // This is the key change: We now set the state and let the useEffect handle the loop.
       setIsScanning(true);
     } catch (err) {
-      console.error('[BarcodeScanner] Camera access error:', err);
       setError('Failed to access camera. Please check permissions.');
       setIsScanning(false);
     }
@@ -128,26 +109,18 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScan, title })
   // This new useEffect hook ensures the scan loop starts only after the state is updated.
   useEffect(() => {
     if (isScanning) {
-      console.log('[BarcodeScanner] isScanning is true, starting scan loop.');
       scanFrame();
     }
   }, [isScanning]);
 
   const scanFrame = async () => {
     if (!videoRef.current || !detectorRef.current || !isScanning) {
-      console.log('[BarcodeScanner] scanFrame skipped - conditions not met:', {
-        hasVideoRef: !!videoRef.current,
-        hasDetectorRef: !!detectorRef.current,
-        isScanning,
-      });
       return;
     }
 
     try {
-      console.log('[BarcodeScanner] Attempting to detect barcodes...');
       // New logging in the scan loop
       if (videoRef.current.readyState < 2) {
-        console.log('[BarcodeScanner] Video not ready, waiting for more data...');
         // Wait for the video to have enough data
         await new Promise(resolve => {
           const checkReadyState = () => {
@@ -162,17 +135,8 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScan, title })
       }
 
       const barcodes = await detectorRef.current.detect(videoRef.current);
-      console.log('[BarcodeScanner] Detection result:', barcodes);
 
       if (barcodes.length > 0) {
-        console.log('[BarcodeScanner] ✓ Barcode DETECTED:', {
-          // detailed info
-          rawValue: barcodes[0].rawValue,
-          format: barcodes[0].format,
-          boundingBox: barcodes[0].boundingBox,
-          cornerPoints: barcodes[0].cornerPoints,
-        });
-
         setDetectedBarcode(barcodes[0].rawValue);
 
         // Call the callback with the detected barcode
@@ -183,52 +147,42 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScan, title })
         setIsOpen(false);
 
         return;
-      } else {
-        console.log('[BarcodeScanner] No barcode detected in this frame.');
       }
     } catch (err) {
-      console.error('[BarcodeScanner] Barcode detection error:', err);
+      // Silent error handling
     }
 
     // Continue scanning
     animationFrameRef.current = requestAnimationFrame(scanFrame);
-    console.log('[BarcodeScanner] Scheduling next scanFrame');
   };
 
   const stopScanning = () => {
-    console.log('[BarcodeScanner] stopScanning called');
     setIsScanning(false);
 
     // Cancel animation frame
     if (animationFrameRef.current) {
-      console.log('[BarcodeScanner] Cancelling animation frame');
       cancelAnimationFrame(animationFrameRef.current);
       animationFrameRef.current = null;
     }
 
     // Stop video stream
     if (streamRef.current) {
-      console.log('[BarcodeScanner] Stopping video stream');
       streamRef.current.getTracks().forEach(track => track.stop());
       streamRef.current = null;
     }
 
     // Clear video source
     if (videoRef.current) {
-      console.log('[BarcodeScanner] Clearing video source');
       videoRef.current.srcObject = null;
     }
 
     setDetectedBarcode(null);
-    console.log('[BarcodeScanner] stopScanning complete');
   };
 
   const handleOpenChange = (open: boolean) => {
-    console.log('[BarcodeScanner] handleOpenChange:', open);
     setIsOpen(open);
 
     if (!open) {
-      console.log('[BarcodeScanner] Dialog closed, stopping scanner');
       stopScanning();
     }
   };
@@ -237,7 +191,6 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScan, title })
     if (isOpen) {
       // Use a timeout to allow the dialog to render and the videoRef to be set.
       const timer = setTimeout(() => {
-        console.log('[BarcodeScanner] Dialog is open, starting scanner');
         startScanning();
       }, 150); // A small delay is often necessary for portal-based dialogs
 

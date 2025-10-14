@@ -280,6 +280,12 @@ const translations = {
     'editItem.updateErrorDescription': 'Failed to update item. Please try again.',
     'editItem.publishSuccessTitle': 'Item Published',
     'editItem.publishSuccessDescription': 'Your item is now available to the community.',
+    'editItem.isbnUpdateSuccessTitle': 'Book Updated from ISBN',
+    'editItem.isbnUpdateSuccessDescription':
+      'Book details have been fetched and updated from OpenLibrary.',
+    'editItem.isbnUpdateErrorTitle': 'ISBN Update Failed',
+    'editItem.isbnUpdateErrorDescription':
+      'Failed to fetch book data from OpenLibrary. Please try again.',
     'editItem.images': 'Images',
     'editItem.editBook': 'Edit Book',
     'editItem.bookDetails': 'Book Details',
@@ -585,6 +591,12 @@ const translations = {
       'Artikel konnte nicht aktualisiert werden. Bitte versuche es erneut.',
     'editItem.publishSuccessTitle': 'Artikel veröffentlicht',
     'editItem.publishSuccessDescription': 'Dein Artikel ist jetzt für die Community verfügbar.',
+    'editItem.isbnUpdateSuccessTitle': 'Buch von ISBN aktualisiert',
+    'editItem.isbnUpdateSuccessDescription':
+      'Buchdetails wurden von OpenLibrary abgerufen und aktualisiert.',
+    'editItem.isbnUpdateErrorTitle': 'ISBN-Aktualisierung fehlgeschlagen',
+    'editItem.isbnUpdateErrorDescription':
+      'Buchdaten konnten nicht von OpenLibrary abgerufen werden. Bitte versuche es erneut.',
     'editItem.images': 'Bilder',
     'editItem.editBook': 'Buch bearbeiten',
     'editItem.bookDetails': 'Buch Details',

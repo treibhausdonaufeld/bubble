@@ -36,6 +36,7 @@ import {
 } from '@/services/django';
 import {
   authorsList,
+  booksIsbnUpdateUpdate,
   booksPartialUpdate,
   booksRetrieve,
   genresList,
@@ -90,6 +91,32 @@ const EditBook = () => {
       toast({
         title: t('editItem.updateErrorTitle'),
         description: error?.message || t('editItem.updateErrorDescription'),
+        variant: 'destructive',
+      });
+    },
+  });
+
+  // ISBN update mutation
+  const isbnUpdateMutation = useMutation({
+    mutationFn: async (data: { uuid: string; isbn: string }) => {
+      const response = await booksIsbnUpdateUpdate({
+        path: { uuid: data.uuid },
+        body: { isbn: data.isbn },
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['book', editItemUuid] });
+      toast({
+        title: t('editItem.isbnUpdateSuccessTitle'),
+        description: t('editItem.isbnUpdateSuccessDescription'),
+      });
+    },
+    onError: (error: any) => {
+      console.error('Error updating book from ISBN:', error);
+      toast({
+        title: t('editItem.isbnUpdateErrorTitle'),
+        description: error?.message || t('editItem.isbnUpdateErrorDescription'),
         variant: 'destructive',
       });
     },
@@ -212,6 +239,23 @@ const EditBook = () => {
       }
     }
   }, [book]);
+
+  const handleBarcodeScan = async (scannedIsbn: string) => {
+    // Update form data with scanned ISBN
+    setFormData(prev => ({ ...prev, isbn: scannedIsbn }));
+
+    // Call ISBN update API if we have a valid book UUID
+    if (editItemUuid) {
+      try {
+        await isbnUpdateMutation.mutateAsync({
+          uuid: editItemUuid,
+          isbn: scannedIsbn,
+        });
+      } catch (error) {
+        console.error('Error updating book from scanned ISBN:', error);
+      }
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -464,10 +508,7 @@ const EditBook = () => {
                       disabled={aiProcessing}
                       className="flex-1"
                     />
-                    <BarcodeScanner
-                      onScan={code => setFormData({ ...formData, isbn: code })}
-                      title={t('editItem.scanIsbn')}
-                    />
+                    <BarcodeScanner onScan={handleBarcodeScan} title={t('editItem.scanIsbn')} />
                   </div>
                 </div>
 
