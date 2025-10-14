@@ -23,7 +23,9 @@ class TestBookViewSetISBNUpdate:
         )
         # add user to default group to have permissions
         self.user.groups.add(Group.objects.get(name=DefaultGroup.DEFAULT))  # pyright: ignore[reportAttributeAccessIssue
-        self.book = Book.objects.create(name="Test Book", user=self.user)
+        self.book = Book.objects.create(
+            name="Test Book", isbn="9780980200447", user=self.user
+        )
         self.view = BookViewSet.as_view({"put": "isbn_update"})
         self.url = f"/api/books/{self.book.uuid}/isbn_update/"
 
@@ -46,11 +48,12 @@ class TestBookViewSetISBNUpdate:
         force_authenticate(request, user=self.user)
         response = self.view(request, uuid=str(self.book.uuid))
 
+        assert response.status_code == status.HTTP_200_OK
+        mock_meta.assert_called_once_with("9780980200447", service="default")
+
         self.book.refresh_from_db()
         assert self.book.name == "Updated Book Title"
         assert self.book.isbn == "9780980200447"
-        assert response.status_code == status.HTTP_200_OK
-        mock_meta.assert_called_once_with("9780980200447", service="default")
 
     def test_isbn_update_no_isbn(self):
         self.book.isbn = ""
@@ -68,14 +71,13 @@ class TestBookViewSetISBNUpdate:
     @patch("bubble.books.services.isbnlib.canonical")
     def test_isbn_update_invalid_isbn(self, mock_canonical):
         mock_canonical.return_value = None
-        request = self.factory.put(self.url)
+        # Provide an ISBN in the request that will be validated
+        request = self.factory.put(self.url, {"isbn": "invalid-isbn"})
         force_authenticate(request, user=self.user)
         response = self.view(request, uuid=str(self.book.uuid))
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert response.data == {
-            "error": "Book does not have an ISBN and none was provided."
-        }
+        assert "Invalid ISBN format" in str(response.data)
 
     @patch("bubble.books.services.isbnlib.meta")
     @patch("bubble.books.services.isbnlib.canonical")
@@ -83,11 +85,10 @@ class TestBookViewSetISBNUpdate:
         mock_canonical.return_value = "9780980200447"
         mock_meta.return_value = None
 
-        request = self.factory.put(self.url)
+        # Provide an ISBN in the request
+        request = self.factory.put(self.url, {"isbn": "9780980200447"})
         force_authenticate(request, user=self.user)
         response = self.view(request, uuid=str(self.book.uuid))
 
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert response.data == {
-            "error": "Book does not have an ISBN and none was provided."
-        }
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        assert "No metadata found" in str(response.data)
