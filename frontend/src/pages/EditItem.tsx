@@ -1,4 +1,5 @@
 import { ImageManager } from '@/components/items/ImageManager';
+import { CategoryConditionFields } from '@/components/items/ItemFormFields';
 import { Header } from '@/components/layout/Header';
 import {
   AlertDialog,
@@ -701,56 +702,33 @@ const EditItem = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="category">{t('editItem.category')} *</Label>
-                  <Select
-                    value={formData.category}
-                    onValueChange={(value: CategoryEnum) =>
-                      setFormData({ ...formData, category: value })
-                    }
-                    disabled={aiProcessing}
-                    required
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder={t('editItem.selectCategory')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map(category => (
-                        <SelectItem key={category} value={category}>
-                          {t(`categories.${category}`)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+              <CategoryConditionFields
+                formData={formData}
+                setFormData={setFormData}
+                categories={categories}
+                onCategoryChange={async category => {
+                  // Update local state immediately
+                  setFormData(prev => ({ ...prev, category: category as CategoryEnum }));
 
-                <div className="space-y-2">
-                  <Label htmlFor="condition">{t('editItem.condition')} *</Label>
-                  <Select
-                    value={formData.condition.toString()}
-                    onValueChange={value =>
-                      setFormData({
-                        ...formData,
-                        condition: parseInt(value) as ConditionEnum,
-                      })
+                  // If switching to books, persist change first then navigate
+                  if (category === 'books' && editItemUuid) {
+                    try {
+                      await updateItemMutation.mutateAsync({
+                        itemUuid: editItemUuid,
+                        data: { category: category as CategoryEnum },
+                      });
+                      navigate(`/edit-book/${editItemUuid}`);
+                    } catch (err) {
+                      console.error('Error updating category before switching to EditBook:', err);
+                      toast({
+                        title: t('editItem.updateErrorTitle'),
+                        description: (err as any)?.message || t('editItem.updateErrorDescription'),
+                        variant: 'destructive',
+                      });
                     }
-                    disabled={aiProcessing}
-                    required
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder={t('editItem.selectCondition')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {conditions.map(condition => (
-                        <SelectItem key={condition.value} value={condition.value.toString()}>
-                          {t(`condition.${condition.key}`)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
+                  }
+                }}
+              />
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">

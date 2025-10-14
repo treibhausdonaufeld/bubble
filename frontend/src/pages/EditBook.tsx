@@ -21,6 +21,7 @@ import {
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
+import { useUpdateItem } from '@/hooks/useCreateItem';
 import {
   Author,
   BookWritable,
@@ -93,6 +94,9 @@ const EditBook = () => {
       });
     },
   });
+
+  // Item update mutation (used when switching category away from books)
+  const updateItemMutation = useUpdateItem();
 
   // Fetch authors, genres, publishers, shelves
   const { data: authorsData } = useQuery({
@@ -421,6 +425,28 @@ const EditBook = () => {
                 formData={formData}
                 setFormData={setFormData}
                 categories={categories}
+                onCategoryChange={async category => {
+                  // Update local state immediately
+                  setFormData(prev => ({ ...prev, category: category as CategoryEnum }));
+
+                  // If switching away from books, persist the change first, then navigate
+                  if (category !== 'books' && editItemUuid) {
+                    try {
+                      await updateItemMutation.mutateAsync({
+                        itemUuid: editItemUuid,
+                        data: { category: category as CategoryEnum },
+                      });
+                      navigate(`/edit-item/${editItemUuid}`);
+                    } catch (err) {
+                      console.error('Error updating category before switching to EditItem:', err);
+                      toast({
+                        title: t('editItem.updateErrorTitle'),
+                        description: (err as any)?.message || t('editItem.updateErrorDescription'),
+                        variant: 'destructive',
+                      });
+                    }
+                  }
+                }}
               />
 
               {/* Book-specific fields */}

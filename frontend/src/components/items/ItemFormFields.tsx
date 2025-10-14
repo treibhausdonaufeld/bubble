@@ -69,6 +69,7 @@ interface CategoryConditionFieldsProps {
   setFormData: (data: any) => void;
   disabled?: boolean;
   categories: CategoryEnum[];
+  onCategoryChange?: (category: CategoryEnum) => void;
 }
 
 export const CategoryConditionFields = ({
@@ -76,6 +77,7 @@ export const CategoryConditionFields = ({
   setFormData,
   disabled,
   categories,
+  onCategoryChange,
 }: CategoryConditionFieldsProps) => {
   const { t } = useLanguage();
 
@@ -91,7 +93,10 @@ export const CategoryConditionFields = ({
         <Label htmlFor="category">{t('editItem.category')} *</Label>
         <Select
           value={formData.category}
-          onValueChange={(value: CategoryEnum) => setFormData({ ...formData, category: value })}
+          onValueChange={(value: CategoryEnum) => {
+            setFormData({ ...formData, category: value });
+            onCategoryChange?.(value);
+          }}
           disabled={disabled}
           required
         >
