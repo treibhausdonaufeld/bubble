@@ -516,7 +516,7 @@ const EditItem = () => {
     return (
       <div className="min-h-screen bg-background">
         <Header />
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto py-8">
           <div className="text-center">{t('common.loading')}</div>
         </div>
       </div>
@@ -531,7 +531,7 @@ const EditItem = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <div className="container mx-auto max-w-2xl px-4 py-8">
+      <div className="container mx-auto py-8 space-y-6">
         {/* Back Button */}
         <Button variant="ghost" onClick={() => navigate(-1)} className="mb-6 gap-2">
           <ArrowLeft className="h-4 w-4" />
