@@ -1,0 +1,10 @@
+ARG BASE_IMAGE=bubble-backend:latest
+FROM ${BASE_IMAGE} AS base
+
+# Sync dev dependencies into the uv-managed venv (this will install dev deps)
+COPY --chown=django:django uv.lock pyproject.toml /app/
+RUN --mount=type=cache,target=/home/django/.cache/uv,uid=1000 \
+  uv sync
+
+ENTRYPOINT ["/entrypoint"]
+CMD ["/start"]

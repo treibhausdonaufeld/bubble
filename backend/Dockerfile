@@ -71,6 +71,6 @@ RUN DATABASE_URL="" \
   DJANGO_SETTINGS_MODULE="config.settings.test" \
   python manage.py compilemessages -v 0 -i .venv
 
-EXPOSE 5000
+EXPOSE 8000
 
 ENTRYPOINT ["/entrypoint"]

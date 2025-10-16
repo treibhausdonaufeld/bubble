@@ -26,7 +26,7 @@ ALLOWED_HOSTS = env.list(
 )
 
 ALLOWED_CIDR_NETS = env.list(
-    "ALLOWED_CIDR_NETS", default=["172.16.0.0/12", "192.168.0.0/16"]
+    "ALLOWED_CIDR_NETS", default=["172.16.0.0/12", "192.168.0.0/16", "127.0.0.1/32"]
 )
 
 # DATABASES
@@ -44,17 +44,6 @@ CACHES = {
             # Mimicking memcache behavior.
             # https://github.com/jazzband/django-redis#memcached-exceptions-behavior
             "IGNORE_EXCEPTIONS": True,
-        },
-    },
-}
-
-# CHANNELS
-# ------------------------------------------------------------------------------
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [REDIS_URL],
         },
     },
 }
@@ -129,8 +118,8 @@ INSTALLED_APPS += ["anymail"]
 # https://anymail.readthedocs.io/en/stable/esps/mailgun/
 EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
 ANYMAIL = {
-    "MAILGUN_API_KEY": env("MAILGUN_API_KEY"),
-    "MAILGUN_SENDER_DOMAIN": env("MAILGUN_DOMAIN"),
+    "MAILGUN_API_KEY": env("MAILGUN_API_KEY", default=""),
+    "MAILGUN_SENDER_DOMAIN": env("MAILGUN_DOMAIN", default=""),
     "MAILGUN_API_URL": env("MAILGUN_API_URL", default="https://api.mailgun.net/v3"),
 }
 
