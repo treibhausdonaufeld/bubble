@@ -37,29 +37,21 @@ services:
   backend:
     <<: *backend
     command: sh -c "python3 manage.py migrate && uvicorn config.asgi:application --host 0.0.0.0 --reload"
-    ports:
-      - '127.0.0.1:8000:8000'
 
   postgres:
     image: docker.io/pgvector/pgvector:pg17
     restart: always
     volumes:
       - bubble_local_postgres_data:/var/lib/postgresql/data
-    ports:
-      - '127.0.0.1:5432:5432'
     env_file:
       - ./backend/.env-docker.local
 
   mailpit:
     image: docker.io/axllent/mailpit:latest
-    ports:
-      - '127.0.0.1:8025:8025'
 
   redis:
     image: ghcr.io/dragonflydb/dragonfly:latest
     restart: always
-    ports:
-      - '127.0.0.1:6377:6379'
     environment:
       # required to work with django-channels
       # https://github.com/dragonflydb/dragonfly/issues/182#issuecomment-1241624150

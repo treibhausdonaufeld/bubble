@@ -73,13 +73,13 @@ services:
       timeout: 10s
       retries: 5
 
-  # worker:
-  #   <<: *backend
-  #   command: /start-celeryworker
+  worker:
+    <<: *backend
+    command: /start-celeryworker
 
-  # beat:
-  #   <<: *backend
-  #   command: /start-celerybeat
+  beat:
+    <<: *backend
+    command: /start-celerybeat
 
   # flower:
   #   <<: *backend

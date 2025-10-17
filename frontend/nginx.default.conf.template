@@ -19,15 +19,16 @@ server {
     server_tokens off;
 
     # add default headers
-    # add_header Content-Security-Policy $csp always;
-    # add_header X-XSS-Protection "1; mode=block";
-    # add_header Referrer-Policy 'strict-origin-when-cross-origin';
-    # add_header Permissions-Policy "geolocation=(),midi=(),sync-xhr=(),microphone=(),camera=(),magnetometer=(),gyroscope=(),fullscreen=(self),payment=()";
-    # add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
-    # add_header X-Content-Type-Options  "nosniff";
-    # add_header Cache-Control "no-cache, no-store, max-age=0, must-revalidate";
-    # add_header Expires "0";
-    # add_header Pragma "no-cache";
+    # Basic secure Content Security Policy: blocks all by default, allows self for scripts/styles/images/fonts, disallows inline JS, no external frames
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self'; script-src-elem 'self'; style-src 'self'; style-src-elem 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" always;
+    add_header X-XSS-Protection "1; mode=block";
+    add_header Referrer-Policy 'strict-origin-when-cross-origin';
+    add_header Permissions-Policy "geolocation=(),midi=(),sync-xhr=(),microphone=(),camera=(),magnetometer=(),gyroscope=(),fullscreen=(self),payment=()";
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+    add_header X-Content-Type-Options  "nosniff";
+    add_header Cache-Control "no-cache, no-store, max-age=0, must-revalidate";
+    add_header Expires "0";
+    add_header Pragma "no-cache";
 
     root /usr/share/nginx/html;
 
@@ -60,5 +61,8 @@ server {
     }
     location /media/ {
         alias /usr/share/nginx/media/;
+    }
+    location /healthz {
+        return 200 "OK";
     }
 }
