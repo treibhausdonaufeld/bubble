@@ -1,3 +1,4 @@
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import {
@@ -32,6 +33,7 @@ export const useUpdateItemStatus = () => {
   const queryClient = useQueryClient();
   const { user } = useAuth();
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   return useMutation({
     mutationFn: async ({ itemId, status }: { itemId: string; status: Status402Enum }) => {
@@ -45,14 +47,13 @@ export const useUpdateItemStatus = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['my-items', user?.id] });
       toast({
-        title: 'Status Updated',
-        description: 'The item status has been successfully updated.',
+        title: t('myItems.statusUpdated'),
       });
     },
     onError: (error: Error) => {
       toast({
-        title: 'Error Updating Status',
-        description: error.message || 'Failed to update item status',
+        title: t('common.error'),
+        description: JSON.stringify(error),
         variant: 'destructive',
       });
     },

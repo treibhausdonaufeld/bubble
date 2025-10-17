@@ -441,6 +441,8 @@ export type ItemMinimal = {
     readonly id: string;
     name?: string;
     readonly first_image: string;
+    rental_price?: string | null;
+    sale_price?: string | null;
 };
 
 /**
@@ -1222,6 +1224,8 @@ export type ItemListWritable = {
  */
 export type ItemMinimalWritable = {
     name?: string;
+    rental_price?: string | null;
+    sale_price?: string | null;
 };
 
 /**

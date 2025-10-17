@@ -11,7 +11,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { CategoryEnum, ConditionEnum, RentalPeriodEnum, Status402Enum } from '@/services/django';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface BasicFieldsProps {
   formData: {
@@ -95,8 +95,10 @@ export const CategoryConditionFields = ({
         <Select
           value={formData.category}
           onValueChange={(value: CategoryEnum) => {
-            setFormData({ ...formData, category: value });
-            onCategoryChange?.(value);
+            if (value) {
+              setFormData({ ...formData, category: value });
+              onCategoryChange?.(value);
+            }
           }}
           disabled={disabled}
           required
@@ -119,10 +121,12 @@ export const CategoryConditionFields = ({
         <Select
           value={formData.condition.toString()}
           onValueChange={value =>
-            setFormData({
-              ...formData,
-              condition: parseInt(value) as ConditionEnum,
-            })
+            value
+              ? setFormData({
+                  ...formData,
+                  condition: parseInt(value) as ConditionEnum,
+                })
+              : null
           }
           disabled={disabled}
           required
@@ -157,9 +161,15 @@ interface PricingFieldsProps {
 
 export const PricingFields = ({ formData, setFormData, disabled }: PricingFieldsProps) => {
   const { t } = useLanguage();
-  const [pricingOption, setPricingOption] = useState<'sell' | 'rent' | ''>(
-    formData.rental_price ? 'rent' : 'sell',
-  );
+  const [pricingOption, setPricingOption] = useState<'sell' | 'rent' | ''>('sell');
+
+  useEffect(() => {
+    if (formData.rental_price) {
+      setPricingOption('rent');
+    } else {
+      setPricingOption('sell');
+    }
+  }, [formData.sale_price, formData.rental_price]);
 
   const handleOptionChange = (value: 'sell' | 'rent') => {
     setPricingOption(value);
@@ -201,7 +211,7 @@ export const PricingFields = ({ formData, setFormData, disabled }: PricingFields
           </RadioGroup>
         </div>
 
-        {pricingOption === 'sell' && (
+        {(pricingOption === 'sell' || !!formData.sale_price) && (
           <div className="space-y-2">
             <Label htmlFor="sale_price">{t('editItem.salePrice')}</Label>
             <Input
@@ -222,7 +232,7 @@ export const PricingFields = ({ formData, setFormData, disabled }: PricingFields
           </div>
         )}
 
-        {pricingOption === 'rent' && (
+        {(pricingOption === 'rent' || !!formData.rental_price) && (
           <div className="space-y-2">
             <Label htmlFor="rental_price">{t('editItem.rentalPrice')}</Label>
             <Input
@@ -243,7 +253,7 @@ export const PricingFields = ({ formData, setFormData, disabled }: PricingFields
           </div>
         )}
       </div>
-      {pricingOption === 'rent' && (
+      {(pricingOption === 'rent' || !!formData.rental_price) && (
         <div className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -336,10 +346,12 @@ export const StatusField = ({ formData, setFormData, disabled }: StatusFieldProp
       <Select
         value={formData.status.toString()}
         onValueChange={value =>
-          setFormData({
-            ...formData,
-            status: parseInt(value) as Status402Enum,
-          })
+          value !== ''
+            ? setFormData({
+                ...formData,
+                status: parseInt(value) as Status402Enum,
+              })
+            : null
         }
         disabled={disabled}
       >

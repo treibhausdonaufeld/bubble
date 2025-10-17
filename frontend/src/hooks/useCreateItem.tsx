@@ -1,3 +1,4 @@
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import {
@@ -13,6 +14,7 @@ export const useCreateItem = () => {
   const queryClient = useQueryClient();
   const { user } = useAuth();
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   return useMutation<Item, Error, ItemWritable>({
     mutationFn: async (data: ItemWritable) => {
@@ -27,7 +29,7 @@ export const useCreateItem = () => {
     },
     onError: (error: Error) => {
       toast({
-        title: 'Error Creating Item',
+        title: t('editItem.updateErrorTitle'),
         description: error.message,
         variant: 'destructive',
       });
@@ -39,6 +41,7 @@ export const useUpdateItem = () => {
   const queryClient = useQueryClient();
   const { user } = useAuth();
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   return useMutation<Item, Error, { itemUuid: string; data: PatchedItemWritable }>({
     mutationFn: async ({ itemUuid, data }: { itemUuid: string; data: PatchedItemWritable }) => {
@@ -54,13 +57,13 @@ export const useUpdateItem = () => {
       queryClient.invalidateQueries({ queryKey: ['item', variables.itemUuid] });
       queryClient.invalidateQueries({ queryKey: ['items'] });
       toast({
-        title: 'Item Updated',
-        description: 'Your item has been successfully updated.',
+        title: t('editItem.updateSuccessTitle'),
+        description: t('editItem.updateSuccessDescription'),
       });
     },
     onError: (error: Error) => {
       toast({
-        title: 'Error Updating Item',
+        title: t('editItem.updateErrorTitle'),
         description: error.message,
         variant: 'destructive',
       });

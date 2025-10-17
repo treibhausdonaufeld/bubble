@@ -48,14 +48,6 @@ const EditItem = () => {
   const handleBackClick = () => {
     navigate(-1);
   };
-
-  const handleClearImages = () => {
-    setImages([]);
-  };
-
-  const handleRentalPeriodChange = (value: RentalPeriodEnum) => {
-    setFormData({ ...formData, rental_period: value });
-  };
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -75,7 +67,6 @@ const EditItem = () => {
     'idle' | 'uploading' | 'processing' | 'completed' | 'error'
   >('idle');
   const [progress, setProgress] = useState(0);
-  const intervalRef = useRef<number | null>(null);
   const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
   const [formData, setFormData] = useState({
     name: '',
@@ -113,7 +104,7 @@ const EditItem = () => {
         description: item.description || '',
         category: item.category || '',
         condition: item.condition !== undefined ? item.condition : '',
-        status: item.status,
+        status: item.status !== undefined && item.status !== null ? item.status : '',
         sale_price: item.sale_price?.toString() || '',
         rental_price: item.rental_price?.toString() || '',
         rental_period: (item.rental_period as RentalPeriodEnum) || '',
@@ -130,15 +121,6 @@ const EditItem = () => {
       setTimeout(() => adjustDescriptionHeight(), 0);
     }
   }, [item, editItemUuid]);
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      if (intervalRef.current) {
-        window.clearInterval(intervalRef.current);
-      }
-    };
-  }, []);
 
   // Handle error
   if (error) {
@@ -165,6 +147,7 @@ const EditItem = () => {
 
     // Validate required fields
     if (!formData.name || !formData.category || formData.condition === '') {
+      console.log(formData);
       toast({
         title: 'Missing Information',
         description: 'Please fill in all required fields.',
@@ -200,7 +183,7 @@ const EditItem = () => {
         description: formData.description,
         category: formData.category as CategoryEnum,
         condition: formData.condition as ConditionEnum,
-        status: formData.status,
+        status: formData.status !== '' ? (formData.status as Status402Enum) : undefined,
         sale_price: formData.sale_price === '' ? null : formData.sale_price,
         rental_price: formData.rental_price === '' ? null : formData.rental_price,
         rental_period:
@@ -239,6 +222,7 @@ const EditItem = () => {
 
     // Validate required fields
     if (!formData.name || !formData.category || formData.condition === '') {
+      console.log(formData);
       toast({
         title: 'Missing Information',
         description: 'Please fill in all required fields before publishing.',
