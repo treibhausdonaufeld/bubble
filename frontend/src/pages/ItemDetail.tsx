@@ -14,13 +14,6 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from '@/components/ui/carousel';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import UserInfoBox from '@/components/users/UserInfoBox';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -29,8 +22,9 @@ import { useItem } from '@/hooks/useItem';
 import { useDeleteItem } from '@/hooks/useMyItems';
 import { formatPrice } from '@/lib/currency';
 import { formatDistanceToNow } from 'date-fns';
-import { ArrowLeft, Calendar, Edit3, Trash2, X } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import useEmblaCarousel from 'embla-carousel-react';
+import { ArrowLeft, Calendar, ChevronLeft, ChevronRight, Edit3, Trash2, X } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 const ItemDetail = () => {
@@ -40,10 +34,24 @@ const ItemDetail = () => {
   const { t } = useLanguage();
   const { data: item, isLoading, error } = useItem(itemUuid);
   const deleteItemMutation = useDeleteItem();
+
   const [showAllImages, setShowAllImages] = useState(false);
   const [selectedStartDate, setSelectedStartDate] = useState<Date | undefined>();
   const [selectedEndDate, setSelectedEndDate] = useState<Date | undefined>();
   const [showBookingDialog, setShowBookingDialog] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
+  // open fullscreen viewer at a given index
+  const openFullscreen = (index: number) => {
+    setActiveIndex(index);
+    setShowAllImages(true);
+    // try to scroll fullscreen embla immediately if available
+    if (emblaFsApi && emblaFsApi.scrollTo) emblaFsApi.scrollTo(index);
+  };
+
+  // embla refs and api - configure for single full-width slide (no peek)
+  const emblaOptions = { loop: false, align: 'center', containScroll: 'trimSnaps' } as const;
+  const [emblaRef, emblaApi] = useEmblaCarousel(emblaOptions);
+  const [emblaFsRef, emblaFsApi] = useEmblaCarousel(emblaOptions);
 
   const handleDateRangeSelect = (start: Date, end: Date) => {
     setSelectedStartDate(start);
@@ -58,8 +66,6 @@ const ItemDetail = () => {
 
   const isOwner = useMemo(() => {
     if (!user || !item) return false;
-    // The user's ID from the auth hook is a UUID string.
-    // The item.user from the Django API is also a UUID string.
     return item.user === user.id;
   }, [user, item]);
 
@@ -71,6 +77,63 @@ const ItemDetail = () => {
       },
     });
   };
+
+  useEffect(() => {
+    if (emblaApi && emblaApi.reInit) emblaApi.reInit();
+    if (emblaFsApi && emblaFsApi.reInit) emblaFsApi.reInit();
+
+    // wire up select handler to keep track of active slide for dot indicators
+    let removeSelect: (() => void) | undefined;
+    if (emblaApi && emblaApi.on) {
+      const onSelect = () => {
+        const idx =
+          typeof emblaApi.selectedScrollSnap === 'function' ? emblaApi.selectedScrollSnap() : 0;
+        setActiveIndex(idx ?? 0);
+      };
+      emblaApi.on('select', onSelect);
+      // set initial
+      onSelect();
+      removeSelect = () => emblaApi.off && emblaApi.off('select', onSelect);
+    }
+
+    return () => {
+      if (removeSelect) removeSelect();
+    };
+  }, [emblaApi, emblaFsApi, item?.images]);
+
+  // when opening fullscreen, ensure fullscreen embla is on the correct slide
+  useEffect(() => {
+    if (showAllImages && typeof activeIndex === 'number' && emblaFsApi && emblaFsApi.scrollTo) {
+      emblaFsApi.scrollTo(activeIndex);
+    }
+  }, [showAllImages, activeIndex, emblaFsApi]);
+
+  const scrollPrev = useCallback((api: any) => api && api.scrollPrev && api.scrollPrev(), []);
+  const scrollNext = useCallback((api: any) => api && api.scrollNext && api.scrollNext(), []);
+
+  // keyboard navigation: left/right arrows control the current visible carousel
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      const tag = target?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || (target && target.isContentEditable)) return;
+      if (e.key === 'Escape' || e.key === 'Esc') {
+        // close fullscreen preview
+        setShowAllImages(false);
+        return;
+      }
+      if (e.key === 'ArrowLeft') {
+        if (showAllImages) scrollPrev(emblaFsApi);
+        else scrollPrev(emblaApi);
+      } else if (e.key === 'ArrowRight') {
+        if (showAllImages) scrollNext(emblaFsApi);
+        else scrollNext(emblaApi);
+      }
+    };
+
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [emblaApi, emblaFsApi, showAllImages, scrollPrev, scrollNext]);
 
   if (isLoading) {
     return (
@@ -134,28 +197,65 @@ const ItemDetail = () => {
         </Button>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Image Carousel */}
+          {/* Image Carousel (embla) */}
           <div className="relative">
-            <Carousel className="w-full">
-              <CarouselContent>
-                {images.map((image, index) => (
-                  <CarouselItem key={index}>
-                    <img
-                      src={image.preview || image.original}
-                      alt={`${name} ${index + 1}`}
-                      className="w-full h-auto object-cover rounded-lg cursor-pointer"
-                      onClick={() => setShowAllImages(true)}
-                    />
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              {images.length > 1 && (
-                <>
-                  <CarouselPrevious className="left-2" />
-                  <CarouselNext className="right-2" />
-                </>
-              )}
-            </Carousel>
+            <div className="embla overflow-hidden">
+              <div className="embla__viewport" ref={emblaRef}>
+                <div className="embla__container flex">
+                  {images.map((image, index) => (
+                    <div key={index} className="embla__slide flex-none w-full">
+                      {/* reduced thumbnail height; smaller on mobile, larger on desktop */}
+                      <div className="w-full h-40 md:h-56 lg:h-72 overflow-hidden rounded-lg relative">
+                        <img
+                          src={image.preview || image.original}
+                          alt={`${name} ${index + 1}`}
+                          className="w-full h-full object-cover cursor-pointer"
+                          onClick={() => openFullscreen(index)}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            {/* navigation: arrows (left) and dots (center) on same horizontal row */}
+            {images.length > 1 && (
+              <div className="mt-2 flex items-center w-full">
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => scrollPrev(emblaApi)}
+                    className="bg-white/80 hover:bg-white/95 text-black shadow-sm"
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => scrollNext(emblaApi)}
+                    className="bg-white/80 hover:bg-white/95 text-black shadow-sm"
+                  >
+                    <ChevronRight className="h-5 w-5" />
+                  </Button>
+                </div>
+
+                <div className="flex-1 flex justify-center">
+                  <div className="flex items-center gap-2">
+                    {images.map((_, idx) => (
+                      <button
+                        key={idx}
+                        aria-label={`Go to image ${idx + 1}`}
+                        onClick={() => emblaApi && emblaApi.scrollTo(idx)}
+                        className={`h-2 w-2 rounded-full ${
+                          activeIndex === idx ? 'bg-primary' : 'bg-gray-300'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Item Details */}
@@ -286,30 +386,53 @@ const ItemDetail = () => {
             className="relative w-full h-full max-w-4xl max-h-4xl"
             onClick={e => e.stopPropagation()}
           >
-            <Carousel className="w-full h-full">
-              <CarouselContent>
-                {images.map((image, index) => (
-                  <CarouselItem key={index}>
+            <div className="embla embla--fullscreen h-full w-full">
+              <div className="embla__viewport h-full" ref={emblaFsRef}>
+                <div className="embla__container flex h-full">
+                  {images.map((image, index) => (
                     <div
-                      className="flex items-center justify-center h-full cursor-pointer"
-                      onClick={() => setShowAllImages(false)}
+                      key={index}
+                      className="embla__slide flex-none w-full flex items-center justify-center"
                     >
-                      <img
-                        src={image.preview || image.original}
-                        alt={`${name} ${index + 1}`}
-                        className="max-w-full max-h-full object-contain"
-                      />
+                      <div className="w-full h-full flex items-center justify-center">
+                        <img
+                          src={image.preview || image.original}
+                          alt={`${name} ${index + 1}`}
+                          className="max-w-full max-h-full object-contain"
+                          onClick={() => setShowAllImages(false)}
+                        />
+                      </div>
                     </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              {images.length > 1 && (
-                <>
-                  <CarouselPrevious className="left-4 bg-background/80 hover:bg-background" />
-                  <CarouselNext className="right-4 bg-background/80 hover:bg-background" />
-                </>
-              )}
-            </Carousel>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {images.length > 1 && (
+              <div className="absolute inset-y-0 left-2 flex items-center z-50">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => scrollPrev(emblaFsApi)}
+                  className="text-white bg-black/40 hover:bg-black/50 shadow-lg"
+                >
+                  <ChevronLeft className="h-6 w-6" />
+                </Button>
+              </div>
+            )}
+            {images.length > 1 && (
+              <div className="absolute inset-y-0 right-2 flex items-center z-50">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => scrollNext(emblaFsApi)}
+                  className="text-white bg-black/40 hover:bg-black/50 shadow-lg"
+                >
+                  <ChevronRight className="h-6 w-6" />
+                </Button>
+              </div>
+            )}
+
             <Button
               variant="ghost"
               size="icon"
