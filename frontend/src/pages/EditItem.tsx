@@ -49,6 +49,18 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const EditItem = () => {
+  // CSP-compliant event handlers
+  const handleBackClick = () => {
+    navigate(-1);
+  };
+
+  const handleClearImages = () => {
+    setImages([]);
+  };
+
+  const handleRentalPeriodChange = (value: RentalPeriodEnum) => {
+    setFormData({ ...formData, rental_period: value });
+  };
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -532,7 +544,7 @@ const EditItem = () => {
       <Header />
       <div className="container mx-auto py-8 space-y-6">
         {/* Back Button */}
-        <Button variant="ghost" onClick={() => navigate(-1)} className="mb-6 gap-2">
+        <Button variant="ghost" onClick={handleBackClick} className="mb-6 gap-2">
           <ArrowLeft className="h-4 w-4" />
           {t('common.back')}
         </Button>
@@ -657,7 +669,7 @@ const EditItem = () => {
                           <Button
                             type="button"
                             variant="ghost"
-                            onClick={() => setImages([])}
+                            onClick={handleClearImages}
                             disabled={aiProcessing}
                             className="w-full gap-2 text-muted-foreground"
                           >
@@ -766,9 +778,7 @@ const EditItem = () => {
                       <Label htmlFor="rental_period">{t('editItem.rentalPeriod')}</Label>
                       <Select
                         value={formData.rental_period}
-                        onValueChange={(value: RentalPeriodEnum) =>
-                          setFormData({ ...formData, rental_period: value })
-                        }
+                        onValueChange={handleRentalPeriodChange}
                         disabled={aiProcessing}
                       >
                         <SelectTrigger>

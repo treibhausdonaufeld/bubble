@@ -19,6 +19,19 @@ import { Calendar, Clock, Menu, Package, RefreshCw, Send, User } from 'lucide-re
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 const Bookings = () => {
+  // CSP-compliant event handlers
+  const handleBookingCardClick = (bookingUuid: string) => {
+    setSelectedBookingId(bookingUuid);
+    setIsMenuOpen(false); // Close menu on selection (mobile)
+  };
+
+  const handleSelectBooking = (bookingUuid: string) => {
+    setSelectedBookingId(bookingUuid);
+  };
+
+  const handleRefreshMessages = () => {
+    refetchMessages();
+  };
   const { t } = useLanguage();
   const { user } = useAuth();
   const { data: bookings, isLoading } = useBookings();
@@ -187,10 +200,7 @@ const Bookings = () => {
                                 'cursor-pointer transition-colors hover:bg-accent',
                                 isSelected && 'bg-accent dark:bg-accent border-green-200 border-2',
                               )}
-                              onClick={() => {
-                                setSelectedBookingId(booking.uuid!);
-                                setIsMenuOpen(false); // Close menu on selection (mobile)
-                              }}
+                              onClick={() => handleBookingCardClick(booking.uuid!)}
                             >
                               <CardContent className="p-3">
                                 <div className="flex gap-3">
@@ -281,7 +291,7 @@ const Bookings = () => {
                               'cursor-pointer transition-colors hover:bg-accent',
                               isSelected && 'bg-accent dark:bg-accent border-green-200 border-2',
                             )}
-                            onClick={() => setSelectedBookingId(booking.uuid!)}
+                            onClick={() => handleSelectBooking(booking.uuid!)}
                           >
                             <CardContent className="p-3">
                               <div className="flex gap-3">
@@ -521,7 +531,7 @@ const Bookings = () => {
                           <Button
                             size="icon"
                             variant="ghost"
-                            onClick={() => refetchMessages()}
+                            onClick={handleRefreshMessages}
                             disabled={!selectedBookingId || isFetchingMessages}
                             aria-label={t('bookings.refresh')}
                           >
@@ -560,7 +570,7 @@ const Bookings = () => {
                           <Button
                             size="icon"
                             variant="ghost"
-                            onClick={() => refetchMessages()}
+                            onClick={handleRefreshMessages}
                             disabled={!selectedBookingId || isFetchingMessages}
                             aria-label={t('bookings.refresh')}
                           >
