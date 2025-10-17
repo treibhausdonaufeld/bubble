@@ -1,5 +1,6 @@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   Select,
   SelectContent,
@@ -8,9 +9,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { CategoryEnum, ConditionEnum, RentalPeriodEnum, Status402Enum } from '@/services/django';
+import { useState } from 'react';
 
 interface BasicFieldsProps {
   formData: {
@@ -156,63 +157,93 @@ interface PricingFieldsProps {
 
 export const PricingFields = ({ formData, setFormData, disabled }: PricingFieldsProps) => {
   const { t } = useLanguage();
+  const [pricingOption, setPricingOption] = useState<'sell' | 'rent' | ''>(
+    formData.sale_price ? 'sell' : 'rent',
+  );
+
+  const handleOptionChange = (value: 'sell' | 'rent') => {
+    setPricingOption(value);
+    if (value === 'sell') {
+      setFormData({
+        ...formData,
+        rental_price: '',
+        rental_period: 'h',
+        rental_self_service: false,
+        rental_open_end: false,
+      });
+    } else if (value === 'rent') {
+      setFormData({
+        ...formData,
+        sale_price: '',
+      });
+    }
+  };
 
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="sale_price">{t('editItem.salePrice')}</Label>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Input
-                id="sale_price"
-                type="number"
-                step="1.00"
-                placeholder={t('editItem.saleDisabledPlaceholder')}
-                value={formData.sale_price}
-                onChange={e =>
-                  setFormData({
-                    ...formData,
-                    sale_price: e.target.value,
-                  })
-                }
-                disabled={disabled || formData.rental_price !== ''}
-              />
-            </TooltipTrigger>
-            {formData.rental_price !== '' && (
-              <TooltipContent>{t('editItem.saleDisablesRental')}</TooltipContent>
-            )}
-          </Tooltip>
+          <Label>{t('editItem.pricingModel')}</Label>
+          <RadioGroup
+            value={pricingOption}
+            onValueChange={handleOptionChange}
+            className="flex gap-4"
+            disabled={disabled}
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="sell" id="sell" />
+              <Label htmlFor="sell">{t('editItem.sell')}</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="rent" id="rent" />
+              <Label htmlFor="rent">{t('editItem.rent')}</Label>
+            </div>
+          </RadioGroup>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="rental_price">{t('editItem.rentalPrice')}</Label>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Input
-                id="rental_price"
-                type="number"
-                step="1.00"
-                placeholder={t('editItem.rentalDisabledPlaceholder')}
-                value={formData.rental_price}
-                onChange={e =>
-                  setFormData({
-                    ...formData,
-                    rental_price: e.target.value,
-                  })
-                }
-                disabled={disabled || formData.sale_price !== ''}
-              />
-            </TooltipTrigger>
-            {formData.sale_price !== '' && (
-              <TooltipContent>{t('editItem.rentalDisablesSale')}</TooltipContent>
-            )}
-          </Tooltip>
-        </div>
+        {pricingOption === 'sell' && (
+          <div className="space-y-2">
+            <Label htmlFor="sale_price">{t('editItem.salePrice')}</Label>
+            <Input
+              id="sale_price"
+              type="number"
+              step="1.00"
+              placeholder={t('editItem.enterSalePrice')}
+              value={formData.sale_price}
+              onChange={e =>
+                setFormData({
+                  ...formData,
+                  sale_price: e.target.value,
+                })
+              }
+              disabled={disabled}
+              required
+            />
+          </div>
+        )}
+
+        {pricingOption === 'rent' && (
+          <div className="space-y-2">
+            <Label htmlFor="rental_price">{t('editItem.rentalPrice')}</Label>
+            <Input
+              id="rental_price"
+              type="number"
+              step="1.00"
+              placeholder={t('editItem.enterRentalPrice')}
+              value={formData.rental_price}
+              onChange={e =>
+                setFormData({
+                  ...formData,
+                  rental_price: e.target.value,
+                })
+              }
+              disabled={disabled}
+              required
+            />
+          </div>
+        )}
       </div>
-
-      {/* Rental-specific fields - only visible when rental_price is set */}
-      {formData.rental_price !== '' && (
+      {pricingOption === 'rent' && (
         <div className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -223,6 +254,7 @@ export const PricingFields = ({ formData, setFormData, disabled }: PricingFields
                   setFormData({ ...formData, rental_period: value })
                 }
                 disabled={disabled}
+                required
               >
                 <SelectTrigger>
                   <SelectValue placeholder={t('editItem.selectRentalPeriod')} />
@@ -289,11 +321,11 @@ export const StatusField = ({ formData, setFormData, disabled }: StatusFieldProp
 
   const statuses = [
     { value: 0, label: 'draft' },
-    { value: 1, label: 'archived' },
+    { value: 1, label: 'processing' },
     { value: 2, label: 'available' },
-    { value: 3, label: 'pending' },
-    { value: 4, label: 'sold' },
-    { value: 5, label: 'rented' },
+    { value: 3, label: 'reserved' },
+    { value: 4, label: 'rented' },
+    { value: 5, label: 'sold' },
   ];
 
   return (
