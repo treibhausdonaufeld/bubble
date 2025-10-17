@@ -79,7 +79,7 @@ jobs:
         run: docker compose run --rm -e DJANGO_SETTINGS_MODULE=config.settings.test backend python manage.py migrate
 
       - name: Run Django Tests
-        run: docker compose run --rm -e DJANGO_SETTINGS_MODULE=config.settings.test backend uv run pytest
+        run: docker compose run --user root --rm -e DJANGO_SETTINGS_MODULE=config.settings.test backend uv run pytest
 
       - name: Tear down the Stack
         run: docker compose down
