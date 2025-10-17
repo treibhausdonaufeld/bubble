@@ -361,7 +361,7 @@ ACCOUNT_ALLOW_REGISTRATION = env.bool("ACCOUNT_ALLOW_REGISTRATION", default=Fals
 SOCIALACCOUNT_ONLY = env.bool("SOCIALACCOUNT_ONLY", default=False)
 
 # https://docs.allauth.org/en/latest/account/configuration.html
-ACCOUNT_LOGIN_METHODS = {"username"}
+ACCOUNT_LOGIN_METHODS = {"username"} if not SOCIALACCOUNT_ONLY else {}
 # https://docs.allauth.org/en/latest/account/configuration.html
 ACCOUNT_SIGNUP_FIELDS = ["email*", "username*", "password1*", "password2*"]
 # https://docs.allauth.org/en/latest/account/configuration.html
@@ -403,7 +403,7 @@ if authentik_server_url := env("AUTHENTIK_SERVER_URL", default=""):
         "APPS": [
             {
                 "provider_id": "authentik",
-                "name": "Authentik (neu)",
+                "name": "Treibhaus Anmeldung",
                 "client_id": env("AUTHENTIK_CLIENT_ID", default="default_client_id"),
                 "secret": env("AUTHENTIK_SECRET", default="default_secret"),
                 "settings": {
@@ -446,6 +446,7 @@ HEADLESS_FRONTEND_URLS = {
     "socialaccount_login_error": FRONTEND_URL,
 }
 HEADLESS_SERVE_SPECIFICATION = True
+HEADLESS_ONLY = True
 
 # django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup
 CORS_URLS_REGEX = r"^/api/.*$"

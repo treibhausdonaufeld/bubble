@@ -7,6 +7,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { authAPI, LoginCredentials } from '@/services/custom/auth';
+import { client } from '@/services/django/client.gen';
 import { ArrowLeft, Eye, EyeOff, Loader } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -20,6 +21,9 @@ const Auth = () => {
   const { toast } = useToast();
   const { t } = useLanguage();
   const { refreshAuth } = useAuth();
+
+  const [authConfig, setAuthConfig] = useState<any | null>(null);
+  const [loadingConfig, setLoadingConfig] = useState(true);
 
   const [loginData, setLoginData] = useState<LoginCredentials>({
     username: '',
@@ -40,6 +44,28 @@ const Auth = () => {
     };
 
     initializeCSRF();
+  }, []);
+
+  // Fetch auth config to determine which login methods and social providers are available
+  useEffect(() => {
+    const fetchConfig = async () => {
+      setLoadingConfig(true);
+      try {
+        const res = await fetch(`${client.getConfig().baseUrl}/api/_allauth/app/v1/config`);
+        if (!res.ok) {
+          throw new Error(`Config fetch failed: ${res.status}`);
+        }
+        const json = await res.json();
+        setAuthConfig(json);
+      } catch (err) {
+        console.error('Failed to fetch auth config:', err);
+        setAuthConfig(null);
+      } finally {
+        setLoadingConfig(false);
+      }
+    };
+
+    fetchConfig();
   }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -97,7 +123,16 @@ const Auth = () => {
           <CardContent className="space-y-6">
             {/* Social Login Button */}
             <div className="text-center">
-              <LoginWithSocialButton name="Treibhaus login" id="authentik" />
+              {loadingConfig ? (
+                <div className="text-sm text-muted-foreground">{t('common.loading')}</div>
+              ) : (
+                // render one button per provider if available
+                (authConfig?.data?.socialaccount?.providers ?? []).map((p: any) => (
+                  <div key={p.id} className="mb-2">
+                    <LoginWithSocialButton name={p.name} id={p.id} />
+                  </div>
+                ))
+              )}
             </div>
 
             {/* Divider */}
@@ -105,11 +140,7 @@ const Auth = () => {
               <div className="absolute inset-0 flex items-center">
                 <span className="w-full border-t" />
               </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-2 text-muted-foreground">
-                  {t('auth.orContinueWith')}
-                </span>
-              </div>
+              <div className="relative flex justify-center text-xs uppercase"></div>
             </div>
 
             <form onSubmit={handleLogin} className="space-y-4">
@@ -122,64 +153,69 @@ const Auth = () => {
                 </div>
               )}
 
-              <div className="space-y-2">
-                <Label htmlFor="username">{t('auth.usernameOrEmail')}</Label>
-                <Input
-                  id="username"
-                  name="username"
-                  type="text"
-                  value={loginData.username}
-                  onChange={e => setLoginData({ ...loginData, username: e.target.value })}
-                  placeholder={t('auth.enterUsernameOrEmail')}
-                  required
-                  disabled={isLoading}
-                />
-              </div>
+              {/* show username/password login only when backend indicates methods are available */}
+              {!loadingConfig && (authConfig?.data?.account?.login_methods ?? []).length > 0 && (
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="username">{t('auth.usernameOrEmail')}</Label>
+                    <Input
+                      id="username"
+                      name="username"
+                      type="text"
+                      value={loginData.username}
+                      onChange={e => setLoginData({ ...loginData, username: e.target.value })}
+                      placeholder={t('auth.enterUsernameOrEmail')}
+                      required
+                      disabled={isLoading}
+                    />
+                  </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="password">{t('auth.password')}</Label>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    name="password"
-                    type={showPassword ? 'text' : 'password'}
-                    value={loginData.password}
-                    onChange={e => setLoginData({ ...loginData, password: e.target.value })}
-                    placeholder={t('auth.enterPassword')}
-                    required
-                    disabled={isLoading}
-                    className="pr-10"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                    disabled={isLoading}
+                  <div className="space-y-2">
+                    <Label htmlFor="password">{t('auth.password')}</Label>
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        name="password"
+                        type={showPassword ? 'text' : 'password'}
+                        value={loginData.password}
+                        onChange={e => setLoginData({ ...loginData, password: e.target.value })}
+                        placeholder={t('auth.enterPassword')}
+                        required
+                        disabled={isLoading}
+                        className="pr-10"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                        disabled={isLoading}
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  <Button
+                    type="submit"
+                    className="w-full"
+                    disabled={isLoading || !loginData.username || !loginData.password}
                   >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
-                </div>
-              </div>
-
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={isLoading || !loginData.username || !loginData.password}
-              >
-                {isLoading ? (
-                  <>
-                    <Loader className="w-4 h-4 mr-2 animate-spin" />
-                    {t('auth.signingIn')}
-                  </>
-                ) : (
-                  t('auth.signIn')
-                )}
-              </Button>
+                    {isLoading ? (
+                      <>
+                        <Loader className="w-4 h-4 mr-2 animate-spin" />
+                        {t('auth.signingIn')}
+                      </>
+                    ) : (
+                      t('auth.signIn')
+                    )}
+                  </Button>
+                </>
+              )}
             </form>
-
-            <div className="text-center text-sm text-muted-foreground">
-              <p>{t('auth.noAccountContact')}</p>
-            </div>
           </CardContent>
         </Card>
       </div>
