@@ -3,7 +3,7 @@ With these settings, tests run faster.
 """
 
 from .base import *  # noqa: F403
-from .base import TEMPLATES, env
+from .base import BASE_DIR, TEMPLATES, env
 
 # GENERAL
 # ------------------------------------------------------------------------------
@@ -28,6 +28,9 @@ EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 # DEBUGGING FOR TEMPLATES
 # ------------------------------------------------------------------------------
 TEMPLATES[0]["OPTIONS"]["debug"] = True  # type: ignore[index]
+
+# overwrite staticfiles for testing to avoid mount issues with docker-compose in ci
+STATIC_ROOT = str(BASE_DIR / "tmp" / "staticfiles")
 
 # MEDIA
 # ------------------------------------------------------------------------------
