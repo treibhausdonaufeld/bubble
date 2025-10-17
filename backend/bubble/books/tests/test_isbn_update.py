@@ -9,6 +9,7 @@ from rest_framework.test import APIRequestFactory, force_authenticate
 from bubble.books.api.views import BookViewSet
 from bubble.books.models import Book
 from bubble.core.permissions_config import DefaultGroup
+from bubble.core.signals import create_default_groups_and_permissions
 
 User = get_user_model()
 
@@ -16,6 +17,9 @@ User = get_user_model()
 @pytest.mark.django_db
 class TestBookViewSetISBNUpdate:
     def setup_method(self):
+        # Ensure default groups and permissions are created
+        create_default_groups_and_permissions()
+
         self.factory = APIRequestFactory()
         self.user = User.objects.create_user(  # pyright: ignore[reportAttributeAccessIssue]
             username="testuser",
