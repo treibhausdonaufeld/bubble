@@ -267,7 +267,7 @@ export const ImageManager = ({
         </Badge>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {allImages.map((item, displayIndex) => (
           <div
             key={item.type === 'existing' ? item.data.id : `new-${item.index}`}
@@ -280,7 +280,7 @@ export const ImageManager = ({
             <img
               src={item.type === 'existing' ? item.data.thumbnail : item.data.url}
               alt={`Image ${displayIndex + 1}`}
-              className="w-full h-32 object-cover rounded-lg border cursor-pointer"
+              className="w-full h-32 object-contain rounded-lg border cursor-pointer bg-muted"
             />
 
             {/* Drag Handle for existing images */}
@@ -319,7 +319,7 @@ export const ImageManager = ({
         {/* Add New Image Button(s) */}
         {totalImages < maxImages &&
           (isMobile ? (
-            <div className="flex flex-col items-stretch justify-center p-2 gap-2">
+            <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg h-32 flex flex-col items-center justify-center p-2 gap-2 hover:border-muted-foreground/50 transition-colors">
               {/* Hidden inputs */}
               <Input
                 id="camera-image"
@@ -338,20 +338,20 @@ export const ImageManager = ({
                 className="hidden"
               />
               {/* Buttons */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 w-full">
                 <Label
                   htmlFor="camera-image"
-                  className="cursor-pointer flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md border hover:bg-muted/50"
+                  className="cursor-pointer flex-1 flex flex-col items-center justify-center gap-1 px-2 py-1.5 rounded-md border hover:bg-muted/50"
                 >
-                  <Camera className="h-5 w-12 text-muted-foreground" />
-                  <span className="text-sm">Use Camera</span>
+                  <Camera className="h-5 w-5 text-muted-foreground" />
+                  <span className="text-xs">Camera</span>
                 </Label>
                 <Label
                   htmlFor="device-images"
-                  className="cursor-pointer flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md border hover:bg-muted/50"
+                  className="cursor-pointer flex-1 flex flex-col items-center justify-center gap-1 px-2 py-1.5 rounded-md border hover:bg-muted/50"
                 >
-                  <ImageIcon className="h-5 w-12 text-muted-foreground" />
-                  <span className="text-sm">Upload Files</span>
+                  <ImageIcon className="h-5 w-5 text-muted-foreground" />
+                  <span className="text-xs">Upload</span>
                 </Label>
               </div>
             </div>
