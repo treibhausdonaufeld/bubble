@@ -20,6 +20,9 @@ const translations = {
     'header.myItems': 'My Items',
     'header.myBookings': 'My Bookings',
     'header.signOut': 'Sign Out',
+    'header.theme': 'Theme',
+    'header.light': 'Light',
+    'header.dark': 'Dark',
 
     // Hero Section
     'hero.title': 'Share & Discover in Your Community',
@@ -329,6 +332,9 @@ const translations = {
     'header.myItems': 'Meine Artikel',
     'header.myBookings': 'Meine Buchungen',
     'header.signOut': 'Abmelden',
+    'header.theme': 'Design',
+    'header.light': 'Hell',
+    'header.dark': 'Dunkel',
 
     // Hero Section
     'hero.title': 'Teilen & Entdecken in deiner Community',

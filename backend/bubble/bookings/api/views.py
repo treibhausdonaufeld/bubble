@@ -94,14 +94,19 @@ class BookingViewSet(viewsets.ModelViewSet, PublicBookingViewSet):
 
         booking = serializer.instance
 
-        message = _("Booking updated: {fields_updated}").format(
-            fields_updated=", ".join(
-                [
-                    f"{booking._meta.get_field(field).verbose_name}: {value}"  # noqa: SLF001
-                    for field, value in serializer.validated_data.items()
-                ]
+        if "status" in serializer.validated_data:
+            message = _("Booking status updated to {status}").format(
+                status=booking.get_status_display()
             )
-        )
+        else:
+            message = _("Booking updated: {fields_updated}").format(
+                fields_updated=", ".join(
+                    [
+                        f"{booking._meta.get_field(field).verbose_name}: {value}"  # noqa: SLF001
+                        for field, value in serializer.validated_data.items()
+                    ]
+                )
+            )
         Message.objects.create(
             booking=booking, sender=self.request.user, message=message
         )

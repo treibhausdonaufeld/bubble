@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-17 14:59+0200\n"
+"POT-Creation-Date: 2025-10-17 15:09+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,12 +45,17 @@ msgstr "Sie können kein Gegenangebot für Ihre eigene Buchung setzen."
 msgid "Booking request created for {offer}"
 msgstr "Buchungsanfrage erstellt für {offer}"
 
-#: bubble/bookings/api/views.py:97
+#: bubble/bookings/api/views.py:98
+#| msgid "Booking updated: {fields_updated}"
+msgid "Booking status updated to {status}"
+msgstr "Buchungs-Status aktualisiert: {status}"
+
+#: bubble/bookings/api/views.py:102
 #, python-brace-format
 msgid "Booking updated: {fields_updated}"
 msgstr "Buchung aktualisiert: {fields_updated}"
 
-#: bubble/bookings/api/views.py:140
+#: bubble/bookings/api/views.py:145
 msgid "Only 'is_read' field can be updated."
 msgstr "Nur das Feld 'is_read' kann aktualisiert werden."
 
