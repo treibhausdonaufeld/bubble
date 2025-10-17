@@ -1,7 +1,8 @@
 x-backend: &backend
   build:
     context: ./backend/
-    dockerfile: Dockerfile.dev
+    dockerfile: Dockerfile
+    target: dev
   image: bubble-backend
   restart: unless-stopped
   depends_on:

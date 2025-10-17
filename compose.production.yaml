@@ -2,6 +2,7 @@ x-backend: &backend
   build:
     context: ./backend/
     dockerfile: Dockerfile
+    target: prod
   image: bubble-backend
   restart: unless-stopped
   depends_on:

@@ -2,7 +2,7 @@
 FROM docker.io/python:3.13-slim AS python
 
 # Python 'run' stage
-FROM python AS python-run-stage
+FROM python AS base
 
 ARG BUILD_ENVIRONMENT=production
 ARG APP_HOME=/app
@@ -73,4 +73,18 @@ RUN DATABASE_URL="" \
 
 EXPOSE 8000
 
+# production image
+FROM base AS prod
+
 ENTRYPOINT ["/entrypoint"]
+
+# dev image build part
+FROM base AS dev
+
+# Sync dev dependencies into the uv-managed venv (this will install dev deps)
+COPY --chown=django:django uv.lock pyproject.toml /app/
+RUN --mount=type=cache,target=/home/django/.cache/uv,uid=1000 \
+  uv sync
+
+ENTRYPOINT ["/entrypoint"]
+CMD ["/start"]
