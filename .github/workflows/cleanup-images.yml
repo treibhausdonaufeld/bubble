@@ -18,8 +18,7 @@ jobs:
         uses: actions/delete-package-versions@v5
         with:
           package-name: 'bubble-backend'
-          min-versions-to-keep: 2
-          ignore-tagged-versions: 'main,latest'
+          min-versions-to-keep: 5
           delete-only-untagged-versions: 'false'
           token: ${{ secrets.GITHUB_TOKEN }}
           owner: ${{ github.repository_owner }}
@@ -30,8 +29,7 @@ jobs:
         uses: actions/delete-package-versions@v5
         with:
           package-name: 'bubble-frontend'
-          min-versions-to-keep: 2
-          ignore-tagged-versions: 'main,latest'
+          min-versions-to-keep: 5
           delete-only-untagged-versions: 'false'
           token: ${{ secrets.GITHUB_TOKEN }}
           owner: ${{ github.repository_owner }}
