@@ -6,12 +6,23 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { BarcodeDetector } from 'barcode-detector/ponyfill';
+import { BarcodeDetector, prepareZXingModule } from 'barcode-detector/ponyfill';
 
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Loader, Scan, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
+// Override the locateFile function
+prepareZXingModule({
+  overrides: {
+    locateFile: (path, prefix) => {
+      if (path.endsWith('.wasm')) {
+        return `/lib/wasm/${path}`;
+      }
+      return prefix + path;
+    },
+  },
+});
 interface BarcodeScannerProps {
   onScan: (barcode: string) => void;
   title?: string; // optional override for dialog title
