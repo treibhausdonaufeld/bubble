@@ -83,10 +83,7 @@ export const RentalCalendar = ({
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectingStart, setSelectingStart] = useState<Date | null>(null);
 
-  const currentWeekStart = useMemo(
-    () => startOfWeek(currentDate, { weekStartsOn: 1 }),
-    [currentDate],
-  );
+  const currentWeekStart = useMemo(() => startOfDay(currentDate), [currentDate]);
 
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(currentWeekStart, i));
   const hours = Array.from({ length: 24 }, (_, i) => i);
@@ -127,8 +124,7 @@ export const RentalCalendar = ({
     } else {
       const start = isBefore(dayStart, selectingStart) ? dayStart : selectingStart;
       const end = isBefore(dayStart, selectingStart) ? selectingStart : dayStart;
-      const adjustedEnd = new Date(end);
-      adjustedEnd.setHours(23, 59, 59, 999); // End of the selected day
+      const adjustedEnd = addDays(end, 1); // Next day at 00:00:00 for full 24h
 
       onDateRangeSelect?.(start, adjustedEnd);
       setSelectingStart(null);
@@ -237,8 +233,23 @@ export const RentalCalendar = ({
 
   const isDaySelected = (day: Date): boolean => {
     if (!selectedStart || !selectedEnd) return false;
-    return isWithinInterval(day, {
-      start: startOfDay(selectedStart),
+    const dayStart = startOfDay(day);
+    const rangeStart = startOfDay(selectedStart);
+
+    // Check if the day is before the range end
+    // For visual selection, exclude the end day if selectedEnd is exactly at midnight
+    const isEndAtMidnight =
+      selectedEnd.getHours() === 0 &&
+      selectedEnd.getMinutes() === 0 &&
+      selectedEnd.getSeconds() === 0;
+
+    if (isEndAtMidnight) {
+      // If end is at midnight, exclude that day from visual selection
+      return dayStart >= rangeStart && dayStart < selectedEnd;
+    }
+
+    return isWithinInterval(dayStart, {
+      start: rangeStart,
       end: selectedEnd,
     });
   };
@@ -453,9 +464,9 @@ export const RentalCalendar = ({
   return (
     <Card className="w-full">
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-lg">{t('calendar.selectRentalPeriod')}</CardTitle>
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-lg">{t('calendar.selectRentalPeriod')}</CardTitle>
             <ToggleGroup
               type="single"
               value={viewMode}
@@ -471,22 +482,22 @@ export const RentalCalendar = ({
                 {t('calendar.month')}
               </ToggleGroupItem>
             </ToggleGroup>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" onClick={goToPrevious}>
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <span className="text-sm font-medium min-w-[200px] text-center">
-                {viewMode === 'weekly'
-                  ? `${format(currentWeekStart, 'MMM d')} - ${format(
-                      endOfWeek(currentWeekStart, { weekStartsOn: 1 }),
-                      'MMM d, yyyy',
-                    )}`
-                  : format(currentDate, 'MMMM yyyy')}
-              </span>
-              <Button variant="outline" size="sm" onClick={goToNext}>
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
+          </div>
+          <div className="flex items-center justify-center gap-2">
+            <Button variant="outline" size="sm" onClick={goToPrevious}>
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <span className="text-sm font-medium min-w-[180px] text-center">
+              {viewMode === 'weekly'
+                ? `${format(currentWeekStart, 'MMM d')} - ${format(
+                    endOfWeek(currentWeekStart, { weekStartsOn: 1 }),
+                    'MMM d, yyyy',
+                  )}`
+                : format(currentDate, 'MMMM yyyy')}
+            </span>
+            <Button variant="outline" size="sm" onClick={goToNext}>
+              <ChevronRight className="h-4 w-4" />
+            </Button>
           </div>
         </div>
       </CardHeader>

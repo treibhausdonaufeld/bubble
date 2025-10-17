@@ -46,7 +46,7 @@ const translations = {
     'item.category': 'Category',
     'item.condition': 'Condition',
     'item.location': 'Location',
-    'item.cannotMessageSelf': 'You cannot message yourself',
+    'item.cannotMessageSelf': 'This is already yours',
 
     // List Item
     'editItem.title': 'Share an Item',
@@ -355,7 +355,7 @@ const translations = {
     'item.category': 'Kategorie',
     'item.condition': 'Zustand',
     'item.location': 'Ort',
-    'item.cannotMessageSelf': 'Sie können sich nicht selbst eine Nachricht senden',
+    'item.cannotMessageSelf': 'Der Artikel gehört schon dir',
 
     // List Item
     'editItem.title': 'Artikel teilen',

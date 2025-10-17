@@ -4,7 +4,7 @@ import {
   itemsDestroy,
   itemsList,
   itemsPartialUpdate,
-  StatusEnum,
+  Status402Enum,
   type PaginatedItemListList,
 } from '@/services/django';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -34,7 +34,7 @@ export const useUpdateItemStatus = () => {
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: async ({ itemId, status }: { itemId: string; status: StatusEnum }) => {
+    mutationFn: async ({ itemId, status }: { itemId: string; status: Status402Enum }) => {
       const response = await itemsPartialUpdate({
         path: { id: itemId },
         body: { status },

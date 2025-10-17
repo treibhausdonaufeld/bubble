@@ -58,10 +58,6 @@ const ItemDetail = () => {
 
   const isOwner = useMemo(() => {
     if (!user || !item) return false;
-    console.log(user.id);
-    console.log(item.user === user.id);
-    console.log(item.user);
-
     // The user's ID from the auth hook is a UUID string.
     // The item.user from the Django API is also a UUID string.
     return item.user === user.id;
@@ -153,8 +149,12 @@ const ItemDetail = () => {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious className="left-2" />
-              <CarouselNext className="right-2" />
+              {images.length > 1 && (
+                <>
+                  <CarouselPrevious className="left-2" />
+                  <CarouselNext className="right-2" />
+                </>
+              )}
             </Carousel>
           </div>
 
@@ -303,8 +303,12 @@ const ItemDetail = () => {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious className="left-4 bg-background/80 hover:bg-background" />
-              <CarouselNext className="right-4 bg-background/80 hover:bg-background" />
+              {images.length > 1 && (
+                <>
+                  <CarouselPrevious className="left-4 bg-background/80 hover:bg-background" />
+                  <CarouselNext className="right-4 bg-background/80 hover:bg-background" />
+                </>
+              )}
             </Carousel>
             <Button
               variant="ghost"
