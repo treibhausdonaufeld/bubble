@@ -158,7 +158,7 @@ interface PricingFieldsProps {
 export const PricingFields = ({ formData, setFormData, disabled }: PricingFieldsProps) => {
   const { t } = useLanguage();
   const [pricingOption, setPricingOption] = useState<'sell' | 'rent' | ''>(
-    formData.sale_price ? 'sell' : 'rent',
+    formData.rental_price ? 'rent' : 'sell',
   );
 
   const handleOptionChange = (value: 'sell' | 'rent') => {

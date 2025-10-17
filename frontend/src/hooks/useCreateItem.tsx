@@ -23,10 +23,6 @@ export const useCreateItem = () => {
     onSuccess: data => {
       queryClient.invalidateQueries({ queryKey: ['my-items', user?.id] });
       queryClient.invalidateQueries({ queryKey: ['items'] });
-      toast({
-        title: 'Item Created',
-        description: 'Your item has been successfully created.',
-      });
       return data;
     },
     onError: (error: Error) => {
