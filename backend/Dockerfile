@@ -1,5 +1,5 @@
 # define an alias for the specific python version used in this file.
-FROM docker.io/python:3.13-slim AS python
+FROM docker.io/python:3.14-slim AS python
 
 # Python 'run' stage
 FROM python AS base
