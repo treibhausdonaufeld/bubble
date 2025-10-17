@@ -151,7 +151,7 @@ const Index = () => {
                     rentalPriceCurrency={item.rental_price_currency}
                     location="Location not set"
                     imageUrl={item.first_image || '/placeholder.svg'}
-                    username={item.username}
+                    owner={item.user}
                     createdAt={item.created_at}
                     isFavorited={false}
                   />
