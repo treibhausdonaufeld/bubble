@@ -12,7 +12,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useUpdateBooking } from '@/hooks/useBookings';
-import { Edit3 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface Props {
@@ -57,8 +56,8 @@ const BookingEditDialog = ({ booking }: Props) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="icon" className="ml-2">
-          <Edit3 className="h-4 w-4" />
+        <Button size="sm" variant="outline">
+          {t('bookings.editBooking')}
         </Button>
       </DialogTrigger>
       <DialogContent>

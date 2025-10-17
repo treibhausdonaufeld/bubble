@@ -46,7 +46,7 @@ const BookingCounterOfferDialog = ({ booking }: Props) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm" variant="outline" className="mr-2">
+        <Button size="sm" variant="outline">
           {t('bookings.counterOffer')}
         </Button>
       </DialogTrigger>

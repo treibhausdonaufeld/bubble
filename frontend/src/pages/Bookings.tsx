@@ -481,70 +481,75 @@ const Bookings = () => {
                         <div className="flex gap-2">
                           {/* Check if current user is the booking requester (owner of the booking) */}
                           {user?.username === selectedBooking.user?.username ? (
-                            // Booking requester can only cancel
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={async () => {
-                                try {
-                                  await updateBookingMutation.mutateAsync({
-                                    id: selectedBooking.id,
-                                    data: { status: 2 }, // Cancelled
-                                  });
-                                } catch (error) {
-                                  console.error('Error cancelling booking:', error);
-                                }
-                              }}
-                              disabled={updateBookingMutation.isPending}
-                            >
-                              {updateBookingMutation.isPending
-                                ? t('common.submitting')
-                                : t('bookings.cancel')}
-                            </Button>
+                            // Booking requester can edit offer and cancel
+                            <>
+                              <BookingEditDialog booking={selectedBooking} />
+                              <Button
+                                size="sm"
+                                variant="destructive"
+                                onClick={async () => {
+                                  try {
+                                    await updateBookingMutation.mutateAsync({
+                                      id: selectedBooking.id,
+                                      data: { status: 2 }, // Cancelled
+                                    });
+                                  } catch (error) {
+                                    console.error('Error cancelling booking:', error);
+                                  }
+                                }}
+                                disabled={updateBookingMutation.isPending}
+                              >
+                                {updateBookingMutation.isPending
+                                  ? t('common.submitting')
+                                  : t('bookings.cancel')}
+                              </Button>
+                            </>
                           ) : (
                             // Item owner can accept or reject
                             <>
-                              <div className="flex items-center gap-2">
-                                <BookingCounterOfferDialog booking={selectedBooking} />
-                                <Button
-                                  size="sm"
-                                  className="bg-green-500 hover:bg-green-600"
-                                  onClick={async () => {
-                                    try {
-                                      await updateBookingMutation.mutateAsync({
-                                        id: selectedBooking.id,
-                                        data: { status: 3 }, // Confirmed
-                                      });
-                                    } catch (error) {
-                                      console.error('Error accepting booking:', error);
-                                    }
-                                  }}
-                                  disabled={updateBookingMutation.isPending}
-                                >
-                                  {updateBookingMutation.isPending
-                                    ? t('common.submitting')
-                                    : t('bookings.accept')}
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="destructive"
-                                  onClick={async () => {
-                                    try {
-                                      await updateBookingMutation.mutateAsync({
-                                        id: selectedBooking.id,
-                                        data: { status: 5 }, // Rejected
-                                      });
-                                    } catch (error) {
-                                      console.error('Error rejecting booking:', error);
-                                    }
-                                  }}
-                                  disabled={updateBookingMutation.isPending}
-                                >
-                                  {updateBookingMutation.isPending
-                                    ? t('common.submitting')
-                                    : t('bookings.reject')}
-                                </Button>
-                              </div>
+                              <BookingCounterOfferDialog booking={selectedBooking} />
+                              <Button
+                                size="sm"
+                                className="bg-green-500 hover:bg-green-600"
+                                onClick={async () => {
+                                  try {
+                                    await updateBookingMutation.mutateAsync({
+                                      id: selectedBooking.id,
+                                      data: { status: 3 }, // Confirmed
+                                    });
+                                  } catch (error) {
+                                    console.error('Error accepting booking:', error);
+                                  }
+                                }}
+                                disabled={
+                                  updateBookingMutation.isPending ||
+                                  (!!selectedBooking.counter_offer &&
+                                    selectedBooking.counter_offer !== selectedBooking.offer)
+                                }
+                              >
+                                {updateBookingMutation.isPending
+                                  ? t('common.submitting')
+                                  : t('bookings.accept')}
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="destructive"
+                                onClick={async () => {
+                                  try {
+                                    await updateBookingMutation.mutateAsync({
+                                      id: selectedBooking.id,
+                                      data: { status: 5 }, // Rejected
+                                    });
+                                  } catch (error) {
+                                    console.error('Error rejecting booking:', error);
+                                  }
+                                }}
+                                disabled={updateBookingMutation.isPending}
+                              >
+                                {updateBookingMutation.isPending
+                                  ? t('common.submitting')
+                                  : t('bookings.reject')}
+                              </Button>
                             </>
                           )}
                         </div>
@@ -634,6 +639,16 @@ const Bookings = () => {
                                         : 'bg-muted',
                                     )}
                                   >
+                                    <p
+                                      className={cn(
+                                        'text-xs font-semibold mb-1',
+                                        isOwnMessage
+                                          ? 'text-primary-foreground/90'
+                                          : 'text-foreground',
+                                      )}
+                                    >
+                                      {message.sender}
+                                    </p>
                                     <p className="text-sm whitespace-pre-wrap break-words">
                                       {message.message}
                                     </p>
