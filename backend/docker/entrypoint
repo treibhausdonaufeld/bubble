@@ -16,7 +16,7 @@ wait-for-it "${POSTGRES_HOST}:${POSTGRES_PORT}" -t 30
 
 # Optionally collect static files (creates manifest used by ManifestStaticFilesStorage/Whitenoise)
 # Set DJANGO_COLLECT_STATIC=0 to skip in environments where static assets are built separately.
-if [ "${DJANGO_COLLECT_STATIC:-1}" = "1" ]; then
+if [ "${DJANGO_COLLECT_STATIC}" = "1" ]; then
     >&2 echo 'Collecting static files (python manage.py collectstatic)'
     # Use manage.py from project root; fail the container if collectstatic fails
     python manage.py collectstatic --noinput
