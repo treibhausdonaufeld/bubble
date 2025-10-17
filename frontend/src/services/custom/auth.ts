@@ -26,7 +26,7 @@ export interface LoginResponse {
   status: number;
   data: {
     user: {
-      id: number;
+      id: string;
       display: string;
       email: string;
       has_usable_password: boolean;
@@ -50,8 +50,7 @@ export interface SessionResponse {
   };
   data: {
     user: {
-      id: number;
-      uuid: string;
+      id: string;
       email: string;
       username: string;
       display: string;

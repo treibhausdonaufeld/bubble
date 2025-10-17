@@ -58,7 +58,7 @@ const MyItems = () => {
 
   // Helper function to get the correct edit URL based on item category
   const getEditUrl = (item: any) => {
-    return item.category === 'books' ? `/edit-book/${item.uuid}` : `/edit-item/${item.uuid}`;
+    return item.category === 'books' ? `/edit-book/${item.id}` : `/edit-item/${item.id}`;
   };
 
   // View mode state with localStorage persistence
@@ -234,7 +234,7 @@ const MyItems = () => {
 
                   return (
                     <TableRow
-                      key={item.uuid}
+                      key={item.id}
                       className="cursor-pointer hover:bg-muted/50"
                       onClick={() => navigate(getEditUrl(item))}
                     >
@@ -275,7 +275,7 @@ const MyItems = () => {
                               '4': 'rented',
                               '5': 'sold',
                             };
-                            handleStatusChange(item.uuid, statusMap[value] || 'draft');
+                            handleStatusChange(item.id, statusMap[value] || 'draft');
                           }}
                           disabled={updateStatusMutation.isPending}
                         >
@@ -324,7 +324,7 @@ const MyItems = () => {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => navigate(`/item/${item.uuid}`)}>
+                            <DropdownMenuItem onClick={() => navigate(`/item/${item.id}`)}>
                               <Eye className="h-4 w-4 mr-2" />
                               View
                             </DropdownMenuItem>
@@ -354,7 +354,7 @@ const MyItems = () => {
                                 <AlertDialogFooter>
                                   <AlertDialogCancel>Cancel</AlertDialogCancel>
                                   <AlertDialogAction
-                                    onClick={() => handleDeleteItem(item.uuid)}
+                                    onClick={() => handleDeleteItem(item.id)}
                                     className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                                   >
                                     Delete
@@ -375,7 +375,7 @@ const MyItems = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {items.map(item => {
               return (
-                <Card key={item.uuid} className="overflow-hidden">
+                <Card key={item.id} className="overflow-hidden">
                   {/* Image */}
                   <div
                     className="aspect-[4/3] overflow-hidden cursor-pointer"
@@ -412,7 +412,7 @@ const MyItems = () => {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => navigate(`/item/${item.uuid}`)}>
+                          <DropdownMenuItem onClick={() => navigate(`/item/${item.id}`)}>
                             <Eye className="h-4 w-4 mr-2" />
                             View
                           </DropdownMenuItem>
@@ -442,7 +442,7 @@ const MyItems = () => {
                               <AlertDialogFooter>
                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                                 <AlertDialogAction
-                                  onClick={() => handleDeleteItem(item.uuid)}
+                                  onClick={() => handleDeleteItem(item.id)}
                                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                                 >
                                   Delete
@@ -502,7 +502,7 @@ const MyItems = () => {
                             '4': 'rented',
                             '5': 'sold',
                           };
-                          handleStatusChange(item.uuid, statusMap[value] || 'draft');
+                          handleStatusChange(item.id, statusMap[value] || 'draft');
                         }}
                         disabled={updateStatusMutation.isPending}
                       >

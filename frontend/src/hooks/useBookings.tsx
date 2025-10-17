@@ -20,15 +20,15 @@ export const useBookings = () => {
   });
 };
 
-export const useBooking = (uuid?: string) => {
+export const useBooking = (id?: string) => {
   return useQuery({
-    queryKey: ['bookings', uuid],
+    queryKey: ['bookings', id],
     queryFn: async () => {
-      if (!uuid) throw new Error('Booking UUID is required');
-      const response = await bookingsRetrieve({ path: { uuid } });
+      if (!id) throw new Error('Booking UUID is required');
+      const response = await bookingsRetrieve({ path: { id } });
       return response.data;
     },
-    enabled: !!uuid,
+    enabled: !!id,
   });
 };
 
@@ -66,9 +66,9 @@ export const useUpdateBooking = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ uuid, data }: { uuid: string; data: PatchedBooking }) => {
+    mutationFn: async ({ id, data }: { id: string; data: PatchedBooking }) => {
       const response = await bookingsPartialUpdate({
-        path: { uuid },
+        path: { id },
         body: data,
       });
       return response.data;

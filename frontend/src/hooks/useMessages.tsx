@@ -53,7 +53,7 @@ export const useMarkMessageAsRead = () => {
   return useMutation({
     mutationFn: async (messageUuid: string) => {
       const response = await messagesPartialUpdate({
-        path: { uuid: messageUuid },
+        path: { id: messageUuid },
         body: { is_read: true },
       });
       return response.data;

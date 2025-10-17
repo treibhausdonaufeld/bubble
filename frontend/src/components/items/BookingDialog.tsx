@@ -145,7 +145,7 @@ export const BookingDialog = ({
     setDialogOpen(false);
 
     // If backend returned the created booking with a UUID, navigate to it
-    if (booking && (booking as any).uuid) {
+    if (booking && (booking as any).id) {
       navigate(`/bookings`);
     }
   };

@@ -7,7 +7,7 @@ export const useMyItem = (itemUuid?: string) => {
     queryFn: async () => {
       if (!itemUuid) throw new Error('Item UUID is required');
       const response = await itemsRetrieve({
-        path: { uuid: itemUuid },
+        path: { id: itemUuid },
       });
       return response.data;
     },

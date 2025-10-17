@@ -48,7 +48,7 @@ export const useUpdateItem = () => {
     mutationFn: async ({ itemUuid, data }: { itemUuid: string; data: PatchedItemWritable }) => {
       if (!user) throw new Error('User not authenticated');
       const response = await itemsPartialUpdate({
-        path: { uuid: itemUuid },
+        path: { id: itemUuid },
         body: data,
       });
       return response.data;

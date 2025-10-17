@@ -12,7 +12,7 @@ const UserInfoBox = ({ userUuid }: { userUuid: string }) => {
   } = useQuery({
     queryKey: ['user', userUuid],
     queryFn: async () => {
-      const resp = await usersRetrieve({ path: { uuid: userUuid } });
+      const resp = await usersRetrieve({ path: { id: userUuid } });
       return resp.data;
     },
     enabled: !!userUuid,

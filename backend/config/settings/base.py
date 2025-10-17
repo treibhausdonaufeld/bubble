@@ -360,8 +360,6 @@ ACCOUNT_ALLOW_REGISTRATION = env.bool("ACCOUNT_ALLOW_REGISTRATION", default=Fals
 
 SOCIALACCOUNT_ONLY = env.bool("SOCIALACCOUNT_ONLY", default=False)
 
-HEADLESS_ADAPTER = "bubble.users.adapters.DefaultHeadlessAdapter"
-
 # https://docs.allauth.org/en/latest/account/configuration.html
 ACCOUNT_LOGIN_METHODS = {"username"}
 # https://docs.allauth.org/en/latest/account/configuration.html

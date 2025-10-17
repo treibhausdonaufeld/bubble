@@ -136,8 +136,8 @@ const Index = () => {
               ) : (
                 items.map(item => (
                   <ItemCard
-                    key={item.uuid}
-                    id={item.uuid}
+                    key={item.id}
+                    id={item.id}
                     title={item.name}
                     description={item.description || ''}
                     category={item.category}

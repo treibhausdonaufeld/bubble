@@ -158,9 +158,9 @@ export const ImageManager = ({
     async (imageId: string) => {
       try {
         // Use Django API to delete the image
-        await imagesDestroy({ path: { uuid: imageId } });
+        await imagesDestroy({ path: { id: imageId } });
 
-        const updatedExistingImages = currentExistingImages.filter(img => img.uuid !== imageId);
+        const updatedExistingImages = currentExistingImages.filter(img => img.id !== imageId);
 
         // Reorder remaining images
         const reorderedImages = updatedExistingImages.map((img, index) => ({
@@ -220,7 +220,7 @@ export const ImageManager = ({
     try {
       const updatePromises = updatedImages.map(img =>
         imagesPartialUpdate({
-          path: { uuid: img.uuid },
+          path: { id: img.id },
           body: {
             ordering: img.ordering,
           },
@@ -270,7 +270,7 @@ export const ImageManager = ({
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {allImages.map((item, displayIndex) => (
           <div
-            key={item.type === 'existing' ? item.data.uuid : `new-${item.index}`}
+            key={item.type === 'existing' ? item.data.id : `new-${item.index}`}
             className="relative group"
             draggable={item.type === 'existing' && isEditing}
             onDragStart={() => item.type === 'existing' && handleDragStart(item.index)}
@@ -298,7 +298,7 @@ export const ImageManager = ({
               className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
               onClick={() => {
                 if (item.type === 'existing') {
-                  removeExistingImage(item.data.uuid);
+                  removeExistingImage(item.data.id);
                 } else {
                   removeNewImage(item.index - currentExistingImages.length);
                 }

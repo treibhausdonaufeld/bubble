@@ -41,7 +41,7 @@ const BookingEditDialog = ({ booking }: Props) => {
     e.preventDefault();
     try {
       await updateBooking.mutateAsync({
-        uuid: booking.uuid,
+        id: booking.id,
         data: {
           offer: offer === '' ? null : offer,
           time_from: timeFrom === '' ? null : timeFrom,

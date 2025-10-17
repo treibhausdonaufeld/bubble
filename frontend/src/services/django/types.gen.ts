@@ -14,7 +14,7 @@ export type AuthToken = {
  * Serializer for Author model.
  */
 export type Author = {
-    readonly uuid: string;
+    readonly id: string;
     name: string;
     website?: string;
     bio?: string;
@@ -27,6 +27,7 @@ export type BlankEnum = '';
  * Serializer for Book detail view.
  */
 export type Book = {
+    readonly id: string;
     readonly images: Array<Image>;
     readonly user: string;
     readonly first_image: string;
@@ -53,10 +54,6 @@ export type Book = {
      * * `vehicles` - Vehicles
      */
     category?: CategoryEnum | BlankEnum;
-    /**
-     * Unique identifier for the item
-     */
-    readonly uuid: string;
     name?: string;
     slug?: string;
     description?: string;
@@ -108,12 +105,17 @@ export type Book = {
      * Main topic or subject
      */
     topic?: string;
+    /**
+     * Raw metadata fetched from external sources like ISBN databases
+     */
+    metadata?: unknown;
 };
 
 /**
  * Serializer for Book list view.
  */
 export type BookList = {
+    readonly id: string;
     readonly user: string;
     readonly first_image: string;
     sale_price?: string | null;
@@ -139,10 +141,6 @@ export type BookList = {
      * * `vehicles` - Vehicles
      */
     category?: CategoryEnum | BlankEnum;
-    /**
-     * Unique identifier for the item
-     */
-    readonly uuid: string;
     name?: string;
     slug?: string;
     description?: string;
@@ -195,24 +193,25 @@ export type BookList = {
      */
     topic?: string;
     /**
+     * Raw metadata fetched from external sources like ISBN databases
+     */
+    metadata?: unknown;
+    /**
      * Publisher
      */
-    verlag?: number | null;
+    verlag?: string | null;
     /**
      * Shelf location
      */
-    shelf?: number | null;
+    shelf?: string | null;
 };
 
 /**
  * Detailed serializer for Booking where `item` is represented only by UUID.
  */
 export type Booking = {
-    readonly uuid: string;
+    readonly id: string;
     status?: StatusE2dEnum;
-    /**
-     * Unique identifier for the item
-     */
     item: string;
     item_details: ItemMinimal;
     user: User;
@@ -226,7 +225,7 @@ export type Booking = {
      * Counter offer price for the booking
      */
     counter_offer?: string | null;
-    accepted_by?: number | null;
+    accepted_by?: string | null;
     readonly created_at: string;
     readonly updated_at: string;
     /**
@@ -239,11 +238,8 @@ export type Booking = {
  * Detailed serializer for Booking where `item` is represented only by UUID.
  */
 export type BookingList = {
-    readonly uuid: string;
+    readonly id: string;
     status?: StatusE2dEnum;
-    /**
-     * Unique identifier for the item
-     */
     readonly item: string;
     item_details: ItemMinimal;
     user: User;
@@ -283,12 +279,12 @@ export type ConditionEnum = 0 | 1 | 2;
  * Serializer for Genre model.
  */
 export type Genre = {
-    readonly uuid: string;
+    readonly id: string;
     name: string;
     description?: string;
-    parent_genre?: number | null;
+    parent_genre?: string | null;
     readonly parent_genre_name: string | null;
-    readonly parent_genre_uuid: string | null;
+    readonly parent_genre_id: string | null;
     readonly hierarchy: string;
     readonly books_count: string;
 };
@@ -297,14 +293,11 @@ export type Genre = {
  * Serializer for Image model.
  */
 export type Image = {
-    readonly uuid: string;
+    readonly id: string;
     original: string;
     ordering?: number | null;
     readonly thumbnail: string;
     readonly preview: string;
-    /**
-     * Unique identifier for the item
-     */
     item: string;
 };
 
@@ -312,6 +305,7 @@ export type Image = {
  * Serializer for Item model.
  */
 export type Item = {
+    readonly id: string;
     readonly images: Array<Image>;
     readonly user: string;
     readonly first_image: string;
@@ -334,10 +328,6 @@ export type Item = {
      * * `vehicles` - Vehicles
      */
     category?: CategoryEnum | BlankEnum;
-    /**
-     * Unique identifier for the item
-     */
-    readonly uuid: string;
     name?: string;
     slug?: string;
     description?: string;
@@ -382,6 +372,7 @@ export type Item = {
  * Lightweight serializer for item lists.
  */
 export type ItemList = {
+    readonly id: string;
     readonly user: string;
     readonly first_image: string;
     sale_price?: string | null;
@@ -403,10 +394,6 @@ export type ItemList = {
      * * `vehicles` - Vehicles
      */
     category?: CategoryEnum | BlankEnum;
-    /**
-     * Unique identifier for the item
-     */
-    readonly uuid: string;
     name?: string;
     slug?: string;
     description?: string;
@@ -451,10 +438,7 @@ export type ItemList = {
  * Lightweight serializer for item lists.
  */
 export type ItemMinimal = {
-    /**
-     * Unique identifier for the item
-     */
-    readonly uuid: string;
+    readonly id: string;
     name?: string;
     readonly first_image: string;
 };
@@ -463,7 +447,7 @@ export type ItemMinimal = {
  * Serializer for Message model. Booking is referenced by UUID.
  */
 export type Message = {
-    readonly uuid: string;
+    readonly id: string;
     booking: string;
     readonly sender: string;
     readonly created_at: string;
@@ -552,7 +536,7 @@ export type PaginatedUserList = {
  * Serializer for Author model.
  */
 export type PatchedAuthor = {
-    readonly uuid?: string;
+    readonly id?: string;
     name?: string;
     website?: string;
     bio?: string;
@@ -563,6 +547,7 @@ export type PatchedAuthor = {
  * Serializer for Book detail view.
  */
 export type PatchedBook = {
+    readonly id?: string;
     readonly images?: Array<Image>;
     readonly user?: string;
     readonly first_image?: string;
@@ -589,10 +574,6 @@ export type PatchedBook = {
      * * `vehicles` - Vehicles
      */
     category?: CategoryEnum | BlankEnum;
-    /**
-     * Unique identifier for the item
-     */
-    readonly uuid?: string;
     name?: string;
     slug?: string;
     description?: string;
@@ -644,17 +625,18 @@ export type PatchedBook = {
      * Main topic or subject
      */
     topic?: string;
+    /**
+     * Raw metadata fetched from external sources like ISBN databases
+     */
+    metadata?: unknown;
 };
 
 /**
  * Detailed serializer for Booking where `item` is represented only by UUID.
  */
 export type PatchedBooking = {
-    readonly uuid?: string;
+    readonly id?: string;
     status?: StatusE2dEnum;
-    /**
-     * Unique identifier for the item
-     */
     item?: string;
     item_details?: ItemMinimal;
     user?: User;
@@ -668,7 +650,7 @@ export type PatchedBooking = {
      * Counter offer price for the booking
      */
     counter_offer?: string | null;
-    accepted_by?: number | null;
+    accepted_by?: string | null;
     readonly created_at?: string;
     readonly updated_at?: string;
     /**
@@ -681,12 +663,12 @@ export type PatchedBooking = {
  * Serializer for Genre model.
  */
 export type PatchedGenre = {
-    readonly uuid?: string;
+    readonly id?: string;
     name?: string;
     description?: string;
-    parent_genre?: number | null;
+    parent_genre?: string | null;
     readonly parent_genre_name?: string | null;
-    readonly parent_genre_uuid?: string | null;
+    readonly parent_genre_id?: string | null;
     readonly hierarchy?: string;
     readonly books_count?: string;
 };
@@ -695,14 +677,11 @@ export type PatchedGenre = {
  * Serializer for Image model.
  */
 export type PatchedImage = {
-    readonly uuid?: string;
+    readonly id?: string;
     original?: string;
     ordering?: number | null;
     readonly thumbnail?: string;
     readonly preview?: string;
-    /**
-     * Unique identifier for the item
-     */
     item?: string;
 };
 
@@ -710,6 +689,7 @@ export type PatchedImage = {
  * Serializer for Item model.
  */
 export type PatchedItem = {
+    readonly id?: string;
     readonly images?: Array<Image>;
     readonly user?: string;
     readonly first_image?: string;
@@ -732,10 +712,6 @@ export type PatchedItem = {
      * * `vehicles` - Vehicles
      */
     category?: CategoryEnum | BlankEnum;
-    /**
-     * Unique identifier for the item
-     */
-    readonly uuid?: string;
     name?: string;
     slug?: string;
     description?: string;
@@ -780,7 +756,7 @@ export type PatchedItem = {
  * Serializer for Message model. Booking is referenced by UUID.
  */
 export type PatchedMessage = {
-    readonly uuid?: string;
+    readonly id?: string;
     booking?: string;
     readonly sender?: string;
     readonly created_at?: string;
@@ -801,7 +777,7 @@ export type PatchedProfile = {
  * Serializer for Publisher model.
  */
 export type PatchedPublisher = {
-    readonly uuid?: string;
+    readonly id?: string;
     name?: string;
     description?: string;
     readonly books_count?: string;
@@ -811,14 +787,14 @@ export type PatchedPublisher = {
  * Serializer for Shelf model.
  */
 export type PatchedShelf = {
-    readonly uuid?: string;
+    readonly id?: string;
     name?: string;
     description?: string;
     readonly books_count?: string;
 };
 
 export type PatchedUser = {
-    readonly uuid?: string;
+    readonly id?: string;
     /**
      * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
      */
@@ -846,7 +822,7 @@ export type Profile = {
  * Serializer for Publisher model.
  */
 export type Publisher = {
-    readonly uuid: string;
+    readonly id: string;
     name: string;
     description?: string;
     readonly books_count: string;
@@ -863,7 +839,7 @@ export type RentalPeriodEnum = 'h' | 'd' | 'w';
  * Serializer for Shelf model.
  */
 export type Shelf = {
-    readonly uuid: string;
+    readonly id: string;
     name: string;
     description?: string;
     readonly books_count: string;
@@ -889,7 +865,7 @@ export type Status402Enum = 0 | 1 | 2 | 3 | 4 | 5;
 export type StatusE2dEnum = 1 | 2 | 3 | 4 | 5;
 
 export type User = {
-    readonly uuid: string;
+    readonly id: string;
     /**
      * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
      */
@@ -919,10 +895,10 @@ export type AuthorWritable = {
 export type BookWritable = {
     sale_price?: string | null;
     rental_price?: string | null;
-    author_uuids?: Array<string>;
-    genre_uuids?: Array<string>;
-    verlag_uuid?: string | null;
-    shelf_uuid?: string | null;
+    author_ids?: Array<string>;
+    genre_ids?: Array<string>;
+    verlag_id?: string | null;
+    shelf_id?: string | null;
     /**
      * Category of the item
      *
@@ -987,6 +963,10 @@ export type BookWritable = {
      * Main topic or subject
      */
     topic?: string;
+    /**
+     * Raw metadata fetched from external sources like ISBN databases
+     */
+    metadata?: unknown;
 };
 
 /**
@@ -1060,13 +1040,17 @@ export type BookListWritable = {
      */
     topic?: string;
     /**
+     * Raw metadata fetched from external sources like ISBN databases
+     */
+    metadata?: unknown;
+    /**
      * Publisher
      */
-    verlag?: number | null;
+    verlag?: string | null;
     /**
      * Shelf location
      */
-    shelf?: number | null;
+    shelf?: string | null;
 };
 
 /**
@@ -1074,9 +1058,6 @@ export type BookListWritable = {
  */
 export type BookingWritable = {
     status?: StatusE2dEnum;
-    /**
-     * Unique identifier for the item
-     */
     item: string;
     time_from?: string | null;
     time_to?: string | null;
@@ -1088,7 +1069,7 @@ export type BookingWritable = {
      * Counter offer price for the booking
      */
     counter_offer?: string | null;
-    accepted_by?: number | null;
+    accepted_by?: string | null;
 };
 
 /**
@@ -1106,7 +1087,7 @@ export type BookingListWritable = {
 export type GenreWritable = {
     name: string;
     description?: string;
-    parent_genre?: number | null;
+    parent_genre?: string | null;
 };
 
 /**
@@ -1115,9 +1096,6 @@ export type GenreWritable = {
 export type ImageWritable = {
     original: string;
     ordering?: number | null;
-    /**
-     * Unique identifier for the item
-     */
     item: string;
 };
 
@@ -1270,10 +1248,10 @@ export type PatchedAuthorWritable = {
 export type PatchedBookWritable = {
     sale_price?: string | null;
     rental_price?: string | null;
-    author_uuids?: Array<string>;
-    genre_uuids?: Array<string>;
-    verlag_uuid?: string | null;
-    shelf_uuid?: string | null;
+    author_ids?: Array<string>;
+    genre_ids?: Array<string>;
+    verlag_id?: string | null;
+    shelf_id?: string | null;
     /**
      * Category of the item
      *
@@ -1338,6 +1316,10 @@ export type PatchedBookWritable = {
      * Main topic or subject
      */
     topic?: string;
+    /**
+     * Raw metadata fetched from external sources like ISBN databases
+     */
+    metadata?: unknown;
 };
 
 /**
@@ -1345,9 +1327,6 @@ export type PatchedBookWritable = {
  */
 export type PatchedBookingWritable = {
     status?: StatusE2dEnum;
-    /**
-     * Unique identifier for the item
-     */
     item?: string;
     time_from?: string | null;
     time_to?: string | null;
@@ -1359,7 +1338,7 @@ export type PatchedBookingWritable = {
      * Counter offer price for the booking
      */
     counter_offer?: string | null;
-    accepted_by?: number | null;
+    accepted_by?: string | null;
 };
 
 /**
@@ -1368,7 +1347,7 @@ export type PatchedBookingWritable = {
 export type PatchedGenreWritable = {
     name?: string;
     description?: string;
-    parent_genre?: number | null;
+    parent_genre?: string | null;
 };
 
 /**
@@ -1377,9 +1356,6 @@ export type PatchedGenreWritable = {
 export type PatchedImageWritable = {
     original?: string;
     ordering?: number | null;
-    /**
-     * Unique identifier for the item
-     */
     item?: string;
 };
 
@@ -1581,10 +1557,13 @@ export type AuthorsCreateResponse = AuthorsCreateResponses[keyof AuthorsCreateRe
 export type AuthorsDestroyData = {
     body?: never;
     path: {
-        uuid: string;
+        /**
+         * A UUID string identifying this Author.
+         */
+        id: string;
     };
     query?: never;
-    url: '/api/authors/{uuid}/';
+    url: '/api/authors/{id}/';
 };
 
 export type AuthorsDestroyResponses = {
@@ -1599,10 +1578,13 @@ export type AuthorsDestroyResponse = AuthorsDestroyResponses[keyof AuthorsDestro
 export type AuthorsRetrieveData = {
     body?: never;
     path: {
-        uuid: string;
+        /**
+         * A UUID string identifying this Author.
+         */
+        id: string;
     };
     query?: never;
-    url: '/api/authors/{uuid}/';
+    url: '/api/authors/{id}/';
 };
 
 export type AuthorsRetrieveResponses = {
@@ -1614,10 +1596,13 @@ export type AuthorsRetrieveResponse = AuthorsRetrieveResponses[keyof AuthorsRetr
 export type AuthorsPartialUpdateData = {
     body?: PatchedAuthorWritable;
     path: {
-        uuid: string;
+        /**
+         * A UUID string identifying this Author.
+         */
+        id: string;
     };
     query?: never;
-    url: '/api/authors/{uuid}/';
+    url: '/api/authors/{id}/';
 };
 
 export type AuthorsPartialUpdateResponses = {
@@ -1629,10 +1614,13 @@ export type AuthorsPartialUpdateResponse = AuthorsPartialUpdateResponses[keyof A
 export type AuthorsUpdateData = {
     body: AuthorWritable;
     path: {
-        uuid: string;
+        /**
+         * A UUID string identifying this Author.
+         */
+        id: string;
     };
     query?: never;
-    url: '/api/authors/{uuid}/';
+    url: '/api/authors/{id}/';
 };
 
 export type AuthorsUpdateResponses = {
@@ -1683,10 +1671,10 @@ export type BookingsCreateResponse = BookingsCreateResponses[keyof BookingsCreat
 export type BookingsDestroyData = {
     body?: never;
     path: {
-        uuid: string;
+        id: string;
     };
     query?: never;
-    url: '/api/bookings/{uuid}/';
+    url: '/api/bookings/{id}/';
 };
 
 export type BookingsDestroyResponses = {
@@ -1701,10 +1689,10 @@ export type BookingsDestroyResponse = BookingsDestroyResponses[keyof BookingsDes
 export type BookingsRetrieveData = {
     body?: never;
     path: {
-        uuid: string;
+        id: string;
     };
     query?: never;
-    url: '/api/bookings/{uuid}/';
+    url: '/api/bookings/{id}/';
 };
 
 export type BookingsRetrieveResponses = {
@@ -1716,10 +1704,10 @@ export type BookingsRetrieveResponse = BookingsRetrieveResponses[keyof BookingsR
 export type BookingsPartialUpdateData = {
     body?: PatchedBookingWritable;
     path: {
-        uuid: string;
+        id: string;
     };
     query?: never;
-    url: '/api/bookings/{uuid}/';
+    url: '/api/bookings/{id}/';
 };
 
 export type BookingsPartialUpdateResponses = {
@@ -1731,10 +1719,10 @@ export type BookingsPartialUpdateResponse = BookingsPartialUpdateResponses[keyof
 export type BookingsUpdateData = {
     body: BookingWritable;
     path: {
-        uuid: string;
+        id: string;
     };
     query?: never;
-    url: '/api/bookings/{uuid}/';
+    url: '/api/bookings/{id}/';
 };
 
 export type BookingsUpdateResponses = {
@@ -1799,12 +1787,12 @@ export type BooksDestroyData = {
     body?: never;
     path: {
         /**
-         * Unique identifier for the item
+         * A UUID string identifying this book.
          */
-        uuid: string;
+        id: string;
     };
     query?: never;
-    url: '/api/books/{uuid}/';
+    url: '/api/books/{id}/';
 };
 
 export type BooksDestroyResponses = {
@@ -1820,12 +1808,12 @@ export type BooksRetrieveData = {
     body?: never;
     path: {
         /**
-         * Unique identifier for the item
+         * A UUID string identifying this book.
          */
-        uuid: string;
+        id: string;
     };
     query?: never;
-    url: '/api/books/{uuid}/';
+    url: '/api/books/{id}/';
 };
 
 export type BooksRetrieveResponses = {
@@ -1838,12 +1826,12 @@ export type BooksPartialUpdateData = {
     body?: PatchedBookWritable;
     path: {
         /**
-         * Unique identifier for the item
+         * A UUID string identifying this book.
          */
-        uuid: string;
+        id: string;
     };
     query?: never;
-    url: '/api/books/{uuid}/';
+    url: '/api/books/{id}/';
 };
 
 export type BooksPartialUpdateResponses = {
@@ -1856,12 +1844,12 @@ export type BooksUpdateData = {
     body?: BookWritable;
     path: {
         /**
-         * Unique identifier for the item
+         * A UUID string identifying this book.
          */
-        uuid: string;
+        id: string;
     };
     query?: never;
-    url: '/api/books/{uuid}/';
+    url: '/api/books/{id}/';
 };
 
 export type BooksUpdateResponses = {
@@ -1879,12 +1867,12 @@ export type BooksIsbnUpdateUpdateData = {
     };
     path: {
         /**
-         * Unique identifier for the item
+         * A UUID string identifying this book.
          */
-        uuid: string;
+        id: string;
     };
     query?: never;
-    url: '/api/books/{uuid}/isbn_update/';
+    url: '/api/books/{id}/isbn_update/';
 };
 
 export type BooksIsbnUpdateUpdateResponses = {
@@ -1938,10 +1926,13 @@ export type GenresCreateResponse = GenresCreateResponses[keyof GenresCreateRespo
 export type GenresDestroyData = {
     body?: never;
     path: {
-        uuid: string;
+        /**
+         * A UUID string identifying this Genre.
+         */
+        id: string;
     };
     query?: never;
-    url: '/api/genres/{uuid}/';
+    url: '/api/genres/{id}/';
 };
 
 export type GenresDestroyResponses = {
@@ -1956,10 +1947,13 @@ export type GenresDestroyResponse = GenresDestroyResponses[keyof GenresDestroyRe
 export type GenresRetrieveData = {
     body?: never;
     path: {
-        uuid: string;
+        /**
+         * A UUID string identifying this Genre.
+         */
+        id: string;
     };
     query?: never;
-    url: '/api/genres/{uuid}/';
+    url: '/api/genres/{id}/';
 };
 
 export type GenresRetrieveResponses = {
@@ -1971,10 +1965,13 @@ export type GenresRetrieveResponse = GenresRetrieveResponses[keyof GenresRetriev
 export type GenresPartialUpdateData = {
     body?: PatchedGenreWritable;
     path: {
-        uuid: string;
+        /**
+         * A UUID string identifying this Genre.
+         */
+        id: string;
     };
     query?: never;
-    url: '/api/genres/{uuid}/';
+    url: '/api/genres/{id}/';
 };
 
 export type GenresPartialUpdateResponses = {
@@ -1986,10 +1983,13 @@ export type GenresPartialUpdateResponse = GenresPartialUpdateResponses[keyof Gen
 export type GenresUpdateData = {
     body: GenreWritable;
     path: {
-        uuid: string;
+        /**
+         * A UUID string identifying this Genre.
+         */
+        id: string;
     };
     query?: never;
-    url: '/api/genres/{uuid}/';
+    url: '/api/genres/{id}/';
 };
 
 export type GenresUpdateResponses = {
@@ -2032,10 +2032,13 @@ export type ImagesCreateResponse = ImagesCreateResponses[keyof ImagesCreateRespo
 export type ImagesDestroyData = {
     body?: never;
     path: {
-        uuid: string;
+        /**
+         * A UUID string identifying this image.
+         */
+        id: string;
     };
     query?: never;
-    url: '/api/images/{uuid}/';
+    url: '/api/images/{id}/';
 };
 
 export type ImagesDestroyResponses = {
@@ -2050,10 +2053,13 @@ export type ImagesDestroyResponse = ImagesDestroyResponses[keyof ImagesDestroyRe
 export type ImagesRetrieveData = {
     body?: never;
     path: {
-        uuid: string;
+        /**
+         * A UUID string identifying this image.
+         */
+        id: string;
     };
     query?: never;
-    url: '/api/images/{uuid}/';
+    url: '/api/images/{id}/';
 };
 
 export type ImagesRetrieveResponses = {
@@ -2065,10 +2071,13 @@ export type ImagesRetrieveResponse = ImagesRetrieveResponses[keyof ImagesRetriev
 export type ImagesPartialUpdateData = {
     body?: PatchedImageWritable;
     path: {
-        uuid: string;
+        /**
+         * A UUID string identifying this image.
+         */
+        id: string;
     };
     query?: never;
-    url: '/api/images/{uuid}/';
+    url: '/api/images/{id}/';
 };
 
 export type ImagesPartialUpdateResponses = {
@@ -2080,10 +2089,13 @@ export type ImagesPartialUpdateResponse = ImagesPartialUpdateResponses[keyof Ima
 export type ImagesUpdateData = {
     body: ImageWritable;
     path: {
-        uuid: string;
+        /**
+         * A UUID string identifying this image.
+         */
+        id: string;
     };
     query?: never;
-    url: '/api/images/{uuid}/';
+    url: '/api/images/{id}/';
 };
 
 export type ImagesUpdateResponses = {
@@ -2141,7 +2153,7 @@ export type ItemsListData = {
          * * `5` - Sold
          */
         status?: Array<0 | 1 | 2 | 3 | 4 | 5>;
-        user?: number;
+        user?: string;
     };
     url: '/api/items/';
 };
@@ -2169,12 +2181,12 @@ export type ItemsDestroyData = {
     body?: never;
     path: {
         /**
-         * Unique identifier for the item
+         * A UUID string identifying this item.
          */
-        uuid: string;
+        id: string;
     };
     query?: never;
-    url: '/api/items/{uuid}/';
+    url: '/api/items/{id}/';
 };
 
 export type ItemsDestroyResponses = {
@@ -2190,12 +2202,12 @@ export type ItemsRetrieveData = {
     body?: never;
     path: {
         /**
-         * Unique identifier for the item
+         * A UUID string identifying this item.
          */
-        uuid: string;
+        id: string;
     };
     query?: never;
-    url: '/api/items/{uuid}/';
+    url: '/api/items/{id}/';
 };
 
 export type ItemsRetrieveResponses = {
@@ -2208,12 +2220,12 @@ export type ItemsPartialUpdateData = {
     body?: PatchedItemWritable;
     path: {
         /**
-         * Unique identifier for the item
+         * A UUID string identifying this item.
          */
-        uuid: string;
+        id: string;
     };
     query?: never;
-    url: '/api/items/{uuid}/';
+    url: '/api/items/{id}/';
 };
 
 export type ItemsPartialUpdateResponses = {
@@ -2226,12 +2238,12 @@ export type ItemsUpdateData = {
     body?: ItemWritable;
     path: {
         /**
-         * Unique identifier for the item
+         * A UUID string identifying this item.
          */
-        uuid: string;
+        id: string;
     };
     query?: never;
-    url: '/api/items/{uuid}/';
+    url: '/api/items/{id}/';
 };
 
 export type ItemsUpdateResponses = {
@@ -2244,12 +2256,12 @@ export type ItemsAiDescribeUpdateData = {
     body?: ItemWritable;
     path: {
         /**
-         * Unique identifier for the item
+         * A UUID string identifying this item.
          */
-        uuid: string;
+        id: string;
     };
     query?: never;
-    url: '/api/items/{uuid}/ai_describe/';
+    url: '/api/items/{id}/ai_describe/';
 };
 
 export type ItemsAiDescribeUpdateResponses = {
@@ -2262,12 +2274,12 @@ export type ItemsAiImageUpdateData = {
     body?: ItemWritable;
     path: {
         /**
-         * Unique identifier for the item
+         * A UUID string identifying this item.
          */
-        uuid: string;
+        id: string;
     };
     query?: never;
-    url: '/api/items/{uuid}/ai_image/';
+    url: '/api/items/{id}/ai_image/';
 };
 
 export type ItemsAiImageUpdateResponses = {
@@ -2280,12 +2292,12 @@ export type ItemsReorderImagesUpdateData = {
     body?: ItemWritable;
     path: {
         /**
-         * Unique identifier for the item
+         * A UUID string identifying this item.
          */
-        uuid: string;
+        id: string;
     };
     query?: never;
-    url: '/api/items/{uuid}/reorder_images/';
+    url: '/api/items/{id}/reorder_images/';
 };
 
 export type ItemsReorderImagesUpdateResponses = {
@@ -2310,7 +2322,7 @@ export type MessagesListData = {
          * A page number within the paginated result set.
          */
         page?: number;
-        sender?: number;
+        sender?: string;
         /**
          * Unread messages received by current user
          */
@@ -2341,10 +2353,13 @@ export type MessagesCreateResponse = MessagesCreateResponses[keyof MessagesCreat
 export type MessagesDestroyData = {
     body?: never;
     path: {
-        uuid: string;
+        /**
+         * A UUID string identifying this message.
+         */
+        id: string;
     };
     query?: never;
-    url: '/api/messages/{uuid}/';
+    url: '/api/messages/{id}/';
 };
 
 export type MessagesDestroyResponses = {
@@ -2359,10 +2374,13 @@ export type MessagesDestroyResponse = MessagesDestroyResponses[keyof MessagesDes
 export type MessagesRetrieveData = {
     body?: never;
     path: {
-        uuid: string;
+        /**
+         * A UUID string identifying this message.
+         */
+        id: string;
     };
     query?: never;
-    url: '/api/messages/{uuid}/';
+    url: '/api/messages/{id}/';
 };
 
 export type MessagesRetrieveResponses = {
@@ -2374,10 +2392,13 @@ export type MessagesRetrieveResponse = MessagesRetrieveResponses[keyof MessagesR
 export type MessagesPartialUpdateData = {
     body?: PatchedMessageWritable;
     path: {
-        uuid: string;
+        /**
+         * A UUID string identifying this message.
+         */
+        id: string;
     };
     query?: never;
-    url: '/api/messages/{uuid}/';
+    url: '/api/messages/{id}/';
 };
 
 export type MessagesPartialUpdateResponses = {
@@ -2389,10 +2410,13 @@ export type MessagesPartialUpdateResponse = MessagesPartialUpdateResponses[keyof
 export type MessagesUpdateData = {
     body: MessageWritable;
     path: {
-        uuid: string;
+        /**
+         * A UUID string identifying this message.
+         */
+        id: string;
     };
     query?: never;
-    url: '/api/messages/{uuid}/';
+    url: '/api/messages/{id}/';
 };
 
 export type MessagesUpdateResponses = {
@@ -2487,7 +2511,7 @@ export type PublicBookingsListData = {
          * * `5` - Rejected
          */
         status?: Array<1 | 2 | 3 | 4 | 5>;
-        user?: number;
+        user?: string;
     };
     url: '/api/public-bookings/';
 };
@@ -2501,10 +2525,13 @@ export type PublicBookingsListResponse = PublicBookingsListResponses[keyof Publi
 export type PublicBookingsRetrieveData = {
     body?: never;
     path: {
-        uuid: string;
+        /**
+         * A UUID string identifying this booking.
+         */
+        id: string;
     };
     query?: never;
-    url: '/api/public-bookings/{uuid}/';
+    url: '/api/public-bookings/{id}/';
 };
 
 export type PublicBookingsRetrieveResponses = {
@@ -2562,7 +2589,7 @@ export type PublicItemsListData = {
          * * `5` - Sold
          */
         status?: Array<0 | 1 | 2 | 3 | 4 | 5>;
-        user?: number;
+        user?: string;
     };
     url: '/api/public-items/';
 };
@@ -2577,12 +2604,12 @@ export type PublicItemsRetrieveData = {
     body?: never;
     path: {
         /**
-         * Unique identifier for the item
+         * A UUID string identifying this item.
          */
-        uuid: string;
+        id: string;
     };
     query?: never;
-    url: '/api/public-items/{uuid}/';
+    url: '/api/public-items/{id}/';
 };
 
 export type PublicItemsRetrieveResponses = {
@@ -2634,10 +2661,13 @@ export type PublishersCreateResponse = PublishersCreateResponses[keyof Publisher
 export type PublishersDestroyData = {
     body?: never;
     path: {
-        uuid: string;
+        /**
+         * A UUID string identifying this Publisher.
+         */
+        id: string;
     };
     query?: never;
-    url: '/api/publishers/{uuid}/';
+    url: '/api/publishers/{id}/';
 };
 
 export type PublishersDestroyResponses = {
@@ -2652,10 +2682,13 @@ export type PublishersDestroyResponse = PublishersDestroyResponses[keyof Publish
 export type PublishersRetrieveData = {
     body?: never;
     path: {
-        uuid: string;
+        /**
+         * A UUID string identifying this Publisher.
+         */
+        id: string;
     };
     query?: never;
-    url: '/api/publishers/{uuid}/';
+    url: '/api/publishers/{id}/';
 };
 
 export type PublishersRetrieveResponses = {
@@ -2667,10 +2700,13 @@ export type PublishersRetrieveResponse = PublishersRetrieveResponses[keyof Publi
 export type PublishersPartialUpdateData = {
     body?: PatchedPublisherWritable;
     path: {
-        uuid: string;
+        /**
+         * A UUID string identifying this Publisher.
+         */
+        id: string;
     };
     query?: never;
-    url: '/api/publishers/{uuid}/';
+    url: '/api/publishers/{id}/';
 };
 
 export type PublishersPartialUpdateResponses = {
@@ -2682,10 +2718,13 @@ export type PublishersPartialUpdateResponse = PublishersPartialUpdateResponses[k
 export type PublishersUpdateData = {
     body: PublisherWritable;
     path: {
-        uuid: string;
+        /**
+         * A UUID string identifying this Publisher.
+         */
+        id: string;
     };
     query?: never;
-    url: '/api/publishers/{uuid}/';
+    url: '/api/publishers/{id}/';
 };
 
 export type PublishersUpdateResponses = {
@@ -2755,10 +2794,13 @@ export type ShelvesCreateResponse = ShelvesCreateResponses[keyof ShelvesCreateRe
 export type ShelvesDestroyData = {
     body?: never;
     path: {
-        uuid: string;
+        /**
+         * A UUID string identifying this Shelf.
+         */
+        id: string;
     };
     query?: never;
-    url: '/api/shelves/{uuid}/';
+    url: '/api/shelves/{id}/';
 };
 
 export type ShelvesDestroyResponses = {
@@ -2773,10 +2815,13 @@ export type ShelvesDestroyResponse = ShelvesDestroyResponses[keyof ShelvesDestro
 export type ShelvesRetrieveData = {
     body?: never;
     path: {
-        uuid: string;
+        /**
+         * A UUID string identifying this Shelf.
+         */
+        id: string;
     };
     query?: never;
-    url: '/api/shelves/{uuid}/';
+    url: '/api/shelves/{id}/';
 };
 
 export type ShelvesRetrieveResponses = {
@@ -2788,10 +2833,13 @@ export type ShelvesRetrieveResponse = ShelvesRetrieveResponses[keyof ShelvesRetr
 export type ShelvesPartialUpdateData = {
     body?: PatchedShelfWritable;
     path: {
-        uuid: string;
+        /**
+         * A UUID string identifying this Shelf.
+         */
+        id: string;
     };
     query?: never;
-    url: '/api/shelves/{uuid}/';
+    url: '/api/shelves/{id}/';
 };
 
 export type ShelvesPartialUpdateResponses = {
@@ -2803,10 +2851,13 @@ export type ShelvesPartialUpdateResponse = ShelvesPartialUpdateResponses[keyof S
 export type ShelvesUpdateData = {
     body: ShelfWritable;
     path: {
-        uuid: string;
+        /**
+         * A UUID string identifying this Shelf.
+         */
+        id: string;
     };
     query?: never;
-    url: '/api/shelves/{uuid}/';
+    url: '/api/shelves/{id}/';
 };
 
 export type ShelvesUpdateResponses = {
@@ -2836,10 +2887,13 @@ export type UsersListResponse = UsersListResponses[keyof UsersListResponses];
 export type UsersRetrieveData = {
     body?: never;
     path: {
-        uuid: string;
+        /**
+         * A UUID string identifying this user.
+         */
+        id: string;
     };
     query?: never;
-    url: '/api/users/{uuid}/';
+    url: '/api/users/{id}/';
 };
 
 export type UsersRetrieveResponses = {
@@ -2851,10 +2905,13 @@ export type UsersRetrieveResponse = UsersRetrieveResponses[keyof UsersRetrieveRe
 export type UsersPartialUpdateData = {
     body?: PatchedUserWritable;
     path: {
-        uuid: string;
+        /**
+         * A UUID string identifying this user.
+         */
+        id: string;
     };
     query?: never;
-    url: '/api/users/{uuid}/';
+    url: '/api/users/{id}/';
 };
 
 export type UsersPartialUpdateResponses = {
@@ -2866,10 +2923,13 @@ export type UsersPartialUpdateResponse = UsersPartialUpdateResponses[keyof Users
 export type UsersUpdateData = {
     body: UserWritable;
     path: {
-        uuid: string;
+        /**
+         * A UUID string identifying this user.
+         */
+        id: string;
     };
     query?: never;
-    url: '/api/users/{uuid}/';
+    url: '/api/users/{id}/';
 };
 
 export type UsersUpdateResponses = {

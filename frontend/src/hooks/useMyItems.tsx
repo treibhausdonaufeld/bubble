@@ -18,7 +18,7 @@ export const useMyItems = (page?: number) => {
       if (!user) throw new Error('User not authenticated');
       const response = await itemsList({
         query: {
-          user: Number(user.id),
+          user: user.id,
           page: page,
         },
       });
@@ -36,7 +36,7 @@ export const useUpdateItemStatus = () => {
   return useMutation({
     mutationFn: async ({ itemId, status }: { itemId: string; status: StatusEnum }) => {
       const response = await itemsPartialUpdate({
-        path: { uuid: itemId },
+        path: { id: itemId },
         body: { status },
       });
 
@@ -68,7 +68,7 @@ export const useDeleteItem = () => {
     mutationFn: async (itemId: string) => {
       if (!user) throw new Error('User not authenticated');
       const response = await itemsDestroy({
-        path: { uuid: itemId },
+        path: { id: itemId },
       });
 
       return response.data;

@@ -64,16 +64,16 @@ const EditBook = () => {
     queryKey: ['book', editItemUuid],
     queryFn: async () => {
       if (!editItemUuid) throw new Error('No book UUID provided');
-      const response = await booksRetrieve({ path: { uuid: editItemUuid } });
+      const response = await booksRetrieve({ path: { id: editItemUuid } });
       return response.data;
     },
     enabled: !!editItemUuid,
   });
 
   const updateBookMutation = useMutation({
-    mutationFn: async (data: { uuid: string; body: BookWritable }) => {
+    mutationFn: async (data: { id: string; body: BookWritable }) => {
       const response = await booksPartialUpdate({
-        path: { uuid: data.uuid },
+        path: { id: data.id },
         body: data.body,
       });
       return response.data;
@@ -98,9 +98,9 @@ const EditBook = () => {
 
   // ISBN update mutation
   const isbnUpdateMutation = useMutation({
-    mutationFn: async (data: { uuid: string; isbn: string }) => {
+    mutationFn: async (data: { id: string; isbn: string }) => {
       const response = await booksIsbnUpdateUpdate({
-        path: { uuid: data.uuid },
+        path: { id: data.id },
         body: { isbn: data.isbn },
       });
       return response.data;
@@ -190,10 +190,10 @@ const EditBook = () => {
     isbn: '',
     year: '',
     topic: '',
-    author_uuids: [] as string[],
-    genre_uuids: [] as string[],
-    verlag_uuid: '',
-    shelf_uuid: '',
+    author_ids: [] as string[],
+    genre_ids: [] as string[],
+    verlag_id: '',
+    shelf_id: '',
   });
 
   const categories: CategoryEnum[] = [
@@ -228,10 +228,10 @@ const EditBook = () => {
         isbn: book.isbn || '',
         year: book.year?.toString() || '',
         topic: book.topic || '',
-        author_uuids: book.authors?.map(a => a.uuid) || [],
-        genre_uuids: book.genres?.map(g => g.uuid) || [],
-        verlag_uuid: book.verlag?.uuid || '',
-        shelf_uuid: book.shelf?.uuid || '',
+        author_ids: book.authors?.map(a => a.id) || [],
+        genre_ids: book.genres?.map(g => g.id) || [],
+        verlag_id: book.verlag?.id || '',
+        shelf_id: book.shelf?.id || '',
       });
 
       if (book.images) {
@@ -248,7 +248,7 @@ const EditBook = () => {
     if (editItemUuid) {
       try {
         await isbnUpdateMutation.mutateAsync({
-          uuid: editItemUuid,
+          id: editItemUuid,
           isbn: scannedIsbn,
         });
       } catch (error) {
@@ -299,14 +299,14 @@ const EditBook = () => {
         isbn: formData.isbn,
         year: formData.year === '' ? null : parseInt(formData.year),
         topic: formData.topic,
-        author_uuids: formData.author_uuids.length > 0 ? formData.author_uuids : undefined,
-        genre_uuids: formData.genre_uuids.length > 0 ? formData.genre_uuids : undefined,
-        verlag_uuid: formData.verlag_uuid || null,
-        shelf_uuid: formData.shelf_uuid || null,
+        author_ids: formData.author_ids.length > 0 ? formData.author_ids : undefined,
+        genre_ids: formData.genre_ids.length > 0 ? formData.genre_ids : undefined,
+        verlag_id: formData.verlag_id || null,
+        shelf_id: formData.shelf_id || null,
       };
 
       await updateBookMutation.mutateAsync({
-        uuid: editItemUuid,
+        id: editItemUuid,
         body: bookData,
       });
 
@@ -368,14 +368,14 @@ const EditBook = () => {
         isbn: formData.isbn,
         year: formData.year === '' ? null : parseInt(formData.year),
         topic: formData.topic,
-        author_uuids: formData.author_uuids.length > 0 ? formData.author_uuids : undefined,
-        genre_uuids: formData.genre_uuids.length > 0 ? formData.genre_uuids : undefined,
-        verlag_uuid: formData.verlag_uuid || null,
-        shelf_uuid: formData.shelf_uuid || null,
+        author_ids: formData.author_ids.length > 0 ? formData.author_ids : undefined,
+        genre_ids: formData.genre_ids.length > 0 ? formData.genre_ids : undefined,
+        verlag_id: formData.verlag_id || null,
+        shelf_id: formData.shelf_id || null,
       };
 
       await updateBookMutation.mutateAsync({
-        uuid: editItemUuid,
+        id: editItemUuid,
         body: bookData,
       });
 
@@ -542,10 +542,10 @@ const EditBook = () => {
                 <div className="space-y-2">
                   <Label htmlFor="authors">{t('editItem.authors')}</Label>
                   <Select
-                    value={formData.author_uuids.join(',')}
+                    value={formData.author_ids.join(',')}
                     onValueChange={value => {
-                      const uuids = value ? value.split(',').filter(Boolean) : [];
-                      setFormData({ ...formData, author_uuids: uuids });
+                      const ids = value ? value.split(',').filter(Boolean) : [];
+                      setFormData({ ...formData, author_ids: ids });
                     }}
                     disabled={aiProcessing}
                   >
@@ -554,7 +554,7 @@ const EditBook = () => {
                     </SelectTrigger>
                     <SelectContent>
                       {authors?.map((author: Author) => (
-                        <SelectItem key={author.uuid} value={author.uuid}>
+                        <SelectItem key={author.id} value={author.id}>
                           {author.name}
                         </SelectItem>
                       ))}
@@ -565,10 +565,10 @@ const EditBook = () => {
                 <div className="space-y-2">
                   <Label htmlFor="genres">{t('editItem.genres')}</Label>
                   <Select
-                    value={formData.genre_uuids.join(',')}
+                    value={formData.genre_ids.join(',')}
                     onValueChange={value => {
-                      const uuids = value ? value.split(',').filter(Boolean) : [];
-                      setFormData({ ...formData, genre_uuids: uuids });
+                      const ids = value ? value.split(',').filter(Boolean) : [];
+                      setFormData({ ...formData, genre_ids: ids });
                     }}
                     disabled={aiProcessing}
                   >
@@ -577,7 +577,7 @@ const EditBook = () => {
                     </SelectTrigger>
                     <SelectContent>
                       {genres?.map((genre: Genre) => (
-                        <SelectItem key={genre.uuid} value={genre.uuid}>
+                        <SelectItem key={genre.id} value={genre.id}>
                           {genre.name}
                         </SelectItem>
                       ))}
@@ -591,8 +591,8 @@ const EditBook = () => {
                 <div className="space-y-2">
                   <Label htmlFor="publisher">{t('editItem.publisher')}</Label>
                   <Select
-                    value={formData.verlag_uuid}
-                    onValueChange={value => setFormData({ ...formData, verlag_uuid: value })}
+                    value={formData.verlag_id}
+                    onValueChange={value => setFormData({ ...formData, verlag_id: value })}
                     disabled={aiProcessing}
                   >
                     <SelectTrigger>
@@ -600,7 +600,7 @@ const EditBook = () => {
                     </SelectTrigger>
                     <SelectContent>
                       {publishers?.map((publisher: Publisher) => (
-                        <SelectItem key={publisher.uuid} value={publisher.uuid}>
+                        <SelectItem key={publisher.id} value={publisher.id}>
                           {publisher.name}
                         </SelectItem>
                       ))}
@@ -611,8 +611,8 @@ const EditBook = () => {
                 <div className="space-y-2">
                   <Label htmlFor="shelf">{t('editItem.shelf')}</Label>
                   <Select
-                    value={formData.shelf_uuid}
-                    onValueChange={value => setFormData({ ...formData, shelf_uuid: value })}
+                    value={formData.shelf_id}
+                    onValueChange={value => setFormData({ ...formData, shelf_id: value })}
                     disabled={aiProcessing}
                   >
                     <SelectTrigger>
@@ -620,7 +620,7 @@ const EditBook = () => {
                     </SelectTrigger>
                     <SelectContent>
                       {shelves?.map((shelf: Shelf) => (
-                        <SelectItem key={shelf.uuid} value={shelf.uuid}>
+                        <SelectItem key={shelf.id} value={shelf.id}>
                           {shelf.name}
                         </SelectItem>
                       ))}

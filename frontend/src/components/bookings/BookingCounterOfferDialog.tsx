@@ -34,7 +34,7 @@ const BookingCounterOfferDialog = ({ booking }: Props) => {
     e.preventDefault();
     try {
       await updateBooking.mutateAsync({
-        uuid: booking.uuid,
+        id: booking.id,
         data: { counter_offer: value === '' ? null : value },
       });
       setOpen(false);

@@ -123,7 +123,7 @@ export const authorsDestroy = <ThrowOnError extends boolean = true>(options: Opt
                 type: 'apiKey'
             }
         ],
-        url: '/api/authors/{uuid}/',
+        url: '/api/authors/{id}/',
         ...options
     });
 };
@@ -151,7 +151,7 @@ export const authorsRetrieve = <ThrowOnError extends boolean = true>(options: Op
                 type: 'apiKey'
             }
         ],
-        url: '/api/authors/{uuid}/',
+        url: '/api/authors/{id}/',
         ...options
     });
 };
@@ -179,7 +179,7 @@ export const authorsPartialUpdate = <ThrowOnError extends boolean = true>(option
                 type: 'apiKey'
             }
         ],
-        url: '/api/authors/{uuid}/',
+        url: '/api/authors/{id}/',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -211,7 +211,7 @@ export const authorsUpdate = <ThrowOnError extends boolean = true>(options: Opti
                 type: 'apiKey'
             }
         ],
-        url: '/api/authors/{uuid}/',
+        url: '/api/authors/{id}/',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -282,7 +282,7 @@ export const bookingsDestroy = <ThrowOnError extends boolean = true>(options: Op
                 type: 'apiKey'
             }
         ],
-        url: '/api/bookings/{uuid}/',
+        url: '/api/bookings/{id}/',
         ...options
     });
 };
@@ -303,7 +303,7 @@ export const bookingsRetrieve = <ThrowOnError extends boolean = true>(options: O
                 type: 'apiKey'
             }
         ],
-        url: '/api/bookings/{uuid}/',
+        url: '/api/bookings/{id}/',
         ...options
     });
 };
@@ -324,7 +324,7 @@ export const bookingsPartialUpdate = <ThrowOnError extends boolean = true>(optio
                 type: 'apiKey'
             }
         ],
-        url: '/api/bookings/{uuid}/',
+        url: '/api/bookings/{id}/',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -349,7 +349,7 @@ export const bookingsUpdate = <ThrowOnError extends boolean = true>(options: Opt
                 type: 'apiKey'
             }
         ],
-        url: '/api/bookings/{uuid}/',
+        url: '/api/bookings/{id}/',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -453,7 +453,7 @@ export const booksDestroy = <ThrowOnError extends boolean = true>(options: Optio
                 type: 'apiKey'
             }
         ],
-        url: '/api/books/{uuid}/',
+        url: '/api/books/{id}/',
         ...options
     });
 };
@@ -485,7 +485,7 @@ export const booksRetrieve = <ThrowOnError extends boolean = true>(options: Opti
                 type: 'apiKey'
             }
         ],
-        url: '/api/books/{uuid}/',
+        url: '/api/books/{id}/',
         ...options
     });
 };
@@ -517,7 +517,7 @@ export const booksPartialUpdate = <ThrowOnError extends boolean = true>(options:
                 type: 'apiKey'
             }
         ],
-        url: '/api/books/{uuid}/',
+        url: '/api/books/{id}/',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -553,7 +553,7 @@ export const booksUpdate = <ThrowOnError extends boolean = true>(options: Option
                 type: 'apiKey'
             }
         ],
-        url: '/api/books/{uuid}/',
+        url: '/api/books/{id}/',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -581,7 +581,7 @@ export const booksIsbnUpdateUpdate = <ThrowOnError extends boolean = true>(optio
                 type: 'apiKey'
             }
         ],
-        url: '/api/books/{uuid}/isbn_update/',
+        url: '/api/books/{id}/isbn_update/',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -673,7 +673,7 @@ export const genresDestroy = <ThrowOnError extends boolean = true>(options: Opti
                 type: 'apiKey'
             }
         ],
-        url: '/api/genres/{uuid}/',
+        url: '/api/genres/{id}/',
         ...options
     });
 };
@@ -701,7 +701,7 @@ export const genresRetrieve = <ThrowOnError extends boolean = true>(options: Opt
                 type: 'apiKey'
             }
         ],
-        url: '/api/genres/{uuid}/',
+        url: '/api/genres/{id}/',
         ...options
     });
 };
@@ -729,7 +729,7 @@ export const genresPartialUpdate = <ThrowOnError extends boolean = true>(options
                 type: 'apiKey'
             }
         ],
-        url: '/api/genres/{uuid}/',
+        url: '/api/genres/{id}/',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -761,7 +761,7 @@ export const genresUpdate = <ThrowOnError extends boolean = true>(options: Optio
                 type: 'apiKey'
             }
         ],
-        url: '/api/genres/{uuid}/',
+        url: '/api/genres/{id}/',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -838,7 +838,7 @@ export const imagesDestroy = <ThrowOnError extends boolean = true>(options: Opti
                 type: 'apiKey'
             }
         ],
-        url: '/api/images/{uuid}/',
+        url: '/api/images/{id}/',
         ...options
     });
 };
@@ -861,7 +861,7 @@ export const imagesRetrieve = <ThrowOnError extends boolean = true>(options: Opt
                 type: 'apiKey'
             }
         ],
-        url: '/api/images/{uuid}/',
+        url: '/api/images/{id}/',
         ...options
     });
 };
@@ -884,7 +884,7 @@ export const imagesPartialUpdate = <ThrowOnError extends boolean = true>(options
                 type: 'apiKey'
             }
         ],
-        url: '/api/images/{uuid}/',
+        url: '/api/images/{id}/',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -911,7 +911,7 @@ export const imagesUpdate = <ThrowOnError extends boolean = true>(options: Optio
                 type: 'apiKey'
             }
         ],
-        url: '/api/images/{uuid}/',
+        url: '/api/images/{id}/',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -982,7 +982,7 @@ export const itemsDestroy = <ThrowOnError extends boolean = true>(options: Optio
                 type: 'apiKey'
             }
         ],
-        url: '/api/items/{uuid}/',
+        url: '/api/items/{id}/',
         ...options
     });
 };
@@ -1003,7 +1003,7 @@ export const itemsRetrieve = <ThrowOnError extends boolean = true>(options: Opti
                 type: 'apiKey'
             }
         ],
-        url: '/api/items/{uuid}/',
+        url: '/api/items/{id}/',
         ...options
     });
 };
@@ -1024,7 +1024,7 @@ export const itemsPartialUpdate = <ThrowOnError extends boolean = true>(options:
                 type: 'apiKey'
             }
         ],
-        url: '/api/items/{uuid}/',
+        url: '/api/items/{id}/',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -1049,7 +1049,7 @@ export const itemsUpdate = <ThrowOnError extends boolean = true>(options: Option
                 type: 'apiKey'
             }
         ],
-        url: '/api/items/{uuid}/',
+        url: '/api/items/{id}/',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -1074,7 +1074,7 @@ export const itemsAiDescribeUpdate = <ThrowOnError extends boolean = true>(optio
                 type: 'apiKey'
             }
         ],
-        url: '/api/items/{uuid}/ai_describe/',
+        url: '/api/items/{id}/ai_describe/',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -1103,7 +1103,7 @@ export const itemsAiImageUpdate = <ThrowOnError extends boolean = true>(options:
                 type: 'apiKey'
             }
         ],
-        url: '/api/items/{uuid}/ai_image/',
+        url: '/api/items/{id}/ai_image/',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -1128,7 +1128,7 @@ export const itemsReorderImagesUpdate = <ThrowOnError extends boolean = true>(op
                 type: 'apiKey'
             }
         ],
-        url: '/api/items/{uuid}/reorder_images/',
+        url: '/api/items/{id}/reorder_images/',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -1208,7 +1208,7 @@ export const messagesDestroy = <ThrowOnError extends boolean = true>(options: Op
                 type: 'apiKey'
             }
         ],
-        url: '/api/messages/{uuid}/',
+        url: '/api/messages/{id}/',
         ...options
     });
 };
@@ -1232,7 +1232,7 @@ export const messagesRetrieve = <ThrowOnError extends boolean = true>(options: O
                 type: 'apiKey'
             }
         ],
-        url: '/api/messages/{uuid}/',
+        url: '/api/messages/{id}/',
         ...options
     });
 };
@@ -1256,7 +1256,7 @@ export const messagesPartialUpdate = <ThrowOnError extends boolean = true>(optio
                 type: 'apiKey'
             }
         ],
-        url: '/api/messages/{uuid}/',
+        url: '/api/messages/{id}/',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -1284,7 +1284,7 @@ export const messagesUpdate = <ThrowOnError extends boolean = true>(options: Opt
                 type: 'apiKey'
             }
         ],
-        url: '/api/messages/{uuid}/',
+        url: '/api/messages/{id}/',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -1426,7 +1426,7 @@ export const publicBookingsRetrieve = <ThrowOnError extends boolean = true>(opti
                 type: 'apiKey'
             }
         ],
-        url: '/api/public-bookings/{uuid}/',
+        url: '/api/public-bookings/{id}/',
         ...options
     });
 };
@@ -1470,7 +1470,7 @@ export const publicItemsRetrieve = <ThrowOnError extends boolean = true>(options
                 type: 'apiKey'
             }
         ],
-        url: '/api/public-items/{uuid}/',
+        url: '/api/public-items/{id}/',
         ...options
     });
 };
@@ -1558,7 +1558,7 @@ export const publishersDestroy = <ThrowOnError extends boolean = true>(options: 
                 type: 'apiKey'
             }
         ],
-        url: '/api/publishers/{uuid}/',
+        url: '/api/publishers/{id}/',
         ...options
     });
 };
@@ -1586,7 +1586,7 @@ export const publishersRetrieve = <ThrowOnError extends boolean = true>(options:
                 type: 'apiKey'
             }
         ],
-        url: '/api/publishers/{uuid}/',
+        url: '/api/publishers/{id}/',
         ...options
     });
 };
@@ -1614,7 +1614,7 @@ export const publishersPartialUpdate = <ThrowOnError extends boolean = true>(opt
                 type: 'apiKey'
             }
         ],
-        url: '/api/publishers/{uuid}/',
+        url: '/api/publishers/{id}/',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -1646,7 +1646,7 @@ export const publishersUpdate = <ThrowOnError extends boolean = true>(options: O
                 type: 'apiKey'
             }
         ],
-        url: '/api/publishers/{uuid}/',
+        url: '/api/publishers/{id}/',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -1762,7 +1762,7 @@ export const shelvesDestroy = <ThrowOnError extends boolean = true>(options: Opt
                 type: 'apiKey'
             }
         ],
-        url: '/api/shelves/{uuid}/',
+        url: '/api/shelves/{id}/',
         ...options
     });
 };
@@ -1790,7 +1790,7 @@ export const shelvesRetrieve = <ThrowOnError extends boolean = true>(options: Op
                 type: 'apiKey'
             }
         ],
-        url: '/api/shelves/{uuid}/',
+        url: '/api/shelves/{id}/',
         ...options
     });
 };
@@ -1818,7 +1818,7 @@ export const shelvesPartialUpdate = <ThrowOnError extends boolean = true>(option
                 type: 'apiKey'
             }
         ],
-        url: '/api/shelves/{uuid}/',
+        url: '/api/shelves/{id}/',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -1850,7 +1850,7 @@ export const shelvesUpdate = <ThrowOnError extends boolean = true>(options: Opti
                 type: 'apiKey'
             }
         ],
-        url: '/api/shelves/{uuid}/',
+        url: '/api/shelves/{id}/',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -1890,7 +1890,7 @@ export const usersRetrieve = <ThrowOnError extends boolean = true>(options: Opti
                 type: 'apiKey'
             }
         ],
-        url: '/api/users/{uuid}/',
+        url: '/api/users/{id}/',
         ...options
     });
 };
@@ -1908,7 +1908,7 @@ export const usersPartialUpdate = <ThrowOnError extends boolean = true>(options:
                 type: 'apiKey'
             }
         ],
-        url: '/api/users/{uuid}/',
+        url: '/api/users/{id}/',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -1930,7 +1930,7 @@ export const usersUpdate = <ThrowOnError extends boolean = true>(options: Option
                 type: 'apiKey'
             }
         ],
-        url: '/api/users/{uuid}/',
+        url: '/api/users/{id}/',
         ...options,
         headers: {
             'Content-Type': 'application/json',

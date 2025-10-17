@@ -385,7 +385,7 @@ const EditItem = () => {
           await Promise.all(
             merged.map(img =>
               imagesPartialUpdate({
-                path: { uuid: img.uuid },
+                path: { id: img.id },
                 body: { ordering: img.ordering },
               }),
             ),
@@ -442,7 +442,7 @@ const EditItem = () => {
 
     try {
       const aiResult = await itemsAiDescribeUpdate({
-        path: { uuid: editItemUuid },
+        path: { id: editItemUuid },
       });
       const data = aiResult.data;
 
@@ -497,7 +497,7 @@ const EditItem = () => {
 
     try {
       await itemsAiImageUpdate({
-        path: { uuid: editItemUuid },
+        path: { id: editItemUuid },
         body: {
           name: formData.name,
           description: formData.description,

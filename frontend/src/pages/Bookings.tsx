@@ -64,7 +64,7 @@ const Bookings = () => {
   // Select first booking on load
   useMemo(() => {
     if (bookings?.results && bookings.results.length > 0 && !selectedBookingId) {
-      setSelectedBookingId(bookings.results[0].uuid!);
+      setSelectedBookingId(bookings.results[0].id!);
     }
   }, [bookings, selectedBookingId]);
 
@@ -87,16 +87,16 @@ const Bookings = () => {
       message =>
         message.is_read === false &&
         message.sender !== user.username &&
-        message.uuid &&
-        !markedAsReadRef.current.has(message.uuid),
+        message.id &&
+        !markedAsReadRef.current.has(message.id),
     );
 
     // Mark each unread message as read
     unreadMessages.forEach(message => {
-      if (message.uuid) {
+      if (message.id) {
         // Add to marked set immediately to prevent duplicate requests
-        markedAsReadRef.current.add(message.uuid);
-        markMessageAsReadMutation.mutate(message.uuid);
+        markedAsReadRef.current.add(message.id);
+        markMessageAsReadMutation.mutate(message.id);
       }
     });
   }, [messages, user, markMessageAsReadMutation]);
@@ -188,19 +188,19 @@ const Bookings = () => {
                     ) : (
                       <div className="space-y-2">
                         {bookings.results.map(booking => {
-                          const isSelected = selectedBookingId === booking.uuid;
+                          const isSelected = selectedBookingId === booking.id;
                           const itemTitle = booking.item_details?.name || t('bookings.unknownItem');
                           const itemImage = booking.item_details?.first_image;
-                          const itemUuid = booking.item_details?.uuid || booking.item;
+                          const itemUuid = booking.item_details?.id || booking.item;
 
                           return (
                             <Card
-                              key={booking.uuid}
+                              key={booking.id}
                               className={cn(
                                 'cursor-pointer transition-colors hover:bg-accent',
                                 isSelected && 'bg-accent dark:bg-accent border-green-200 border-2',
                               )}
-                              onClick={() => handleBookingCardClick(booking.uuid!)}
+                              onClick={() => handleBookingCardClick(booking.id!)}
                             >
                               <CardContent className="p-3">
                                 <div className="flex gap-3">
@@ -279,19 +279,19 @@ const Bookings = () => {
                   ) : (
                     <div className="space-y-2">
                       {bookings.results.map(booking => {
-                        const isSelected = selectedBookingId === booking.uuid;
+                        const isSelected = selectedBookingId === booking.id;
                         const itemTitle = booking.item_details?.name || t('bookings.unknownItem');
                         const itemImage = booking.item_details?.first_image;
-                        const itemUuid = booking.item_details?.uuid || booking.item;
+                        const itemUuid = booking.item_details?.id || booking.item;
 
                         return (
                           <Card
-                            key={booking.uuid}
+                            key={booking.id}
                             className={cn(
                               'cursor-pointer transition-colors hover:bg-accent',
                               isSelected && 'bg-accent dark:bg-accent border-green-200 border-2',
                             )}
-                            onClick={() => handleSelectBooking(booking.uuid!)}
+                            onClick={() => handleSelectBooking(booking.id!)}
                           >
                             <CardContent className="p-3">
                               <div className="flex gap-3">
@@ -362,7 +362,7 @@ const Bookings = () => {
                     <div className="flex items-start gap-4 mb-4">
                       {/* Item Thumbnail */}
                       <a
-                        href={`/item/${selectedBooking.item_details?.uuid || selectedBooking.item}`}
+                        href={`/item/${selectedBooking.item_details?.id || selectedBooking.item}`}
                         className="flex-shrink-0"
                       >
                         <div className="w-20 h-20 rounded overflow-hidden bg-muted">
@@ -383,9 +383,7 @@ const Bookings = () => {
                       {/* Item Info */}
                       <div className="flex-1">
                         <a
-                          href={`/item/${
-                            selectedBooking.item_details?.uuid || selectedBooking.item
-                          }`}
+                          href={`/item/${selectedBooking.item_details?.id || selectedBooking.item}`}
                           className="text-xl font-bold mb-2 hover:underline block"
                         >
                           {selectedBooking.item_details?.name || t('bookings.unknownItem')}
@@ -466,7 +464,7 @@ const Bookings = () => {
                               onClick={async () => {
                                 try {
                                   await updateBookingMutation.mutateAsync({
-                                    uuid: selectedBooking.uuid,
+                                    id: selectedBooking.id,
                                     data: { status: 2 }, // Cancelled
                                   });
                                 } catch (error) {
@@ -490,7 +488,7 @@ const Bookings = () => {
                                   onClick={async () => {
                                     try {
                                       await updateBookingMutation.mutateAsync({
-                                        uuid: selectedBooking.uuid,
+                                        id: selectedBooking.id,
                                         data: { status: 3 }, // Confirmed
                                       });
                                     } catch (error) {
@@ -509,7 +507,7 @@ const Bookings = () => {
                                   onClick={async () => {
                                     try {
                                       await updateBookingMutation.mutateAsync({
-                                        uuid: selectedBooking.uuid,
+                                        id: selectedBooking.id,
                                         data: { status: 5 }, // Rejected
                                       });
                                     } catch (error) {
@@ -552,7 +550,7 @@ const Bookings = () => {
                           onClick={async () => {
                             try {
                               await updateBookingMutation.mutateAsync({
-                                uuid: selectedBooking.uuid,
+                                id: selectedBooking.id,
                                 data: { status: 2 }, // Cancelled
                               });
                             } catch (error) {
@@ -598,7 +596,7 @@ const Bookings = () => {
                               const isOwnMessage = user?.username === message.sender;
                               return (
                                 <div
-                                  key={message.uuid}
+                                  key={message.id}
                                   className={cn(
                                     'flex',
                                     isOwnMessage ? 'justify-end' : 'justify-start',

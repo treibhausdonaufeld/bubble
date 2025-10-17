@@ -3,8 +3,7 @@ import { createContext, ReactNode, useContext, useEffect, useState } from 'react
 
 // Custom types for Django session auth
 interface User {
-  id: string | number;
-  uuid: string;
+  id: string;
   email: string;
   username: string;
   display: string;
@@ -62,7 +61,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (responseData.meta.is_authenticated) {
           const userData: User = {
             id: responseData.data.user.id,
-            uuid: responseData.data.user.uuid,
             email: responseData.data.user.email,
             username: responseData.data.user.username,
             display: responseData.data.user.display,
