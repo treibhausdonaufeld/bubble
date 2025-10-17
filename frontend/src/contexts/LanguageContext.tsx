@@ -517,7 +517,7 @@ const translations = {
     'bookings.itemId': 'Artikel-ID',
     'bookings.requestFrom': 'Anfrage von',
     'bookings.requestTo': 'Anfrage an',
-    'bookings.offerAmount': 'Angebotsbetrag',
+    'bookings.offerAmount': 'Angebot',
     'bookings.counterOffer': 'Gegenangebot',
     'bookings.rentalPeriod': 'Mietzeitraum',
     'bookings.noDate': 'Kein Datum angegeben',
@@ -536,6 +536,10 @@ const translations = {
     'bookings.editBookingDescription':
       'Bearbeite Mietzeitraum oder angebotenen Preis für diese Buchung.',
     'bookings.update': 'Aktualisieren',
+    'bookings.counterOfferDialogTitle': 'Gegenangebot machen',
+    'bookings.counterOfferDialogDescription':
+      'Gib einen alternativen Preis ein, den du vorschlagen möchtest.',
+    'bookings.counterOfferSubmit': 'Gegenangebot senden',
     'bookings.status.pending': 'Ausstehend',
     'bookings.status.cancelled': 'Storniert',
     'bookings.status.confirmed': 'Bestätigt',

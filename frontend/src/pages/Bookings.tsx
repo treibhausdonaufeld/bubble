@@ -11,6 +11,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/hooks/useAuth';
 import { useBooking, useBookings, useUpdateBooking } from '@/hooks/useBookings';
+import { useItem } from '@/hooks/useItem';
 import { useCreateMessage, useMarkMessageAsRead, useMessages } from '@/hooks/useMessages';
 import { formatPrice } from '@/lib/currency';
 import { cn } from '@/lib/utils';
@@ -37,6 +38,7 @@ const Bookings = () => {
   const { data: bookings, isLoading } = useBookings();
   const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null);
   const { data: selectedBookingDetails } = useBooking(selectedBookingId || undefined);
+  const { data: selectedItemDetails } = useItem(selectedBookingDetails?.item_details?.id);
   const [messageText, setMessageText] = useState('');
   const updateBookingMutation = useUpdateBooking();
   const {
@@ -419,10 +421,32 @@ const Bookings = () => {
                     </div>
 
                     {/* Booking Details */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-muted rounded-lg">
+                    <div className="grid grid-cols-3 md:grid-cols-3 gap-4 p-4 bg-muted rounded-lg">
+                      {/* Original Item Price */}
+                      {selectedItemDetails &&
+                        (selectedItemDetails.sale_price || selectedItemDetails.rental_price) && (
+                          <div>
+                            <p className="text-xs font-medium mb-1">
+                              {selectedItemDetails.rental_price
+                                ? t('booking.listedRentalPrice')
+                                : t('booking.listedPrice')}
+                            </p>
+                            <p className="text-lg text-muted-foreground">
+                              {selectedItemDetails.rental_price
+                                ? `${formatPrice(
+                                    selectedItemDetails.rental_price,
+                                    selectedItemDetails.rental_price_currency,
+                                  )} ${t('time.perHour')}`
+                                : formatPrice(
+                                    selectedItemDetails.sale_price!,
+                                    selectedItemDetails.sale_price_currency,
+                                  )}
+                            </p>
+                          </div>
+                        )}
                       {selectedBooking.offer && (
                         <div>
-                          <p className="text-sm font-medium mb-1">{t('bookings.offerAmount')}</p>
+                          <p className="text-xs mb-1">{t('bookings.offerAmount')}</p>
                           <p className="text-lg font-bold">
                             {formatPrice(selectedBooking.offer, 'EUR')}
                           </p>
@@ -443,7 +467,7 @@ const Bookings = () => {
                       )}
                       {selectedBooking.counter_offer && (
                         <div>
-                          <p className="text-sm font-medium mb-1">{t('bookings.counterOffer')}</p>
+                          <p className="text-xs font-medium mb-1">{t('bookings.counterOffer')}</p>
                           <p className="text-lg font-bold text-orange-500">
                             {formatPrice(selectedBooking.counter_offer, 'EUR')}
                           </p>
@@ -480,7 +504,7 @@ const Bookings = () => {
                           ) : (
                             // Item owner can accept or reject
                             <>
-                              <div className="flex items-center">
+                              <div className="flex items-center gap-2">
                                 <BookingCounterOfferDialog booking={selectedBooking} />
                                 <Button
                                   size="sm"
