@@ -56,7 +56,7 @@ jobs:
         with:
           push: false
           load: true
-          files: compose.yaml:compose.test.yaml
+          files: compose.yaml,compose.test.yaml
           targets: backend
           set: |
             backend.cache-from=type=gha,scope=backend-cached-tests
