@@ -3,6 +3,7 @@ import {
   BasicFields,
   CategoryConditionFields,
   PricingFields,
+  StatusField,
 } from '@/components/items/ItemFormFields';
 import { Header } from '@/components/layout/Header';
 import {
@@ -19,15 +20,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
@@ -112,20 +105,6 @@ const EditItem = () => {
     'other',
   ];
 
-  const conditions: { value: ConditionEnum; key: string }[] = [
-    { value: 0, key: 'new' },
-    { value: 1, key: 'used' },
-    { value: 2, key: 'broken' },
-  ];
-
-  const statuses: { value: Status402Enum; label: string }[] = [
-    { value: 0, label: 'Draft' },
-    { value: 2, label: 'Available' },
-    { value: 3, label: 'Reserved' },
-    { value: 4, label: 'Rented' },
-    { value: 5, label: 'Sold' },
-  ];
-
   // Load existing item data if editing
   useEffect(() => {
     if (item && editItemUuid) {
@@ -134,7 +113,7 @@ const EditItem = () => {
         description: item.description || '',
         category: item.category || '',
         condition: item.condition !== undefined ? item.condition : '',
-        status: item.status !== undefined ? item.status : '',
+        status: item.status,
         sale_price: item.sale_price?.toString() || '',
         rental_price: item.rental_price?.toString() || '',
         rental_period: (item.rental_period as RentalPeriodEnum) || '',
@@ -221,7 +200,7 @@ const EditItem = () => {
         description: formData.description,
         category: formData.category as CategoryEnum,
         condition: formData.condition as ConditionEnum,
-        status: formData.status !== '' ? (formData.status as Status402Enum) : undefined,
+        status: formData.status,
         sale_price: formData.sale_price === '' ? null : formData.sale_price,
         rental_price: formData.rental_price === '' ? null : formData.rental_price,
         rental_period:
@@ -713,30 +692,11 @@ const EditItem = () => {
               <div className="flex items-end justify-between gap-4 pt-4">
                 {/* Status field */}
                 <div className="flex-1 max-w-xs space-y-2">
-                  <Label htmlFor="status" className="text-sm">
-                    {t('editItem.status')}
-                  </Label>
-                  <Select
-                    value={formData.status.toString()}
-                    onValueChange={value =>
-                      setFormData({
-                        ...formData,
-                        status: parseInt(value) as Status402Enum,
-                      })
-                    }
+                  <StatusField
+                    formData={formData}
+                    setFormData={setFormData}
                     disabled={aiProcessing}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder={t('editItem.selectStatus')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {statuses.map(status => (
-                        <SelectItem key={status.value} value={status.value.toString()}>
-                          {t(`status.${status.label.toLowerCase()}`)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  />
                 </div>
 
                 <div className="flex gap-2">
