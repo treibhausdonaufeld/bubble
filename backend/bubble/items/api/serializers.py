@@ -119,4 +119,4 @@ class ItemListSerializer(ItemSerializer):
 class ItemMinimalSerializer(ItemListSerializer):
     class Meta:
         model = Item
-        fields = ["id", "name", "first_image"]
+        fields = ["id", "name", "first_image", "rental_price", "sale_price"]

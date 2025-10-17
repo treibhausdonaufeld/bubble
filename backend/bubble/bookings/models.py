@@ -37,7 +37,9 @@ class BookingManager(models.Manager):
 class Booking(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
-    status = models.IntegerField(choices=BookingStatus, default=BookingStatus.PENDING)
+    status = models.IntegerField(
+        choices=BookingStatus, default=BookingStatus.PENDING, verbose_name=_("Status")
+    )
     item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="bookings")
     user = models.ForeignKey(
         AUTH_USER_MODEL,
@@ -45,14 +47,17 @@ class Booking(models.Model):
         related_name="bookings",
     )
 
-    time_from = models.DateTimeField(blank=True, null=True, default=timezone.now)
-    time_to = models.DateTimeField(blank=True, null=True)
+    time_from = models.DateTimeField(
+        blank=True, null=True, default=timezone.now, verbose_name=_("Time From")
+    )
+    time_to = models.DateTimeField(blank=True, null=True, verbose_name=_("Time To"))
 
     offer = MoneyField(
         **money_defaults,
         blank=True,
         null=True,
         default_currency=settings.DEFAULT_CURRENCY,
+        verbose_name=_("Offer"),
         help_text=_("Offered price for the booking"),
     )
     counter_offer = MoneyField(
@@ -60,6 +65,7 @@ class Booking(models.Model):
         blank=True,
         null=True,
         default_currency=settings.DEFAULT_CURRENCY,
+        verbose_name=_("Counter Offer"),
         help_text=_("Counter offer price for the booking"),
     )
 

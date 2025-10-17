@@ -410,13 +410,6 @@ const Bookings = () => {
                       </div>
 
                       {/* Status Badge */}
-                      {/* Edit booking if current user is the booking owner */}
-                      {user &&
-                        selectedBooking.user &&
-                        selectedBooking.status == 1 &&
-                        user.username === selectedBooking.user.username && (
-                          <BookingEditDialog booking={selectedBooking} />
-                        )}
                       <div className="flex-shrink-0">{getStatusBadge(selectedBooking.status)}</div>
                     </div>
 

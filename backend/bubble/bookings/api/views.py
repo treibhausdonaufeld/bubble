@@ -76,10 +76,35 @@ class BookingViewSet(viewsets.ModelViewSet, PublicBookingViewSet):
         item = serializer.validated_data.get("item")
 
         # Auto-confirm booking if item allows self-service rentals
-        if item and item.rental_self_service:
+        if item and (
+            item.rental_self_service or self.request.user.has_perm("change_item", item)
+        ):
             serializer.save(user=self.request.user, status=BookingStatus.CONFIRMED)
         else:
             serializer.save(user=self.request.user)
+
+        booking = serializer.instance
+        message = _("Booking request created for {offer}").format(offer=booking.offer)
+        Message.objects.create(
+            booking=booking, sender=self.request.user, message=message
+        )
+
+    def perform_update(self, serializer):
+        super().perform_update(serializer)
+
+        booking = serializer.instance
+
+        message = _("Booking updated: {fields_updated}").format(
+            fields_updated=", ".join(
+                [
+                    f"{booking._meta.get_field(field).verbose_name}: {value}"  # noqa: SLF001
+                    for field, value in serializer.validated_data.items()
+                ]
+            )
+        )
+        Message.objects.create(
+            booking=booking, sender=self.request.user, message=message
+        )
 
 
 class MessageViewSet(viewsets.ModelViewSet):
