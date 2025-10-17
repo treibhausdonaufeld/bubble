@@ -6,7 +6,14 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useToast } from '@/hooks/use-toast';
 import { type Image, imagesDestroy, imagesPartialUpdate } from '@/services/django';
-import { Camera, GripVertical, Image as ImageIcon, X } from 'lucide-react';
+import {
+  Camera,
+  ChevronLeft,
+  ChevronRight,
+  GripVertical,
+  Image as ImageIcon,
+  X,
+} from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 
 export interface NewImage {
@@ -34,7 +41,7 @@ export const ImageManager = ({
   const [newImages, setNewImages] = useState<NewImage[]>([]);
   const [currentExistingImages, setCurrentExistingImages] = useState<Image[]>(existingImages);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const { toast } = useToast();
   const { t } = useLanguage();
   const isMobile = useIsMobile();
@@ -247,6 +254,62 @@ export const ImageManager = ({
     }
   };
 
+  const moveImage = useCallback(
+    async (fromIndex: number, toIndex: number) => {
+      if (fromIndex === toIndex) return;
+      const all = [
+        ...currentExistingImages.map((img, index) => ({
+          type: 'existing' as const,
+          data: img,
+          index,
+        })),
+        ...newImages.map((img, index) => ({
+          type: 'new' as const,
+          data: img,
+          index: currentExistingImages.length + index,
+        })),
+      ].sort((a, b) => a.index - b.index);
+
+      if (toIndex < 0 || toIndex >= all.length) return;
+
+      const reordered = [...all];
+      const [moved] = reordered.splice(fromIndex, 1);
+      reordered.splice(toIndex, 0, moved);
+
+      // Build updated existing and new arrays
+      const updatedExisting = reordered
+        .filter(i => i.type === 'existing')
+        .map(i => i.data as Image)
+        .map((img, idx) => ({ ...img, ordering: idx }));
+      const updatedNew = reordered.filter(i => i.type === 'new').map(i => i.data as NewImage);
+
+      setCurrentExistingImages(updatedExisting);
+      setNewImages(updatedNew);
+      onImagesChange(updatedNew);
+      onExistingImagesChange?.(updatedExisting);
+
+      // Persist ordering for existing images
+      try {
+        await Promise.all(
+          updatedExisting.map(img =>
+            imagesPartialUpdate({
+              path: { id: img.id },
+              body: { ordering: img.ordering },
+            }),
+          ),
+        );
+      } catch (err) {
+        console.error('Failed to persist image ordering after move', err);
+        toast({
+          title: 'Error',
+          description: 'Failed to persist image ordering',
+          variant: 'destructive',
+        });
+      }
+    },
+    [currentExistingImages, newImages, onExistingImagesChange, onImagesChange, toast],
+  );
+
   // Combine and sort all images for display
   const allImages = [
     ...currentExistingImages.map((img, index) => ({
@@ -262,7 +325,7 @@ export const ImageManager = ({
   ].sort((a, b) => a.index - b.index);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-2 px-0 md-0 p-3">
       <div className="flex items-center justify-between pt-4">
         <Label>
           {t('imageManager.imagesLabel')}
@@ -273,7 +336,7 @@ export const ImageManager = ({
         </Badge>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
         {allImages.map((item, displayIndex) => (
           <div
             key={item.type === 'existing' ? item.data.id : `new-${item.index}`}
@@ -287,15 +350,9 @@ export const ImageManager = ({
               src={item.type === 'existing' ? item.data.thumbnail : item.data.url}
               alt={`Image ${displayIndex + 1}`}
               className="w-full h-32 object-contain rounded-lg border cursor-pointer bg-muted"
-              onClick={() => {
-                // Prefer server-provided preview or original if available
-                if (item.type === 'existing') {
-                  // types from backend: thumbnail, preview, original
-                  setPreviewUrl(item.data.preview || item.data.original || item.data.thumbnail);
-                } else {
-                  setPreviewUrl(item.data.url);
-                }
-              }}
+              onClick={() =>
+                setSelectedIndex(prev => (prev === displayIndex ? null : displayIndex))
+              }
             />
 
             {/* Drag Handle for existing images */}
@@ -310,7 +367,9 @@ export const ImageManager = ({
               type="button"
               variant="destructive"
               size="sm"
-              className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+              className={`absolute top-2 right-2 transition-opacity ${
+                selectedIndex === displayIndex ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+              } p-1`}
               onClick={() => {
                 if (item.type === 'existing') {
                   removeExistingImage(item.data.id);
@@ -318,8 +377,9 @@ export const ImageManager = ({
                   removeNewImage(item.index - currentExistingImages.length);
                 }
               }}
+              aria-label={t('imageManager.delete')}
             >
-              <X className="h-4 w-4" />
+              <X className="h-3 w-3" />
             </Button>
 
             {/* Primary Badge */}
@@ -327,6 +387,31 @@ export const ImageManager = ({
               <Badge className="absolute bottom-2 left-2 bg-primary text-primary-foreground">
                 Primary
               </Badge>
+            )}
+            {/* Mobile move controls */}
+            {isMobile && (
+              <div
+                className={`absolute inset-0 flex items-center justify-between px-1 pointer-events-none transition-opacity ${
+                  selectedIndex === displayIndex
+                    ? 'opacity-100'
+                    : 'opacity-0 group-hover:opacity-100'
+                }`}
+              >
+                <button
+                  type="button"
+                  className="pointer-events-auto bg-white/80 rounded-full p-1 shadow-sm"
+                  onClick={() => moveImage(displayIndex, displayIndex - 1)}
+                >
+                  <ChevronLeft className="h-4 w-4 text-black dark:text-black" />
+                </button>
+                <button
+                  type="button"
+                  className="pointer-events-auto bg-white/80 rounded-full p-1 shadow-sm"
+                  onClick={() => moveImage(displayIndex, displayIndex + 1)}
+                >
+                  <ChevronRight className="h-4 w-4 text-black dark:text-black" />
+                </button>
+              </div>
             )}
           </div>
         ))}
@@ -396,23 +481,6 @@ export const ImageManager = ({
           .replace('{max}', String(maxImages))
           .replace('{drag}', isEditing ? ' ' + t('imageManager.dragToReorder') : '')}
       </p>
-      {/* Full-size preview overlay */}
-      {previewUrl && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-          <div
-            className="max-w-[90%] max-h-[90%] p-2"
-            // stop click from closing when clicking backdrop — we only close on image click
-            onClick={e => e.stopPropagation()}
-          >
-            <img
-              src={previewUrl}
-              alt="Preview"
-              className="w-full h-auto max-h-[90vh] object-contain rounded shadow-lg cursor-pointer"
-              onClick={() => setPreviewUrl(null)}
-            />
-          </div>
-        </div>
-      )}
     </div>
   );
 };

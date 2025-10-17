@@ -559,7 +559,7 @@ const EditItem = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <div className="container mx-auto py-8 space-y-6">
+      <div className="container mx-auto py-8 space-y-0 p-3">
         {/* Back Button */}
         <Button variant="ghost" onClick={handleBackClick} className="mb-6 gap-2">
           <ArrowLeft className="h-4 w-4" />
