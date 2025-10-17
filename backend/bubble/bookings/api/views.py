@@ -1,5 +1,5 @@
 from django.db.models import Count, Q
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
 from rest_framework.exceptions import ValidationError
