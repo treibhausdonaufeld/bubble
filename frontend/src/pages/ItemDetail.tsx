@@ -226,7 +226,7 @@ const ItemDetail = () => {
                     variant="ghost"
                     size="icon"
                     onClick={() => scrollPrev(emblaApi)}
-                    className="bg-white/80 hover:bg-white/95 text-black shadow-sm"
+                    className="bg-white/80 hover:bg-white/95 text-black shadow-xs"
                   >
                     <ChevronLeft className="h-5 w-5" />
                   </Button>
@@ -234,7 +234,7 @@ const ItemDetail = () => {
                     variant="ghost"
                     size="icon"
                     onClick={() => scrollNext(emblaApi)}
-                    className="bg-white/80 hover:bg-white/95 text-black shadow-sm"
+                    className="bg-white/80 hover:bg-white/95 text-black shadow-xs"
                   >
                     <ChevronRight className="h-5 w-5" />
                   </Button>

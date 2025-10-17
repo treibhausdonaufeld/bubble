@@ -399,14 +399,14 @@ export const ImageManager = ({
               >
                 <button
                   type="button"
-                  className="pointer-events-auto bg-white/80 rounded-full p-1 shadow-sm"
+                  className="pointer-events-auto bg-white/80 rounded-full p-1 shadow-xs"
                   onClick={() => moveImage(displayIndex, displayIndex - 1)}
                 >
                   <ChevronLeft className="h-4 w-4 text-black dark:text-black" />
                 </button>
                 <button
                   type="button"
-                  className="pointer-events-auto bg-white/80 rounded-full p-1 shadow-sm"
+                  className="pointer-events-auto bg-white/80 rounded-full p-1 shadow-xs"
                   onClick={() => moveImage(displayIndex, displayIndex + 1)}
                 >
                   <ChevronRight className="h-4 w-4 text-black dark:text-black" />

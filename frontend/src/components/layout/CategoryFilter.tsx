@@ -95,7 +95,7 @@ export const CategoryFilter = ({ selectedCategory, onCategoryChange }: CategoryF
           return (
             <Button
               key={category.id}
-              variant={isSelected ? 'community' : 'outline'}
+              variant={isSelected ? 'community' : 'outline-solid'}
               size="sm"
               onClick={() => onCategoryChange(category.id)}
               className={cn(

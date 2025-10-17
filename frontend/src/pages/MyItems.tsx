@@ -378,7 +378,7 @@ const MyItems = () => {
                 <Card key={item.id} className="overflow-hidden">
                   {/* Image */}
                   <div
-                    className="aspect-[4/3] overflow-hidden cursor-pointer"
+                    className="aspect-4/3 overflow-hidden cursor-pointer"
                     onClick={() => navigate(getEditUrl(item))}
                   >
                     {item.first_image ? (

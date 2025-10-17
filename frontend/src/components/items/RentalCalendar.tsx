@@ -440,7 +440,7 @@ export const RentalCalendar = ({
                       {bookings.map((booking, idx) => (
                         <div key={idx} className="flex flex-col gap-0.5">
                           <div className="flex items-center gap-2 text-sm">
-                            <User className="h-3.5 w-3.5 flex-shrink-0" />
+                            <User className="h-3.5 w-3.5 shrink-0" />
                             <span className="font-medium">{booking.userFullName}</span>
                           </div>
                           <div className="text-xs text-muted-foreground ml-5">

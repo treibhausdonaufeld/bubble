@@ -86,7 +86,7 @@ export const ItemCard = ({
       onClick={() => navigate(`/item/${id}`)}
     >
       {/* Image Section */}
-      <div className="relative aspect-[4/3] overflow-hidden">
+      <div className="relative aspect-4/3 overflow-hidden">
         {imageUrl ? (
           <img
             src={imageUrl}
@@ -124,7 +124,7 @@ export const ItemCard = ({
         {/* <Button
           variant="ghost"
           size="icon"
-          className="absolute top-3 right-3 h-8 w-8 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background/90 transition-all duration-300"
+          className="absolute top-3 right-3 h-8 w-8 rounded-full bg-background/80 backdrop-blur-xs hover:bg-background/90 transition-all duration-300"
         >
           <Heart className={cn(
             "h-4 w-4 transition-colors",
@@ -134,7 +134,7 @@ export const ItemCard = ({
 
         {/* Price overlay */}
         <div className="absolute bottom-3 right-3">
-          <div className="rounded-lg bg-background/90 backdrop-blur-sm px-3 py-1 shadow-medium">
+          <div className="rounded-lg bg-background/90 backdrop-blur-xs px-3 py-1 shadow-medium">
             {salePrice && (
               <div className="flex items-center gap-1 text-sm font-semibold">
                 {formatPrice(salePrice, salePriceCurrency)}

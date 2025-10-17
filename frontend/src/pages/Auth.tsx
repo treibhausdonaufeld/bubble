@@ -99,7 +99,7 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted flex items-center justify-center p-4">
+    <div className="min-h-screen bg-linear-to-br from-background to-muted flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="mb-6">
           <Button
@@ -112,9 +112,9 @@ const Auth = () => {
           </Button>
         </div>
 
-        <Card className="shadow-lg border-0 bg-card/50 backdrop-blur-sm">
+        <Card className="shadow-lg border-0 bg-card/50 backdrop-blur-xs">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
+            <CardTitle className="text-2xl font-bold bg-linear-to-r from-primary to-primary-glow bg-clip-text text-transparent">
               {t('auth.welcomeTitle')}
             </CardTitle>
             <p className="text-muted-foreground mt-2">{t('auth.signInSubtitle')}</p>

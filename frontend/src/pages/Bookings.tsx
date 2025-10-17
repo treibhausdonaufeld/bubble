@@ -360,12 +360,12 @@ const Bookings = () => {
               {selectedBooking ? (
                 <>
                   {/* Booking Header */}
-                  <div className="p-4 border-b flex-shrink-0">
+                  <div className="p-4 border-b shrink-0">
                     <div className="flex items-start gap-4 mb-4">
                       {/* Item Thumbnail */}
                       <a
                         href={`/item/${selectedBooking.item_details?.id || selectedBooking.item}`}
-                        className="flex-shrink-0"
+                        className="shrink-0"
                       >
                         <div className="w-20 h-20 rounded overflow-hidden bg-muted">
                           {selectedBooking.item_details?.first_image ? (
@@ -410,7 +410,7 @@ const Bookings = () => {
                       </div>
 
                       {/* Status Badge */}
-                      <div className="flex-shrink-0">{getStatusBadge(selectedBooking.status)}</div>
+                      <div className="shrink-0">{getStatusBadge(selectedBooking.status)}</div>
                     </div>
 
                     {/* Booking Details */}
@@ -669,7 +669,7 @@ const Bookings = () => {
 
                   {/* Message Input */}
                   <Separator />
-                  <div className="p-4 flex-shrink-0">
+                  <div className="p-4 shrink-0">
                     <div className="flex gap-2">
                       <Input
                         ref={messageInputRef}
