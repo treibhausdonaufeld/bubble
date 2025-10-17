@@ -46,7 +46,7 @@ import {
   Status402Enum,
 } from '@/services/django';
 import { useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, CheckCircle, Loader, SkipForward, Sparkles } from 'lucide-react';
+import { ArrowLeft, CheckCircle, Loader, Sparkles } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -408,6 +408,21 @@ const EditItem = () => {
     }
   };
 
+  // Auto-upload newly selected images immediately when in edit mode
+  useEffect(() => {
+    // Only auto-upload when editing an existing item (we need an item UUID)
+    if (!editItemUuid) return;
+    // Don't trigger during AI operations or if already uploading/processing
+    if (aiProcessing) return;
+    if (processingState !== 'idle') return;
+    // Only run when there are new images pending upload
+    if (images.length === 0) return;
+
+    // Start upload
+    // Note: uploadImages clears `images` on success, so this effect won't loop.
+    void uploadImages();
+  }, [images, editItemUuid, aiProcessing, processingState]);
+
   const getProcessingMessage = () => {
     switch (processingState) {
       case 'uploading':
@@ -651,37 +666,6 @@ const EditItem = () => {
                       <Progress value={progress} className="w-full" />
                     </div>
                   )}
-
-                  {/* AI Processing Buttons */}
-                  <div className="flex flex-col gap-2">
-                    {processingState === 'idle' && (
-                      <>
-                        <Button
-                          type="button"
-                          onClick={uploadImages}
-                          disabled={images.length === 0 || aiProcessing}
-                          variant="outline"
-                          className="w-full gap-2"
-                        >
-                          <Sparkles className="h-4 w-4" />
-                          {t('editItem.uploadNewImages')}
-                        </Button>
-
-                        {images.length > 0 && (
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            onClick={handleClearImages}
-                            disabled={aiProcessing}
-                            className="w-full gap-2 text-muted-foreground"
-                          >
-                            <SkipForward className="h-4 w-4" />
-                            {t('editItem.clearNewImages')}
-                          </Button>
-                        )}
-                      </>
-                    )}
-                  </div>
                 </CardContent>
               </Card>
 

@@ -159,6 +159,24 @@ const translations = {
     'imageUpload.continueWithAI': 'Continue with AI Processing',
     'imageUpload.skipAndContinue': 'Skip AI, Continue Manually',
 
+    // ImageManager UI text
+    'imageManager.uploadInstructions':
+      'Upload up to {max} images. The first image will be used as the primary image.{drag}',
+    'imageManager.dragToReorder': '(Drag to reorder)',
+    'imageManager.imagesLabel': 'Images',
+
+    // ImageManager
+    'imageManager.tooManyTitle': 'Too many images',
+    'imageManager.tooManyDescription': 'Maximum {max} images allowed',
+    'imageManager.invalidTypeTitle': 'Invalid file type',
+    'imageManager.invalidTypeDescription': 'Please select only image files',
+    'imageManager.fileTooLargeTitle': 'File too large',
+    'imageManager.fileTooLargeDescription': 'Images must be smaller than 20MB',
+    'imageManager.deleteSuccessTitle': 'Success',
+    'imageManager.deleteSuccessDescription': 'Image deleted successfully',
+    'imageManager.deleteErrorTitle': 'Error',
+    'imageManager.deleteErrorDescription': 'Failed to delete image',
+
     // Messages
     'messages.title': 'Messages',
     'messages.noConversations': 'No conversations yet',
@@ -494,6 +512,24 @@ const translations = {
     'imageUpload.aiGenerating': 'KI generiert Inhalte…',
     'imageUpload.continueWithAI': 'Mit KI-Verarbeitung fortfahren',
     'imageUpload.skipAndContinue': 'KI überspringen, manuell fortfahren',
+
+    // ImageManager UI text
+    'imageManager.uploadInstructions':
+      'Lade bis zu {max} Bilder hoch. Das erste Bild wird als Hauptbild verwendet.{drag}',
+    'imageManager.dragToReorder': '(ziehen zum Neuordnen)',
+    'imageManager.imagesLabel': 'Bilder',
+
+    // ImageManager
+    'imageManager.tooManyTitle': 'Zu viele Bilder',
+    'imageManager.tooManyDescription': 'Maximal {max} Bilder erlaubt',
+    'imageManager.invalidTypeTitle': 'Ungültiger Dateityp',
+    'imageManager.invalidTypeDescription': 'Bitte wähle nur Bilddateien aus',
+    'imageManager.fileTooLargeTitle': 'Datei zu groß',
+    'imageManager.fileTooLargeDescription': 'Bilder müssen kleiner als 20MB sein',
+    'imageManager.deleteSuccessTitle': 'Erfolg',
+    'imageManager.deleteSuccessDescription': 'Bild erfolgreich gelöscht',
+    'imageManager.deleteErrorTitle': 'Fehler',
+    'imageManager.deleteErrorDescription': 'Bild konnte nicht gelöscht werden',
 
     // Messages
     'messages.title': 'Nachrichten',

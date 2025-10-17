@@ -2,6 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useToast } from '@/hooks/use-toast';
 import { type Image, imagesDestroy, imagesPartialUpdate } from '@/services/django';
@@ -33,7 +34,9 @@ export const ImageManager = ({
   const [newImages, setNewImages] = useState<NewImage[]>([]);
   const [currentExistingImages, setCurrentExistingImages] = useState<Image[]>(existingImages);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const { toast } = useToast();
+  const { t } = useLanguage();
   const isMobile = useIsMobile();
 
   useEffect(() => {
@@ -83,8 +86,8 @@ export const ImageManager = ({
 
       if (totalImages + files.length > maxImages) {
         toast({
-          title: 'Too many images',
-          description: `Maximum ${maxImages} images allowed`,
+          title: t('imageManager.tooManyTitle'),
+          description: t('imageManager.tooManyDescription').replace('{max}', String(maxImages)),
           variant: 'destructive',
         });
         return;
@@ -94,8 +97,8 @@ export const ImageManager = ({
       for (const file of files) {
         if (!file.type.startsWith('image/')) {
           toast({
-            title: 'Invalid file type',
-            description: 'Please select only image files',
+            title: t('imageManager.invalidTypeTitle'),
+            description: t('imageManager.invalidTypeDescription'),
             variant: 'destructive',
           });
           continue;
@@ -103,8 +106,8 @@ export const ImageManager = ({
         if (file.size > 20 * 1024 * 1024) {
           // 20MB limit
           toast({
-            title: 'File too large',
-            description: 'Images must be smaller than 20MB',
+            title: t('imageManager.fileTooLargeTitle'),
+            description: t('imageManager.fileTooLargeDescription'),
             variant: 'destructive',
           });
           continue;
@@ -172,14 +175,14 @@ export const ImageManager = ({
         onExistingImagesChange?.(reorderedImages);
 
         toast({
-          title: 'Success',
-          description: 'Image deleted successfully',
+          title: t('imageManager.deleteSuccessTitle'),
+          description: t('imageManager.deleteSuccessDescription'),
         });
       } catch (error) {
         console.error('Error deleting image:', error);
         toast({
-          title: 'Error',
-          description: 'Failed to delete image',
+          title: t('imageManager.deleteErrorTitle'),
+          description: t('imageManager.deleteErrorDescription'),
           variant: 'destructive',
         });
       }
@@ -261,7 +264,10 @@ export const ImageManager = ({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between pt-4">
-        <Label>Images {isEditing && '(drag to reorder)'}</Label>
+        <Label>
+          {t('imageManager.imagesLabel')}
+          {isEditing && ' ' + t('imageManager.dragToReorder')}
+        </Label>
         <Badge variant="secondary">
           {totalImages} / {maxImages}
         </Badge>
@@ -281,6 +287,15 @@ export const ImageManager = ({
               src={item.type === 'existing' ? item.data.thumbnail : item.data.url}
               alt={`Image ${displayIndex + 1}`}
               className="w-full h-32 object-contain rounded-lg border cursor-pointer bg-muted"
+              onClick={() => {
+                // Prefer server-provided preview or original if available
+                if (item.type === 'existing') {
+                  // types from backend: thumbnail, preview, original
+                  setPreviewUrl(item.data.preview || item.data.original || item.data.thumbnail);
+                } else {
+                  setPreviewUrl(item.data.url);
+                }
+              }}
             />
 
             {/* Drag Handle for existing images */}
@@ -377,9 +392,27 @@ export const ImageManager = ({
       </div>
 
       <p className="text-sm text-muted-foreground">
-        Upload up to {maxImages} images. The first image will be used as the primary image.
-        {isEditing && ' Drag images to reorder them.'}
+        {t('imageManager.uploadInstructions')
+          .replace('{max}', String(maxImages))
+          .replace('{drag}', isEditing ? ' ' + t('imageManager.dragToReorder') : '')}
       </p>
+      {/* Full-size preview overlay */}
+      {previewUrl && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+          <div
+            className="max-w-[90%] max-h-[90%] p-2"
+            // stop click from closing when clicking backdrop — we only close on image click
+            onClick={e => e.stopPropagation()}
+          >
+            <img
+              src={previewUrl}
+              alt="Preview"
+              className="w-full h-auto max-h-[90vh] object-contain rounded shadow-lg cursor-pointer"
+              onClick={() => setPreviewUrl(null)}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
