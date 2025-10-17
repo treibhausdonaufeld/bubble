@@ -1,10 +1,43 @@
+x-backend: &backend
+  build:
+    context: ./backend/
+    dockerfile: Dockerfile
+    target: prod
+  image: bubble-backend
+  restart: unless-stopped
+  depends_on:
+    - postgres
+    - redis
+  command: /start
+  environment:
+    - GEMINI_API_KEY=${GEMINI_API_KEY:-not_set}
+
+    - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-config.settings.production}
+    - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+    - DJANGO_ADMIN_URL=${DJANGO_ADMIN_URL}
+    - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS:-localhost}
+    - ALLOWED_CIDR_NETS=${ALLOWED_CIDR_NETS:-}
+
+    - DJANGO_LOG_LEVEL=${DJANGO_LOG_LEVEL:-INFO}
+    - DJANGO_DEBUG=${DJANGO_DEBUG:-false}
+
+    - MAILGUN_API_KEY=${MAILGUN_API_KEY:-not_set}
+    - MAILGUN_DOMAIN=${MAILGUN_DOMAIN:-not_set}
+    # secure overrides e.g. for local development
+    - HTTP_X_FORWARDED_PROTO=${HTTP_X_FORWARDED_PROTO:-https}
+    - DJANGO_SECURE_SSL_REDIRECT=${DJANGO_SECURE_SSL_REDIRECT:-true}
+    - DJANGO_SESSION_COOKIE_SECURE=${DJANGO_SESSION_COOKIE_SECURE:-true}
+    - ACCOUNT_EMAIL_VERIFICATION=${ACCOUNT_EMAIL_VERIFICATION:-true}
+  env_file:
+    - ./backend/.env-docker.production
+  volumes:
+    - media:/app/bubble/media
+    - staticfiles:/app/staticfiles
+
 volumes:
   production_postgres_data: {}
-  production_postgres_data_backups: {}
-  production_traefik: {}
-  production_django_media: {}
-
-  production_redis_data: {}
+  media: {}
+  staticfiles: {}
 
 services:
   frontend:
@@ -13,41 +46,42 @@ services:
       dockerfile: Dockerfile
     image: bubble-frontend
     environment:
-      - VITE_API_URL=http://localhost:8000
+      - BACKEND_HOST=${BACKEND_HOST:-backend:8000}
     ports:
       - '8080:8888'
+    volumes:
+      - media:/usr/share/nginx/html/media
+      - staticfiles:/usr/share/nginx/html/static
 
-  backend: &backend
-    build:
-      context: ./backend/
-      dockerfile: Dockerfile
-    image: bubble-backend
-    depends_on:
-      - postgres
-      - redis
+  backend:
+    <<: *backend
     command: /start
-    environment:
-      - DJANGO_SETTINGS_MODULE=config.settings.production
-      - GEMINI_API_KEY=${GEMINI_API_KEY:-not_set}
-    env_file:
-      - ./backend/.env-docker.local
 
   postgres:
     image: docker.io/pgvector/pgvector:pg17
     volumes:
       - production_postgres_data:/var/lib/postgresql/data
-      - production_postgres_data_backups:/backups
     env_file:
-      - ./backend/.env-docker.local
+      - ./backend/.env-docker.production
 
   redis:
     image: ghcr.io/dragonflydb/dragonfly:latest
+    restart: always
+    environment:
+      # required to work with django-channels
+      # https://github.com/dragonflydb/dragonfly/issues/182#issuecomment-1241624150
+      DFLY_default_lua_flags: 'allow-undeclared-keys disable-atomicity'
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
-  celeryworker:
+  worker:
     <<: *backend
     command: /start-celeryworker
 
-  celerybeat:
+  beat:
     <<: *backend
     command: /start-celerybeat
 

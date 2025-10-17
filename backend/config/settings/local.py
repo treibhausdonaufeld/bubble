@@ -24,6 +24,8 @@ CACHES = {
     },
 }
 
+DEBUG = env("DJANGO_DEBUG", default=True)
+
 # EMAIL
 # ------------------------------------------------------------------------------
 # Use console backend for local development to see emails in terminal
@@ -74,6 +76,12 @@ if env("USE_DOCKER", default="no") == "yes":
 # ------------------------------------------------------------------------------
 # https://django-extensions.readthedocs.io/en/latest/installation_instructions.html#configuration
 INSTALLED_APPS += ["django_extensions"]
+
+
+# pygraphviz
+if env.bool("ENABLE_DJANGOVIZ", default=False):
+    INSTALLED_APPS += ["djangoviz"]
+
 # Celery
 # ------------------------------------------------------------------------------
 
@@ -81,3 +89,7 @@ INSTALLED_APPS += ["django_extensions"]
 CELERY_TASK_EAGER_PROPAGATES = True
 # Your stuff...
 # ------------------------------------------------------------------------------
+
+GRAPH_MODELS = {
+    "app_labels": ["users", "items", "bookings", "books"],
+}

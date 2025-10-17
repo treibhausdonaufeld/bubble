@@ -34,7 +34,7 @@ const BookingCounterOfferDialog = ({ booking }: Props) => {
     e.preventDefault();
     try {
       await updateBooking.mutateAsync({
-        uuid: booking.uuid,
+        id: booking.id,
         data: { counter_offer: value === '' ? null : value },
       });
       setOpen(false);
@@ -46,7 +46,7 @@ const BookingCounterOfferDialog = ({ booking }: Props) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm" variant="outline" className="mr-2">
+        <Button size="sm" variant="outline">
           {t('bookings.counterOffer')}
         </Button>
       </DialogTrigger>

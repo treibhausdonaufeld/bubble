@@ -3,7 +3,7 @@ import { createContext, ReactNode, useContext, useEffect, useState } from 'react
 
 // Custom types for Django session auth
 interface User {
-  id: string | number;
+  id: string;
   email: string;
   username: string;
   display: string;

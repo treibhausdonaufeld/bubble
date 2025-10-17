@@ -33,7 +33,7 @@ class ItemImageResult:
     price: str | None = None
 
 
-def analyze_image(image_uuid: str, language: str = "de") -> ItemImageResult:
+def analyze_image(image_id: str, language: str = "de") -> ItemImageResult:
     """Analyze a single image and generate AI suggestions."""
 
     categories_string = ", ".join(dict(CategoryType.choices).keys())
@@ -48,7 +48,7 @@ def analyze_image(image_uuid: str, language: str = "de") -> ItemImageResult:
 
     logger.info("Prompt instruction: %s", prompt_instruction)
 
-    img = PILImage.open(Image.objects.get(uuid=image_uuid).preview)
+    img = PILImage.open(Image.objects.get(id=image_id).preview)
 
     parsed_response = call_model(contents=[prompt_instruction, img])
 
@@ -63,7 +63,7 @@ def analyze_image(image_uuid: str, language: str = "de") -> ItemImageResult:
 
     logger.info(
         "AI analysis completed for image %s: %s",
-        image_uuid,
+        image_id,
         parsed_response,
     )
 

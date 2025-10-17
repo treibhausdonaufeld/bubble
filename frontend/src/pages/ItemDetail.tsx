@@ -65,7 +65,7 @@ const ItemDetail = () => {
 
   const handleDelete = async () => {
     if (!item) return;
-    await deleteItemMutation.mutateAsync(item.uuid, {
+    await deleteItemMutation.mutateAsync(item.id, {
       onSuccess: () => {
         navigate('/my-items');
       },
@@ -149,8 +149,12 @@ const ItemDetail = () => {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious className="left-2" />
-              <CarouselNext className="right-2" />
+              {images.length > 1 && (
+                <>
+                  <CarouselPrevious className="left-2" />
+                  <CarouselNext className="right-2" />
+                </>
+              )}
             </Carousel>
           </div>
 
@@ -195,7 +199,7 @@ const ItemDetail = () => {
               {isOwner && (
                 <>
                   <Button asChild variant="outline">
-                    <Link to={`/edit-item/${item.uuid}`}>
+                    <Link to={`/edit-item/${item.id}`}>
                       <Edit3 className="mr-2 h-4 w-4" /> {t('common.edit')}
                     </Link>
                   </Button>
@@ -231,7 +235,7 @@ const ItemDetail = () => {
                       <TooltipTrigger asChild>
                         <div>
                           <BookingDialog
-                            itemUuid={item.uuid}
+                            itemUuid={item.id}
                             itemName={name}
                             salePrice={sale_price}
                             salePriceCurrency={sale_price_currency}
@@ -241,7 +245,7 @@ const ItemDetail = () => {
                             preselectedEndDate={selectedEndDate}
                             controlledOpen={showBookingDialog}
                             onControlledOpenChange={setShowBookingDialog}
-                            disabled={!user || (isOwner && !!sale_price && !rental_price)}
+                            disabled={!user || (isOwner && !!sale_price)}
                           />
                         </div>
                       </TooltipTrigger>
@@ -299,8 +303,12 @@ const ItemDetail = () => {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious className="left-4 bg-background/80 hover:bg-background" />
-              <CarouselNext className="right-4 bg-background/80 hover:bg-background" />
+              {images.length > 1 && (
+                <>
+                  <CarouselPrevious className="left-4 bg-background/80 hover:bg-background" />
+                  <CarouselNext className="right-4 bg-background/80 hover:bg-background" />
+                </>
+              )}
             </Carousel>
             <Button
               variant="ghost"

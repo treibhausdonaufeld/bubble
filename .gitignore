@@ -58,7 +58,7 @@ docs/_build/
 target/
 
 # celery beat schedule file
-celerybeat-schedule
+celerybeat-schedule*
 
 # Environments
 .venv

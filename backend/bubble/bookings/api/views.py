@@ -1,5 +1,5 @@
 from django.db.models import Count, Q
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
 from rest_framework.exceptions import ValidationError
@@ -26,7 +26,7 @@ class PublicBookingViewSet(viewsets.ReadOnlyModelViewSet):
     Supports filtering via BookingFilter.
     """
 
-    lookup_field = "uuid"
+    lookup_field = "id"
     serializer_class = BookingSerializer
     filter_backends = [
         DjangoFilterBackend,
@@ -76,10 +76,40 @@ class BookingViewSet(viewsets.ModelViewSet, PublicBookingViewSet):
         item = serializer.validated_data.get("item")
 
         # Auto-confirm booking if item allows self-service rentals
-        if item and item.rental_self_service:
+        if item and (
+            item.rental_self_service or self.request.user.has_perm("change_item", item)
+        ):
             serializer.save(user=self.request.user, status=BookingStatus.CONFIRMED)
         else:
             serializer.save(user=self.request.user)
+
+        booking = serializer.instance
+        message = _("Booking request created for {offer}").format(offer=booking.offer)
+        Message.objects.create(
+            booking=booking, sender=self.request.user, message=message
+        )
+
+    def perform_update(self, serializer):
+        super().perform_update(serializer)
+
+        booking = serializer.instance
+
+        if "status" in serializer.validated_data:
+            message = _("Booking status updated to {status}").format(
+                status=booking.get_status_display()
+            )
+        else:
+            message = _("Booking updated: {fields_updated}").format(
+                fields_updated=", ".join(
+                    [
+                        f"{booking._meta.get_field(field).verbose_name}: {value}"  # noqa: SLF001
+                        for field, value in serializer.validated_data.items()
+                    ]
+                )
+            )
+        Message.objects.create(
+            booking=booking, sender=self.request.user, message=message
+        )
 
 
 class MessageViewSet(viewsets.ModelViewSet):
@@ -89,7 +119,7 @@ class MessageViewSet(viewsets.ModelViewSet):
     to be provided to avoid returning global message lists.
     """
 
-    lookup_field = "uuid"
+    lookup_field = "id"
     queryset = Message.objects.select_related("booking", "sender").all()
     serializer_class = MessageSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]

@@ -10,9 +10,7 @@ from bubble.users.api.serializers import UserSerializer
 class BookingSerializer(serializers.ModelSerializer):
     """Detailed serializer for Booking where `item` is represented only by UUID."""
 
-    item = serializers.SlugRelatedField(
-        slug_field="uuid", queryset=Item.objects.published()
-    )
+    item = serializers.PrimaryKeyRelatedField(queryset=Item.objects.published())
     item_details = ItemMinimalSerializer(read_only=True, source="item")
     user = UserSerializer(read_only=True)
     unread_messages_count = serializers.SerializerMethodField()
@@ -20,7 +18,7 @@ class BookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Booking
         fields = [
-            "uuid",
+            "id",
             "status",
             "item",
             "item_details",
@@ -34,7 +32,7 @@ class BookingSerializer(serializers.ModelSerializer):
             "updated_at",
             "unread_messages_count",
         ]
-        read_only_fields = ["uuid", "user", "created_at", "updated_at"]
+        read_only_fields = ["id", "user", "created_at", "updated_at"]
 
     def get_unread_messages_count(self, obj) -> int | None:
         """Return unread_messages_count if it exists as an annotated field."""
@@ -139,12 +137,12 @@ class BookingSerializer(serializers.ModelSerializer):
 
 
 class BookingListSerializer(BookingSerializer):
-    item = serializers.SlugRelatedField(read_only=True, slug_field="uuid")
+    item = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Booking
         fields = [
-            "uuid",
+            "id",
             "status",
             "item",
             "item_details",
@@ -159,19 +157,17 @@ class BookingListSerializer(BookingSerializer):
 class MessageSerializer(serializers.ModelSerializer):
     """Serializer for Message model. Booking is referenced by UUID."""
 
-    booking = serializers.SlugRelatedField(
-        slug_field="uuid", queryset=Booking.objects.all()
-    )
+    booking = serializers.PrimaryKeyRelatedField(queryset=Booking.objects.all())
     sender = serializers.StringRelatedField(read_only=True)
 
     class Meta:
         model = Message
         fields = [
-            "uuid",
+            "id",
             "booking",
             "sender",
             "created_at",
             "message",
             "is_read",
         ]
-        read_only_fields = ["uuid", "sender", "created_at"]
+        read_only_fields = ["id", "sender", "created_at"]

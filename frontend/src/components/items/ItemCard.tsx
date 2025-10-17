@@ -29,7 +29,7 @@ interface ItemCardProps {
   createdAt: string;
   isFavorited?: boolean;
   ownerId?: string;
-  username?: string;
+  owner?: string;
 }
 
 export const ItemCard = ({
@@ -50,13 +50,13 @@ export const ItemCard = ({
   ownerRating,
   createdAt,
   isFavorited = false,
-  username,
+  owner,
 }: ItemCardProps) => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { t } = useLanguage();
 
-  const isOwner = user && username && user.username === username;
+  const isOwner = user && owner && user.id === owner;
 
   const handleMessageOwner = () => {
     if (!user) {

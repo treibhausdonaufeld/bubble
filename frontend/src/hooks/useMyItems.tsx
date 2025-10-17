@@ -4,7 +4,7 @@ import {
   itemsDestroy,
   itemsList,
   itemsPartialUpdate,
-  StatusEnum,
+  Status402Enum,
   type PaginatedItemListList,
 } from '@/services/django';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -18,7 +18,7 @@ export const useMyItems = (page?: number) => {
       if (!user) throw new Error('User not authenticated');
       const response = await itemsList({
         query: {
-          user: Number(user.id),
+          user: user.id,
           page: page,
         },
       });
@@ -34,9 +34,9 @@ export const useUpdateItemStatus = () => {
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: async ({ itemId, status }: { itemId: string; status: StatusEnum }) => {
+    mutationFn: async ({ itemId, status }: { itemId: string; status: Status402Enum }) => {
       const response = await itemsPartialUpdate({
-        path: { uuid: itemId },
+        path: { id: itemId },
         body: { status },
       });
 
@@ -68,7 +68,7 @@ export const useDeleteItem = () => {
     mutationFn: async (itemId: string) => {
       if (!user) throw new Error('User not authenticated');
       const response = await itemsDestroy({
-        path: { uuid: itemId },
+        path: { id: itemId },
       });
 
       return response.data;

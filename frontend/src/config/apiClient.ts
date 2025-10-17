@@ -34,6 +34,9 @@ export const configureApiClient = () => {
       if (csrfToken) {
         request.headers.set('X-CSRFToken', csrfToken);
       }
+      // Always send current language
+      const lang = localStorage.getItem('bubble-language') || 'en';
+      request.headers.set('Accept-Language', lang);
       return request;
     });
   }

@@ -136,8 +136,8 @@ const Index = () => {
               ) : (
                 items.map(item => (
                   <ItemCard
-                    key={item.uuid}
-                    id={item.uuid}
+                    key={item.id}
+                    id={item.id}
                     title={item.name}
                     description={item.description || ''}
                     category={item.category}
@@ -151,7 +151,7 @@ const Index = () => {
                     rentalPriceCurrency={item.rental_price_currency}
                     location="Location not set"
                     imageUrl={item.first_image || '/placeholder.svg'}
-                    username={item.username}
+                    owner={item.user}
                     createdAt={item.created_at}
                     isFavorited={false}
                   />

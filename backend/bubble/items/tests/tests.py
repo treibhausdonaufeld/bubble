@@ -67,7 +67,7 @@ class ImageAPITestCase(TestCase):
         self.client.login(username="testuser1", password=TEST_PASSWORD)
 
         test_image = self.create_test_image()
-        data = {"item": str(self.item1.uuid), "original": test_image, "ordering": 1}
+        data = {"item": str(self.item1.id), "original": test_image, "ordering": 1}
 
         url = reverse("api:image-list")  # Using the image endpoint
         response = self.client.post(url, data, format="multipart")
@@ -81,7 +81,7 @@ class ImageAPITestCase(TestCase):
 
         test_image = self.create_test_image()
         data = {
-            "item": str(self.item1.uuid),  # user2 trying to add image to user1's item
+            "item": str(self.item1.id),  # user2 trying to add image to user1's item
             "original": test_image,
             "ordering": 1,
         }
@@ -96,7 +96,7 @@ class ImageAPITestCase(TestCase):
     def test_create_image_unauthenticated_fails(self):
         """Test that unauthenticated users cannot create images."""
         test_image = self.create_test_image()
-        data = {"item": str(self.item1.uuid), "original": test_image, "ordering": 1}
+        data = {"item": str(self.item1.id), "original": test_image, "ordering": 1}
 
         url = reverse("api:image-list")  # Using the image endpoint
         response = self.client.post(url, data, format="multipart")
@@ -110,26 +110,26 @@ class ImageAPITestCase(TestCase):
 
         # Create first image
         test_image1 = self.create_test_image()
-        data1 = {"item": str(self.item1.uuid), "original": test_image1, "ordering": 1}
+        data1 = {"item": str(self.item1.id), "original": test_image1, "ordering": 1}
         url = reverse("api:image-list")
         response1 = self.client.post(url, data1, format="multipart")
         assert response1.status_code == status.HTTP_201_CREATED
 
         # Create second image
         test_image2 = self.create_test_image()
-        data2 = {"item": str(self.item1.uuid), "original": test_image2, "ordering": 2}
+        data2 = {"item": str(self.item1.id), "original": test_image2, "ordering": 2}
         response2 = self.client.post(url, data2, format="multipart")
         assert response2.status_code == status.HTTP_201_CREATED
 
         image_count = 2
         assert Image.objects.filter(item=self.item1).count() == image_count
 
-    def test_create_image_with_invalid_item_uuid(self):
-        """Test that creating image with invalid item UUID fails."""
+    def test_create_image_with_invalid_item_id(self):
+        """Test that creating image with invalid item id fails."""
         self.client.login(username="testuser1", password=TEST_PASSWORD)
 
         test_image = self.create_test_image()
-        data = {"item": "invalid-uuid", "original": test_image, "ordering": 1}
+        data = {"item": "invalid-id", "original": test_image, "ordering": 1}
 
         url = reverse("api:image-list")
         response = self.client.post(url, data, format="multipart")
@@ -142,7 +142,7 @@ class ImageAPITestCase(TestCase):
 
         # First create an image
         test_image = self.create_test_image()
-        data = {"item": str(self.item1.uuid), "original": test_image, "ordering": 1}
+        data = {"item": str(self.item1.id), "original": test_image, "ordering": 1}
         create_url = reverse("api:image-list")
         create_response = self.client.post(create_url, data, format="multipart")
 
@@ -150,11 +150,11 @@ class ImageAPITestCase(TestCase):
         created_image = Image.objects.get(item=self.item1)
 
         # Now delete the image
-        delete_url = reverse("api:image-detail", kwargs={"uuid": created_image.uuid})
+        delete_url = reverse("api:image-detail", kwargs={"id": created_image.id})
         delete_response = self.client.delete(delete_url)
 
         assert delete_response.status_code == status.HTTP_204_NO_CONTENT
-        assert not Image.objects.filter(uuid=created_image.uuid).exists()
+        assert not Image.objects.filter(id=created_image.id).exists()
 
     def test_delete_image_as_non_owner_with_permissions(self):
         """
@@ -164,7 +164,7 @@ class ImageAPITestCase(TestCase):
         # First, user1 creates an image
         self.client.login(username="testuser1", password=TEST_PASSWORD)
         test_image = self.create_test_image()
-        data = {"item": str(self.item1.uuid), "original": test_image, "ordering": 1}
+        data = {"item": str(self.item1.id), "original": test_image, "ordering": 1}
         create_url = reverse("api:image-list")
         create_response = self.client.post(create_url, data, format="multipart")
 
@@ -173,18 +173,18 @@ class ImageAPITestCase(TestCase):
 
         # user2 can delete user1's image because both are in "Item Owners" group
         self.client.login(username="testuser2", password=TEST_PASSWORD)
-        delete_url = reverse("api:image-detail", kwargs={"uuid": created_image.uuid})
+        delete_url = reverse("api:image-detail", kwargs={"id": created_image.id})
         delete_response = self.client.delete(delete_url)
 
         assert delete_response.status_code == status.HTTP_404_NOT_FOUND
-        assert Image.objects.filter(uuid=created_image.uuid).exists()
+        assert Image.objects.filter(id=created_image.id).exists()
 
     def test_delete_image_without_permissions_fails(self):
         """Test that user without permissions cannot delete images."""
         # First, user1 creates an image
         self.client.login(username="testuser1", password=TEST_PASSWORD)
         test_image = self.create_test_image()
-        data = {"item": str(self.item1.uuid), "original": test_image, "ordering": 1}
+        data = {"item": str(self.item1.id), "original": test_image, "ordering": 1}
         create_url = reverse("api:image-list")
         create_response = self.client.post(create_url, data, format="multipart")
 
@@ -197,19 +197,19 @@ class ImageAPITestCase(TestCase):
 
         # User without permissions tries to delete the image
         self.client.login(username="nopermuser", password=TEST_PASSWORD)
-        delete_url = reverse("api:image-detail", kwargs={"uuid": created_image.uuid})
+        delete_url = reverse("api:image-detail", kwargs={"id": created_image.id})
         delete_response = self.client.delete(delete_url)
 
         # Should get 404 because user can't see the image (filtered out by get_queryset)
         assert delete_response.status_code == status.HTTP_403_FORBIDDEN
-        assert Image.objects.filter(uuid=created_image.uuid).exists()
+        assert Image.objects.filter(id=created_image.id).exists()
 
     def test_delete_image_unauthenticated_fails(self):
         """Test that unauthenticated users cannot delete images."""
         # First, create an image as authenticated user
         self.client.login(username="testuser1", password=TEST_PASSWORD)
         test_image = self.create_test_image()
-        data = {"item": str(self.item1.uuid), "original": test_image, "ordering": 1}
+        data = {"item": str(self.item1.id), "original": test_image, "ordering": 1}
         create_url = reverse("api:image-list")
         create_response = self.client.post(create_url, data, format="multipart")
 
@@ -218,11 +218,11 @@ class ImageAPITestCase(TestCase):
 
         # Now try to delete as unauthenticated user
         self.client.logout()
-        delete_url = reverse("api:image-detail", kwargs={"uuid": created_image.uuid})
+        delete_url = reverse("api:image-detail", kwargs={"id": created_image.id})
         delete_response = self.client.delete(delete_url)
 
         assert delete_response.status_code == status.HTTP_403_FORBIDDEN
-        assert Image.objects.filter(uuid=created_image.uuid).exists()
+        assert Image.objects.filter(id=created_image.id).exists()
 
     def test_update_image_ordering_as_owner(self):
         """Test that item owner can update the ordering of their images."""
@@ -233,7 +233,7 @@ class ImageAPITestCase(TestCase):
         initial_ordering = 1
         updated_ordering = 5
         data = {
-            "item": str(self.item1.uuid),
+            "item": str(self.item1.id),
             "original": test_image,
             "ordering": initial_ordering,
         }
@@ -245,7 +245,7 @@ class ImageAPITestCase(TestCase):
         assert created_image.ordering == initial_ordering
 
         # Now update the ordering
-        update_url = reverse("api:image-detail", kwargs={"uuid": created_image.uuid})
+        update_url = reverse("api:image-detail", kwargs={"id": created_image.id})
         update_data = {"ordering": updated_ordering}
         update_response = self.client.patch(update_url, update_data, format="json")
 
@@ -259,7 +259,7 @@ class ImageAPITestCase(TestCase):
 
         # First create an image
         test_image = self.create_test_image()
-        data = {"item": str(self.item1.uuid), "original": test_image, "ordering": 1}
+        data = {"item": str(self.item1.id), "original": test_image, "ordering": 1}
         create_url = reverse("api:image-list")
         create_response = self.client.post(create_url, data, format="multipart")
 
@@ -269,7 +269,7 @@ class ImageAPITestCase(TestCase):
 
         # Try to update the original field
         new_image = self.create_test_image()
-        update_url = reverse("api:image-detail", kwargs={"uuid": created_image.uuid})
+        update_url = reverse("api:image-detail", kwargs={"id": created_image.id})
         update_data = {"original": new_image}
         update_response = self.client.patch(update_url, update_data, format="multipart")
 
@@ -284,23 +284,23 @@ class ImageAPITestCase(TestCase):
 
         # First create an image
         test_image = self.create_test_image()
-        data = {"item": str(self.item1.uuid), "original": test_image, "ordering": 1}
+        data = {"item": str(self.item1.id), "original": test_image, "ordering": 1}
         create_url = reverse("api:image-list")
         create_response = self.client.post(create_url, data, format="multipart")
 
         assert create_response.status_code == status.HTTP_201_CREATED
         created_image = Image.objects.get(item=self.item1)
-        original_item_uuid = created_image.item.uuid
+        original_item_id = created_image.item.id
 
         # Try to update the item field to item2
-        update_url = reverse("api:image-detail", kwargs={"uuid": created_image.uuid})
-        update_data = {"item": str(self.item2.uuid)}
+        update_url = reverse("api:image-detail", kwargs={"id": created_image.id})
+        update_data = {"item": str(self.item2.id)}
         update_response = self.client.patch(update_url, update_data, format="json")
 
         # Should succeed but item should not change
         assert update_response.status_code == status.HTTP_200_OK
         created_image.refresh_from_db()
-        assert created_image.item.uuid == original_item_uuid
+        assert created_image.item.id == original_item_id
 
     def test_update_image_ordering_and_other_fields_only_ordering_changes(self):
         """Test that when updating multiple fields, only ordering changes."""
@@ -311,7 +311,7 @@ class ImageAPITestCase(TestCase):
         initial_ordering = 1
         new_ordering = 10
         data = {
-            "item": str(self.item1.uuid),
+            "item": str(self.item1.id),
             "original": test_image,
             "ordering": initial_ordering,
         }
@@ -321,15 +321,15 @@ class ImageAPITestCase(TestCase):
         assert create_response.status_code == status.HTTP_201_CREATED
         created_image = Image.objects.get(item=self.item1)
         original_file = created_image.original.name
-        original_item_uuid = created_image.item.uuid
+        original_item_id = created_image.item.id
 
         # Try to update multiple fields including ordering
         new_image = self.create_test_image()
-        update_url = reverse("api:image-detail", kwargs={"uuid": created_image.uuid})
+        update_url = reverse("api:image-detail", kwargs={"id": created_image.id})
         update_data = {
             "ordering": new_ordering,
             "original": new_image,
-            "item": str(self.item2.uuid),
+            "item": str(self.item2.id),
         }
         update_response = self.client.patch(update_url, update_data, format="multipart")
 
@@ -340,8 +340,8 @@ class ImageAPITestCase(TestCase):
         # Only ordering should change
         assert created_image.ordering == new_ordering
         assert created_image.original.name == original_file
-        assert created_image.item.uuid == original_item_uuid
-        assert created_image.item.uuid == original_item_uuid
+        assert created_image.item.id == original_item_id
+        assert created_image.item.id == original_item_id
 
     def test_update_image_non_owner_fails(self):
         """Test that non-owner cannot update image ordering."""
@@ -349,7 +349,7 @@ class ImageAPITestCase(TestCase):
 
         # First create an image as user1
         test_image = self.create_test_image()
-        data = {"item": str(self.item1.uuid), "original": test_image, "ordering": 1}
+        data = {"item": str(self.item1.id), "original": test_image, "ordering": 1}
         create_url = reverse("api:image-list")
         create_response = self.client.post(create_url, data, format="multipart")
 
@@ -358,7 +358,7 @@ class ImageAPITestCase(TestCase):
 
         # Try to update as user2
         self.client.login(username="testuser2", password=TEST_PASSWORD)
-        update_url = reverse("api:image-detail", kwargs={"uuid": created_image.uuid})
+        update_url = reverse("api:image-detail", kwargs={"id": created_image.id})
         update_data = {"ordering": 5}
         update_response = self.client.patch(update_url, update_data, format="json")
 
@@ -376,7 +376,7 @@ class ImageAPITestCase(TestCase):
 
         # Create first image without ordering
         test_image1 = self.create_test_image()
-        data1 = {"item": str(self.item1.uuid), "original": test_image1}
+        data1 = {"item": str(self.item1.id), "original": test_image1}
         url = reverse("api:image-list")
         response1 = self.client.post(url, data1, format="multipart")
 
@@ -387,7 +387,7 @@ class ImageAPITestCase(TestCase):
 
         # Create second image without ordering
         test_image2 = self.create_test_image()
-        data2 = {"item": str(self.item1.uuid), "original": test_image2}
+        data2 = {"item": str(self.item1.id), "original": test_image2}
         response2 = self.client.post(url, data2, format="multipart")
 
         assert response2.status_code == status.HTTP_201_CREATED
@@ -398,7 +398,7 @@ class ImageAPITestCase(TestCase):
 
         # Create third image without ordering
         test_image3 = self.create_test_image()
-        data3 = {"item": str(self.item1.uuid), "original": test_image3}
+        data3 = {"item": str(self.item1.id), "original": test_image3}
         response3 = self.client.post(url, data3, format="multipart")
 
         assert response3.status_code == status.HTTP_201_CREATED
@@ -416,7 +416,7 @@ class ImageAPITestCase(TestCase):
         test_image1 = self.create_test_image()
         explicit_ordering = 10
         data1 = {
-            "item": str(self.item1.uuid),
+            "item": str(self.item1.id),
             "original": test_image1,
             "ordering": explicit_ordering,
         }
@@ -430,7 +430,7 @@ class ImageAPITestCase(TestCase):
 
         # Create second image without ordering - should use automatic
         test_image2 = self.create_test_image()
-        data2 = {"item": str(self.item1.uuid), "original": test_image2}
+        data2 = {"item": str(self.item1.id), "original": test_image2}
         response2 = self.client.post(url, data2, format="multipart")
 
         assert response2.status_code == status.HTTP_201_CREATED
@@ -459,18 +459,18 @@ class ImageAPITestCase(TestCase):
 
         # Create images for item1
         test_image1 = self.create_test_image()
-        data1 = {"item": str(self.item1.uuid), "original": test_image1}
+        data1 = {"item": str(self.item1.id), "original": test_image1}
         response1 = self.client.post(url, data1, format="multipart")
         assert response1.status_code == status.HTTP_201_CREATED
 
         test_image2 = self.create_test_image()
-        data2 = {"item": str(self.item1.uuid), "original": test_image2}
+        data2 = {"item": str(self.item1.id), "original": test_image2}
         response2 = self.client.post(url, data2, format="multipart")
         assert response2.status_code == status.HTTP_201_CREATED
 
         # Create images for item1_second (different item, same user)
         test_image3 = self.create_test_image()
-        data3 = {"item": str(item1_second.uuid), "original": test_image3}
+        data3 = {"item": str(item1_second.id), "original": test_image3}
         response3 = self.client.post(url, data3, format="multipart")
         assert response3.status_code == status.HTTP_201_CREATED
 
@@ -816,7 +816,7 @@ class AIDescribeItemTestCase(TestCase):
         self.client.force_authenticate(user=self.owner)
 
         # Call the ai_describe_item endpoint
-        url = reverse("api:item-ai-describe", kwargs={"uuid": self.item.uuid})
+        url = reverse("api:item-ai-describe", kwargs={"id": self.item.id})
         response = self.client.put(url)
 
         # Assert successful response
@@ -829,8 +829,8 @@ class AIDescribeItemTestCase(TestCase):
         assert self.item.category == "tools"
         assert self.item.sale_price == Money("25.00", "EUR")
 
-        # Verify analyze_image was called with correct image UUID
-        mock_analyze_image.assert_called_once_with(self.image.uuid)
+        # Verify analyze_image was called with correct image id
+        mock_analyze_image.assert_called_once_with(self.image.id)
 
     @patch("bubble.items.api.views.analyze_image")
     def test_non_owner_cannot_call_ai_describe_item(self, mock_analyze_image):
@@ -839,7 +839,7 @@ class AIDescribeItemTestCase(TestCase):
         self.client.force_authenticate(user=self.other_user)
 
         # Try to call the ai_describe_item endpoint
-        url = reverse("api:item-ai-describe", kwargs={"uuid": self.item.uuid})
+        url = reverse("api:item-ai-describe", kwargs={"id": self.item.id})
         response = self.client.put(url)
 
         # Assert permission denied
@@ -861,7 +861,7 @@ class AIDescribeItemTestCase(TestCase):
         # Don't authenticate
 
         # Try to call the ai_describe_item endpoint
-        url = reverse("api:item-ai-describe", kwargs={"uuid": self.item.uuid})
+        url = reverse("api:item-ai-describe", kwargs={"id": self.item.id})
         response = self.client.put(url)
 
         # Assert forbidden or unauthorized

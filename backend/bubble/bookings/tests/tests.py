@@ -45,7 +45,7 @@ class BookingAutoConfirmTestCase(APITestCase):
         response = self.client.post(
             "/api/bookings/",
             {
-                "item": str(self.regular_item.uuid),
+                "item": str(self.regular_item.id),
                 "offer": "20.00",
                 "time_to": timezone.now() + timedelta(days=1),
             },
@@ -56,7 +56,7 @@ class BookingAutoConfirmTestCase(APITestCase):
         assert response.data["status"] == BookingStatus.PENDING
 
         # Verify in database
-        booking = Booking.objects.get(uuid=response.data["uuid"])
+        booking = Booking.objects.get(id=response.data["id"])
         assert booking.status == BookingStatus.PENDING
 
     def test_booking_self_service_item_auto_confirms(self):
@@ -66,7 +66,7 @@ class BookingAutoConfirmTestCase(APITestCase):
         response = self.client.post(
             "/api/bookings/",
             {
-                "item": str(self.self_service_item.uuid),
+                "item": str(self.self_service_item.id),
                 "offer": "15.00",
                 "time_to": timezone.now() + timedelta(days=1),
             },
@@ -77,7 +77,7 @@ class BookingAutoConfirmTestCase(APITestCase):
         assert response.data["status"] == BookingStatus.CONFIRMED
 
         # Verify in database
-        booking = Booking.objects.get(uuid=response.data["uuid"])
+        booking = Booking.objects.get(id=response.data["id"])
         assert booking.status == BookingStatus.CONFIRMED
 
     def test_self_service_booking_visible_in_public_endpoint(self):
@@ -88,7 +88,7 @@ class BookingAutoConfirmTestCase(APITestCase):
         response = self.client.post(
             "/api/bookings/",
             {
-                "item": str(self.self_service_item.uuid),
+                "item": str(self.self_service_item.id),
                 "offer": "15.00",
                 "time_to": timezone.now() + timedelta(days=1),
             },
@@ -96,14 +96,14 @@ class BookingAutoConfirmTestCase(APITestCase):
         )
 
         assert response.status_code == status.HTTP_201_CREATED
-        booking_uuid = response.data["uuid"]
+        booking_id = response.data["id"]
 
         # Check it appears in public bookings list
         response = self.client.get("/api/public-bookings/")
         assert response.status_code == status.HTTP_200_OK
 
-        booking_uuids = [b["uuid"] for b in response.data["results"]]
-        assert booking_uuid in booking_uuids
+        booking_ids = [b["id"] for b in response.data["results"]]
+        assert booking_id in booking_ids
 
     def test_pending_booking_not_visible_in_public_endpoint(self):
         """Test PENDING bookings don't appear in public endpoint."""
@@ -113,7 +113,7 @@ class BookingAutoConfirmTestCase(APITestCase):
         response = self.client.post(
             "/api/bookings/",
             {
-                "item": str(self.regular_item.uuid),
+                "item": str(self.regular_item.id),
                 "offer": "20.00",
                 "time_to": timezone.now() + timedelta(days=1),
             },
@@ -121,15 +121,15 @@ class BookingAutoConfirmTestCase(APITestCase):
         )
 
         assert response.status_code == status.HTTP_201_CREATED
-        booking_uuid = response.data["uuid"]
+        booking_id = response.data["id"]
         assert response.data["status"] == BookingStatus.PENDING
 
         # Check it does NOT appear in public bookings list
         response = self.client.get("/api/public-bookings/")
         assert response.status_code == status.HTTP_200_OK
 
-        booking_uuids = [b["uuid"] for b in response.data["results"]]
-        assert booking_uuid not in booking_uuids
+        booking_ids = [b["id"] for b in response.data["results"]]
+        assert booking_id not in booking_ids
 
     def test_booking_no_open_ended_without_time_to_fails(self):
         """Test booking without time_to fails when open-ended not allowed."""
@@ -138,7 +138,7 @@ class BookingAutoConfirmTestCase(APITestCase):
         response = self.client.post(
             "/api/bookings/",
             {
-                "item": str(self.regular_item.uuid),
+                "item": str(self.regular_item.id),
                 "offer": "20.00",
                 # Intentionally not providing time_to
             },
@@ -187,21 +187,19 @@ class PublicBookingViewSetTestCase(APITestCase):
 
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data["results"]) == 1
-        assert response.data["results"][0]["uuid"] == str(self.confirmed_booking.uuid)
+        assert response.data["results"][0]["id"] == str(self.confirmed_booking.id)
 
     def test_public_bookings_detail_confirmed(self):
         """Test confirmed booking detail is accessible."""
-        response = self.client.get(
-            f"/api/public-bookings/{self.confirmed_booking.uuid}/"
-        )
+        response = self.client.get(f"/api/public-bookings/{self.confirmed_booking.id}/")
 
         assert response.status_code == status.HTTP_200_OK
-        assert response.data["uuid"] == str(self.confirmed_booking.uuid)
+        assert response.data["id"] == str(self.confirmed_booking.id)
         assert response.data["status"] == BookingStatus.CONFIRMED
 
     def test_public_bookings_detail_pending_not_found(self):
         """Test pending booking not accessible via public endpoint."""
-        response = self.client.get(f"/api/public-bookings/{self.pending_booking.uuid}/")
+        response = self.client.get(f"/api/public-bookings/{self.pending_booking.id}/")
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
@@ -212,14 +210,14 @@ class PublicBookingViewSetTestCase(APITestCase):
         # Try to create
         response = self.client.post(
             "/api/public-bookings/",
-            {"item": str(self.item.uuid), "offer": "10.00"},
+            {"item": str(self.item.id), "offer": "10.00"},
             format="json",
         )
         assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
 
         # Try to update
         response = self.client.patch(
-            f"/api/public-bookings/{self.confirmed_booking.uuid}/",
+            f"/api/public-bookings/{self.confirmed_booking.id}/",
             {"status": BookingStatus.CANCELLED},
             format="json",
         )
@@ -227,7 +225,7 @@ class PublicBookingViewSetTestCase(APITestCase):
 
         # Try to delete
         response = self.client.delete(
-            f"/api/public-bookings/{self.confirmed_booking.uuid}/"
+            f"/api/public-bookings/{self.confirmed_booking.id}/"
         )
         assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
 
@@ -240,7 +238,7 @@ class PublicBookingViewSetTestCase(APITestCase):
         assert len(response.data["results"]) == 1
 
     def test_public_bookings_filter_by_item(self):
-        """Test filtering public bookings by item UUID."""
+        """Test filtering public bookings by item id."""
         # Create another item and confirmed booking
         item2 = ItemFactory(user=self.user)
         booking2 = BookingFactory(
@@ -248,16 +246,16 @@ class PublicBookingViewSetTestCase(APITestCase):
         )
 
         # Filter by first item
-        response = self.client.get(f"/api/public-bookings/?item={self.item.uuid}")
+        response = self.client.get(f"/api/public-bookings/?item={self.item.id}")
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data["results"]) == 1
-        assert response.data["results"][0]["uuid"] == str(self.confirmed_booking.uuid)
+        assert response.data["results"][0]["id"] == str(self.confirmed_booking.id)
 
         # Filter by second item
-        response = self.client.get(f"/api/public-bookings/?item={item2.uuid}")
+        response = self.client.get(f"/api/public-bookings/?item={item2.id}")
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data["results"]) == 1
-        assert response.data["results"][0]["uuid"] == str(booking2.uuid)
+        assert response.data["results"][0]["id"] == str(booking2.id)
 
 
 class BookingTimeToValidationTestCase(APITestCase):
@@ -298,7 +296,7 @@ class BookingTimeToValidationTestCase(APITestCase):
         response = self.client.post(
             "/api/bookings/",
             {
-                "item": str(self.item_requires_end_time.uuid),
+                "item": str(self.item_requires_end_time.id),
                 "offer": "20.00",
                 # Intentionally not providing time_to
             },
@@ -316,7 +314,7 @@ class BookingTimeToValidationTestCase(APITestCase):
         response = self.client.post(
             "/api/bookings/",
             {
-                "item": str(self.item_allows_open_end.uuid),
+                "item": str(self.item_allows_open_end.id),
                 "offer": "25.00",
                 # Intentionally not providing time_to
             },
@@ -327,7 +325,7 @@ class BookingTimeToValidationTestCase(APITestCase):
         assert response.data["time_to"] is None
 
         # Verify in database
-        booking = Booking.objects.get(uuid=response.data["uuid"])
+        booking = Booking.objects.get(id=response.data["id"])
         assert booking.time_to is None
 
     def test_booking_with_time_to_succeeds_regardless_of_open_end_setting(self):
@@ -338,7 +336,7 @@ class BookingTimeToValidationTestCase(APITestCase):
         response = self.client.post(
             "/api/bookings/",
             {
-                "item": str(self.item_requires_end_time.uuid),
+                "item": str(self.item_requires_end_time.id),
                 "offer": "20.00",
                 "time_to": "2025-12-31T23:59:59Z",
             },
@@ -352,7 +350,7 @@ class BookingTimeToValidationTestCase(APITestCase):
         response = self.client.post(
             "/api/bookings/",
             {
-                "item": str(self.item_allows_open_end.uuid),
+                "item": str(self.item_allows_open_end.id),
                 "offer": "25.00",
                 "time_to": "2025-12-31T23:59:59Z",
             },
@@ -377,7 +375,7 @@ class BookingTimeToValidationTestCase(APITestCase):
         response = self.client.post(
             "/api/bookings/",
             {
-                "item": str(sale_item.uuid),
+                "item": str(sale_item.id),
                 "offer": "100.00",
                 # No time_to provided
             },
@@ -388,5 +386,5 @@ class BookingTimeToValidationTestCase(APITestCase):
         assert response.data["time_to"] is None
 
         # Verify in database
-        booking = Booking.objects.get(uuid=response.data["uuid"])
+        booking = Booking.objects.get(id=response.data["id"])
         assert booking.time_to is None

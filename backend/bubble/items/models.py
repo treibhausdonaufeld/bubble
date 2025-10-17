@@ -71,8 +71,7 @@ class ItemManager(models.Manager):
         """Return a queryset filtered by user permissions."""
         items_with_change_permission = get_objects_for_user(
             user,
-            "items.change_item",
-            klass=Item,
+            f"{self.model._meta.app_label}.change_{self.model._meta.model_name}",  # noqa: SLF001
             accept_global_perms=False,
         )
         return self.filter(pk__in=items_with_change_permission)
@@ -103,6 +102,7 @@ class ItemManager(models.Manager):
 
 
 class Item(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(
         AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -114,12 +114,6 @@ class Item(models.Model):
         db_index=True,
         choices=CategoryType,
         help_text=_("Category of the item"),
-    )
-    uuid = models.UUIDField(
-        default=uuid.uuid4,
-        editable=False,
-        unique=True,
-        help_text=_("Unique identifier for the item"),
     )
     name = models.CharField(max_length=200, blank=True)
     slug = models.SlugField(max_length=200, unique=True, blank=True)
@@ -221,8 +215,10 @@ class Item(models.Model):
 
         if self.user:
             # give all object permission to self.request.user on instance
-            assign_perm("change_item", self.user, obj=self)
-            assign_perm("delete_item", self.user, obj=self)
+            app_label = self._meta.model._meta.app_label  # noqa: SLF001
+            model_name = self._meta.model._meta.model_name  # noqa: SLF001
+            assign_perm(f"{app_label}.change_{model_name}", self.user, obj=self)
+            assign_perm(f"{app_label}.delete_{model_name}", self.user, obj=self)
 
     def is_ready_for_display(self):
         """Check if item has minimum required fields to be displayed."""
@@ -253,22 +249,18 @@ class ItemEmbedding(models.Model):
     )
 
     def __str__(self):
-        return f"Embedding for {self.item.name} ({self.item.uuid})"
+        return f"Embedding for {self.item.name} ({self.item.id})"
 
 
 def upload_to_item_images(instance: "Image", filename: str):
     extension: str = Path(filename).suffix or ".jpg"
     item_creation_datestr = instance.item.created_at.strftime("%Y/%m/%d")
-    item_prefix: str = f"items/{item_creation_datestr}/{instance.item.uuid}"
+    item_prefix: str = f"items/{item_creation_datestr}/{instance.item.id}"
     return f"{item_prefix}/{str(uuid.uuid4())[0:8]}/original{extension}"
 
 
 class Image(models.Model):
-    uuid = models.UUIDField(
-        default=uuid.uuid4,
-        editable=False,
-        unique=True,
-    )
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     original = models.ImageField(upload_to=upload_to_item_images, max_length=255)
     item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="images")
     ordering = models.IntegerField(default=0)
@@ -299,7 +291,7 @@ class Image(models.Model):
 
     def _get_temp_path(self, suffix: str) -> str | None:
         """Return the path where the image should be stored."""
-        folder = f"temp/{suffix}/{str(self.item.uuid)[0:4]}/{self.pk}"
+        folder = f"temp/{suffix}/{str(self.item.id)[0:4]}/{self.pk}"
         return f"{folder}/{suffix}.jpg"
 
     def get_preview_path(self) -> str | None:

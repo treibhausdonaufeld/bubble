@@ -106,6 +106,7 @@ LOCAL_APPS = [
     "bubble.core.apps.CoreConfig",
     "bubble.favorites.apps.FavoritesConfig",
     "bubble.rooms.apps.RoomsConfig",
+    "bubble.books.apps.BooksConfig",
     # "bubble.payments.apps.PaymentsConfig",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -309,7 +310,10 @@ ASGI_APPLICATION = "config.asgi.application"
 
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [REDIS_URL],
+        },
     },
 }
 

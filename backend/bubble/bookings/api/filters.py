@@ -8,8 +8,8 @@ class BookingFilter(django_filters.FilterSet):
     status = django_filters.MultipleChoiceFilter(
         field_name="status", choices=BookingStatus.choices, conjoined=False
     )
-    item = django_filters.UUIDFilter(field_name="item__uuid")
-    user = django_filters.NumberFilter(field_name="user__id")
+    item = django_filters.UUIDFilter(field_name="item__id")
+    user = django_filters.UUIDFilter(field_name="user__id")
     created_at_after = django_filters.IsoDateTimeFilter(
         field_name="created_at", lookup_expr="gte"
     )
@@ -23,8 +23,8 @@ class BookingFilter(django_filters.FilterSet):
 
 
 class MessageFilter(django_filters.FilterSet):
-    booking = django_filters.UUIDFilter(field_name="booking__uuid")
-    sender = django_filters.NumberFilter(field_name="sender__id")
+    booking = django_filters.UUIDFilter(field_name="booking__id")
+    sender = django_filters.UUIDFilter(field_name="sender__id")
     created_at_after = django_filters.IsoDateTimeFilter(
         field_name="created_at", lookup_expr="gte"
     )

@@ -52,7 +52,7 @@ export const ImageUploadStep = ({ onBack, onComplete }: ImageUploadStepProps) =>
           throw new Error('Failed to create draft item.');
         }
 
-        const newItemUuid = newItem.uuid;
+        const newItemUuid = newItem.id;
 
         setProgress(10);
 
@@ -90,7 +90,7 @@ export const ImageUploadStep = ({ onBack, onComplete }: ImageUploadStepProps) =>
 
             // Call Django AI endpoint using itemsAPI
             const response = await itemsAiDescribeUpdate({
-              path: { uuid: newItemUuid },
+              path: { id: newItemUuid },
             });
 
             if (response) {

@@ -41,7 +41,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useDeleteItem, useMyItems, useUpdateItemStatus } from '@/hooks/useMyItems';
 import { formatPrice } from '@/lib/currency';
 import { cn } from '@/lib/utils';
-import { StatusEnum } from '@/services/django';
+import { Status402Enum } from '@/services/django';
 import { Edit3, Eye, Grid3X3, List, MoreHorizontal, Plus, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -55,6 +55,11 @@ const MyItems = () => {
   const items = myItemsData?.results || [];
   const updateStatusMutation = useUpdateItemStatus();
   const deleteItemMutation = useDeleteItem();
+
+  // Helper function to get the correct edit URL based on item category
+  const getEditUrl = (item: any) => {
+    return item.category === 'books' ? `/edit-book/${item.id}` : `/edit-item/${item.id}`;
+  };
 
   // View mode state with localStorage persistence
   const [viewMode, setViewMode] = useState<'list' | 'cards'>('list');
@@ -79,8 +84,8 @@ const MyItems = () => {
     itemId: string,
     newStatus: 'draft' | 'available' | 'reserved' | 'rented' | 'sold',
   ) => {
-    // Map string status to StatusEnum number
-    let statusEnum: StatusEnum;
+    // Map string status to Status402Enum number
+    let statusEnum: Status402Enum;
     switch (newStatus) {
       case 'draft':
         statusEnum = 0;
@@ -104,7 +109,7 @@ const MyItems = () => {
     updateStatusMutation.mutate({ itemId, status: statusEnum });
   };
 
-  const getStatusColor = (status: StatusEnum) => {
+  const getStatusColor = (status: Status402Enum) => {
     switch (status) {
       case 0:
         return 'bg-muted text-muted-foreground'; // draft
@@ -123,7 +128,7 @@ const MyItems = () => {
     }
   };
 
-  const getStatusText = (status: StatusEnum) => {
+  const getStatusText = (status: Status402Enum) => {
     switch (status) {
       case 0:
         return t('status.draft');
@@ -229,9 +234,9 @@ const MyItems = () => {
 
                   return (
                     <TableRow
-                      key={item.uuid}
+                      key={item.id}
                       className="cursor-pointer hover:bg-muted/50"
-                      onClick={() => navigate(`/edit-item/${item.uuid}`)}
+                      onClick={() => navigate(getEditUrl(item))}
                     >
                       <TableCell>
                         <div className="w-12 h-12 rounded-lg overflow-hidden">
@@ -270,7 +275,7 @@ const MyItems = () => {
                               '4': 'rented',
                               '5': 'sold',
                             };
-                            handleStatusChange(item.uuid, statusMap[value] || 'draft');
+                            handleStatusChange(item.id, statusMap[value] || 'draft');
                           }}
                           disabled={updateStatusMutation.isPending}
                         >
@@ -319,11 +324,11 @@ const MyItems = () => {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => navigate(`/item/${item.uuid}`)}>
+                            <DropdownMenuItem onClick={() => navigate(`/item/${item.id}`)}>
                               <Eye className="h-4 w-4 mr-2" />
                               View
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => navigate(`/edit-item/${item.uuid}`)}>
+                            <DropdownMenuItem onClick={() => navigate(getEditUrl(item))}>
                               <Edit3 className="h-4 w-4 mr-2" />
                               Edit
                             </DropdownMenuItem>
@@ -349,7 +354,7 @@ const MyItems = () => {
                                 <AlertDialogFooter>
                                   <AlertDialogCancel>Cancel</AlertDialogCancel>
                                   <AlertDialogAction
-                                    onClick={() => handleDeleteItem(item.uuid)}
+                                    onClick={() => handleDeleteItem(item.id)}
                                     className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                                   >
                                     Delete
@@ -370,11 +375,11 @@ const MyItems = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {items.map(item => {
               return (
-                <Card key={item.uuid} className="overflow-hidden">
+                <Card key={item.id} className="overflow-hidden">
                   {/* Image */}
                   <div
                     className="aspect-[4/3] overflow-hidden cursor-pointer"
-                    onClick={() => navigate(`/edit-item/${item.uuid}`)}
+                    onClick={() => navigate(getEditUrl(item))}
                   >
                     {item.first_image ? (
                       <img
@@ -396,7 +401,7 @@ const MyItems = () => {
                     <div className="flex items-center justify-between">
                       <h3
                         className="font-semibold text-foreground line-clamp-1 cursor-pointer hover:underline"
-                        onClick={() => navigate(`/edit-item/${item.uuid}`)}
+                        onClick={() => navigate(getEditUrl(item))}
                       >
                         {item.name}
                       </h3>
@@ -407,11 +412,11 @@ const MyItems = () => {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => navigate(`/item/${item.uuid}`)}>
+                          <DropdownMenuItem onClick={() => navigate(`/item/${item.id}`)}>
                             <Eye className="h-4 w-4 mr-2" />
                             View
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => navigate(`/edit-item/${item.uuid}`)}>
+                          <DropdownMenuItem onClick={() => navigate(getEditUrl(item))}>
                             <Edit3 className="h-4 w-4 mr-2" />
                             Edit
                           </DropdownMenuItem>
@@ -437,7 +442,7 @@ const MyItems = () => {
                               <AlertDialogFooter>
                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                                 <AlertDialogAction
-                                  onClick={() => handleDeleteItem(item.uuid)}
+                                  onClick={() => handleDeleteItem(item.id)}
                                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                                 >
                                   Delete
@@ -497,7 +502,7 @@ const MyItems = () => {
                             '4': 'rented',
                             '5': 'sold',
                           };
-                          handleStatusChange(item.uuid, statusMap[value] || 'draft');
+                          handleStatusChange(item.id, statusMap[value] || 'draft');
                         }}
                         disabled={updateStatusMutation.isPending}
                       >

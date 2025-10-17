@@ -1,4 +1,5 @@
 import { ImageManager } from '@/components/items/ImageManager';
+import { BasicFields, CategoryConditionFields } from '@/components/items/ItemFormFields';
 import { Header } from '@/components/layout/Header';
 import {
   AlertDialog,
@@ -24,7 +25,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useToast } from '@/hooks/use-toast';
@@ -49,6 +49,18 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const EditItem = () => {
+  // CSP-compliant event handlers
+  const handleBackClick = () => {
+    navigate(-1);
+  };
+
+  const handleClearImages = () => {
+    setImages([]);
+  };
+
+  const handleRentalPeriodChange = (value: RentalPeriodEnum) => {
+    setFormData({ ...formData, rental_period: value });
+  };
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -373,7 +385,7 @@ const EditItem = () => {
           await Promise.all(
             merged.map(img =>
               imagesPartialUpdate({
-                path: { uuid: img.uuid },
+                path: { id: img.id },
                 body: { ordering: img.ordering },
               }),
             ),
@@ -430,7 +442,7 @@ const EditItem = () => {
 
     try {
       const aiResult = await itemsAiDescribeUpdate({
-        path: { uuid: editItemUuid },
+        path: { id: editItemUuid },
       });
       const data = aiResult.data;
 
@@ -485,7 +497,7 @@ const EditItem = () => {
 
     try {
       await itemsAiImageUpdate({
-        path: { uuid: editItemUuid },
+        path: { id: editItemUuid },
         body: {
           name: formData.name,
           description: formData.description,
@@ -515,7 +527,7 @@ const EditItem = () => {
     return (
       <div className="min-h-screen bg-background">
         <Header />
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto py-8">
           <div className="text-center">{t('common.loading')}</div>
         </div>
       </div>
@@ -530,9 +542,9 @@ const EditItem = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <div className="container mx-auto max-w-2xl px-4 py-8">
+      <div className="container mx-auto py-8 space-y-6">
         {/* Back Button */}
-        <Button variant="ghost" onClick={() => navigate(-1)} className="mb-6 gap-2">
+        <Button variant="ghost" onClick={handleBackClick} className="mb-6 gap-2">
           <ArrowLeft className="h-4 w-4" />
           {t('common.back')}
         </Button>
@@ -657,7 +669,7 @@ const EditItem = () => {
                           <Button
                             type="button"
                             variant="ghost"
-                            onClick={() => setImages([])}
+                            onClick={handleClearImages}
                             disabled={aiProcessing}
                             className="w-full gap-2 text-muted-foreground"
                           >
@@ -671,86 +683,40 @@ const EditItem = () => {
                 </CardContent>
               </Card>
 
-              <div className="space-y-2">
-                <Label htmlFor="name">{t('editItem.itemName')} *</Label>
-                <Input
-                  id="name"
-                  type="text"
-                  placeholder={t('editItem.itemNamePlaceholder')}
-                  value={formData.name}
-                  onChange={e => setFormData({ ...formData, name: e.target.value })}
-                  disabled={aiProcessing}
-                  required
-                />
-              </div>
+              <BasicFields
+                formData={formData}
+                setFormData={setFormData}
+                disabled={aiProcessing}
+                descriptionRef={descriptionRef}
+              />
 
-              <div className="space-y-2">
-                <Label htmlFor="description">{t('editItem.description')}</Label>
-                <Textarea
-                  id="description"
-                  placeholder={t('editItem.descriptionPlaceholder')}
-                  value={formData.description}
-                  onChange={e => {
-                    setFormData({ ...formData, description: e.target.value });
-                    adjustDescriptionHeight();
-                  }}
-                  onInput={() => adjustDescriptionHeight()}
-                  disabled={aiProcessing}
-                  ref={descriptionRef}
-                  className="min-h-[100px]"
-                />
-              </div>
+              <CategoryConditionFields
+                formData={formData}
+                setFormData={setFormData}
+                categories={categories}
+                onCategoryChange={async category => {
+                  // Update local state immediately
+                  setFormData(prev => ({ ...prev, category: category as CategoryEnum }));
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="category">{t('editItem.category')} *</Label>
-                  <Select
-                    value={formData.category}
-                    onValueChange={(value: CategoryEnum) =>
-                      setFormData({ ...formData, category: value })
+                  // If switching to books, persist change first then navigate
+                  if (category === 'books' && editItemUuid) {
+                    try {
+                      await updateItemMutation.mutateAsync({
+                        itemUuid: editItemUuid,
+                        data: { category: category as CategoryEnum },
+                      });
+                      navigate(`/edit-book/${editItemUuid}`);
+                    } catch (err) {
+                      console.error('Error updating category before switching to EditBook:', err);
+                      toast({
+                        title: t('editItem.updateErrorTitle'),
+                        description: (err as any)?.message || t('editItem.updateErrorDescription'),
+                        variant: 'destructive',
+                      });
                     }
-                    disabled={aiProcessing}
-                    required
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder={t('editItem.selectCategory')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map(category => (
-                        <SelectItem key={category} value={category}>
-                          {t(`categories.${category}`)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="condition">{t('editItem.condition')} *</Label>
-                  <Select
-                    value={formData.condition.toString()}
-                    onValueChange={value =>
-                      setFormData({
-                        ...formData,
-                        condition: parseInt(value) as ConditionEnum,
-                      })
-                    }
-                    disabled={aiProcessing}
-                    required
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder={t('editItem.selectCondition')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {conditions.map(condition => (
-                        <SelectItem key={condition.value} value={condition.value.toString()}>
-                          {t(`condition.${condition.key}`)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
+                  }
+                }}
+              />
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -812,9 +778,7 @@ const EditItem = () => {
                       <Label htmlFor="rental_period">{t('editItem.rentalPeriod')}</Label>
                       <Select
                         value={formData.rental_period}
-                        onValueChange={(value: RentalPeriodEnum) =>
-                          setFormData({ ...formData, rental_period: value })
-                        }
+                        onValueChange={handleRentalPeriodChange}
                         disabled={aiProcessing}
                       >
                         <SelectTrigger>

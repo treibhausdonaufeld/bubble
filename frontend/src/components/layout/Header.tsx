@@ -15,7 +15,7 @@ import { useUnreadMessages } from '@/hooks/useMessages';
 
 import { cn } from '@/lib/utils';
 import { useTheme } from '@/providers/theme-provider';
-import { Languages, LogOut, Moon, NotebookPen, Plus, Search, Sun, User } from 'lucide-react';
+import { LogOut, Moon, NotebookPen, Package, Plus, Search, Sun, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -112,46 +112,6 @@ export const Header = () => {
 
           {/* Actions */}
           <div className="flex items-center gap-2">
-            {/* Language Toggle */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="hover:scale-110 transition-transform"
-                >
-                  <Languages className="h-5 w-5" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                align="end"
-                className="w-32 bg-background border border-border z-50"
-              >
-                <DropdownMenuItem
-                  onClick={() => setLanguage('en')}
-                  className={cn('cursor-pointer', language === 'en' && 'bg-accent')}
-                >
-                  🇺🇸 English
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => setLanguage('de')}
-                  className={cn('cursor-pointer', language === 'de' && 'bg-accent')}
-                >
-                  🇩🇪 Deutsch
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* Theme Toggle */}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleTheme}
-              className="hover:scale-110 transition-transform"
-            >
-              {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-            </Button>
-
             {user && (
               <>
                 {/* Bookings */}
@@ -171,6 +131,17 @@ export const Header = () => {
                       {unreadCount}
                     </Badge>
                   )}
+                </Button>
+
+                {/* My Items */}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => navigate('/my-items')}
+                  className="hover:scale-110 transition-transform"
+                  title={t('header.myItems')}
+                >
+                  <Package className="h-5 w-5" />
                 </Button>
 
                 {/* Add Item */}
@@ -210,12 +181,41 @@ export const Header = () => {
                       <User className="w-4 h-4 mr-2" />
                       {t('header.myProfile')}
                     </DropdownMenuItem>
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem
-                      className="flex items-center"
-                      onClick={() => navigate('/my-items')}
+                      className="flex items-center justify-between"
+                      onClick={toggleTheme}
                     >
-                      <Plus className="w-4 h-4 mr-2" />
-                      {t('header.myItems')}
+                      <div className="flex items-center">
+                        {theme === 'dark' ? (
+                          <Moon className="w-4 h-4 mr-2" />
+                        ) : (
+                          <Sun className="w-4 h-4 mr-2" />
+                        )}
+                        {t('header.theme')}
+                      </div>
+                      <span className="text-xs text-muted-foreground">
+                        {theme === 'dark' ? t('header.dark') : t('header.light')}
+                      </span>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={() => setLanguage('en')}
+                      className={cn(
+                        'flex items-center cursor-pointer',
+                        language === 'en' && 'bg-accent',
+                      )}
+                    >
+                      🇺🇸 English
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setLanguage('de')}
+                      className={cn(
+                        'flex items-center cursor-pointer',
+                        language === 'de' && 'bg-accent',
+                      )}
+                    >
+                      🇩🇪 Deutsch
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem

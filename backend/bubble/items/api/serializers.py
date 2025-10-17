@@ -16,7 +16,7 @@ class ItemOwnerException(serializers.ValidationError):
 class ImageSerializer(serializers.ModelSerializer):
     """Serializer for Image model."""
 
-    item = serializers.SlugRelatedField(slug_field="uuid", queryset=Item.objects.all())
+    item = serializers.PrimaryKeyRelatedField(queryset=Item.objects.all())
     thumbnail = serializers.ImageField(read_only=True)
     preview = serializers.ImageField(read_only=True)
     ordering = serializers.IntegerField(required=False, allow_null=True)
@@ -24,14 +24,14 @@ class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Image
         fields = [
-            "uuid",
+            "id",
             "original",
             "ordering",
             "thumbnail",
             "preview",
             "item",
         ]
-        read_only_fields = ["uuid", "thumbnail", "preview"]
+        read_only_fields = ["id", "thumbnail", "preview"]
 
     def get_fields(self):
         """Override to make fields read-only on update."""
@@ -57,16 +57,16 @@ class ItemSerializer(serializers.ModelSerializer):
     """Serializer for Item model."""
 
     images = ImageSerializer(many=True, read_only=True)
-    user = serializers.SlugRelatedField(read_only=True, slug_field="uuid")
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
     first_image = serializers.SerializerMethodField()
     sale_price = MoneyField(**money_defaults, required=False, allow_null=True)
     rental_price = MoneyField(**money_defaults, required=False, allow_null=True)
 
     class Meta:
         model = Item
-        exclude = ["id"]
+        fields = "__all__"
         read_only_fields = [
-            "uuid",
+            "id",
             "user",
             "created_at",
             "date_updated",
@@ -119,4 +119,4 @@ class ItemListSerializer(ItemSerializer):
 class ItemMinimalSerializer(ItemListSerializer):
     class Meta:
         model = Item
-        fields = ["uuid", "name", "first_image"]
+        fields = ["id", "name", "first_image", "rental_price", "sale_price"]

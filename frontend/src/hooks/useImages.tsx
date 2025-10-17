@@ -64,7 +64,7 @@ export const useUpdateImage = () => {
     mutationFn: async ({ imageId, data }: { imageId: string; data: PatchedImage }) => {
       if (!user) throw new Error('User not authenticated');
       const response = await imagesPartialUpdate({
-        path: { uuid: imageId },
+        path: { id: imageId },
         body: data,
       });
       return response.data;
@@ -96,7 +96,7 @@ export const useDeleteImage = () => {
     mutationFn: async ({ imageId }: { imageId: string; itemUuid: string }) => {
       if (!user) throw new Error('User not authenticated');
       await imagesDestroy({
-        path: { uuid: imageId },
+        path: { id: imageId },
       });
     },
     onSuccess: (_, variables) => {

@@ -11,6 +11,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/hooks/useAuth';
 import { useBooking, useBookings, useUpdateBooking } from '@/hooks/useBookings';
+import { useItem } from '@/hooks/useItem';
 import { useCreateMessage, useMarkMessageAsRead, useMessages } from '@/hooks/useMessages';
 import { formatPrice } from '@/lib/currency';
 import { cn } from '@/lib/utils';
@@ -19,11 +20,25 @@ import { Calendar, Clock, Menu, Package, RefreshCw, Send, User } from 'lucide-re
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 const Bookings = () => {
+  // CSP-compliant event handlers
+  const handleBookingCardClick = (bookingUuid: string) => {
+    setSelectedBookingId(bookingUuid);
+    setIsMenuOpen(false); // Close menu on selection (mobile)
+  };
+
+  const handleSelectBooking = (bookingUuid: string) => {
+    setSelectedBookingId(bookingUuid);
+  };
+
+  const handleRefreshMessages = () => {
+    refetchMessages();
+  };
   const { t } = useLanguage();
   const { user } = useAuth();
   const { data: bookings, isLoading } = useBookings();
   const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null);
   const { data: selectedBookingDetails } = useBooking(selectedBookingId || undefined);
+  const { data: selectedItemDetails } = useItem(selectedBookingDetails?.item_details?.id);
   const [messageText, setMessageText] = useState('');
   const updateBookingMutation = useUpdateBooking();
   const {
@@ -51,7 +66,7 @@ const Bookings = () => {
   // Select first booking on load
   useMemo(() => {
     if (bookings?.results && bookings.results.length > 0 && !selectedBookingId) {
-      setSelectedBookingId(bookings.results[0].uuid!);
+      setSelectedBookingId(bookings.results[0].id!);
     }
   }, [bookings, selectedBookingId]);
 
@@ -74,16 +89,16 @@ const Bookings = () => {
       message =>
         message.is_read === false &&
         message.sender !== user.username &&
-        message.uuid &&
-        !markedAsReadRef.current.has(message.uuid),
+        message.id &&
+        !markedAsReadRef.current.has(message.id),
     );
 
     // Mark each unread message as read
     unreadMessages.forEach(message => {
-      if (message.uuid) {
+      if (message.id) {
         // Add to marked set immediately to prevent duplicate requests
-        markedAsReadRef.current.add(message.uuid);
-        markMessageAsReadMutation.mutate(message.uuid);
+        markedAsReadRef.current.add(message.id);
+        markMessageAsReadMutation.mutate(message.id);
       }
     });
   }, [messages, user, markMessageAsReadMutation]);
@@ -175,22 +190,19 @@ const Bookings = () => {
                     ) : (
                       <div className="space-y-2">
                         {bookings.results.map(booking => {
-                          const isSelected = selectedBookingId === booking.uuid;
+                          const isSelected = selectedBookingId === booking.id;
                           const itemTitle = booking.item_details?.name || t('bookings.unknownItem');
                           const itemImage = booking.item_details?.first_image;
-                          const itemUuid = booking.item_details?.uuid || booking.item;
+                          const itemUuid = booking.item_details?.id || booking.item;
 
                           return (
                             <Card
-                              key={booking.uuid}
+                              key={booking.id}
                               className={cn(
                                 'cursor-pointer transition-colors hover:bg-accent',
                                 isSelected && 'bg-accent dark:bg-accent border-green-200 border-2',
                               )}
-                              onClick={() => {
-                                setSelectedBookingId(booking.uuid!);
-                                setIsMenuOpen(false); // Close menu on selection (mobile)
-                              }}
+                              onClick={() => handleBookingCardClick(booking.id!)}
                             >
                               <CardContent className="p-3">
                                 <div className="flex gap-3">
@@ -269,19 +281,19 @@ const Bookings = () => {
                   ) : (
                     <div className="space-y-2">
                       {bookings.results.map(booking => {
-                        const isSelected = selectedBookingId === booking.uuid;
+                        const isSelected = selectedBookingId === booking.id;
                         const itemTitle = booking.item_details?.name || t('bookings.unknownItem');
                         const itemImage = booking.item_details?.first_image;
-                        const itemUuid = booking.item_details?.uuid || booking.item;
+                        const itemUuid = booking.item_details?.id || booking.item;
 
                         return (
                           <Card
-                            key={booking.uuid}
+                            key={booking.id}
                             className={cn(
                               'cursor-pointer transition-colors hover:bg-accent',
                               isSelected && 'bg-accent dark:bg-accent border-green-200 border-2',
                             )}
-                            onClick={() => setSelectedBookingId(booking.uuid!)}
+                            onClick={() => handleSelectBooking(booking.id!)}
                           >
                             <CardContent className="p-3">
                               <div className="flex gap-3">
@@ -352,7 +364,7 @@ const Bookings = () => {
                     <div className="flex items-start gap-4 mb-4">
                       {/* Item Thumbnail */}
                       <a
-                        href={`/item/${selectedBooking.item_details?.uuid || selectedBooking.item}`}
+                        href={`/item/${selectedBooking.item_details?.id || selectedBooking.item}`}
                         className="flex-shrink-0"
                       >
                         <div className="w-20 h-20 rounded overflow-hidden bg-muted">
@@ -373,9 +385,7 @@ const Bookings = () => {
                       {/* Item Info */}
                       <div className="flex-1">
                         <a
-                          href={`/item/${
-                            selectedBooking.item_details?.uuid || selectedBooking.item
-                          }`}
+                          href={`/item/${selectedBooking.item_details?.id || selectedBooking.item}`}
                           className="text-xl font-bold mb-2 hover:underline block"
                         >
                           {selectedBooking.item_details?.name || t('bookings.unknownItem')}
@@ -400,21 +410,36 @@ const Bookings = () => {
                       </div>
 
                       {/* Status Badge */}
-                      {/* Edit booking if current user is the booking owner */}
-                      {user &&
-                        selectedBooking.user &&
-                        selectedBooking.status == 1 &&
-                        user.username === selectedBooking.user.username && (
-                          <BookingEditDialog booking={selectedBooking} />
-                        )}
                       <div className="flex-shrink-0">{getStatusBadge(selectedBooking.status)}</div>
                     </div>
 
                     {/* Booking Details */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-muted rounded-lg">
+                    <div className="grid grid-cols-3 md:grid-cols-3 gap-4 p-4 bg-muted rounded-lg">
+                      {/* Original Item Price */}
+                      {selectedItemDetails &&
+                        (selectedItemDetails.sale_price || selectedItemDetails.rental_price) && (
+                          <div>
+                            <p className="text-xs font-medium mb-1">
+                              {selectedItemDetails.rental_price
+                                ? t('booking.listedRentalPrice')
+                                : t('booking.listedPrice')}
+                            </p>
+                            <p className="text-lg text-muted-foreground">
+                              {selectedItemDetails.rental_price
+                                ? `${formatPrice(
+                                    selectedItemDetails.rental_price,
+                                    selectedItemDetails.rental_price_currency,
+                                  )} ${t('time.perHour')}`
+                                : formatPrice(
+                                    selectedItemDetails.sale_price!,
+                                    selectedItemDetails.sale_price_currency,
+                                  )}
+                            </p>
+                          </div>
+                        )}
                       {selectedBooking.offer && (
                         <div>
-                          <p className="text-sm font-medium mb-1">{t('bookings.offerAmount')}</p>
+                          <p className="text-xs mb-1">{t('bookings.offerAmount')}</p>
                           <p className="text-lg font-bold">
                             {formatPrice(selectedBooking.offer, 'EUR')}
                           </p>
@@ -435,7 +460,7 @@ const Bookings = () => {
                       )}
                       {selectedBooking.counter_offer && (
                         <div>
-                          <p className="text-sm font-medium mb-1">{t('bookings.counterOffer')}</p>
+                          <p className="text-xs font-medium mb-1">{t('bookings.counterOffer')}</p>
                           <p className="text-lg font-bold text-orange-500">
                             {formatPrice(selectedBooking.counter_offer, 'EUR')}
                           </p>
@@ -449,70 +474,75 @@ const Bookings = () => {
                         <div className="flex gap-2">
                           {/* Check if current user is the booking requester (owner of the booking) */}
                           {user?.username === selectedBooking.user?.username ? (
-                            // Booking requester can only cancel
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={async () => {
-                                try {
-                                  await updateBookingMutation.mutateAsync({
-                                    uuid: selectedBooking.uuid,
-                                    data: { status: 2 }, // Cancelled
-                                  });
-                                } catch (error) {
-                                  console.error('Error cancelling booking:', error);
-                                }
-                              }}
-                              disabled={updateBookingMutation.isPending}
-                            >
-                              {updateBookingMutation.isPending
-                                ? t('common.submitting')
-                                : t('bookings.cancel')}
-                            </Button>
+                            // Booking requester can edit offer and cancel
+                            <>
+                              <BookingEditDialog booking={selectedBooking} />
+                              <Button
+                                size="sm"
+                                variant="destructive"
+                                onClick={async () => {
+                                  try {
+                                    await updateBookingMutation.mutateAsync({
+                                      id: selectedBooking.id,
+                                      data: { status: 2 }, // Cancelled
+                                    });
+                                  } catch (error) {
+                                    console.error('Error cancelling booking:', error);
+                                  }
+                                }}
+                                disabled={updateBookingMutation.isPending}
+                              >
+                                {updateBookingMutation.isPending
+                                  ? t('common.submitting')
+                                  : t('bookings.cancel')}
+                              </Button>
+                            </>
                           ) : (
                             // Item owner can accept or reject
                             <>
-                              <div className="flex items-center">
-                                <BookingCounterOfferDialog booking={selectedBooking} />
-                                <Button
-                                  size="sm"
-                                  className="bg-green-500 hover:bg-green-600"
-                                  onClick={async () => {
-                                    try {
-                                      await updateBookingMutation.mutateAsync({
-                                        uuid: selectedBooking.uuid,
-                                        data: { status: 3 }, // Confirmed
-                                      });
-                                    } catch (error) {
-                                      console.error('Error accepting booking:', error);
-                                    }
-                                  }}
-                                  disabled={updateBookingMutation.isPending}
-                                >
-                                  {updateBookingMutation.isPending
-                                    ? t('common.submitting')
-                                    : t('bookings.accept')}
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="destructive"
-                                  onClick={async () => {
-                                    try {
-                                      await updateBookingMutation.mutateAsync({
-                                        uuid: selectedBooking.uuid,
-                                        data: { status: 5 }, // Rejected
-                                      });
-                                    } catch (error) {
-                                      console.error('Error rejecting booking:', error);
-                                    }
-                                  }}
-                                  disabled={updateBookingMutation.isPending}
-                                >
-                                  {updateBookingMutation.isPending
-                                    ? t('common.submitting')
-                                    : t('bookings.reject')}
-                                </Button>
-                              </div>
+                              <BookingCounterOfferDialog booking={selectedBooking} />
+                              <Button
+                                size="sm"
+                                className="bg-green-500 hover:bg-green-600"
+                                onClick={async () => {
+                                  try {
+                                    await updateBookingMutation.mutateAsync({
+                                      id: selectedBooking.id,
+                                      data: { status: 3 }, // Confirmed
+                                    });
+                                  } catch (error) {
+                                    console.error('Error accepting booking:', error);
+                                  }
+                                }}
+                                disabled={
+                                  updateBookingMutation.isPending ||
+                                  (!!selectedBooking.counter_offer &&
+                                    selectedBooking.counter_offer !== selectedBooking.offer)
+                                }
+                              >
+                                {updateBookingMutation.isPending
+                                  ? t('common.submitting')
+                                  : t('bookings.accept')}
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="destructive"
+                                onClick={async () => {
+                                  try {
+                                    await updateBookingMutation.mutateAsync({
+                                      id: selectedBooking.id,
+                                      data: { status: 5 }, // Rejected
+                                    });
+                                  } catch (error) {
+                                    console.error('Error rejecting booking:', error);
+                                  }
+                                }}
+                                disabled={updateBookingMutation.isPending}
+                              >
+                                {updateBookingMutation.isPending
+                                  ? t('common.submitting')
+                                  : t('bookings.reject')}
+                              </Button>
                             </>
                           )}
                         </div>
@@ -521,7 +551,7 @@ const Bookings = () => {
                           <Button
                             size="icon"
                             variant="ghost"
-                            onClick={() => refetchMessages()}
+                            onClick={handleRefreshMessages}
                             disabled={!selectedBookingId || isFetchingMessages}
                             aria-label={t('bookings.refresh')}
                           >
@@ -542,7 +572,7 @@ const Bookings = () => {
                           onClick={async () => {
                             try {
                               await updateBookingMutation.mutateAsync({
-                                uuid: selectedBooking.uuid,
+                                id: selectedBooking.id,
                                 data: { status: 2 }, // Cancelled
                               });
                             } catch (error) {
@@ -560,7 +590,7 @@ const Bookings = () => {
                           <Button
                             size="icon"
                             variant="ghost"
-                            onClick={() => refetchMessages()}
+                            onClick={handleRefreshMessages}
                             disabled={!selectedBookingId || isFetchingMessages}
                             aria-label={t('bookings.refresh')}
                           >
@@ -588,7 +618,7 @@ const Bookings = () => {
                               const isOwnMessage = user?.username === message.sender;
                               return (
                                 <div
-                                  key={message.uuid}
+                                  key={message.id}
                                   className={cn(
                                     'flex',
                                     isOwnMessage ? 'justify-end' : 'justify-start',
@@ -602,6 +632,16 @@ const Bookings = () => {
                                         : 'bg-muted',
                                     )}
                                   >
+                                    <p
+                                      className={cn(
+                                        'text-xs font-semibold mb-1',
+                                        isOwnMessage
+                                          ? 'text-primary-foreground/90'
+                                          : 'text-foreground',
+                                      )}
+                                    >
+                                      {message.sender}
+                                    </p>
                                     <p className="text-sm whitespace-pre-wrap break-words">
                                       {message.message}
                                     </p>

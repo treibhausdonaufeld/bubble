@@ -17,8 +17,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 sys.path.append(str(BASE_DIR / "bubble"))
 
-# If DJANGO_SETTINGS_MODULE is unset, default to the local settings
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.local")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.production")
 
 # Import the WebSocket application which includes both HTTP and WebSocket routing
 from config.websocket import application  # noqa: E402, F401

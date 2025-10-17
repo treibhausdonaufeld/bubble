@@ -11,6 +11,7 @@ import { configureApiClient } from './config/apiClient';
 import Auth from './pages/Auth';
 import Bookings from './pages/Bookings';
 import CreateItem from './pages/CreateItem';
+import EditBook from './pages/EditBook';
 import EditItem from './pages/EditItem';
 import Index from './pages/Index';
 import ItemDetail from './pages/ItemDetail';
@@ -46,6 +47,7 @@ const App = () => (
                   <Route path="/auth" element={<Auth />} />
                   <Route path="/create-item" element={<CreateItem />} />
                   <Route path="/edit-item/:itemUuid" element={<EditItem />} />
+                  <Route path="/edit-book/:itemUuid" element={<EditBook />} />
                   <Route path="/item/:itemUuid" element={<ItemDetail />} />
                   <Route path="/my-items" element={<MyItems />} />
                   <Route path="/profile" element={<Profile />} />

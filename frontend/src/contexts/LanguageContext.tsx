@@ -20,6 +20,9 @@ const translations = {
     'header.myItems': 'My Items',
     'header.myBookings': 'My Bookings',
     'header.signOut': 'Sign Out',
+    'header.theme': 'Theme',
+    'header.light': 'Light',
+    'header.dark': 'Dark',
 
     // Hero Section
     'hero.title': 'Share & Discover in Your Community',
@@ -46,14 +49,16 @@ const translations = {
     'item.category': 'Category',
     'item.condition': 'Condition',
     'item.location': 'Location',
-    'item.cannotMessageSelf': 'You cannot message yourself',
+    'item.cannotMessageSelf': 'This is already yours',
 
     // List Item
     'editItem.title': 'Share an Item',
     'editItem.name': 'Edit Item',
     'editItem.itemName': 'Item Name',
     'editItem.itemNamePlaceholder': 'Enter the name of your item...',
+    'editItem.enterName': 'Enter the item name...',
     'editItem.description': 'Description',
+    'editItem.enterDescription': 'Enter a description for your item...',
     'editItem.descriptionPlaceholder': 'Describe your item, its condition, and any details...',
     'editItem.category': 'Category',
     'editItem.condition': 'Condition',
@@ -80,6 +85,7 @@ const translations = {
     'editItem.aiMagicWarningCancel': 'Cancel',
     'editItem.aiMagicWarningContinue': 'Continue',
     'editItem.aiMagicImage': 'Generate Image',
+    'editItem.scanIsbn': 'Scan ISBN',
 
     // Categories
     'categories.all': 'All Categories',
@@ -273,12 +279,49 @@ const translations = {
     'editItem.invalidPricingTitle': 'Invalid Pricing',
     'editItem.invalidPricingDescription':
       'Please set either a sale price or a rental price, not both.',
+    'editItem.updateSuccessTitle': 'Item Updated',
+    'editItem.updateSuccessDescription': 'Your item has been updated successfully.',
+    'editItem.updateErrorTitle': 'Update Failed',
+    'editItem.updateErrorDescription': 'Failed to update item. Please try again.',
+    'editItem.publishSuccessTitle': 'Item Published',
+    'editItem.publishSuccessDescription': 'Your item is now available to the community.',
+    'editItem.isbnUpdateSuccessTitle': 'Book Updated from ISBN',
+    'editItem.isbnUpdateSuccessDescription':
+      'Book details have been fetched and updated from OpenLibrary.',
+    'editItem.isbnUpdateErrorTitle': 'ISBN Update Failed',
+    'editItem.isbnUpdateErrorDescription':
+      'Failed to fetch book data from OpenLibrary. Please try again.',
+    'editItem.images': 'Images',
+    'editItem.editBook': 'Edit Book',
+    'editItem.bookDetails': 'Book Details',
+    'editItem.isbn': 'ISBN',
+    'editItem.enterIsbn': 'Enter ISBN',
+    'editItem.year': 'Publication Year',
+    'editItem.enterYear': 'Enter year',
+    'editItem.topic': 'Topic',
+    'editItem.enterTopic': 'Enter topic or subject',
+    'editItem.authors': 'Authors',
+    'editItem.selectAuthors': 'Select authors',
+    'editItem.genres': 'Genres',
+    'editItem.selectGenres': 'Select genres',
+    'editItem.publisher': 'Publisher',
+    'editItem.selectPublisher': 'Select publisher',
+    'editItem.shelf': 'Shelf',
+    'editItem.selectShelf': 'Select shelf location',
     'rentalPeriod.h': 'Hourly',
     'rentalPeriod.d': 'Daily',
     'rentalPeriod.w': 'Weekly',
     // User labels
     'user.name': 'Name',
     'user.email': 'Email',
+    // Scanner
+    'scanner.open': 'Open scanner',
+    'scanner.title': 'Scan Barcode',
+    'scanner.description': 'Position the barcode within the camera view to scan',
+    'scanner.usingNative': 'Using native BarcodeDetector',
+    'scanner.usingPolyfill': 'Using barcode-detector polyfill',
+    'scanner.initializingCamera': 'Initializing camera...',
+    'scanner.detected': 'Detected',
   },
   de: {
     // Header
@@ -289,6 +332,9 @@ const translations = {
     'header.myItems': 'Meine Artikel',
     'header.myBookings': 'Meine Buchungen',
     'header.signOut': 'Abmelden',
+    'header.theme': 'Design',
+    'header.light': 'Hell',
+    'header.dark': 'Dunkel',
 
     // Hero Section
     'hero.title': 'Teilen & Entdecken in deiner Community',
@@ -315,18 +361,20 @@ const translations = {
     'item.category': 'Kategorie',
     'item.condition': 'Zustand',
     'item.location': 'Ort',
-    'item.cannotMessageSelf': 'Sie können sich nicht selbst eine Nachricht senden',
+    'item.cannotMessageSelf': 'Der Artikel gehört schon dir',
 
     // List Item
     'editItem.title': 'Artikel teilen',
     'editItem.name': 'Artikel bearbeiten',
     'editItem.itemName': 'Artikelname',
     'editItem.itemNamePlaceholder': 'Gib den Namen deines Artikels ein...',
+    'editItem.enterName': 'Artikelnamen eingeben...',
     'editItem.description': 'Beschreibung',
     'editItem.saleDisablesRental':
       'Wenn du einen Verkaufspreis setzt, ist der Mietpreis deaktiviert',
     'editItem.rentalDisablesSale':
       'Wenn du einen Mietpreis setzt, ist der Verkaufspreis deaktiviert',
+    'editItem.enterDescription': 'Beschreibung für den Artikel...',
     'editItem.descriptionPlaceholder':
       'Beschreibe deinen Artikel, seinen Zustand und weitere Details...',
     'editItem.category': 'Kategorie',
@@ -354,6 +402,7 @@ const translations = {
     'editItem.aiMagicWarningCancel': 'Abbrechen',
     'editItem.aiMagicWarningContinue': 'Fortfahren',
     'editItem.aiMagicImage': 'Bild generieren',
+    'editItem.scanIsbn': 'ISBN scannen',
 
     // Categories
     'categories.all': 'Alle Kategorien',
@@ -474,7 +523,7 @@ const translations = {
     'bookings.itemId': 'Artikel-ID',
     'bookings.requestFrom': 'Anfrage von',
     'bookings.requestTo': 'Anfrage an',
-    'bookings.offerAmount': 'Angebotsbetrag',
+    'bookings.offerAmount': 'Angebot',
     'bookings.counterOffer': 'Gegenangebot',
     'bookings.rentalPeriod': 'Mietzeitraum',
     'bookings.noDate': 'Kein Datum angegeben',
@@ -493,6 +542,10 @@ const translations = {
     'bookings.editBookingDescription':
       'Bearbeite Mietzeitraum oder angebotenen Preis für diese Buchung.',
     'bookings.update': 'Aktualisieren',
+    'bookings.counterOfferDialogTitle': 'Gegenangebot machen',
+    'bookings.counterOfferDialogDescription':
+      'Gib einen alternativen Preis ein, den du vorschlagen möchtest.',
+    'bookings.counterOfferSubmit': 'Gegenangebot senden',
     'bookings.status.pending': 'Ausstehend',
     'bookings.status.cancelled': 'Storniert',
     'bookings.status.confirmed': 'Bestätigt',
@@ -545,12 +598,50 @@ const translations = {
     'editItem.invalidPricingTitle': 'Ungültige Preisangabe',
     'editItem.invalidPricingDescription':
       'Bitte setze entweder einen Verkaufspreis oder einen Mietpreis, nicht beides.',
+    'editItem.updateSuccessTitle': 'Artikel aktualisiert',
+    'editItem.updateSuccessDescription': 'Dein Artikel wurde erfolgreich aktualisiert.',
+    'editItem.updateErrorTitle': 'Aktualisierung fehlgeschlagen',
+    'editItem.updateErrorDescription':
+      'Artikel konnte nicht aktualisiert werden. Bitte versuche es erneut.',
+    'editItem.publishSuccessTitle': 'Artikel veröffentlicht',
+    'editItem.publishSuccessDescription': 'Dein Artikel ist jetzt für die Community verfügbar.',
+    'editItem.isbnUpdateSuccessTitle': 'Buch von ISBN aktualisiert',
+    'editItem.isbnUpdateSuccessDescription':
+      'Buchdetails wurden von OpenLibrary abgerufen und aktualisiert.',
+    'editItem.isbnUpdateErrorTitle': 'ISBN-Aktualisierung fehlgeschlagen',
+    'editItem.isbnUpdateErrorDescription':
+      'Buchdaten konnten nicht von OpenLibrary abgerufen werden. Bitte versuche es erneut.',
+    'editItem.images': 'Bilder',
+    'editItem.editBook': 'Buch bearbeiten',
+    'editItem.bookDetails': 'Buch Details',
+    'editItem.isbn': 'ISBN',
+    'editItem.enterIsbn': 'ISBN eingeben',
+    'editItem.year': 'Erscheinungsjahr',
+    'editItem.enterYear': 'Jahr eingeben',
+    'editItem.topic': 'Thema',
+    'editItem.enterTopic': 'Thema oder Fachgebiet eingeben',
+    'editItem.authors': 'Autoren',
+    'editItem.selectAuthors': 'Autoren auswählen',
+    'editItem.genres': 'Genres',
+    'editItem.selectGenres': 'Genres auswählen',
+    'editItem.publisher': 'Verlag',
+    'editItem.selectPublisher': 'Verlag auswählen',
+    'editItem.shelf': 'Regal',
+    'editItem.selectShelf': 'Regalstandort auswählen',
     'rentalPeriod.h': 'Stündlich',
     'rentalPeriod.d': 'Täglich',
     'rentalPeriod.w': 'Wöchentlich',
     // User labels
     'user.name': 'Name',
     'user.email': 'E-Mail',
+    // Scanner
+    'scanner.open': 'Scanner öffnen',
+    'scanner.title': 'Barcode scannen',
+    'scanner.description': 'Positioniere den Barcode im Kamerabereich, um zu scannen',
+    'scanner.usingNative': 'Verwendet native BarcodeDetector-API',
+    'scanner.usingPolyfill': 'Verwendet barcode-detector Polyfill',
+    'scanner.initializingCamera': 'Kamera wird initialisiert...',
+    'scanner.detected': 'Erkannt',
   },
 };
 

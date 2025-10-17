@@ -30,12 +30,12 @@ def notify_new_message(sender, instance: Message, created, **kwargs):
         send_message_notification(
             instance.booking.user_id,  # type: ignore[union-attr]
             message=instance.message,
-            booking_uuid=str(instance.booking.uuid),
+            booking_uuid=str(instance.booking.id),
         )
         logger.info(
             "Sent new message notification to user %s for message %s",
             instance.booking.user.username,
-            instance.uuid,
+            instance.pk,
         )
     else:
         # Send notification to each user with change permission (except the sender)
@@ -44,12 +44,12 @@ def notify_new_message(sender, instance: Message, created, **kwargs):
                 send_message_notification(
                     user.id,  # type: ignore[union-attr]
                     message=instance.message,
-                    booking_uuid=str(instance.booking.uuid),
+                    booking_uuid=str(instance.booking.id),
                 )
                 logger.info(
                     "Sent new message notification to user %s for message %s",
                     getattr(user, "username", str(user)),
-                    instance.uuid,
+                    instance.pk,
                 )
 
 
@@ -77,5 +77,5 @@ def notify_new_booking(sender, instance: Booking, created, **kwargs):
             logger.info(
                 "Sent new booking notification to user %s for booking %s",
                 getattr(user, "username", str(user)),
-                instance.uuid,
+                instance.pk,
             )

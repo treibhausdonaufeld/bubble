@@ -1,3 +1,22 @@
+x-backend: &backend
+  build:
+    context: ./backend/
+    dockerfile: Dockerfile
+    target: dev
+  image: bubble-backend
+  restart: unless-stopped
+  depends_on:
+    - postgres
+    - redis
+    - mailpit
+  volumes:
+    - ./backend:/app:z
+  env_file:
+    - ./backend/.env-docker.local
+  environment:
+    - GEMINI_API_KEY=${GEMINI_API_KEY:-not_set}
+    - FRONTEND_URL=http://localhost:8080
+
 volumes:
   bubble_local_postgres_data: {}
   bubble_local_redis_data: {}
@@ -9,54 +28,31 @@ services:
       dockerfile: Dockerfile.dev
     image: bubble-frontend
     environment:
-      - VITE_API_URL=${VITE_API_URL:-http://localhost:8000}
-      - VITE_PROXY_URL=${VITE_PROXY_URL:-http://localhost:8000}
+      - VITE_API_URL=${VITE_API_URL:-}
+      - VITE_PROXY_URL=${VITE_PROXY_URL:-http://backend:8000}
     volumes:
       - ./frontend/src:/app/src:z
     ports:
       - '127.0.0.1:8080:8080'
 
-  backend: &backend
-    build:
-      context: ./backend/
-      dockerfile: Dockerfile
-    command: sh -c "uv sync && python3 manage.py migrate && uvicorn config.asgi:application --host 0.0.0.0 --reload"
-    image: bubble-backend
-    restart: unless-stopped
-    depends_on:
-      - postgres
-      - redis
-      - mailpit
-    volumes:
-      - ./backend:/app:z
-    env_file:
-      - ./backend/.env-docker.local
-    environment:
-      - GEMINI_API_KEY=${GEMINI_API_KEY:-not_set}
-      - FRONTEND_URL=http://localhost:8080
-    ports:
-      - '127.0.0.1:8000:8000'
+  backend:
+    <<: *backend
+    command: sh -c "python3 manage.py migrate && uvicorn config.asgi:application --host 0.0.0.0 --reload"
 
   postgres:
     image: docker.io/pgvector/pgvector:pg17
     restart: always
     volumes:
       - bubble_local_postgres_data:/var/lib/postgresql/data
-    ports:
-      - '127.0.0.1:5432:5432'
     env_file:
       - ./backend/.env-docker.local
 
   mailpit:
     image: docker.io/axllent/mailpit:latest
-    ports:
-      - '127.0.0.1:8025:8025'
 
   redis:
     image: ghcr.io/dragonflydb/dragonfly:latest
     restart: always
-    ports:
-      - '127.0.0.1:6377:6379'
     environment:
       # required to work with django-channels
       # https://github.com/dragonflydb/dragonfly/issues/182#issuecomment-1241624150
@@ -74,17 +70,16 @@ services:
       - postgres
       - mailpit
     ports: []
-    command: /app/.venv/bin/watchfiles --filter python /app/.venv/bin/celery.__main__.main --args '-A config.celery_app worker -l INFO'
+    command: sh -c "watchfiles --filter python 'celery -A config.celery_app worker -l INFO' bubble"
 
   beat:
     <<: *backend
-    image: bubble_local_celerybeat
     depends_on:
       - redis
       - postgres
       - mailpit
     ports: []
-    command: /app/.venv/bin/watchfiles --filter python /app/.venv/bin/celery.__main__.main --args '-A config.celery_app beat -l INFO'
+    command: sh -c "watchfiles --filter python 'celery -A config.celery_app beat -l INFO' bubble"
 
   # flower:
   #   <<: *backend
