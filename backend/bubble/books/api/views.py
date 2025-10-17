@@ -46,7 +46,7 @@ class AuthorViewSet(viewsets.ModelViewSet):
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
     permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
-    lookup_field = "uuid"
+    lookup_field = "id"
     filterset_class = AuthorFilter
     filter_backends = [
         DjangoFilterBackend,
@@ -73,7 +73,7 @@ class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all().select_related("parent_genre")
     serializer_class = GenreSerializer
     permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
-    lookup_field = "uuid"
+    lookup_field = "id"
     filterset_class = GenreFilter
     filter_backends = [
         DjangoFilterBackend,
@@ -100,7 +100,7 @@ class PublisherViewSet(viewsets.ModelViewSet):
     queryset = Publisher.objects.all()
     serializer_class = PublisherSerializer
     permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
-    lookup_field = "uuid"
+    lookup_field = "id"
     filterset_class = PublisherFilter
     filter_backends = [
         DjangoFilterBackend,
@@ -127,7 +127,7 @@ class ShelfViewSet(viewsets.ModelViewSet):
     queryset = Shelf.objects.all()
     serializer_class = ShelfSerializer
     permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
-    lookup_field = "uuid"
+    lookup_field = "id"
     filterset_class = ShelfFilter
     filter_backends = [
         DjangoFilterBackend,
@@ -157,7 +157,7 @@ class BookViewSet(viewsets.ModelViewSet):
 
     serializer_class = BookSerializer
     permission_classes = [DjangoModelPermissions]
-    lookup_field = "uuid"
+    lookup_field = "id"
     filterset_class = BookFilter
     filter_backends = [
         DjangoFilterBackend,
@@ -196,7 +196,7 @@ class BookViewSet(viewsets.ModelViewSet):
             obj = super().get_object()
         except Http404:
             try:
-                item = Item.objects.get(uuid=self.kwargs[lookup_url_kwarg])
+                item = Item.objects.get(id=self.kwargs[lookup_url_kwarg])
                 # Create temporary book instance for response
                 obj = Book(item_ptr_id=item.pk)
                 obj.__dict__.update(item.__dict__)
@@ -227,7 +227,7 @@ class BookViewSet(viewsets.ModelViewSet):
         responses={200: BookSerializer},
     )
     @action(detail=True, methods=["put"])
-    def isbn_update(self, request, uuid=None):
+    def isbn_update(self, request, *args, **kwargs):
         """
         Update book details from OpenLibrary based on ISBN.
 

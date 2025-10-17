@@ -35,7 +35,8 @@ class BookingManager(models.Manager):
 
 
 class Booking(models.Model):
-    uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
     status = models.IntegerField(choices=BookingStatus, default=BookingStatus.PENDING)
     item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="bookings")
     user = models.ForeignKey(
@@ -82,7 +83,7 @@ class Booking(models.Model):
 
 
 class Message(models.Model):
-    uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     booking = models.ForeignKey(
         Booking, on_delete=models.CASCADE, related_name="messages"
     )

@@ -87,3 +87,6 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
             user.save()
 
         return user
+
+
+# class HeadlessAdapter(DefaultHeadlessAdapter):

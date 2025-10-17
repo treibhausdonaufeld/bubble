@@ -26,7 +26,7 @@ class PublicBookingViewSet(viewsets.ReadOnlyModelViewSet):
     Supports filtering via BookingFilter.
     """
 
-    lookup_field = "uuid"
+    lookup_field = "id"
     serializer_class = BookingSerializer
     filter_backends = [
         DjangoFilterBackend,
@@ -89,7 +89,7 @@ class MessageViewSet(viewsets.ModelViewSet):
     to be provided to avoid returning global message lists.
     """
 
-    lookup_field = "uuid"
+    lookup_field = "id"
     queryset = Message.objects.select_related("booking", "sender").all()
     serializer_class = MessageSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]

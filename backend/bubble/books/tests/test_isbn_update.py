@@ -27,7 +27,7 @@ class TestBookViewSetISBNUpdate:
             name="Test Book", isbn="9780980200447", user=self.user
         )
         self.view = BookViewSet.as_view({"put": "isbn_update"})
-        self.url = f"/api/books/{self.book.uuid}/isbn_update/"
+        self.url = f"/api/books/{self.book.id}/isbn_update/"
 
     @patch("bubble.books.services.isbnlib.cover")
     @patch("bubble.books.services.isbnlib.meta")
@@ -46,7 +46,7 @@ class TestBookViewSetISBNUpdate:
 
         request = self.factory.put(self.url, {"isbn": "9780-980200447"})
         force_authenticate(request, user=self.user)
-        response = self.view(request, uuid=str(self.book.uuid))
+        response = self.view(request, id=str(self.book.id))
 
         assert response.status_code == status.HTTP_200_OK
         mock_meta.assert_called_once_with("9780980200447", service="default")
@@ -60,7 +60,7 @@ class TestBookViewSetISBNUpdate:
         self.book.save()
         request = self.factory.put(self.url)
         force_authenticate(request, user=self.user)
-        response = self.view(request, uuid=str(self.book.uuid))
+        response = self.view(request, id=str(self.book.id))
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert (
@@ -74,7 +74,7 @@ class TestBookViewSetISBNUpdate:
         # Provide an ISBN in the request that will be validated
         request = self.factory.put(self.url, {"isbn": "invalid-isbn"})
         force_authenticate(request, user=self.user)
-        response = self.view(request, uuid=str(self.book.uuid))
+        response = self.view(request, id=str(self.book.id))
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "Invalid ISBN format" in str(response.data)
@@ -88,7 +88,7 @@ class TestBookViewSetISBNUpdate:
         # Provide an ISBN in the request
         request = self.factory.put(self.url, {"isbn": "9780980200447"})
         force_authenticate(request, user=self.user)
-        response = self.view(request, uuid=str(self.book.uuid))
+        response = self.view(request, id=str(self.book.id))
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
         assert "No metadata found" in str(response.data)

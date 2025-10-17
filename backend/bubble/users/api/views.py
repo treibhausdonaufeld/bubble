@@ -13,7 +13,6 @@ from .serializers import ProfileSerializer, UserSerializer
 class UserViewSet(RetrieveModelMixin, ListModelMixin, UpdateModelMixin, GenericViewSet):
     serializer_class = UserSerializer
     queryset = User.objects.exclude(is_superuser=True).exclude(username="AnonymousUser")
-    lookup_field = "uuid"
 
     @action(detail=False)
     def me(self, request):

@@ -28,7 +28,7 @@ from .filters import ItemFilter
 class ItemBaseViewSet(viewsets.GenericViewSet):
     """Base viewset with common settings for items."""
 
-    lookup_field = "uuid"
+    lookup_field = "id"
     serializer_class = ItemListSerializer
 
     # Filtering / searching / ordering
@@ -102,7 +102,7 @@ class ItemViewSet(viewsets.ModelViewSet, ItemBaseViewSet):
         return Response({"success": True})
 
     @action(detail=True, methods=["put"])
-    def ai_describe(self, request, uuid=None):
+    def ai_describe(self, request, *args, **kwargs):
         """Ai describe the item and populate fields."""
         item = self.get_object()
 
@@ -110,7 +110,7 @@ class ItemViewSet(viewsets.ModelViewSet, ItemBaseViewSet):
         if not first_image:
             raise ValidationError(_("Item has no images to analyze."))
 
-        analyze_response = analyze_image(first_image.uuid)
+        analyze_response = analyze_image(first_image.id)
 
         item.name = analyze_response.title
         item.description = analyze_response.description
@@ -165,7 +165,7 @@ class ImageViewSet(viewsets.ModelViewSet):
     """
 
     serializer_class = ImageSerializer
-    lookup_field = "uuid"
+    lookup_field = "id"
     ordering = ["item", "ordering"]
 
     # we can use generic permissions here as the queryset limits strictly
@@ -181,9 +181,9 @@ class ImageViewSet(viewsets.ModelViewSet):
         )
 
         # Filter by item if specified
-        item_uuid = self.request.query_params.get("item")
-        if item_uuid is not None:
-            queryset = queryset.filter(item__uuid=item_uuid)
+        item_id = self.request.query_params.get("item")
+        if item_id is not None:
+            queryset = queryset.filter(item__id=item_id)
 
         return queryset
 

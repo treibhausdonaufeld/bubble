@@ -58,6 +58,10 @@ const ItemDetail = () => {
 
   const isOwner = useMemo(() => {
     if (!user || !item) return false;
+    console.log(user.uuid);
+    console.log(item.user === user.id);
+    console.log(item.user);
+
     // The user's ID from the auth hook is a UUID string.
     // The item.user from the Django API is also a UUID string.
     return item.user === user.id;
@@ -241,7 +245,7 @@ const ItemDetail = () => {
                             preselectedEndDate={selectedEndDate}
                             controlledOpen={showBookingDialog}
                             onControlledOpenChange={setShowBookingDialog}
-                            disabled={!user || (isOwner && !!sale_price && !rental_price)}
+                            disabled={!user || (isOwner && !!sale_price)}
                           />
                         </div>
                       </TooltipTrigger>

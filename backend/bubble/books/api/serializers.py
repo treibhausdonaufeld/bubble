@@ -14,13 +14,13 @@ class AuthorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Author
         fields = [
-            "uuid",
+            "id",
             "name",
             "website",
             "bio",
             "books_count",
         ]
-        read_only_fields = ["uuid"]
+        read_only_fields = ["id"]
 
     def get_books_count(self, obj):
         """Get the number of books by this author."""
@@ -33,8 +33,8 @@ class GenreSerializer(serializers.ModelSerializer):
     parent_genre_name = serializers.CharField(
         source="parent_genre.name", read_only=True, allow_null=True
     )
-    parent_genre_uuid = serializers.UUIDField(
-        source="parent_genre.uuid", read_only=True, allow_null=True
+    parent_genre_id = serializers.UUIDField(
+        source="parent_genre.id", read_only=True, allow_null=True
     )
     hierarchy = serializers.CharField(source="get_hierarchy", read_only=True)
     books_count = serializers.SerializerMethodField()
@@ -42,16 +42,16 @@ class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
         fields = [
-            "uuid",
+            "id",
             "name",
             "description",
             "parent_genre",
             "parent_genre_name",
-            "parent_genre_uuid",
+            "parent_genre_id",
             "hierarchy",
             "books_count",
         ]
-        read_only_fields = ["uuid"]
+        read_only_fields = ["id"]
 
     def get_books_count(self, obj):
         """Get the number of books in this genre."""
@@ -66,12 +66,12 @@ class PublisherSerializer(serializers.ModelSerializer):
     class Meta:
         model = Publisher
         fields = [
-            "uuid",
+            "id",
             "name",
             "description",
             "books_count",
         ]
-        read_only_fields = ["uuid"]
+        read_only_fields = ["id"]
 
     def get_books_count(self, obj):
         """Get the number of books from this publisher."""
@@ -86,12 +86,12 @@ class ShelfSerializer(serializers.ModelSerializer):
     class Meta:
         model = Shelf
         fields = [
-            "uuid",
+            "id",
             "name",
             "description",
             "books_count",
         ]
-        read_only_fields = ["uuid"]
+        read_only_fields = ["id"]
 
     def get_books_count(self, obj):
         """Get the number of books on this shelf."""
@@ -108,16 +108,15 @@ class BookListSerializer(ItemListSerializer):
 
     class Meta(ItemListSerializer.Meta):
         model = Book
-        exclude = ["id"]
+        fields = "__all__"
 
 
 class BookSerializer(ItemSerializer):
     """Serializer for Book detail view."""
 
     authors = AuthorSerializer(many=True, read_only=True)
-    author_uuids = serializers.SlugRelatedField(
+    author_ids = serializers.PrimaryKeyRelatedField(
         many=True,
-        slug_field="uuid",
         queryset=Author.objects.all(),
         write_only=True,
         source="authors",
@@ -125,9 +124,8 @@ class BookSerializer(ItemSerializer):
     )
 
     genres = GenreSerializer(many=True, read_only=True)
-    genre_uuids = serializers.SlugRelatedField(
+    genre_ids = serializers.PrimaryKeyRelatedField(
         many=True,
-        slug_field="uuid",
         queryset=Genre.objects.all(),
         write_only=True,
         source="genres",
@@ -135,8 +133,7 @@ class BookSerializer(ItemSerializer):
     )
 
     verlag = PublisherSerializer(read_only=True)
-    verlag_uuid = serializers.SlugRelatedField(
-        slug_field="uuid",
+    verlag_id = serializers.PrimaryKeyRelatedField(
         queryset=Publisher.objects.all(),
         write_only=True,
         source="verlag",
@@ -145,8 +142,7 @@ class BookSerializer(ItemSerializer):
     )
 
     shelf = ShelfSerializer(read_only=True)
-    shelf_uuid = serializers.SlugRelatedField(
-        slug_field="uuid",
+    shelf_id = serializers.PrimaryKeyRelatedField(
         queryset=Shelf.objects.all(),
         write_only=True,
         source="shelf",
@@ -156,4 +152,4 @@ class BookSerializer(ItemSerializer):
 
     class Meta(ItemSerializer.Meta):
         model = Book
-        exclude = ["id"]
+        fields = "__all__"

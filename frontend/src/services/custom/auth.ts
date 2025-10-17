@@ -51,6 +51,7 @@ export interface SessionResponse {
   data: {
     user: {
       id: number;
+      uuid: string;
       email: string;
       username: string;
       display: string;

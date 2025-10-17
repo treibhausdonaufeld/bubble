@@ -18,8 +18,7 @@ class User(AbstractUser):
     check forms.SignupForm and forms.SocialSignupForms accordingly.
     """
 
-    # First and last name do not cover name patterns around the globe
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    id = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
 
     name = CharField(_("Name of User"), blank=True, max_length=255)
     first_name = None  # type: ignore[assignment]
