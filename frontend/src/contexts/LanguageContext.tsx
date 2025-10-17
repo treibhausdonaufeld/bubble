@@ -41,6 +41,20 @@ const translations = {
     'auth.noAccount': "Don't have an account?",
     'auth.hasAccount': 'Already have an account?',
     'auth.loginRequired': 'Please log in to book or buy this item',
+    // Auth page specific
+    'auth.backToHome': 'Back to Home',
+    'auth.welcomeTitle': 'Welcome to Bubble',
+    'auth.signInSubtitle': 'Sign in to your account',
+    'auth.orContinueWith': 'Or continue with',
+    'auth.usernameOrEmail': 'Username or Email',
+    'auth.enterUsernameOrEmail': 'Enter your username or email',
+    'auth.enterPassword': 'Enter your password',
+    'auth.signingIn': 'Signing in...',
+    'auth.noAccountContact': "Don't have an account? Contact your administrator.",
+    'auth.welcomeBackTitle': 'Welcome back!',
+    'auth.loggedInAs': 'Logged in successfully as',
+    'auth.loginFailed': 'Login failed. Please check your credentials.',
+    'auth.unexpectedError': 'An unexpected error occurred. Please try again.',
 
     // Items
     'item.available': 'Available',
@@ -359,6 +373,20 @@ const translations = {
     'auth.noAccount': 'Noch kein Konto?',
     'auth.hasAccount': 'Bereits ein Konto?',
     'auth.loginRequired': 'Bitte melden Sie sich an, um diesen Artikel zu buchen oder zu kaufen',
+    // Auth page specific
+    'auth.backToHome': 'Zurück zur Startseite',
+    'auth.welcomeTitle': 'Willkommen bei Bubble',
+    'auth.signInSubtitle': 'Melden Sie sich bei Ihrem Konto an',
+    'auth.orContinueWith': 'Oder fortfahren mit',
+    'auth.usernameOrEmail': 'Benutzername oder E-Mail',
+    'auth.enterUsernameOrEmail': 'Gib deinen Benutzernamen oder deine E-Mail ein',
+    'auth.enterPassword': 'Gib dein Passwort ein',
+    'auth.signingIn': 'Anmeldung...',
+    'auth.noAccountContact': 'Noch kein Konto? Kontaktiere deinen Administrator.',
+    'auth.welcomeBackTitle': 'Willkommen zurück!',
+    'auth.loggedInAs': 'Erfolgreich eingeloggt als',
+    'auth.loginFailed': 'Anmeldung fehlgeschlagen. Bitte überprüfen Sie Ihre Zugangsdaten.',
+    'auth.unexpectedError': 'Ein unerwarteter Fehler ist aufgetreten. Bitte versuche es erneut.',
 
     // Items
     'item.available': 'Verfügbar',

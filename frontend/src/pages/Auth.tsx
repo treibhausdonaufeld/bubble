@@ -55,20 +55,18 @@ const Auth = () => {
         await refreshAuth();
 
         toast({
-          title: 'Welcome back!',
-          description: `Logged in successfully as ${response.data.user.username}`,
+          title: t('auth.welcomeBackTitle'),
+          description: `${t('auth.loggedInAs')} ${response.data.user.username}`,
         });
 
         // Use navigate for proper SPA routing instead of hard redirect
         navigate('/');
       } else {
-        setError('Login failed. Please check your credentials.');
+        setError(t('auth.loginFailed'));
       }
     } catch (err) {
       console.error('Login error:', err);
-      setError(
-        err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.',
-      );
+      setError(err instanceof Error ? err.message : t('auth.unexpectedError'));
     } finally {
       setIsLoading(false);
     }
@@ -84,16 +82,16 @@ const Auth = () => {
             className="mb-4 text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Home
+            {t('auth.backToHome')}
           </Button>
         </div>
 
         <Card className="shadow-lg border-0 bg-card/50 backdrop-blur-sm">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
-              Welcome to Bubble
+              {t('auth.welcomeTitle')}
             </CardTitle>
-            <p className="text-muted-foreground mt-2">Sign in to your account</p>
+            <p className="text-muted-foreground mt-2">{t('auth.signInSubtitle')}</p>
           </CardHeader>
 
           <CardContent className="space-y-6">
@@ -108,7 +106,9 @@ const Auth = () => {
                 <span className="w-full border-t" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
+                <span className="bg-card px-2 text-muted-foreground">
+                  {t('auth.orContinueWith')}
+                </span>
               </div>
             </div>
 
@@ -123,21 +123,21 @@ const Auth = () => {
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="username">Username or Email</Label>
+                <Label htmlFor="username">{t('auth.usernameOrEmail')}</Label>
                 <Input
                   id="username"
                   name="username"
                   type="text"
                   value={loginData.username}
                   onChange={e => setLoginData({ ...loginData, username: e.target.value })}
-                  placeholder="Enter your username or email"
+                  placeholder={t('auth.enterUsernameOrEmail')}
                   required
                   disabled={isLoading}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">{t('auth.password')}</Label>
                 <div className="relative">
                   <Input
                     id="password"
@@ -145,7 +145,7 @@ const Auth = () => {
                     type={showPassword ? 'text' : 'password'}
                     value={loginData.password}
                     onChange={e => setLoginData({ ...loginData, password: e.target.value })}
-                    placeholder="Enter your password"
+                    placeholder={t('auth.enterPassword')}
                     required
                     disabled={isLoading}
                     className="pr-10"
@@ -169,16 +169,16 @@ const Auth = () => {
                 {isLoading ? (
                   <>
                     <Loader className="w-4 h-4 mr-2 animate-spin" />
-                    Signing in...
+                    {t('auth.signingIn')}
                   </>
                 ) : (
-                  'Sign In'
+                  t('auth.signIn')
                 )}
               </Button>
             </form>
 
             <div className="text-center text-sm text-muted-foreground">
-              <p>Don't have an account? Contact your administrator.</p>
+              <p>{t('auth.noAccountContact')}</p>
             </div>
           </CardContent>
         </Card>
