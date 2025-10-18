@@ -144,6 +144,7 @@ const Index = () => {
                     condition={
                       item.condition === 0 ? 'new' : item.condition === 1 ? 'used' : 'broken'
                     }
+                    status={item.status}
                     listingType="sell" // Django API doesn't have listing_type in list view, default to sell
                     salePrice={item.sale_price ? parseFloat(item.sale_price) : undefined}
                     salePriceCurrency={item.sale_price_currency}

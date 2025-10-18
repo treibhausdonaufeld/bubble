@@ -6,6 +6,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/hooks/useAuth';
 import { formatPrice } from '@/lib/currency';
 import { cn } from '@/lib/utils';
+import { Status402Enum } from '@/services/django';
 import { Clock, ShoppingCart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -30,6 +31,7 @@ interface ItemCardProps {
   isFavorited?: boolean;
   ownerId?: string;
   owner?: string;
+  status?: Status402Enum | null;
 }
 
 export const ItemCard = ({
@@ -51,6 +53,7 @@ export const ItemCard = ({
   createdAt,
   isFavorited = false,
   owner,
+  status,
 }: ItemCardProps) => {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -80,6 +83,24 @@ export const ItemCard = ({
     both: 'bg-gradient-warm text-white',
   };
 
+  const statusLabels: Record<number, string> = {
+    0: 'draft',
+    1: 'processing',
+    2: 'available',
+    3: 'reserved',
+    4: 'rented',
+    5: 'sold',
+  };
+
+  const statusColors: Record<number, string> = {
+    0: 'bg-muted text-muted-foreground',
+    1: 'bg-warning text-warning-foreground',
+    2: 'bg-success text-success-foreground',
+    3: 'bg-secondary text-secondary-foreground',
+    4: 'bg-warning text-destructive-foreground',
+    5: 'bg-destructive text-destructive-foreground',
+  };
+
   return (
     <Card
       className="group overflow-hidden transition-all duration-300 hover:shadow-strong hover:scale-105 border-border animate-fade-in cursor-pointer"
@@ -104,18 +125,10 @@ export const ItemCard = ({
 
         {/* Overlay badges */}
         <div className="absolute top-3 left-3 flex gap-2">
-          <Badge className={cn(conditionColors[condition], 'text-xs shadow-medium')}>
-            {t(`condition.${condition}`)}
-          </Badge>
-          {/* Sale / Rent badge */}
-          {salePrice ? (
-            <Badge className={cn(typeColors['sell'], 'text-xs shadow-medium')}>
-              {t('item.price.sale')}
-            </Badge>
-          ) : null}
-          {rentalPrice ? (
-            <Badge className={cn(typeColors['rent'], 'text-xs shadow-medium')}>
-              {t('item.price.rent')}
+          {/* Status badge (shows available/reserved/sold/...) */}
+          {typeof status !== 'undefined' && status !== null ? (
+            <Badge className={cn(statusColors[status], 'text-xs shadow-medium')}>
+              {t(`status.${statusLabels[status]}`)}
             </Badge>
           ) : null}
         </div>
