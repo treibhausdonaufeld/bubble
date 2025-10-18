@@ -1,10 +1,5 @@
-import logging
-
-import sentry_sdk
-from sentry_sdk.integrations.celery import CeleryIntegration
-from sentry_sdk.integrations.django import DjangoIntegration
-from sentry_sdk.integrations.logging import LoggingIntegration
-from sentry_sdk.integrations.redis import RedisIntegration
+import highlight_io
+from highlight_io.integrations.django import DjangoIntegration
 
 from .base import *  # noqa: F403
 from .base import (
@@ -123,29 +118,6 @@ ANYMAIL = {
     "MAILGUN_API_URL": env("MAILGUN_API_URL", default="https://api.mailgun.net/v3"),
 }
 
-# Sentry
-# ------------------------------------------------------------------------------
-SENTRY_DSN = env("SENTRY_DSN", default="")
-SENTRY_LOG_LEVEL = env.int("DJANGO_SENTRY_LOG_LEVEL", logging.INFO)
-
-if SENTRY_DSN:
-    sentry_logging = LoggingIntegration(
-        level=SENTRY_LOG_LEVEL,  # Capture info and above as breadcrumbs
-        event_level=logging.ERROR,  # Send errors as events
-    )
-    integrations = [
-        sentry_logging,
-        DjangoIntegration(),
-        CeleryIntegration(),
-        RedisIntegration(),
-    ]
-    sentry_sdk.init(
-        dsn=SENTRY_DSN,
-        integrations=integrations,
-        environment=env("SENTRY_ENVIRONMENT", default="production"),
-        traces_sample_rate=env.float("SENTRY_TRACES_SAMPLE_RATE", default=0.0),
-    )
-
 # django-rest-framework
 # -------------------------------------------------------------------------------
 # Tools that generate code samples can use SERVERS to point to the correct domain
@@ -157,3 +129,15 @@ SPECTACULAR_SETTINGS["SERVERS"] = [
 ]
 # Your stuff...
 # ------------------------------------------------------------------------------
+
+
+# `instrument_logging=True` sets up logging instrumentation.
+# if you do not want to send logs or are using `loguru`, pass `instrument_logging=False`
+H = highlight_io.H(
+    "5g5y9yle",
+    integrations=[DjangoIntegration()],
+    instrument_logging=True,
+    service_name="bubble-backend",
+    service_version="git-sha",
+    environment="production",
+)

@@ -6,6 +6,7 @@ import { AuthProvider } from '@/hooks/useAuth';
 import { NotificationProvider } from '@/providers/NotificationProvider';
 import { ThemeProvider } from '@/providers/theme-provider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { H } from 'highlight.run';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { configureApiClient } from './config/apiClient';
 import Auth from './pages/Auth';
@@ -18,6 +19,18 @@ import ItemDetail from './pages/ItemDetail';
 import MyItems from './pages/MyItems';
 import NotFound from './pages/NotFound';
 import Profile from './pages/Profile';
+H.init('5g5y9yle', {
+  serviceName: 'bubble-frontend',
+  tracingOrigins: true,
+  networkRecording: {
+    enabled: true,
+    recordHeadersAndBody: true,
+    urlBlocklist: [
+      // insert full or partial urls that you don't want to record here
+      'https://auth.treibhausdonaufeld.at',
+    ],
+  },
+});
 
 const queryClient = new QueryClient();
 
