@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 import { Status402Enum } from '@/services/django';
 import { Clock, ShoppingCart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { getStatusColor, getStatusLabel } from './status';
 
 interface ItemCardProps {
   id: string;
@@ -83,24 +84,6 @@ export const ItemCard = ({
     both: 'bg-gradient-warm text-white',
   };
 
-  const statusLabels: Record<number, string> = {
-    0: 'draft',
-    1: 'processing',
-    2: 'available',
-    3: 'reserved',
-    4: 'rented',
-    5: 'sold',
-  };
-
-  const statusColors: Record<number, string> = {
-    0: 'bg-muted text-muted-foreground',
-    1: 'bg-warning text-warning-foreground',
-    2: 'bg-success text-success-foreground',
-    3: 'bg-secondary text-secondary-foreground',
-    4: 'bg-warning text-destructive-foreground',
-    5: 'bg-destructive text-destructive-foreground',
-  };
-
   return (
     <Card
       className="group overflow-hidden transition-all duration-300 hover:shadow-strong hover:scale-105 border-border animate-fade-in cursor-pointer"
@@ -127,23 +110,11 @@ export const ItemCard = ({
         <div className="absolute top-3 left-3 flex gap-2">
           {/* Status badge (shows available/reserved/sold/...) */}
           {typeof status !== 'undefined' && status !== null ? (
-            <Badge className={cn(statusColors[status], 'text-xs shadow-medium')}>
-              {t(`status.${statusLabels[status]}`)}
+            <Badge className={cn(getStatusColor(status), 'text-xs shadow-medium')}>
+              {getStatusLabel(status) ? t(`status.${getStatusLabel(status)}`) : ''}
             </Badge>
           ) : null}
         </div>
-
-        {/* Favorite button */}
-        {/* <Button
-          variant="ghost"
-          size="icon"
-          className="absolute top-3 right-3 h-8 w-8 rounded-full bg-background/80 backdrop-blur-xs hover:bg-background/90 transition-all duration-300"
-        >
-          <Heart className={cn(
-            "h-4 w-4 transition-colors",
-            isFavorited ? "fill-destructive text-destructive" : "text-muted-foreground"
-          )} />
-        </Button> */}
 
         {/* Price overlay */}
         <div className="absolute bottom-3 right-3">

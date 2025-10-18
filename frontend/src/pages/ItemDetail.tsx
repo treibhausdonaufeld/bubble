@@ -1,5 +1,6 @@
 import { BookingDialog } from '@/components/items/BookingDialog';
 import { RentalCalendar } from '@/components/items/RentalCalendar';
+import { getStatusColor, getStatusLabel } from '@/components/items/status';
 import { Header } from '@/components/layout/Header';
 import {
   AlertDialog,
@@ -21,6 +22,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useItem } from '@/hooks/useItem';
 import { useDeleteItem } from '@/hooks/useMyItems';
 import { formatPrice } from '@/lib/currency';
+import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
 import useEmblaCarousel from 'embla-carousel-react';
 import { ArrowLeft, Calendar, ChevronLeft, ChevronRight, Edit3, Trash2, X } from 'lucide-react';
@@ -264,6 +266,11 @@ const ItemDetail = () => {
               <div className="flex flex-wrap items-center gap-4">
                 <Badge>{t(`categories.${category}`)}</Badge>
                 <Badge variant="secondary">{conditionMap[condition]}</Badge>
+                {typeof item.status !== 'undefined' && item.status !== null && (
+                  <Badge className={cn(getStatusColor(item.status), 'text-xs')}>
+                    {getStatusLabel(item.status) ? t(`status.${getStatusLabel(item.status)}`) : ''}
+                  </Badge>
+                )}
               </div>
               <h1 className="text-3xl font-bold">{name}</h1>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -300,13 +307,13 @@ const ItemDetail = () => {
                 <>
                   <Button asChild variant="outline">
                     <Link to={`/edit-item/${item.id}`}>
-                      <Edit3 className="mr-2 h-4 w-4" /> {t('common.edit')}
+                      <Edit3 className="mr-2 h-4 w-4" />
                     </Link>
                   </Button>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button variant="destructive">
-                        <Trash2 className="mr-2 h-4 w-4" /> Delete
+                        <Trash2 className="mr-2 h-4 w-4" />
                       </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
