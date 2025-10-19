@@ -476,6 +476,32 @@ const Bookings = () => {
                           {user?.username === selectedBooking.user?.username ? (
                             // Booking requester can edit offer and cancel
                             <>
+                              {/* Accept counteroffer button for booking requester when counter_offer differs from offer */}
+                              {selectedBooking.counter_offer &&
+                                selectedBooking.counter_offer !== selectedBooking.offer && (
+                                  <Button
+                                    size="sm"
+                                    className="bg-emerald-500 hover:bg-emerald-600"
+                                    onClick={async () => {
+                                      try {
+                                        await updateBookingMutation.mutateAsync({
+                                          id: selectedBooking.id,
+                                          data: {
+                                            offer: selectedBooking.counter_offer,
+                                          },
+                                        });
+                                      } catch (error) {
+                                        console.error('Error accepting counteroffer:', error);
+                                      }
+                                    }}
+                                    disabled={updateBookingMutation.isPending}
+                                  >
+                                    {updateBookingMutation.isPending
+                                      ? t('common.submitting')
+                                      : t('bookings.acceptCounterOffer')}
+                                  </Button>
+                                )}
+
                               <BookingEditDialog booking={selectedBooking} />
                               <Button
                                 size="sm"
@@ -501,6 +527,7 @@ const Bookings = () => {
                             // Item owner can accept or reject
                             <>
                               <BookingCounterOfferDialog booking={selectedBooking} />
+
                               <Button
                                 size="sm"
                                 className="bg-green-500 hover:bg-green-600"
