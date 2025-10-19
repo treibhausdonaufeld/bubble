@@ -41,9 +41,11 @@ def check_bookings_active(self) -> None:
     updated = Item.objects.filter(
         id__in=active_item_ids_qs,
         status__in=[ItemStatus.AVAILABLE, ItemStatus.RESERVED],
-    ).update(status=ItemStatus.RENTED)
-    if updated:
-        logger.info("Marked %d items as RENTED (active bookings)", updated)
+    )
+    for item in updated:
+        item.status = ItemStatus.RENTED
+        item.save(update_fields=["status"])
+        logger.debug("Marked item %d as RENTED", item.id)
 
     # Annotate with active_booking_count per item (uses related_name 'bookings')
     active_bookings = Booking.objects.filter(active_q, item=OuterRef("pk"))
@@ -51,6 +53,7 @@ def check_bookings_active(self) -> None:
         ~Exists(active_bookings)
     )
 
-    freed = items_to_free_qs.update(status=ItemStatus.AVAILABLE)
-    if freed:
-        logger.info("Marked %d items as AVAILABLE (no more active bookings)", freed)
+    for item in items_to_free_qs:
+        item.status = ItemStatus.AVAILABLE
+        item.save(update_fields=["status"])
+        logger.debug("Item %d marked as AVAILABLE", item.id)
