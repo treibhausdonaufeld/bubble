@@ -15,7 +15,17 @@ import { useUnreadMessages } from '@/hooks/useMessages';
 
 import { cn } from '@/lib/utils';
 import { useTheme } from '@/providers/theme-provider';
-import { LogOut, Moon, NotebookPen, Package, Plus, Search, Sun, User } from 'lucide-react';
+import {
+  Handshake,
+  Library,
+  LogOut,
+  Moon,
+  Plus,
+  Search,
+  SquareLibrary,
+  Sun,
+  User,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -117,12 +127,14 @@ export const Header = () => {
                 {/* Bookings */}
                 <Button
                   variant="ghost"
-                  size="icon"
+                  size="sm"
                   onClick={() => navigate('/bookings')}
                   className="hover:scale-110 transition-transform relative"
                   title={t('header.myBookings')}
                 >
-                  <NotebookPen className="h-5 w-5" />
+                  <Handshake className="h-5 w-5" />
+                  <span className="hidden sm:inline">Nachrichten</span>
+
                   {unreadCount > 0 && (
                     <Badge
                       variant="destructive"
@@ -136,12 +148,13 @@ export const Header = () => {
                 {/* My Items */}
                 <Button
                   variant="ghost"
-                  size="icon"
+                  size="sm"
                   onClick={() => navigate('/my-items')}
-                  className="hover:scale-110 transition-transform"
+                  className="gap-2"
                   title={t('header.myItems')}
                 >
-                  <Package className="h-5 w-5" />
+                  <Library className="h-5 w-5" />
+                  <span className="hidden sm:inline">Artikel</span>
                 </Button>
 
                 {/* Add Item */}
