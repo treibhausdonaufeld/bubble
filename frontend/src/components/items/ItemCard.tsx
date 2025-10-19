@@ -120,12 +120,12 @@ export const ItemCard = ({
         {/* Price overlay */}
         <div className="absolute bottom-3 right-3">
           <div className="rounded-lg bg-background/90 backdrop-blur-xs px-3 py-1 shadow-medium">
-            {salePrice && (
+            {salePrice !== undefined && (
               <div className="flex items-center gap-1 text-sm font-semibold">
                 {formatPrice(salePrice, salePriceCurrency)}
               </div>
             )}
-            {rentalPrice && (
+            {rentalPrice !== undefined && (
               <div className="flex items-center gap-1 text-sm font-semibold">
                 {formatPrice(rentalPrice, rentalPriceCurrency)} {t('time.perHour')}
               </div>
