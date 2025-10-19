@@ -39,29 +39,21 @@ def check_bookings_active(self) -> None:
     )
     # Set items that are AVAILABLE -> RENTED
     updated = Item.objects.filter(
-        id__in=active_item_ids_qs, status=ItemStatus.AVAILABLE
+        id__in=active_item_ids_qs,
+        status__in=[ItemStatus.AVAILABLE, ItemStatus.RESERVED],
     ).update(status=ItemStatus.RENTED)
     if updated:
         logger.info("Marked %d items as RENTED (active bookings)", updated)
 
     # Now handle bookings that ended (confirmed bookings with time_to < now)
-    ended_q = (
-        Q(status=BookingStatus.CONFIRMED)
-        & Q(time_to__isnull=False)
-        & Q(time_to__lt=now)
-    )
-
+    ended_q = Q(status=BookingStatus.CONFIRMED) & Q(time_to__lt=now)
     ended_item_ids_qs = Booking.objects.filter(ended_q).values_list(
         "item_id", flat=True
     )
 
-    # Among ended items, find those that still have an active confirmed booking
-    still_active_item_ids_qs = Booking.objects.filter(
-        Q(item_id__in=ended_item_ids_qs) & active_q
-    ).values_list("item_id", flat=True)
-
     freed = Item.objects.filter(
-        id__in=still_active_item_ids_qs, status=ItemStatus.RENTED
+        id__in=ended_item_ids_qs,
+        status=ItemStatus.RENTED,
     ).update(status=ItemStatus.AVAILABLE)
     if freed:
         logger.info("Marked %d items as AVAILABLE (no more active bookings)", freed)

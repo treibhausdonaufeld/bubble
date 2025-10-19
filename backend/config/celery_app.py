@@ -14,19 +14,6 @@ app = Celery("bubble")
 #   should have a `CELERY_` prefix.
 app.config_from_object("django.conf:settings", namespace="CELERY")
 
-# Periodic tasks schedule
-# Run bookings.check_bookings_active every 10 minutes to reconcile item statuses
-app.conf.beat_schedule = app.conf.get("beat_schedule", {})
-app.conf.beat_schedule.update(
-    {
-        "bookings.check_active_10min": {
-            "task": "bubble.bookings.tasks.check_bookings_active",
-            "schedule": 600.0,  # every 10 minutes
-            "options": {"queue": "default"},
-        }
-    }
-)
-
 
 @setup_logging.connect
 def config_loggers(*args, **kwargs):
