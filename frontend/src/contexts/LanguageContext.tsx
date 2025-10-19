@@ -217,6 +217,9 @@ const translations = {
     'booking.errorCreate': 'Failed to create booking request. Please try again.',
     'booking.successUpdated': 'Booking updated successfully!',
     'booking.errorUpdate': 'Failed to update booking. Please try again.',
+    'bookings.acceptWarningTitle': 'Confirm acceptance',
+    'bookings.acceptWarningDescription':
+      'You are accepting an offer of {amount}. This will be finalized when the booking is confirmed.',
 
     // Calendar
     'calendar.selectRentalPeriod': 'Select Rental Period',
@@ -574,6 +577,9 @@ const translations = {
       'Erstellen der Buchungsanfrage fehlgeschlagen. Bitte versuche es erneut.',
     'booking.successUpdated': 'Buchung erfolgreich aktualisiert!',
     'booking.errorUpdate': 'Aktualisierung der Buchung fehlgeschlagen. Bitte versuche es erneut.',
+    'bookings.acceptWarningTitle': 'Bestätigung erforderlich',
+    'bookings.acceptWarningDescription':
+      'Du akzeptierst ein Angebot in Höhe von {amount}. Dies wird bei Bestätigung der Buchung endgültig.',
 
     // Calendar
     'calendar.selectRentalPeriod': 'Mietzeitraum auswählen',
