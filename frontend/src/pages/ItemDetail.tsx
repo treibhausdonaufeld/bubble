@@ -83,7 +83,7 @@ const ItemDetail = () => {
       } catch {
         // ignore
       }
-      //history.replaceState(null, '', location.pathname + location.search);
+      history.replaceState(null, '', location.pathname + location.search);
     }
   }, [location.hash]);
 

@@ -163,9 +163,8 @@ export const ItemCard = ({
             <TooltipTrigger asChild>
               <div className="flex flex-1 gap-2">
                 {(() => {
-                  const isBuyOnly = !!salePrice && !rentalPrice;
                   const buyingAllowed = status === 2 || status === 3; // 2 = available, 3 = reserved
-                  const isRentable = !!rentalPrice;
+                  const isRentable = rentalPrice !== undefined && rentalPrice !== null;
 
                   if (isRentable) {
                     // For rentals, navigate to item detail and open/scroll to the booking calendar
@@ -198,10 +197,10 @@ export const ItemCard = ({
                       rentalPriceCurrency={rentalPriceCurrency || undefined}
                       buttonSize="sm"
                       buttonClassName="w-full"
-                      triggerLabel={
-                        salePrice && !rentalPrice ? t('itemDetail.buyNow') : t('booking.bookNow')
+                      triggerLabel={isRentable ? t('booking.bookNow') : t('itemDetail.buyNow')}
+                      disabled={
+                        (isOwner && !!salePrice) || !user || (!isRentable && !buyingAllowed)
                       }
-                      disabled={(isOwner && !!salePrice) || !user || (isBuyOnly && !buyingAllowed)}
                     />
                   );
                 })()}
