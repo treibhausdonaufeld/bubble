@@ -26,8 +26,8 @@ import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
 import useEmblaCarousel from 'embla-carousel-react';
 import { ArrowLeft, Calendar, ChevronLeft, ChevronRight, Edit3, Trash2, X } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 
 const ItemDetail = () => {
   const { itemUuid } = useParams<{ itemUuid: string }>();
@@ -70,6 +70,22 @@ const ItemDetail = () => {
     if (!user || !item) return false;
     return item.user === user.id;
   }, [user, item]);
+
+  const location = useLocation();
+  const rentalCalendarRef = useRef<HTMLDivElement | null>(null);
+
+  // If the URL contains #booking, scroll to the start of the booking calendar and open booking UI
+  useEffect(() => {
+    const hash = location.hash;
+    if (hash === '#booking' && rentalCalendarRef.current) {
+      try {
+        rentalCalendarRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } catch {
+        // ignore
+      }
+      //history.replaceState(null, '', location.pathname + location.search);
+    }
+  }, [location.hash]);
 
   const handleDelete = async () => {
     if (!item) return;
@@ -381,7 +397,7 @@ const ItemDetail = () => {
 
         {/* Rental Calendar - Only show for rental items */}
         {rental_price && user && (
-          <div className="mt-8">
+          <div className="mt-8" id="booking" ref={rentalCalendarRef}>
             <RentalCalendar
               itemUuid={itemUuid}
               onDateRangeSelect={handleDateRangeSelect}

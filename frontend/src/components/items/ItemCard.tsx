@@ -1,5 +1,6 @@
 import { BookingDialog } from '@/components/items/BookingDialog';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -164,6 +165,28 @@ export const ItemCard = ({
                 {(() => {
                   const isBuyOnly = !!salePrice && !rentalPrice;
                   const buyingAllowed = status === 2 || status === 3; // 2 = available, 3 = reserved
+                  const isRentable = !!rentalPrice;
+
+                  if (isRentable) {
+                    // For rentals, navigate to item detail and open/scroll to the booking calendar
+                    return (
+                      <Button
+                        size="sm"
+                        className="w-full"
+                        onClick={e => {
+                          e.stopPropagation();
+                          if (!user) {
+                            navigate('/auth');
+                            return;
+                          }
+                          navigate(`/item/${id}#booking`);
+                        }}
+                        disabled={(isOwner && !!salePrice) || !user}
+                      >
+                        {t('itemDetail.rentNow')}
+                      </Button>
+                    );
+                  }
 
                   return (
                     <BookingDialog
