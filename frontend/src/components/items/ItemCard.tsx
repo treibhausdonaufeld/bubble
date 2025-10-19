@@ -163,7 +163,7 @@ export const ItemCard = ({
               <div className="flex flex-1 gap-2">
                 {(() => {
                   const isBuyOnly = !!salePrice && !rentalPrice;
-                  const buyingAllowed = status === 2; // 2 = available
+                  const buyingAllowed = status === 2 || status === 3; // 2 = available, 3 = reserved
 
                   return (
                     <BookingDialog

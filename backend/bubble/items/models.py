@@ -28,7 +28,7 @@ class ConditionType(models.IntegerChoices):
     BROKEN = 2, _("Broken")
 
 
-class StatusType(models.IntegerChoices):
+class ItemStatus(models.IntegerChoices):
     DRAFT = 0, _("Draft")
     PROCESSING = 1, _("Processing")
     AVAILABLE = 2, _("Available")
@@ -65,7 +65,7 @@ class CategoryType(models.TextChoices):
 class ItemManager(models.Manager):
     def published(self) -> models.QuerySet:
         """Return a queryset of published items."""
-        return self.filter(status__in=StatusType.published())
+        return self.filter(status__in=ItemStatus.published())
 
     def get_for_user(self, user) -> models.QuerySet:
         """Return a queryset filtered by user permissions."""
@@ -171,8 +171,8 @@ class Item(models.Model):
     active = models.BooleanField(default=True)
 
     status = models.IntegerField(
-        choices=StatusType,
-        default=StatusType.DRAFT,
+        choices=ItemStatus,
+        default=ItemStatus.DRAFT,
     )
 
     # enable history tracking

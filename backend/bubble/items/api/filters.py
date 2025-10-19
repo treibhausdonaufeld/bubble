@@ -9,7 +9,7 @@ from django.db.models import Q, QuerySet
 from pgvector.django import CosineDistance
 
 from bubble.items.embeddings import get_embedding_model
-from bubble.items.models import Item, ItemEmbedding, StatusType
+from bubble.items.models import Item, ItemEmbedding, ItemStatus
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +29,7 @@ class ItemFilter(django_filters.FilterSet):
     """
 
     status = django_filters.MultipleChoiceFilter(
-        choices=StatusType.choices,
+        choices=ItemStatus.choices,
         field_name="status",
         conjoined=False,  # OR logic for multiple values
     )
@@ -78,9 +78,9 @@ class ItemFilter(django_filters.FilterSet):
         if value is None:
             return queryset
         if value:
-            return queryset.filter(status__in=StatusType.published())
+            return queryset.filter(status__in=ItemStatus.published())
         # if explicitly false, exclude published statuses
-        return queryset.exclude(status__in=StatusType.published())
+        return queryset.exclude(status__in=ItemStatus.published())
 
     def filter_search(self, queryset: QuerySet[Item], name: str, value: str):
         """Search in name and description fields."""

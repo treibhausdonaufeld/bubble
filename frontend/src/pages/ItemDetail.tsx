@@ -342,7 +342,7 @@ const ItemDetail = () => {
                       <TooltipTrigger asChild>
                         <div>
                           {(() => {
-                            const buyingAllowed = item.status === 2; // 2 = available
+                            const buyingAllowed = item.status === 2 || item.status === 3; // 2 = available, 3 = reserved
 
                             return (
                               <BookingDialog

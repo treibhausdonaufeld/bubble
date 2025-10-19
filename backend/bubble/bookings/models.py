@@ -1,7 +1,9 @@
 import uuid
 
 from django.conf import settings
+from django.contrib.postgres.constraints import ExclusionConstraint
 from django.db import models
+from django.db.models import F, Func, Q
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
@@ -84,8 +86,38 @@ class Booking(models.Model):
 
     objects = BookingManager()
 
+    class Meta:
+        # Prevent overlapping confirmed bookings for the same item.
+        # Uses PostgreSQL exclusion constraint on the tstzrange(time_from, time_to)
+        # and item equality. Only applies when status is CONFIRMED.
+        constraints = [
+            ExclusionConstraint(
+                name="exclude_overlapping_confirmed_bookings_with_time_to",
+                expressions=[
+                    (Func(F("time_from"), F("time_to"), function="tstzrange"), "&&"),
+                    (F("item"), "="),
+                ],
+                condition=Q(status=BookingStatus.CONFIRMED) & Q(time_to__isnull=False),
+                index_type="gist",
+            ),
+            ExclusionConstraint(
+                name="exclude_overlapping_confirmed_bookings_without_time_to",
+                expressions=[(F("item"), "=")],
+                condition=Q(status=BookingStatus.CONFIRMED) & Q(time_to__isnull=True),
+                index_type="gist",
+            ),
+        ]
+
     def __str__(self):
         return f"Booking for {self.item.name} by {self.user}"
+
+    @property
+    def is_active(self):
+        """Check if the booking is currently active."""
+        now = timezone.now()
+        return self.status == BookingStatus.CONFIRMED and self.time_from <= now <= (
+            self.time_to or now
+        )
 
 
 class Message(models.Model):
