@@ -295,7 +295,7 @@ const translations = {
     'itemDetail.availability': 'Availability',
 
     // My Items
-    'myItems.title': 'My Items',
+    'myItems.title': 'Items',
     'myItems.noItems': 'No items yet',
     'myItems.createFirst': 'Create your first item to get started!',
     'myItems.createItem': 'Create Item',
@@ -656,7 +656,7 @@ const translations = {
     'itemDetail.availability': 'Verfügbarkeit',
 
     // My Items
-    'myItems.title': 'Meine Artikel',
+    'myItems.title': 'Artikel',
     'myItems.noItems': 'Noch keine Artikel',
     'myItems.createFirst': 'Erstelle deinen ersten Artikel um loszulegen!',
     'myItems.createItem': 'Artikel erstellen',

@@ -15,17 +15,7 @@ import { useUnreadMessages } from '@/hooks/useMessages';
 
 import { cn } from '@/lib/utils';
 import { useTheme } from '@/providers/theme-provider';
-import {
-  Handshake,
-  Library,
-  LogOut,
-  Moon,
-  Plus,
-  Search,
-  SquareLibrary,
-  Sun,
-  User,
-} from 'lucide-react';
+import { Handshake, Library, LogOut, Moon, Plus, Search, Sun, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -133,7 +123,7 @@ export const Header = () => {
                   title={t('header.myBookings')}
                 >
                   <Handshake className="h-5 w-5" />
-                  <span className="hidden sm:inline">Nachrichten</span>
+                  <span className="hidden sm:inline">{t('messages.title')}</span>
 
                   {unreadCount > 0 && (
                     <Badge
@@ -154,7 +144,7 @@ export const Header = () => {
                   title={t('header.myItems')}
                 >
                   <Library className="h-5 w-5" />
-                  <span className="hidden sm:inline">Artikel</span>
+                  <span className="hidden sm:inline">{t('myItems.title')}</span>
                 </Button>
 
                 {/* Add Item */}
