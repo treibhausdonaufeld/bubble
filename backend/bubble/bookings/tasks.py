@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 
 from celery import shared_task
-from django.db.models import Q
+from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
 
 from bubble.bookings.models import Booking, BookingStatus
@@ -45,15 +45,12 @@ def check_bookings_active(self) -> None:
     if updated:
         logger.info("Marked %d items as RENTED (active bookings)", updated)
 
-    # Now handle bookings that ended (confirmed bookings with time_to < now)
-    ended_q = Q(status=BookingStatus.CONFIRMED) & Q(time_to__lt=now)
-    ended_item_ids_qs = Booking.objects.filter(ended_q).values_list(
-        "item_id", flat=True
+    # Annotate with active_booking_count per item (uses related_name 'bookings')
+    active_bookings = Booking.objects.filter(active_q, item=OuterRef("pk"))
+    items_to_free_qs = Item.objects.filter(status=ItemStatus.RENTED).filter(
+        ~Exists(active_bookings)
     )
 
-    freed = Item.objects.filter(
-        id__in=ended_item_ids_qs,
-        status=ItemStatus.RENTED,
-    ).update(status=ItemStatus.AVAILABLE)
+    freed = items_to_free_qs.update(status=ItemStatus.AVAILABLE)
     if freed:
         logger.info("Marked %d items as AVAILABLE (no more active bookings)", freed)
