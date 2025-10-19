@@ -4,11 +4,11 @@ from typing import Any
 
 from google import genai
 
-client = genai.Client()
-
 
 def call_model(contents: Any, model: str = "gemini-2.5-flash-lite") -> dict:
     """Call the Google Gemini model with the given prompt."""
+    client = genai.Client()
+
     response = client.models.generate_content(
         model=os.environ.get("AI_MODEL", "gemini-2.5-flash-lite"),
         contents=contents,
