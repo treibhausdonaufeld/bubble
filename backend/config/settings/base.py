@@ -358,9 +358,8 @@ SOCIALACCOUNT_ONLY = env.bool("SOCIALACCOUNT_ONLY", default=False)
 ACCOUNT_LOGIN_METHODS = {"username"} if not SOCIALACCOUNT_ONLY else {}
 # https://docs.allauth.org/en/latest/account/configuration.html
 ACCOUNT_SIGNUP_FIELDS = (
-    ["email*", "username*", "password1*", "password2*"]
-    if not SOCIALACCOUNT_ONLY
-    else None
+    None if SOCIALACCOUNT_ONLY else ["email*", "username*", "password1*", "password2*"]
+
 )
 # https://docs.allauth.org/en/latest/account/configuration.html
 ACCOUNT_EMAIL_VERIFICATION = (
