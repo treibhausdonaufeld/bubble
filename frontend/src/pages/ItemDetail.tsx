@@ -341,19 +341,29 @@ const ItemDetail = () => {
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <div>
-                          <BookingDialog
-                            itemUuid={item.id}
-                            itemName={name}
-                            salePrice={sale_price}
-                            salePriceCurrency={sale_price_currency}
-                            rentalPrice={rental_price}
-                            rentalPriceCurrency={rental_price_currency}
-                            preselectedStartDate={selectedStartDate}
-                            preselectedEndDate={selectedEndDate}
-                            controlledOpen={showBookingDialog}
-                            onControlledOpenChange={setShowBookingDialog}
-                            disabled={!user || (isOwner && !!sale_price)}
-                          />
+                          {(() => {
+                            const buyingAllowed = item.status === 2; // 2 = available
+
+                            return (
+                              <BookingDialog
+                                itemUuid={item.id}
+                                itemName={name}
+                                salePrice={sale_price}
+                                salePriceCurrency={sale_price_currency}
+                                rentalPrice={rental_price}
+                                rentalPriceCurrency={rental_price_currency}
+                                preselectedStartDate={selectedStartDate}
+                                preselectedEndDate={selectedEndDate}
+                                controlledOpen={showBookingDialog}
+                                onControlledOpenChange={setShowBookingDialog}
+                                disabled={
+                                  !user ||
+                                  (isOwner && !!sale_price) ||
+                                  (!buyingAllowed && !!sale_price)
+                                }
+                              />
+                            );
+                          })()}
                         </div>
                       </TooltipTrigger>
                       {!user && (

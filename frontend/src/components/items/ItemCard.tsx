@@ -161,20 +161,27 @@ export const ItemCard = ({
           <Tooltip>
             <TooltipTrigger asChild>
               <div className="flex flex-1 gap-2">
-                <BookingDialog
-                  itemUuid={id}
-                  itemName={title}
-                  salePrice={salePrice?.toString()}
-                  salePriceCurrency={salePriceCurrency || undefined}
-                  rentalPrice={rentalPrice?.toString()}
-                  rentalPriceCurrency={rentalPriceCurrency || undefined}
-                  buttonSize="sm"
-                  buttonClassName="w-full"
-                  triggerLabel={
-                    salePrice && !rentalPrice ? t('itemDetail.buyNow') : t('booking.bookNow')
-                  }
-                  disabled={(isOwner && !!salePrice) || !user}
-                />
+                {(() => {
+                  const isBuyOnly = !!salePrice && !rentalPrice;
+                  const buyingAllowed = status === 2; // 2 = available
+
+                  return (
+                    <BookingDialog
+                      itemUuid={id}
+                      itemName={title}
+                      salePrice={salePrice?.toString()}
+                      salePriceCurrency={salePriceCurrency || undefined}
+                      rentalPrice={rentalPrice?.toString()}
+                      rentalPriceCurrency={rentalPriceCurrency || undefined}
+                      buttonSize="sm"
+                      buttonClassName="w-full"
+                      triggerLabel={
+                        salePrice && !rentalPrice ? t('itemDetail.buyNow') : t('booking.bookNow')
+                      }
+                      disabled={(isOwner && !!salePrice) || !user || (isBuyOnly && !buyingAllowed)}
+                    />
+                  );
+                })()}
               </div>
             </TooltipTrigger>
             {(!user || isOwner) && (
