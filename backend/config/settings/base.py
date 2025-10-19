@@ -359,12 +359,12 @@ ACCOUNT_LOGIN_METHODS = {"username"} if not SOCIALACCOUNT_ONLY else {}
 # https://docs.allauth.org/en/latest/account/configuration.html
 ACCOUNT_SIGNUP_FIELDS = (
     None if SOCIALACCOUNT_ONLY else ["email*", "username*", "password1*", "password2*"]
-
 )
 # https://docs.allauth.org/en/latest/account/configuration.html
 ACCOUNT_EMAIL_VERIFICATION = (
-    "none" if SOCIALACCOUNT_ONLY else env.bool("ACCOUNT_EMAIL_VERIFICATION", default=True)
-
+    "none"
+    if SOCIALACCOUNT_ONLY
+    else env.bool("ACCOUNT_EMAIL_VERIFICATION", default=True)
 )
 # https://docs.allauth.org/en/latest/account/configuration.html
 ACCOUNT_ADAPTER = "bubble.users.adapters.AccountAdapter"
