@@ -23,7 +23,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           owner: ${{ github.repository_owner }}
           num-old-versions-to-delete: 100
-          delete-pre-release-versions: 'true'
 
       - name: Delete old versions of bubble-frontend
         uses: actions/delete-package-versions@v5
