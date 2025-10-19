@@ -6,8 +6,9 @@ from django.utils.translation import gettext as _
 from guardian.shortcuts import get_users_with_perms
 
 from bubble.core.websocket_signals import send_message_notification
+from bubble.items.models import Item, ItemStatus
 
-from .models import Booking, Message
+from .models import Booking, BookingStatus, Message
 
 logger = logging.getLogger(__name__)
 
@@ -79,3 +80,30 @@ def notify_new_booking(sender, instance: Booking, created, **kwargs):
                 getattr(user, "username", str(user)),
                 instance.pk,
             )
+
+
+@receiver(post_save, sender=Booking)
+def update_item_status(sender, instance: Booking, created, **kwargs):
+    """Notify item owners when a new booking is created."""
+    # Get the item
+    item: Item = instance.item
+
+    # Booking confirmed, then send the item status to sold
+    if instance.status == BookingStatus.CONFIRMED:
+        if item.sale_price is not None:
+            item.status = ItemStatus.SOLD
+        elif item.rental_price is not None and instance.is_active:
+            item.status = ItemStatus.RENTED
+        item.save(update_fields=["status"])
+
+    # Booking cancelled or rejected, and item is sold or rented, set available
+    elif instance.status in [
+        BookingStatus.CANCELLED,
+        BookingStatus.REJECTED,
+    ] and item.status in [
+        ItemStatus.SOLD,
+        ItemStatus.RENTED,
+    ]:
+        # If booking is cancelled or rejected, and item is sold or rented, set available
+        item.status = ItemStatus.AVAILABLE
+        item.save(update_fields=["status"])

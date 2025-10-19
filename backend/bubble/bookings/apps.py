@@ -6,4 +6,5 @@ class BookingsConfig(AppConfig):
 
     def ready(self):
         """Import signal handlers when the app is ready."""
+        import bubble.bookings.beats  # noqa: PLC0415
         import bubble.bookings.signals  # noqa: PLC0415, F401

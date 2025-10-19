@@ -16,7 +16,7 @@ from rest_framework.test import APIClient
 
 from bubble.core.permissions_config import DefaultGroup
 from bubble.items.ai.image_analyze import ItemImageResult
-from bubble.items.models import Image, Item, StatusType
+from bubble.items.models import Image, Item, ItemStatus
 from bubble.items.tests.factories import ItemOwnerUserFactory
 from bubble.users.tests.factories import UserFactory
 
@@ -657,7 +657,7 @@ class PublishedEndpointFilterTestCase(TestCase):
             name="Gaming Laptop",
             description="High-performance laptop for gaming",
             user=self.user,
-            status=StatusType.AVAILABLE,
+            status=ItemStatus.AVAILABLE,
             sale_price=Decimal("1500.00"),
             category="electronics",
         )
@@ -666,7 +666,7 @@ class PublishedEndpointFilterTestCase(TestCase):
             name="Wooden Desk",
             description="Beautiful oak desk for home office",
             user=self.user,
-            status=StatusType.AVAILABLE,
+            status=ItemStatus.AVAILABLE,
             sale_price=Decimal("300.00"),
             category="furniture",
         )
@@ -675,7 +675,7 @@ class PublishedEndpointFilterTestCase(TestCase):
             name="Office Chair",
             description="Ergonomic office chair",
             user=self.user,
-            status=StatusType.RESERVED,
+            status=ItemStatus.RESERVED,
             sale_price=Decimal("200.00"),
             category="furniture",
         )
@@ -685,7 +685,7 @@ class PublishedEndpointFilterTestCase(TestCase):
             name="Draft Laptop",
             description="Another laptop in draft",
             user=self.user,
-            status=StatusType.DRAFT,
+            status=ItemStatus.DRAFT,
             sale_price=Decimal("1000.00"),
             category="electronics",
         )

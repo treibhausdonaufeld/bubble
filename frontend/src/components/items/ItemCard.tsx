@@ -1,5 +1,6 @@
 import { BookingDialog } from '@/components/items/BookingDialog';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -119,12 +120,12 @@ export const ItemCard = ({
         {/* Price overlay */}
         <div className="absolute bottom-3 right-3">
           <div className="rounded-lg bg-background/90 backdrop-blur-xs px-3 py-1 shadow-medium">
-            {salePrice && (
+            {salePrice !== undefined && (
               <div className="flex items-center gap-1 text-sm font-semibold">
                 {formatPrice(salePrice, salePriceCurrency)}
               </div>
             )}
-            {rentalPrice && (
+            {rentalPrice !== undefined && (
               <div className="flex items-center gap-1 text-sm font-semibold">
                 {formatPrice(rentalPrice, rentalPriceCurrency)} {t('time.perHour')}
               </div>
@@ -161,20 +162,48 @@ export const ItemCard = ({
           <Tooltip>
             <TooltipTrigger asChild>
               <div className="flex flex-1 gap-2">
-                <BookingDialog
-                  itemUuid={id}
-                  itemName={title}
-                  salePrice={salePrice?.toString()}
-                  salePriceCurrency={salePriceCurrency || undefined}
-                  rentalPrice={rentalPrice?.toString()}
-                  rentalPriceCurrency={rentalPriceCurrency || undefined}
-                  buttonSize="sm"
-                  buttonClassName="w-full"
-                  triggerLabel={
-                    salePrice && !rentalPrice ? t('itemDetail.buyNow') : t('booking.bookNow')
+                {(() => {
+                  const buyingAllowed = status === 2 || status === 3; // 2 = available, 3 = reserved
+                  const isRentable = rentalPrice !== undefined && rentalPrice !== null;
+
+                  if (isRentable) {
+                    // For rentals, navigate to item detail and open/scroll to the booking calendar
+                    return (
+                      <Button
+                        size="sm"
+                        className="w-full"
+                        onClick={e => {
+                          e.stopPropagation();
+                          if (!user) {
+                            navigate('/auth');
+                            return;
+                          }
+                          navigate(`/item/${id}#booking`);
+                        }}
+                        disabled={(isOwner && !!salePrice) || !user}
+                      >
+                        {t('itemDetail.rentNow')}
+                      </Button>
+                    );
                   }
-                  disabled={(isOwner && !!salePrice) || !user}
-                />
+
+                  return (
+                    <BookingDialog
+                      itemUuid={id}
+                      itemName={title}
+                      salePrice={salePrice?.toString()}
+                      salePriceCurrency={salePriceCurrency || undefined}
+                      rentalPrice={rentalPrice?.toString()}
+                      rentalPriceCurrency={rentalPriceCurrency || undefined}
+                      buttonSize="sm"
+                      buttonClassName="w-full"
+                      triggerLabel={isRentable ? t('booking.bookNow') : t('itemDetail.buyNow')}
+                      disabled={
+                        (isOwner && !!salePrice) || !user || (!isRentable && !buyingAllowed)
+                      }
+                    />
+                  );
+                })()}
               </div>
             </TooltipTrigger>
             {(!user || isOwner) && (

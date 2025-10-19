@@ -70,7 +70,7 @@ services:
       - postgres
       - mailpit
     ports: []
-    command: sh -c "watchfiles --filter python 'celery -A config.celery_app worker -l INFO' bubble"
+    command: sh -c "watchfiles --filter python 'celery -A config.celery_app worker -l INFO --concurrency=1' bubble"
 
   beat:
     <<: *backend

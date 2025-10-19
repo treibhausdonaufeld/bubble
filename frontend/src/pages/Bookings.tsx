@@ -1,6 +1,17 @@
 import BookingCounterOfferDialog from '@/components/bookings/BookingCounterOfferDialog';
 import BookingEditDialog from '@/components/bookings/BookingEditDialog';
 import { Header } from '@/components/layout/Header';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -41,6 +52,9 @@ const Bookings = () => {
   const { data: selectedItemDetails } = useItem(selectedBookingDetails?.item_details?.id);
   const [messageText, setMessageText] = useState('');
   const updateBookingMutation = useUpdateBooking();
+  // Dialog state for confirming acceptance when offer differs
+  const [showAcceptWarning, setShowAcceptWarning] = useState(false);
+  const [pendingAcceptBookingId, setPendingAcceptBookingId] = useState<string | null>(null);
   const {
     data: messagesData,
     refetch: refetchMessages,
@@ -71,11 +85,11 @@ const Bookings = () => {
   }, [bookings, selectedBookingId]);
 
   // Auto-scroll to bottom when messages change or booking selection changes
-  useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [messages, selectedBookingId]);
+  // useEffect(() => {
+  //   if (messagesEndRef.current) {
+  //     messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+  //   }
+  // }, [messages, selectedBookingId]);
 
   // Auto-mark unread messages as read when displayed
   useEffect(() => {
@@ -476,6 +490,32 @@ const Bookings = () => {
                           {user?.username === selectedBooking.user?.username ? (
                             // Booking requester can edit offer and cancel
                             <>
+                              {/* Accept counteroffer button for booking requester when counter_offer differs from offer */}
+                              {selectedBooking.counter_offer &&
+                                selectedBooking.counter_offer !== selectedBooking.offer && (
+                                  <Button
+                                    size="sm"
+                                    className="bg-emerald-500 hover:bg-emerald-600"
+                                    onClick={async () => {
+                                      try {
+                                        await updateBookingMutation.mutateAsync({
+                                          id: selectedBooking.id,
+                                          data: {
+                                            offer: selectedBooking.counter_offer,
+                                          },
+                                        });
+                                      } catch (error) {
+                                        console.error('Error accepting counteroffer:', error);
+                                      }
+                                    }}
+                                    disabled={updateBookingMutation.isPending}
+                                  >
+                                    {updateBookingMutation.isPending
+                                      ? t('common.submitting')
+                                      : t('bookings.acceptCounterOffer')}
+                                  </Button>
+                                )}
+
                               <BookingEditDialog booking={selectedBooking} />
                               <Button
                                 size="sm"
@@ -501,29 +541,92 @@ const Bookings = () => {
                             // Item owner can accept or reject
                             <>
                               <BookingCounterOfferDialog booking={selectedBooking} />
-                              <Button
-                                size="sm"
-                                className="bg-green-500 hover:bg-green-600"
-                                onClick={async () => {
-                                  try {
-                                    await updateBookingMutation.mutateAsync({
-                                      id: selectedBooking.id,
-                                      data: { status: 3 }, // Confirmed
-                                    });
-                                  } catch (error) {
-                                    console.error('Error accepting booking:', error);
-                                  }
-                                }}
-                                disabled={
-                                  updateBookingMutation.isPending ||
-                                  (!!selectedBooking.counter_offer &&
-                                    selectedBooking.counter_offer !== selectedBooking.offer)
-                                }
+
+                              <AlertDialog
+                                open={showAcceptWarning}
+                                onOpenChange={setShowAcceptWarning}
                               >
-                                {updateBookingMutation.isPending
-                                  ? t('common.submitting')
-                                  : t('bookings.accept')}
-                              </Button>
+                                <AlertDialogTrigger asChild>
+                                  <Button
+                                    size="sm"
+                                    className="bg-green-500 hover:bg-green-600"
+                                    onClick={e => {
+                                      // Determine if we must warn: offer differs from item price and differs from counter_offer
+                                      const itemPrice =
+                                        selectedItemDetails?.sale_price ||
+                                        selectedItemDetails?.rental_price;
+                                      const offerDiffersFromItem =
+                                        !!selectedBooking.offer &&
+                                        selectedBooking.offer !== itemPrice;
+                                      const offerDiffersFromCounter =
+                                        !!selectedBooking.counter_offer &&
+                                        selectedBooking.offer !== selectedBooking.counter_offer;
+
+                                      if (offerDiffersFromItem && offerDiffersFromCounter) {
+                                        e.preventDefault();
+                                        setPendingAcceptBookingId(selectedBooking.id);
+                                        setShowAcceptWarning(true);
+                                        return;
+                                      }
+
+                                      // Otherwise, proceed directly
+                                      (async () => {
+                                        try {
+                                          await updateBookingMutation.mutateAsync({
+                                            id: selectedBooking.id,
+                                            data: { status: 3 },
+                                          });
+                                        } catch (error) {
+                                          console.error('Error accepting booking:', error);
+                                        }
+                                      })();
+                                    }}
+                                    disabled={updateBookingMutation.isPending}
+                                  >
+                                    {updateBookingMutation.isPending
+                                      ? t('common.submitting')
+                                      : t('bookings.accept')}
+                                  </Button>
+                                </AlertDialogTrigger>
+
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>
+                                      {t('bookings.acceptWarningTitle')}
+                                    </AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      {t('bookings.acceptWarningDescription')?.replace(
+                                        '{amount}',
+                                        String(selectedBooking.offer ?? ''),
+                                      )}
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={async () => {
+                                        if (!pendingAcceptBookingId) return;
+                                        try {
+                                          await updateBookingMutation.mutateAsync({
+                                            id: pendingAcceptBookingId,
+                                            data: { status: 3 },
+                                          });
+                                        } catch (error) {
+                                          console.error(
+                                            'Error accepting booking after warning:',
+                                            error,
+                                          );
+                                        } finally {
+                                          setShowAcceptWarning(false);
+                                          setPendingAcceptBookingId(null);
+                                        }
+                                      }}
+                                    >
+                                      {t('bookings.accept')}
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
                               <Button
                                 size="sm"
                                 variant="destructive"

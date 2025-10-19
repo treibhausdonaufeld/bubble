@@ -56,7 +56,7 @@ export function formatPrice(
   price: string | number | null | undefined,
   currencyCode: string | null | undefined,
 ): string {
-  if (!price || price === '0' || price === 0) return '';
+  if (price === undefined || price === null) return '';
 
   const numericPrice = typeof price === 'string' ? parseFloat(price) : price;
   if (isNaN(numericPrice)) return '';
