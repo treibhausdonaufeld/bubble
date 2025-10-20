@@ -63,9 +63,7 @@ server {
         add_header Pragma "no-cache";
         add_header Expires "0";
         return 200 'window._env_ = {
-  HIGHLIGHT_PROJECT_ID: "${HIGHLIGHT_PROJECT_ID}",
-  HIGHLIGHT_NETWORK_RECORDING_ENABLED: "${HIGHLIGHT_NETWORK_RECORDING_ENABLED}",
-  HIGHLIGHT_URL_BLOCKLIST: "${HIGHLIGHT_URL_BLOCKLIST}"
+  TRACKING_PROJECT_ID: "${TRACKING_PROJECT_ID}"
 };';
     }
 

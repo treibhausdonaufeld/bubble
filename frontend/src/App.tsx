@@ -6,7 +6,6 @@ import { AuthProvider } from '@/hooks/useAuth';
 import { NotificationProvider } from '@/providers/NotificationProvider';
 import { ThemeProvider } from '@/providers/theme-provider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { H } from 'highlight.run';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { configureApiClient } from './config/apiClient';
 import Auth from './pages/Auth';
@@ -21,32 +20,6 @@ import NotFound from './pages/NotFound';
 import Profile from './pages/Profile';
 
 const queryClient = new QueryClient();
-
-declare global {
-  interface Window {
-    _env_?: {
-      VITE_API_URL?: string;
-      HIGHLIGHT_PROJECT_ID?: string;
-      HIGHLIGHT_NETWORK_RECORDING_ENABLED?: boolean;
-      HIGHLIGHT_URL_BLOCKLIST?: string;
-    };
-  }
-}
-
-if (window._env_?.HIGHLIGHT_PROJECT_ID) {
-  H.init(window._env_?.HIGHLIGHT_PROJECT_ID, {
-    serviceName: 'bubble-frontend',
-    tracingOrigins: true,
-    networkRecording: {
-      enabled: window._env_?.HIGHLIGHT_NETWORK_RECORDING_ENABLED || false,
-      recordHeadersAndBody: true,
-      urlBlocklist: [
-        // insert full or partial urls that you don't want to record here
-        window._env_?.HIGHLIGHT_URL_BLOCKLIST || 'localhost',
-      ],
-    },
-  });
-}
 
 // Configure the API client once at startup
 configureApiClient();

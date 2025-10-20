@@ -1,3 +1,4 @@
+import { sentryVitePlugin } from '@sentry/vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react-swc';
 import path from 'path';
@@ -32,10 +33,21 @@ export default defineConfig(({ mode }) => ({
       // interval: 1000,
     },
   },
-  plugins: [tailwindcss(), react()].filter(Boolean),
+  plugins: [
+    tailwindcss(),
+    react(),
+    sentryVitePlugin({
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+      org: 'fabslab',
+      project: 'thd-bubble',
+    }),
+  ].filter(Boolean),
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
+  },
+  build: {
+    sourcemap: true, // Source map generation must be turned on
   },
 }));

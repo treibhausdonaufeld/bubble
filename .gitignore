@@ -285,3 +285,5 @@ db.sqlite3
 backend/bubble/media/
 
 compose.override.yaml
+
+.env.sentry-build-plugin

@@ -13,7 +13,6 @@
  * All functions handle CSRF tokens automatically and include proper error handling.
  */
 
-import { H } from 'highlight.run';
 import { client } from '../django/client.gen';
 
 // Django API authentication integration
@@ -156,11 +155,6 @@ class AuthAPI {
         body: JSON.stringify(credentials),
       });
 
-      const user = response.data.user;
-      H.identify(user.username, {
-        id: user.id,
-        email: user.email,
-      });
       return response;
     } catch (error) {
       console.error('Login error:', error);
