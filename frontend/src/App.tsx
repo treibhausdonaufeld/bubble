@@ -19,18 +19,6 @@ import ItemDetail from './pages/ItemDetail';
 import MyItems from './pages/MyItems';
 import NotFound from './pages/NotFound';
 import Profile from './pages/Profile';
-H.init('5g5y9yle', {
-  serviceName: 'bubble-frontend',
-  tracingOrigins: true,
-  networkRecording: {
-    enabled: true,
-    recordHeadersAndBody: true,
-    urlBlocklist: [
-      // insert full or partial urls that you don't want to record here
-      'https://auth.treibhausdonaufeld.at',
-    ],
-  },
-});
 
 const queryClient = new QueryClient();
 
@@ -38,8 +26,26 @@ declare global {
   interface Window {
     _env_?: {
       VITE_API_URL?: string;
+      HIGHLIGHT_PROJECT_ID?: string;
+      HIGHLIGHT_NETWORK_RECORDING_ENABLED?: boolean;
+      HIGHLIGHT_URL_BLOCKLIST?: string;
     };
   }
+}
+
+if (window._env_?.HIGHLIGHT_PROJECT_ID) {
+  H.init(window._env_?.HIGHLIGHT_PROJECT_ID, {
+    serviceName: 'bubble-frontend',
+    tracingOrigins: true,
+    networkRecording: {
+      enabled: window._env_?.HIGHLIGHT_NETWORK_RECORDING_ENABLED || false,
+      recordHeadersAndBody: true,
+      urlBlocklist: [
+        // insert full or partial urls that you don't want to record here
+        window._env_?.HIGHLIGHT_URL_BLOCKLIST || 'localhost',
+      ],
+    },
+  });
 }
 
 // Configure the API client once at startup

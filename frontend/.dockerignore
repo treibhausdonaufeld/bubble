@@ -11,8 +11,6 @@
 venv
 .git/
 .envs/
+
 node_modules
-bubble/media
-db.sqlite3
-.ruff_cache/
-.ipython/
+dist

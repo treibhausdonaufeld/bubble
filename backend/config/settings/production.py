@@ -1,4 +1,5 @@
 import highlight_io
+from highlight_io.integrations.celery import CeleryIntegration
 from highlight_io.integrations.django import DjangoIntegration
 
 from .base import *  # noqa: F403
@@ -133,11 +134,12 @@ SPECTACULAR_SETTINGS["SERVERS"] = [
 
 # `instrument_logging=True` sets up logging instrumentation.
 # if you do not want to send logs or are using `loguru`, pass `instrument_logging=False`
-H = highlight_io.H(
-    "5g5y9yle",
-    integrations=[DjangoIntegration()],
-    instrument_logging=True,
-    service_name="bubble-backend",
-    service_version="git-sha",
-    environment="production",
-)
+if highlight_project_id := env("HIGHLIGHT_PROJECT_ID", default=""):  # pyright: ignore[reportArgumentType]
+    H = highlight_io.H(
+        highlight_project_id,  # pyright: ignore[reportArgumentType]
+        integrations=[DjangoIntegration(), CeleryIntegration()],
+        instrument_logging=True,
+        service_name="bubble-backend",
+        service_version="git-sha",
+        environment="production",
+    )

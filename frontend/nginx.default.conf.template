@@ -56,6 +56,19 @@ server {
         client_max_body_size 100M;
     }
 
+    # Environment configuration endpoint
+    location = /env-config.js {
+        add_header Content-Type "application/javascript";
+        add_header Cache-Control "no-cache, no-store, must-revalidate";
+        add_header Pragma "no-cache";
+        add_header Expires "0";
+        return 200 'window._env_ = {
+  HIGHLIGHT_PROJECT_ID: "${HIGHLIGHT_PROJECT_ID}",
+  HIGHLIGHT_NETWORK_RECORDING_ENABLED: "${HIGHLIGHT_NETWORK_RECORDING_ENABLED}",
+  HIGHLIGHT_URL_BLOCKLIST: "${HIGHLIGHT_URL_BLOCKLIST}"
+};';
+    }
+
     location /static/ {
         alias /usr/share/nginx/static/;
     }

@@ -18,7 +18,6 @@ COPY . .
 RUN bun run build
 
 # Production stage
-# FROM nginx:alpine
 FROM nginxinc/nginx-unprivileged:alpine-slim
 
 # Copy built app to nginx

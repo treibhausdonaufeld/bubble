@@ -47,6 +47,9 @@ services:
     image: bubble-frontend
     environment:
       - BACKEND_HOST=${BACKEND_HOST:-backend:8000}
+      - HIGHLIGHT_PROJECT_ID=${HIGHLIGHT_PROJECT_ID:-}
+      - HIGHLIGHT_NETWORK_RECORDING_ENABLED=${HIGHLIGHT_NETWORK_RECORDING_ENABLED:-false}
+      - HIGHLIGHT_URL_BLOCKLIST=${HIGHLIGHT_URL_BLOCKLIST:-}
     ports:
       - '8080:8888'
     volumes:
