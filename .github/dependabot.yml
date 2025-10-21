@@ -16,11 +16,9 @@ updates:
 
   # Enable version updates for Docker
   - package-ecosystem: 'docker'
-    # Look for a `Dockerfile` in the `compose/local/django` directory
     directories:
-      - 'compose/local/django/'
-      - 'compose/local/docs/'
-      - 'compose/production/django/'
+      - 'frontend/'
+      - 'backend/'
     # Every weekday
     schedule:
       interval: 'daily'
@@ -35,23 +33,11 @@ updates:
         patterns:
           - '*'
 
-  - package-ecosystem: 'docker'
-    # Look for a `Dockerfile` in the listed directories
-    directories:
-      - 'compose/local/node/'
-      - 'compose/production/aws/'
-      - 'compose/production/postgres/'
-      - 'compose/production/traefik/'
-      - 'compose/production/nginx/'
-    # Every weekday
-    schedule:
-      interval: 'daily'
-
   # Enable version updates for Python/Pip - Production
   - package-ecosystem: 'pip'
     # Look for a `requirements.txt` in the `root` directory
     # also 'setup.cfg', '.python-version' and 'requirements/*.txt'
-    directory: '/'
+    directory: '/backend/'
     # Every weekday
     schedule:
       interval: 'daily'

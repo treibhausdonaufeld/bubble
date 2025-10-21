@@ -7,21 +7,38 @@ Treibhaus donaufeld sharing platform
 
 License: MIT
 
-## Settings
+# Quick start
 
-Moved to [settings](https://cookiecutter-django.readthedocs.io/en/latest/1-getting-started/settings.html).
+Run
 
-## Basic Commands
+- `docker compose up -d` (wait a while)
+- `docker compose exec backend python manage.py createsuperuser`
+- open http://localhost:8080 and log in
 
-### Setting Up Your Users
+# Update Translations
 
-- To create a **normal user account**, just go to Sign Up and fill out the form. Once you submit it, you'll see a "Verify Your E-mail Address" page. Go to your console to see a simulated email verification message. Copy the link into your browser. Now the user's email should be verified and ready to go.
+Start by configuring the `LANGUAGES` settings in `base.py`, by uncommenting languages you are willing to support. Then, translation strings will be placed in this folder when running:
 
-- To create a **superuser account**, use this command:
+```bash
+docker compose run --rm backend python manage.py makemessages --all --no-location
+```
 
-      $ python manage.py createsuperuser
+# Frontend
 
-For convenience, you can keep your normal user logged in on Chrome and your superuser logged in on Firefox (or similar), so that you can see how the site behaves for both kinds of users.
+Everything with `bun` please. In the `frontend` folder.
+
+## Update packages
+
+- check with `bun outdated`
+- upgrade with `bun update`
+
+## Update API types
+
+run `bun run types:openapi` to update types
+
+# Backend stuff
+
+Everything in `backend` folder please.
 
 ### Type checks
 
@@ -41,10 +58,6 @@ To run the tests, check your test coverage, and generate an HTML coverage report
 
     $ pytest
 
-### Live reloading and Sass CSS compilation
-
-Moved to [Live reloading and SASS compilation](https://cookiecutter-django.readthedocs.io/en/latest/2-local-development/developing-locally.html#using-webpack-or-gulp).
-
 ### Celery
 
 This app comes with Celery.
@@ -52,23 +65,16 @@ This app comes with Celery.
 To run a celery worker:
 
 ```bash
-cd willgeben
 celery -A config.celery_app worker -l info
 ```
 
-Please note: For Celery's import magic to work, it is important _where_ the celery commands are run. If you are in the same folder with _manage.py_, you should be right.
-
-To run [periodic tasks](https://docs.celeryq.dev/en/stable/userguide/periodic-tasks.html), you'll need to start the celery beat scheduler service. You can start it as a standalone process:
-
 ```bash
-cd willgeben
 celery -A config.celery_app beat
 ```
 
 or you can embed the beat service inside a worker with the `-B` option (not recommended for production use):
 
 ```bash
-cd willgeben
 celery -A config.celery_app worker -B -l info
 ```
 
