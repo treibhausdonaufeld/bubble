@@ -18,16 +18,10 @@ jobs:
         uses: actions/delete-package-versions@v5
         with:
           package-name: 'bubble-backend'
-          min-versions-to-keep: 5
-          delete-only-untagged-versions: 'false'
-          token: ${{ secrets.GITHUB_TOKEN }}
-          owner: ${{ github.repository_owner }}
+          min-versions-to-keep: 10
 
       - name: Delete old versions of bubble-frontend
         uses: actions/delete-package-versions@v5
         with:
           package-name: 'bubble-frontend'
-          min-versions-to-keep: 5
-          delete-only-untagged-versions: 'false'
-          token: ${{ secrets.GITHUB_TOKEN }}
-          owner: ${{ github.repository_owner }}
+          min-versions-to-keep: 10
