@@ -153,3 +153,33 @@ class BookSerializer(ItemSerializer):
     class Meta(ItemSerializer.Meta):
         model = Book
         fields = "__all__"
+
+
+class BookSearchRequestSerializer(serializers.Serializer):
+    """Serializer for book search agent request."""
+
+    title = serializers.CharField(
+        max_length=500,
+        required=True,
+        help_text="Book title to search for",
+    )
+    author = serializers.CharField(
+        max_length=500,
+        required=True,
+        help_text="Author name to search for",
+    )
+
+
+class BookSearchResponseSerializer(serializers.Serializer):
+    """Serializer for book search agent response."""
+
+    success = serializers.BooleanField(help_text="Whether the search was successful")
+    title = serializers.CharField(help_text="Book title searched")
+    author = serializers.CharField(help_text="Author name searched")
+    details = serializers.CharField(
+        help_text="Detailed information about the book", required=False
+    )
+    error = serializers.CharField(help_text="Error message if any", required=False)
+    raw_response = serializers.CharField(
+        help_text="Raw response from agent", required=False
+    )

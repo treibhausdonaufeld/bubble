@@ -21,6 +21,8 @@ from bubble.books.api.filters import (
 from bubble.books.api.serializers import (
     AuthorSerializer,
     BookListSerializer,
+    BookSearchRequestSerializer,
+    BookSearchResponseSerializer,
     BookSerializer,
     GenreSerializer,
     PublisherSerializer,
@@ -248,3 +250,43 @@ class BookViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(book)
         return Response(serializer.data)
+
+    @extend_schema(
+        request=BookSearchRequestSerializer,
+        responses={200: BookSearchResponseSerializer},
+        description=(
+            "Search for book details using Microsoft Agent Framework with "
+            "Google Gemini. Provide book title and author to get comprehensive "
+            "information including ISBN, publisher, description, and more."
+        ),
+    )
+    @action(detail=False, methods=["post"])
+    def agent_search(self, request):
+        """
+        Search for book details using AI agent.
+
+        Uses Microsoft Agent Framework with Google Gemini Flash to search
+        for comprehensive book information from multiple sources including
+        Google Books and Open Library.
+
+        Request body:
+        {
+            "title": "Book Title",
+            "author": "Author Name"
+        }
+        """
+        serializer = BookSearchRequestSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        title = serializer.validated_data["title"]
+        author = serializer.validated_data["author"]
+
+        # Import here to avoid loading the agent at module level
+        from bubble.books.agent import search_book_with_agent
+
+        result = search_book_with_agent(title, author)
+
+        response_serializer = BookSearchResponseSerializer(data=result)
+        response_serializer.is_valid(raise_exception=True)
+
+        return Response(response_serializer.data)

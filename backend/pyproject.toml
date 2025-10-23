@@ -39,6 +39,7 @@ dependencies = [
     "python-slugify",
     "redis",
     "sentry-sdk",
+    "agent-framework>=0.1.0",
     "uvicorn-worker",
     "uvicorn[standard]",
     "whitenoise",
