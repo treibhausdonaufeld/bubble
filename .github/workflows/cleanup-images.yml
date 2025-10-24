@@ -19,9 +19,11 @@ jobs:
         with:
           package-name: 'bubble-backend'
           min-versions-to-keep: 10
+          num-old-versions-to-delete: '' # explicitly unset to avoid conflict
 
       - name: Delete old versions of bubble-frontend
         uses: actions/delete-package-versions@v5
         with:
           package-name: 'bubble-frontend'
           min-versions-to-keep: 10
+          num-old-versions-to-delete: '' # explicitly unset to avoid conflict
