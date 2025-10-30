@@ -1,10 +1,8 @@
 import uuid
-from pathlib import Path
-from typing import List
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from pgvector.django import VectorField, CosineDistance
+from pgvector.django import CosineDistance, VectorField
 
 from config.settings.base import AUTH_USER_MODEL
 
@@ -17,7 +15,7 @@ class AuthorManager(models.Manager):
 class Author(models.Model):
     name = models.CharField(max_length=255, unique=True)
     bio = models.TextField(blank=True)
-    
+
     objects = AuthorManager()
 
     class Meta:
@@ -64,7 +62,7 @@ class Genre(models.Model):
     def get_hierarchy(self) -> str:
         """Returns the full genre hierarchy path"""
         if self.parent_genre:
-            return f"{self.parent_genre.get_hierarchy()} > {str(self.name)}"
+            return f"{self.parent_genre.get_hierarchy()} > {self.name!s}"
         return str(self.name)
 
 
@@ -76,7 +74,7 @@ class LocationManager(models.Manager):
 class Location(models.Model):
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField(blank=True)
-    
+
     objects = LocationManager()
 
     class Meta:
@@ -98,9 +96,10 @@ class VerlagManager(models.Manager):
 
 class Verlag(models.Model):
     """Publisher model"""
+
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField(blank=True)
-    
+
     objects = VerlagManager()
 
     class Meta:
@@ -122,9 +121,10 @@ class OrtManager(models.Manager):
 
 class Ort(models.Model):
     """Place/City model"""
+
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField(blank=True)
-    
+
     objects = OrtManager()
 
     class Meta:
@@ -146,9 +146,10 @@ class RegalManager(models.Manager):
 
 class Regal(models.Model):
     """Shelf model for book storage location"""
+
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField(blank=True)
-    
+
     objects = RegalManager()
 
     class Meta:
@@ -175,71 +176,57 @@ class BookManager(models.Manager):
                 q |= models.Q(active=True)
         return self.filter(q)
 
-    def search_similar(self, query_embedding: List[float], limit: int = 10):
+    def search_similar(self, query_embedding: list[float], limit: int = 10):
         """Search for books similar to the given embedding vector."""
         return self.annotate(
-            similarity=CosineDistance('embedding', query_embedding)
-        ).order_by('similarity')[:limit]
+            similarity=CosineDistance("embedding", query_embedding)
+        ).order_by("similarity")[:limit]
 
 
 class Book(models.Model):
     OWNERSHIP_CHOICES = [
-        ('library', _('Library')),
-        ('user', _('User')),
+        ("library", _("Library")),
+        ("user", _("User")),
     ]
-    
+
     active = models.BooleanField(default=True)
     user = models.ForeignKey(
         AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="books",
     )
-    
+
     # Core book fields
+    isbn = models.CharField(
+        max_length=20, blank=True, help_text=_("ISBN number (ISBN-10 or ISBN-13)")
+    )
     title = models.CharField(max_length=500, help_text=_("Book title"))
-    authors = models.ManyToManyField(
-        Author,
-        related_name="books",
-        help_text=_("Book authors")
+    authors = models.CharField(
+        max_length=500, blank=True, help_text=_("Book authors (comma-separated)")
     )
     year = models.PositiveIntegerField(
-        blank=True,
-        null=True,
-        help_text=_("Publication year")
+        blank=True, null=True, help_text=_("Publication year")
     )
-    verlag = models.ForeignKey(
-        Verlag,
-        on_delete=models.SET_NULL,
-        related_name="books",
-        blank=True,
-        null=True,
-        help_text=_("Publisher")
+    publisher = models.CharField(max_length=255, blank=True, help_text=_("Publisher"))
+    place = models.CharField(
+        max_length=255, blank=True, help_text=_("Place of publication")
     )
-    ort = models.ForeignKey(
-        Ort,
-        on_delete=models.SET_NULL,
-        related_name="books",
-        blank=True,
-        null=True,
-        help_text=_("Place of publication")
-    )
-    topic = models.CharField(
-        max_length=255,
-        blank=True,
-        help_text=_("Main topic or subject")
+    topics = models.CharField(
+        max_length=500, blank=True, help_text=_("Book topics (comma-separated)")
     )
     description = models.TextField(blank=True, help_text=_("Book description"))
-    referenz = models.TextField(
-        blank=True,
-        help_text=_("References (multiple allowed)")
+
+    # Simplified relationships
+    genres = models.CharField(
+        max_length=500, blank=True, help_text=_("Book genres (comma-separated)")
     )
-    
-    # Relationships
-    genres = models.ManyToManyField(
-        Genre,
-        related_name="books",
-        blank=True,
-        help_text=_("Book genres")
+
+    # AI extraction fields
+    language = models.CharField(
+        max_length=10, blank=True, help_text=_("Language code (e.g., de, en, cs)")
+    )
+    page_count = models.CharField(
+        max_length=20, blank=True, help_text=_("Number of pages")
     )
     location = models.ForeignKey(
         Location,
@@ -247,20 +234,20 @@ class Book(models.Model):
         related_name="books",
         blank=True,
         null=True,
-        help_text=_("Book location")
+        help_text=_("Book location"),
     )
-    
+
     # Ownership and library fields
     ownership = models.CharField(
         max_length=20,
         choices=OWNERSHIP_CHOICES,
-        default='user',
-        help_text=_("Book ownership type")
+        default="user",
+        help_text=_("Book ownership type"),
     )
     abbreviation = models.CharField(
         max_length=100,
         blank=True,
-        help_text=_("Library abbreviation (only if ownership is library)")
+        help_text=_("Library abbreviation (only if ownership is library)"),
     )
     regal = models.ForeignKey(
         Regal,
@@ -268,28 +255,25 @@ class Book(models.Model):
         related_name="books",
         blank=True,
         null=True,
-        help_text=_("Shelf location")
+        help_text=_("Shelf location"),
     )
-    
+
     # Booking fields
     booked = models.BooleanField(
-        default=False,
-        help_text=_("Is the book currently booked?")
+        default=False, help_text=_("Is the book currently booked?")
     )
     booked_till = models.DateField(
-        blank=True,
-        null=True,
-        help_text=_("Booked until date (only if booked)")
+        blank=True, null=True, help_text=_("Booked until date (only if booked)")
     )
-    
+
     # Image field
     image = models.ImageField(
-        upload_to='books/covers/',
+        upload_to="books/covers/",
         blank=True,
         null=True,
-        help_text=_("Book cover image")
+        help_text=_("Book cover image"),
     )
-    
+
     # System fields
     uuid = models.UUIDField(
         default=uuid.uuid4,
@@ -303,13 +287,13 @@ class Book(models.Model):
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
-    
+
     # Vector field for semantic search
     embedding = VectorField(
         dimensions=1536,  # Using OpenAI text-embedding-3-small dimensions
         null=True,
         blank=True,
-        help_text=_("Vector embedding for semantic search")
+        help_text=_("Vector embedding for semantic search"),
     )
 
     # Custom manager
@@ -325,28 +309,30 @@ class Book(models.Model):
 
     def is_ready_for_display(self):
         """Check if book has minimum required fields to be displayed."""
-        return bool(self.title and self.authors.exists())
+        return bool(self.title and self.authors)
 
     def get_authors_display(self):
         """Return comma-separated list of authors."""
-        return ", ".join([author.name for author in self.authors.all()])
+        return self.authors
 
     def get_genres_display(self):
         """Return comma-separated list of genres."""
-        return ", ".join([genre.name for genre in self.genres.all()])
+        return self.genres
 
     def get_content_for_embedding(self):
         """Generate text content for creating embeddings."""
         content_parts = [
+            self.isbn or "",
             self.title or "",
-            self.get_authors_display(),
+            self.authors or "",
             str(self.year) if self.year else "",
-            self.verlag.name if self.verlag else "",
-            self.ort.name if self.ort else "",
-            self.get_genres_display(),
-            self.topic or "",
+            self.publisher or "",
+            self.place or "",
+            self.topics or "",
+            self.genres or "",
             self.description or "",
-            self.referenz or "",
+            self.language or "",
+            self.page_count or "",
             self.ownership or "",
             self.abbreviation or "",
             self.regal.name if self.regal else "",
