@@ -119,7 +119,11 @@ export const Header = () => {
                   variant="ghost"
                   size="sm"
                   onClick={() => navigate('/bookings')}
-                  className="hover:scale-110 transition-transform relative"
+                  aria-current={location.pathname.startsWith('/bookings') ? 'page' : undefined}
+                  className={cn(
+                    'relative gap-2',
+                    location.pathname.startsWith('/bookings') && 'font-semibold',
+                  )}
                   title={t('header.myBookings')}
                 >
                   <Handshake className="h-5 w-5" />
@@ -140,7 +144,11 @@ export const Header = () => {
                   variant="ghost"
                   size="sm"
                   onClick={() => navigate('/my-items')}
-                  className="gap-2"
+                  aria-current={location.pathname.startsWith('/my-items') ? 'page' : undefined}
+                  className={cn(
+                    'gap-2',
+                    location.pathname.startsWith('/my-items') && 'font-semibold',
+                  )}
                   title={t('header.myItems')}
                 >
                   <Library className="h-5 w-5" />
@@ -149,10 +157,11 @@ export const Header = () => {
 
                 {/* Add Item */}
                 <Button
-                  variant="community"
+                  variant="default"
                   size="sm"
                   className="gap-2"
                   onClick={() => navigate('/create-item')}
+                  aria-current={location.pathname.startsWith('/create-item') ? 'page' : undefined}
                 >
                   <Plus className="h-4 w-4" />
                   <span className="hidden sm:inline">{t('header.shareItem')}</span>
