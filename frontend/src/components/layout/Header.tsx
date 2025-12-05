@@ -119,7 +119,10 @@ export const Header = () => {
                   variant="ghost"
                   size="sm"
                   onClick={() => navigate('/bookings')}
-                  className="hover:scale-110 transition-transform relative"
+                  className={cn(
+                    'relative gap-2',
+                    location.pathname.startsWith('/bookings') && 'font-semibold',
+                  )}
                   title={t('header.myBookings')}
                 >
                   <Handshake className="h-5 w-5" />
@@ -140,7 +143,10 @@ export const Header = () => {
                   variant="ghost"
                   size="sm"
                   onClick={() => navigate('/my-items')}
-                  className="gap-2"
+                  className={cn(
+                    'gap-2',
+                    location.pathname.startsWith('/my-items') && 'font-semibold',
+                  )}
                   title={t('header.myItems')}
                 >
                   <Library className="h-5 w-5" />
@@ -149,7 +155,7 @@ export const Header = () => {
 
                 {/* Add Item */}
                 <Button
-                  variant="community"
+                  variant="default"
                   size="sm"
                   className="gap-2"
                   onClick={() => navigate('/create-item')}
