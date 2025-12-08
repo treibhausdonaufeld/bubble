@@ -21,6 +21,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/hooks/useAuth';
 import { useItem } from '@/hooks/useItem';
 import { useDeleteItem } from '@/hooks/useMyItems';
+import { convertLineBreaks } from '@/lib/convertLineBreaks';
 import { formatPrice } from '@/lib/currency';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
@@ -318,7 +319,9 @@ const ItemDetail = () => {
               )}
             </div>
 
-            <p className="text-muted-foreground">{description}</p>
+            <p className="text-muted-foreground">
+              {description !== undefined && convertLineBreaks(description)}
+            </p>
 
             {/* Show owner details to logged-in users */}
             {user && <UserInfoBox userUuid={item.user} />}

@@ -39,6 +39,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { useDeleteItem, useMyItems, useUpdateItemStatus } from '@/hooks/useMyItems';
+import { convertLineBreaks } from '@/lib/convertLineBreaks';
 import { formatPrice } from '@/lib/currency';
 import { cn } from '@/lib/utils';
 import { Status402Enum } from '@/services/django';
@@ -471,7 +472,7 @@ const MyItems = () => {
 
                   <CardContent className="pb-3">
                     <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
-                      {item.description}
+                      {item.description !== undefined && convertLineBreaks(item.description)}
                     </p>
 
                     {/* Price */}
