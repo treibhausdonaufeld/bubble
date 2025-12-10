@@ -162,13 +162,13 @@ PostgreSQL password secret name
 PostgreSQL password secret key
 */}}
 {{- define "bubble.postgresql.secretKey" -}}
-{{- if .Values.postgresql.enabled }}
+{{- if .Values.postgresql.enabled -}}
 password
-{{- else if .Values.externalPostgresql.existingSecret }}
-{{- .Values.externalPostgresql.existingSecretPasswordKey }}
-{{- else }}
+{{- else if .Values.externalPostgresql.existingSecret -}}
+{{- .Values.externalPostgresql.existingSecretPasswordKey -}}
+{{- else -}}
 password
-{{- end }}
+{{- end -}}
 {{- end }}
 
 {{/*
