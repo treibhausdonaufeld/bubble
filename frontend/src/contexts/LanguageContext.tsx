@@ -740,8 +740,10 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
 
     // Second choice: use the first available language from the user's browser / OS preferences
     for (const lang of navigator.languages) {
-      if (LANGUAGES.includes(lang as Language)) {
-        return lang as Language;
+      // remove suffixes from languages like "de-AT"
+      const baseLang = lang.split('-')[0];
+      if (LANGUAGES.includes(baseLang as Language)) {
+        return baseLang as Language;
       }
     }
 
