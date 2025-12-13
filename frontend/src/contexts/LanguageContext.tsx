@@ -1,6 +1,7 @@
 import { createContext, ReactNode, useContext, useState } from 'react';
 
-export type Language = 'en' | 'de';
+const LANGUAGES = ['en', 'de'] as const;
+export type Language = (typeof LANGUAGES)[number];
 
 interface LanguageContextType {
   language: Language;
@@ -731,8 +732,21 @@ const translations = {
 
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   const [language, setLanguageState] = useState<Language>(() => {
-    const saved = localStorage.getItem('bubble-language');
-    return (saved as Language) || 'en';
+    // First choice: use language as stored in localStorage (if the user has selected one)
+    const savedLang = localStorage.getItem('bubble-language');
+    if (savedLang && LANGUAGES.includes(savedLang as Language)) {
+      return savedLang as Language;
+    }
+
+    // Second choice: use the first available language from the user's browser / OS preferences
+    for (const lang of navigator.languages) {
+      if (LANGUAGES.includes(lang as Language)) {
+        return lang as Language;
+      }
+    }
+
+    // Third choice: fallback to English
+    return 'en';
   });
 
   const setLanguage = (lang: Language) => {
