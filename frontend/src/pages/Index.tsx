@@ -5,6 +5,7 @@ import { HeroSection } from '@/components/layout/HeroSection';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useItems } from '@/hooks/useItems';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -65,6 +66,7 @@ const mockItems = [
 const Index = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const params = new URLSearchParams(location.search);
   const searchQuery = params.get('search') || undefined;
   const pageParam = params.get('page');
@@ -93,7 +95,9 @@ const Index = () => {
         <Header />
         <main className="container mx-auto px-4 py-8">
           <div className="text-center">
-            <p className="text-destructive">Error loading items: {error}</p>
+            <p className="text-destructive">
+              {t('common.error')}: {error}
+            </p>
           </div>
         </main>
       </div>
@@ -116,22 +120,24 @@ const Index = () => {
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-bold text-foreground">
                 {searchQuery
-                  ? `Search results for "${searchQuery}"`
+                  ? t('index.searchResults').replace('{query}', searchQuery)
                   : selectedCategory === 'all'
-                    ? 'All Items'
-                    : `${selectedCategory} Items`}
+                    ? t('index.allItems')
+                    : t('index.categoryItems').replace('{category}', selectedCategory)}
               </h2>
-              <div className="text-sm text-muted-foreground">{pagination.count} items found</div>
+              <div className="text-sm text-muted-foreground">
+                {t('index.itemsFound').replace('{count}', String(pagination.count))}
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {loading ? (
                 <div className="col-span-full text-center py-8">
-                  <p>Loading items...</p>
+                  <p>{t('index.loadingItems')}</p>
                 </div>
               ) : items.length === 0 ? (
                 <div className="col-span-full text-center py-8">
-                  <p>No items found in this category.</p>
+                  <p>{t('index.noItemsFound')}</p>
                 </div>
               ) : (
                 items.map(item => (
@@ -170,7 +176,7 @@ const Index = () => {
                   disabled={currentPage === 1}
                 >
                   <ChevronLeft className="h-4 w-4 mr-1" />
-                  Previous
+                  {t('index.previous')}
                 </Button>
 
                 <div className="flex items-center gap-2">
@@ -205,7 +211,7 @@ const Index = () => {
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
                 >
-                  Next
+                  {t('index.next')}
                   <ChevronRight className="h-4 w-4 ml-1" />
                 </Button>
               </div>

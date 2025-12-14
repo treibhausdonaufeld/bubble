@@ -26,6 +26,7 @@ const translations = {
     'header.dark': 'Dark',
 
     // Hero Section
+    'hero.tagline': 'Building Stronger Communities Together',
     'hero.title': 'Share & Discover in Your Community',
     'hero.subtitle':
       'Connect with neighbors to share, lend, and discover items in your local area. Building stronger communities through sharing.',
@@ -57,6 +58,16 @@ const translations = {
     'auth.loginFailed': 'Login failed. Please check your credentials.',
     'auth.unexpectedError': 'An unexpected error occurred. Please try again.',
 
+    // Index Page
+    'index.searchResults': 'Search results for "{query}"',
+    'index.allItems': 'All Items',
+    'index.categoryItems': '{category} Items',
+    'index.itemsFound': '{count} items found',
+    'index.loadingItems': 'Loading items...',
+    'index.noItemsFound': 'No items found in this category.',
+    'index.previous': 'Previous',
+    'index.next': 'Next',
+
     // Items
     'item.available': 'Available',
     'item.unavailable': 'Unavailable',
@@ -68,7 +79,7 @@ const translations = {
 
     // List Item
     'editItem.title': 'Share an Item',
-    'editItem.name': 'Edit Item',
+    'editItem.name': 'Item Name',
     'editItem.itemName': 'Item Name',
     'editItem.itemNamePlaceholder': 'Enter the name of your item...',
     'editItem.enterName': 'Enter the item name...',
@@ -368,7 +379,7 @@ const translations = {
   },
   de: {
     // Header
-    'header.search': 'Artikel in deiner Community suchen...',
+    'header.search': 'Suche Artikel in deiner Community...',
     'header.shareItem': 'Artikel teilen',
     'header.signIn': 'Anmelden',
     'header.myProfile': 'Mein Profil',
@@ -380,7 +391,8 @@ const translations = {
     'header.dark': 'Dunkel',
 
     // Hero Section
-    'hero.title': 'Teilen & Entdecken in deiner Community',
+    'hero.tagline': 'Zusammen stärkere Gemeinschaften aufbauen',
+    'hero.title': 'Teile & Entdecke in deiner Community',
     'hero.subtitle':
       'Verbinde dich mit Nachbarn, um Artikel in deiner Umgebung zu teilen, zu leihen und zu entdecken. Stärkere Gemeinschaften durch Teilen.',
     'hero.getStarted': 'Loslegen',
@@ -395,11 +407,11 @@ const translations = {
     'auth.forgotPassword': 'Passwort vergessen?',
     'auth.noAccount': 'Noch kein Konto?',
     'auth.hasAccount': 'Bereits ein Konto?',
-    'auth.loginRequired': 'Bitte melden Sie sich an, um diesen Artikel zu buchen oder zu kaufen',
+    'auth.loginRequired': 'Bitte melde dich an, um diesen Artikel zu buchen oder zu kaufen',
     // Auth page specific
     'auth.backToHome': 'Zurück zur Startseite',
     'auth.welcomeTitle': 'Willkommen bei Bubble',
-    'auth.signInSubtitle': 'Melden Sie sich bei Ihrem Konto an',
+    'auth.signInSubtitle': 'Melde dich bei deinem Konto an',
     'auth.orContinueWith': 'Oder fortfahren mit',
     'auth.usernameOrEmail': 'Benutzername oder E-Mail',
     'auth.enterUsernameOrEmail': 'Gib deinen Benutzernamen oder deine E-Mail ein',
@@ -408,8 +420,18 @@ const translations = {
     'auth.noAccountContact': 'Noch kein Konto? Kontaktiere deinen Administrator.',
     'auth.welcomeBackTitle': 'Willkommen zurück!',
     'auth.loggedInAs': 'Erfolgreich eingeloggt als',
-    'auth.loginFailed': 'Anmeldung fehlgeschlagen. Bitte überprüfen Sie Ihre Zugangsdaten.',
+    'auth.loginFailed': 'Anmeldung fehlgeschlagen. Bitte überprüfe deine Zugangsdaten.',
     'auth.unexpectedError': 'Ein unerwarteter Fehler ist aufgetreten. Bitte versuche es erneut.',
+
+    // Index Page
+    'index.searchResults': 'Suchergebnisse für "{query}"',
+    'index.allItems': 'Alle Artikel',
+    'index.categoryItems': '{category} Artikel',
+    'index.itemsFound': '{count} Artikel gefunden',
+    'index.loadingItems': 'Artikel werden geladen...',
+    'index.noItemsFound': 'Keine Artikel in dieser Kategorie gefunden.',
+    'index.previous': 'Zurück',
+    'index.next': 'Weiter',
 
     // Items
     'item.available': 'Verfügbar',
@@ -422,7 +444,7 @@ const translations = {
 
     // List Item
     'editItem.title': 'Artikel teilen',
-    'editItem.name': 'Artikel bearbeiten',
+    'editItem.name': 'Artikelname',
     'editItem.itemName': 'Artikelname',
     'editItem.itemNamePlaceholder': 'Gib den Namen deines Artikels ein...',
     'editItem.enterName': 'Artikelnamen eingeben...',
@@ -442,7 +464,7 @@ const translations = {
     'editItem.selectStatus': 'Status auswählen',
     'editItem.salePrice': 'Verkaufspreis',
     'editItem.rentalPrice': 'Mietpreis',
-    'editItem.pricingModel': 'Verkauf oder Vermietung',
+    'editItem.pricingModel': 'Verkaufen oder Vermieten',
     'editItem.sell': 'Verkaufen',
     'editItem.rent': 'Vermieten',
     'editItem.enterPrice': 'Preis eingeben',

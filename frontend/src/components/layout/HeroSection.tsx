@@ -16,7 +16,7 @@ export const HeroSection = () => {
           {/* Badge */}
           <Badge variant="secondary" className="mb-6 gap-2 px-4 py-2 text-sm animate-bounce-gentle">
             <Heart className="h-4 w-4 text-accent" />
-            Building Stronger Communities Together
+            {t('hero.tagline')}
           </Badge>
 
           {/* Main Heading */}
