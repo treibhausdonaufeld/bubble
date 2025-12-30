@@ -1,5 +1,6 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { type ItemCategoryFilter } from '@/hooks/types';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
 import {
@@ -16,36 +17,41 @@ import {
   Sofa,
   Wrench,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, ComponentType } from 'react';
 
-const categories = [
-  { id: '', name: 'All Items', icon: Grid3x3 },
-  { id: 'electronics', name: 'Electronics', icon: Smartphone },
-  { id: 'tools', name: 'Tools', icon: Wrench },
-  { id: 'furniture', name: 'Furniture', icon: Sofa },
-  { id: 'books', name: 'Books', icon: BookOpen },
-  { id: 'sports', name: 'Sports', icon: Dumbbell },
-  { id: 'clothing', name: 'Clothing', icon: Shirt },
-  { id: 'kitchen', name: 'Kitchen', icon: ChefHat },
-  { id: 'garden', name: 'Garden', icon: Flower2 },
-  { id: 'toys', name: 'Toys', icon: Gamepad2 },
-  { id: 'vehicles', name: 'Vehicles', icon: Car },
-  { id: 'rooms', name: 'Rooms', icon: Sofa },
-  { id: 'other', name: 'Other', icon: MoreHorizontal },
+type Category = {
+  id: ItemCategoryFilter;
+  icon: ComponentType<{ className?: string }>;
+};
+
+const categories: Category[] = [
+  { id: 'all', icon: Grid3x3 },
+  { id: 'electronics', icon: Smartphone },
+  { id: 'tools', icon: Wrench },
+  { id: 'furniture', icon: Sofa },
+  { id: 'books', icon: BookOpen },
+  { id: 'sports', icon: Dumbbell },
+  { id: 'clothing', icon: Shirt },
+  { id: 'kitchen', icon: ChefHat },
+  { id: 'garden', icon: Flower2 },
+  { id: 'toys', icon: Gamepad2 },
+  { id: 'vehicles', icon: Car },
+  { id: 'rooms', icon: Sofa },
+  { id: 'other', icon: MoreHorizontal },
 ];
 
 interface CategoryFilterProps {
-  selectedCategory: string;
-  onCategoryChange: (category: string) => void;
+  selectedCategory: ItemCategoryFilter;
+  onCategoryChange: (category: ItemCategoryFilter) => void;
 }
 
 export const CategoryFilter = ({ selectedCategory, onCategoryChange }: CategoryFilterProps) => {
   const [showAll, setShowAll] = useState(false);
   const { t } = useLanguage();
 
-  const getCategoryName = (id: string) => {
+  const getCategoryName = (id: ItemCategoryFilter) => {
     switch (id) {
-      case '':
+      case 'all':
         return t('categories.all');
       case 'electronics':
         return t('categories.electronics');
