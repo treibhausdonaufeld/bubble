@@ -5,6 +5,7 @@ import { HeroSection } from '@/components/layout/HeroSection';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useItems } from '@/hooks/useItems';
+import { type ItemCategoryFilter } from '@/hooks/types';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
@@ -72,12 +73,17 @@ const Index = () => {
   const pageParam = params.get('page');
   const currentPage = pageParam ? parseInt(pageParam, 10) : 1;
 
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const { items, loading, error, pagination } = useItems(
-    selectedCategory,
-    searchQuery,
-    currentPage,
-  );
+  const [selectedCategory, setSelectedCategory] = useState<ItemCategoryFilter>('all');
+  const {
+    items,
+    isLoading: loading,
+    error,
+    pagination,
+  } = useItems({
+    category: selectedCategory === 'all' ? undefined : selectedCategory,
+    search: searchQuery,
+    page: currentPage,
+  });
   const { user } = useAuth();
 
   const handlePageChange = (newPage: number) => {
@@ -95,9 +101,7 @@ const Index = () => {
         <Header />
         <main className="container mx-auto px-4 py-8">
           <div className="text-center">
-            <p className="text-destructive">
-              {t('common.error')}: {error}
-            </p>
+            <p className="text-destructive">{t('common.loadingError')}</p>
           </div>
         </main>
       </div>
