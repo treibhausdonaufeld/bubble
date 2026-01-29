@@ -1,11 +1,11 @@
 import { BrowseNav } from '@/components/browse/BrowseNav';
-import { ItemCard } from '@/components/items/ItemCard';
-import { CategoryFilter } from '@/components/layout/CategoryFilter';
+import { ItemCard } from '@/components/browse/ItemCard';
 import { Header } from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
 import { useItems } from '@/hooks/useItems';
 import { type ItemCategoryFilter } from '@/hooks/types';
 import { type Status402Enum } from '@/services/django';
+import { type ConditionEnum } from '@/services/django';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
@@ -19,6 +19,8 @@ type BrowseItemsPageFilters = {
 };
 
 const PAGE_SIZE = 20;
+// by default, show 'new' and 'used' items, don't show 'broken' items
+const DEFAULT_CONDITIONS: ConditionEnum[] = [0, 1];
 
 // Mock data for initial demonstration
 const mockItems = [
@@ -92,8 +94,10 @@ const Index = () => {
   }
 
   const [selectedCategory, setSelectedCategory] = useState<ItemCategoryFilter>('all');
+  const [selectedConditions, setSelectedConditions] = useState<ConditionEnum[]>(DEFAULT_CONDITIONS);
   const itemsQuery = useItems({
     category: selectedCategory === 'all' ? undefined : selectedCategory,
+    conditions: selectedConditions.length > 0 ? selectedConditions : undefined,
     search: searchQuery,
     page: currentPage,
     status: itemFilters?.status,
@@ -144,10 +148,11 @@ const Index = () => {
 
         <main className="container mx-auto px-4 py-4">
           <div className="space-y-4">
-            <BrowseNav />
-            <CategoryFilter
+            <BrowseNav
+              selectedConditions={selectedConditions}
               selectedCategory={selectedCategory}
-              onCategoryChange={setSelectedCategory}
+              onSelectedConditionsChange={setSelectedConditions}
+              onSelectedCategoryChange={setSelectedCategory}
             />
 
             <div className="space-y-6">

@@ -59,6 +59,7 @@ const translations = {
     'index.noItemsFound': 'No items found in this category.',
     'index.previous': 'Previous',
     'index.next': 'Next',
+    'index.condition': 'Condition',
 
     // Browse Nav
     'browse.buy': 'Buy',
@@ -424,6 +425,7 @@ const translations = {
     'index.noItemsFound': 'Keine Artikel in dieser Kategorie gefunden.',
     'index.previous': 'Zurück',
     'index.next': 'Weiter',
+    'index.condition': 'Zustand',
 
     // Browse Nav
     'browse.buy': 'Kaufen',

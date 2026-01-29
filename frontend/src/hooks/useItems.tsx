@@ -1,4 +1,4 @@
-import { publicItemsList, type Status402Enum } from '@/services/django';
+import { publicItemsList, type Status402Enum, type ConditionEnum } from '@/services/django';
 import { useQuery } from '@tanstack/react-query';
 import { type ItemCategory } from './types';
 
@@ -10,6 +10,7 @@ export const useItems = ({
   minSalePrice,
   minRentalPrice,
   maxSalePrice,
+  conditions,
 }: {
   category?: ItemCategory;
   search?: string;
@@ -18,15 +19,27 @@ export const useItems = ({
   minSalePrice?: number;
   minRentalPrice?: number;
   maxSalePrice?: number;
+  conditions?: ConditionEnum[];
 } = {}) => {
   const normalizedStatus =
     status === undefined ? undefined : Array.isArray(status) ? status : [status];
   const statusKey = normalizedStatus?.join(',');
+  // sort the array so it can be better used as a key
+  const conditionsSorted = conditions && [...conditions].sort();
 
   return useQuery({
     queryKey: [
       'items',
-      { category, search, page, status: statusKey, minSalePrice, minRentalPrice, maxSalePrice },
+      {
+        category,
+        search,
+        page,
+        status: statusKey,
+        minSalePrice,
+        minRentalPrice,
+        maxSalePrice,
+        conditions: conditionsSorted,
+      },
     ],
     queryFn: async () => {
       const response = await publicItemsList({
@@ -38,6 +51,7 @@ export const useItems = ({
           min_sale_price: minSalePrice,
           min_rental_price: minRentalPrice,
           max_sale_price: maxSalePrice,
+          conditions: conditionsSorted,
         },
       });
       return {
