@@ -20,7 +20,7 @@ const locationSchema = z.object({
   address: z.string().min(1, 'Address is required'),
   latitude: z.number().optional(),
   longitude: z.number().optional(),
-  is_default: z.boolean().default(false),
+  is_default: z.boolean(),
 });
 
 type LocationFormData = z.infer<typeof locationSchema>;
