@@ -26,9 +26,7 @@ interface ItemCardProps {
   rentalPeriod?: 'hourly' | 'daily' | 'weekly';
   location: string;
   imageUrl?: string;
-  ownerName: string;
   ownerAvatar?: string;
-  ownerRating: number;
   createdAt: string;
   isFavorited?: boolean;
   ownerId?: string;
@@ -49,9 +47,7 @@ export const ItemCard = ({
   rentalPriceCurrency,
   location,
   imageUrl,
-  ownerName,
   ownerAvatar,
-  ownerRating,
   createdAt,
   isFavorited = false,
   owner,

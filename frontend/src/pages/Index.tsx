@@ -195,7 +195,7 @@ const Index = () => {
                     return (
                       <Button
                         key={pageNum}
-                        variant={currentPage === pageNum ? 'default' : 'outline-solid'}
+                        variant={currentPage === pageNum ? 'default' : 'outline'}
                         size="sm"
                         onClick={() => handlePageChange(pageNum)}
                       >
