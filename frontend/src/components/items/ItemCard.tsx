@@ -11,6 +11,7 @@ import { Status402Enum } from '@/services/django';
 import { Clock, ShoppingCart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { getStatusColor, getStatusLabel } from './status';
+import { convertLineBreaks } from '@/lib/convertLineBreaks';
 
 interface ItemCardProps {
   id: string;
@@ -136,7 +137,9 @@ export const ItemCard = ({
           <h3 className="font-semibold text-foreground line-clamp-1 group-hover:text-primary transition-colors">
             {title}
           </h3>
-          <p className="text-sm text-muted-foreground line-clamp-2 mt-1">{description}</p>
+          <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
+            {convertLineBreaks(description)}
+          </p>
         </div>
 
         <div className="flex items-center justify-between text-xs text-muted-foreground">
