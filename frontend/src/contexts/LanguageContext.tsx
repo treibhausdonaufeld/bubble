@@ -138,6 +138,7 @@ const translations = {
     'condition.new': 'New',
     'condition.used': 'Used',
     'condition.broken': 'Broken',
+    'condition.unknown': 'Unknown',
 
     // Item UI
     'item.noImage': 'No image',
@@ -322,6 +323,7 @@ const translations = {
     'status.reserved': 'Reserved',
     'status.rented': 'Rented',
     'status.sold': 'Sold',
+    'status.unknown': 'Unknown',
     // Profile
     'profile.title': 'Profile Settings',
     'profile.manage': 'Manage your profile information and locations',
@@ -508,6 +510,7 @@ const translations = {
     'condition.new': 'Neu',
     'condition.used': 'Gebraucht',
     'condition.broken': 'Kaputt',
+    'condition.unknown': 'Unbekannt',
 
     // Item UI
     'item.noImage': 'Kein Bild',
@@ -694,6 +697,7 @@ const translations = {
     'status.reserved': 'Reserviert',
     'status.rented': 'Vermietet',
     'status.sold': 'Verkauft',
+    'status.unknown': 'Unbekannt',
     // Profile
     'profile.title': 'Profileinstellungen',
     'profile.manage': 'Verwalte deine Profilinformationen und Orte',

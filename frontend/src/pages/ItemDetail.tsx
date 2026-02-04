@@ -205,6 +205,13 @@ const ItemDetail = () => {
     2: t('condition.broken'),
   };
 
+  function getConditionLabel(conditionId: number | undefined) {
+    if (conditionId !== undefined) {
+      return conditionMap[conditionId];
+    }
+    return t('condition.unknown');
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -281,7 +288,7 @@ const ItemDetail = () => {
             <div className="space-y-2">
               <div className="flex flex-wrap items-center gap-4">
                 <Badge>{t(`categories.${category}`)}</Badge>
-                <Badge variant="secondary">{conditionMap[condition]}</Badge>
+                <Badge variant="secondary">{getConditionLabel(condition)}</Badge>
                 {typeof item.status !== 'undefined' && item.status !== null && (
                   <Badge className={cn(getStatusColor(item.status), 'text-xs')}>
                     {getStatusLabel(item.status) ? t(`status.${getStatusLabel(item.status)}`) : ''}
@@ -365,9 +372,9 @@ const ItemDetail = () => {
                                 itemUuid={item.id}
                                 itemName={name}
                                 salePrice={sale_price}
-                                salePriceCurrency={sale_price_currency}
+                                salePriceCurrency={sale_price_currency || undefined}
                                 rentalPrice={rental_price}
-                                rentalPriceCurrency={rental_price_currency}
+                                rentalPriceCurrency={rental_price_currency || undefined}
                                 preselectedStartDate={selectedStartDate}
                                 preselectedEndDate={selectedEndDate}
                                 controlledOpen={showBookingDialog}
