@@ -455,7 +455,12 @@ const MyItems = () => {
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <Badge className={cn(item.status && getStatusColor(item.status), 'text-xs')}>
+                      <Badge
+                        className={cn(
+                          item.status !== undefined && getStatusColor(item.status),
+                          'text-xs',
+                        )}
+                      >
                         {getStatusText(item.status)}
                       </Badge>
                       <Badge variant="outline" className="text-xs">
