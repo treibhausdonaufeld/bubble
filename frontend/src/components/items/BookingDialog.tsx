@@ -18,7 +18,7 @@ import { useNavigate } from 'react-router-dom';
 
 interface BookingDialogProps {
   itemUuid: string;
-  itemName: string;
+  itemName?: string;
   salePrice?: string | null;
   salePriceCurrency?: string;
   rentalPrice?: string | null;
@@ -35,7 +35,7 @@ interface BookingDialogProps {
 
 export const BookingDialog = ({
   itemUuid,
-  itemName,
+  itemName = '',
   salePrice,
   salePriceCurrency,
   rentalPrice,

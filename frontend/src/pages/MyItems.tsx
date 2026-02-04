@@ -128,7 +128,7 @@ const MyItems = () => {
     }
   };
 
-  const getStatusText = (status: Status402Enum) => {
+  const getStatusText = (status: Status402Enum | undefined) => {
     switch (status) {
       case 0:
         return t('status.draft');
@@ -143,7 +143,7 @@ const MyItems = () => {
       case 5:
         return t('status.sold');
       default:
-        return 'Unknown';
+        return t('status.unknown');
     }
   };
 
@@ -263,7 +263,7 @@ const MyItems = () => {
                       </TableCell>
                       <TableCell onClick={e => e.stopPropagation()}>
                         <Select
-                          value={item.status.toString()}
+                          value={item.status?.toString()}
                           onValueChange={value => {
                             const statusMap: Record<
                               string,
@@ -455,7 +455,7 @@ const MyItems = () => {
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <Badge className={cn(getStatusColor(item.status), 'text-xs')}>
+                      <Badge className={cn(item.status && getStatusColor(item.status), 'text-xs')}>
                         {getStatusText(item.status)}
                       </Badge>
                       <Badge variant="outline" className="text-xs">
@@ -490,7 +490,7 @@ const MyItems = () => {
                     <div className="w-full space-y-2">
                       <div className="text-xs text-muted-foreground">{t('myItems.status')}</div>
                       <Select
-                        value={item.status.toString()}
+                        value={item.status?.toString()}
                         onValueChange={value => {
                           const statusMap: Record<
                             string,

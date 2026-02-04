@@ -14,9 +14,9 @@ import { getStatusColor, getStatusLabel } from './status';
 
 interface ItemCardProps {
   id: string;
-  title: string;
+  title?: string;
   description: string;
-  category: string;
+  category?: string;
   condition: 'new' | 'used' | 'broken';
   listingType: 'sell' | 'rent' | 'both';
   salePrice?: number;
@@ -189,7 +189,6 @@ export const ItemCard = ({
                       itemName={title}
                       salePrice={salePrice?.toString()}
                       salePriceCurrency={salePriceCurrency || undefined}
-                      rentalPrice={rentalPrice?.toString()}
                       rentalPriceCurrency={rentalPriceCurrency || undefined}
                       buttonSize="sm"
                       buttonClassName="w-full"

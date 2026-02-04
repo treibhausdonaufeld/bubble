@@ -242,14 +242,15 @@ const Bookings = () => {
                                         {itemTitle}
                                       </span>
                                       <div className="flex items-center gap-1">
-                                        {booking.unread_messages_count > 0 && (
-                                          <Badge
-                                            variant="destructive"
-                                            className="h-5 min-w-[20px] px-1 text-xs"
-                                          >
-                                            {booking.unread_messages_count}
-                                          </Badge>
-                                        )}
+                                        {booking.unread_messages_count !== null &&
+                                          booking.unread_messages_count > 0 && (
+                                            <Badge
+                                              variant="destructive"
+                                              className="h-5 min-w-[20px] px-1 text-xs"
+                                            >
+                                              {booking.unread_messages_count}
+                                            </Badge>
+                                          )}
                                         {getStatusBadge(booking.status)}
                                       </div>
                                     </div>
@@ -333,14 +334,15 @@ const Bookings = () => {
                                       {itemTitle}
                                     </span>
                                     <div className="flex items-center gap-1">
-                                      {booking.unread_messages_count > 0 && (
-                                        <Badge
-                                          variant="destructive"
-                                          className="h-5 min-w-[20px] px-1 text-xs"
-                                        >
-                                          {booking.unread_messages_count}
-                                        </Badge>
-                                      )}
+                                      {booking.unread_messages_count !== null &&
+                                        booking.unread_messages_count > 0 && (
+                                          <Badge
+                                            variant="destructive"
+                                            className="h-5 min-w-[20px] px-1 text-xs"
+                                          >
+                                            {booking.unread_messages_count}
+                                          </Badge>
+                                        )}
                                       {getStatusBadge(booking.status)}
                                     </div>
                                   </div>

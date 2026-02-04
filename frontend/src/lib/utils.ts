@@ -5,8 +5,8 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-function getCookie(name: string): string | null {
-  let cookieValue = null;
+export function getCookie(name: string): string | null {
+  let cookieValue: string | null = null;
   if (document.cookie && document.cookie !== '') {
     const cookies = document.cookie.split(';');
     for (let i = 0; i < cookies.length; i++) {

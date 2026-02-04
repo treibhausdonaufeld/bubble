@@ -20,7 +20,7 @@ interface BasicFieldsProps {
   };
   setFormData: (data: any) => void;
   disabled?: boolean;
-  descriptionRef?: React.RefObject<HTMLTextAreaElement>;
+  descriptionRef?: React.RefObject<HTMLTextAreaElement | null>;
 }
 
 export const BasicFields = ({
