@@ -490,7 +490,7 @@ const MyItems = () => {
                     <div className="w-full space-y-2">
                       <div className="text-xs text-muted-foreground">{t('myItems.status')}</div>
                       <Select
-                        value={item.status?.toString()}
+                        value={item.status !== undefined ? item.status.toString() : undefined}
                         onValueChange={value => {
                           const statusMap: Record<
                             string,
