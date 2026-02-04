@@ -2,10 +2,19 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
+type UserLocation = {
+  id: string;
+  name: string;
+  address: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  is_default?: boolean;
+};
+
 export const useUserLocations = () => {
   const { user } = useAuth();
 
-  return useQuery({
+  return useQuery<UserLocation[]>({
     queryKey: ['user-locations', user?.id],
     queryFn: async () => {
       if (!user) throw new Error('User not authenticated');
@@ -17,7 +26,9 @@ export const useUserLocations = () => {
       //   .order("created_at", { ascending: false });
 
       // if (error) throw error;
-      // return data;
+      // return data as UserLocation[];
+
+      return [];
     },
     enabled: !!user,
   });
