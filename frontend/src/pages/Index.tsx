@@ -5,16 +5,16 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useItems } from '@/hooks/useItems';
 import { type ItemCategoryFilter } from '@/hooks/types';
-import { type ConditionValue } from '@/components/browse-items/ConditionFilter';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FilterForm } from '@/components/browse-items/FilterForm';
+import { ConditionEnum } from '@/services/django';
 
 const PAGE_SIZE = 20;
 // by default, show 'new' and 'used' items, don't show 'broken' items
-const DEFAULT_CONDITIONS: ConditionValue[] = [0, 1];
+const DEFAULT_CONDITIONS: ConditionEnum[] = [0, 1];
 
 // Mock data for initial demonstration
 const mockItems = [
@@ -80,7 +80,7 @@ const Index = () => {
 
   const [selectedCategory, setSelectedCategory] = useState<ItemCategoryFilter>('all');
   const [selectedConditions, setSelectedConditions] =
-    useState<ConditionValue[]>(DEFAULT_CONDITIONS);
+    useState<ConditionEnum[]>(DEFAULT_CONDITIONS);
   const itemsQuery = useItems({
     category: selectedCategory === 'all' ? undefined : selectedCategory,
     conditions: selectedConditions.length > 0 ? selectedConditions : undefined,

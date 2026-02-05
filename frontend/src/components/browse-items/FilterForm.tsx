@@ -1,11 +1,12 @@
 import { FormEvent } from 'react';
 import { CategoryFilter } from './CategoryFilter';
-import { ConditionFilter, type ConditionValue } from './ConditionFilter';
 import { ItemCategoryFilter } from '@/hooks/types';
+import { ConditionEnum } from '@/services/django';
+import { ConditionFilter } from './ConditionFilter';
 
 type FilterOptions = {
   category?: ItemCategoryFilter;
-  conditions?: ConditionValue[];
+  conditions?: ConditionEnum[];
 };
 
 type FilterFormProps = {

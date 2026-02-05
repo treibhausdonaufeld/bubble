@@ -1,7 +1,6 @@
-import { publicItemsList } from '@/services/django';
+import { ConditionEnum, publicItemsList } from '@/services/django';
 import { useQuery } from '@tanstack/react-query';
 import { type ItemCategory } from './types';
-import { ConditionValue } from '@/components/browse-items/ConditionFilter';
 
 export const useItems = ({
   category,
@@ -12,17 +11,19 @@ export const useItems = ({
   category?: ItemCategory;
   search?: string;
   page?: number;
-  conditions?: ConditionValue[];
+  conditions?: ConditionEnum[];
 } = {}) => {
+  // sort the array so it can be better used as a key
+  const conditionsSorted = conditions && [...conditions].sort();
   return useQuery({
-    queryKey: ['items', { category, search, page, conditions }],
+    queryKey: ['items', { category, search, page, conditions: conditionsSorted }],
     queryFn: async () => {
       const response = await publicItemsList({
         query: {
           category,
           page: page,
           search: search,
-          conditions,
+          conditions: conditionsSorted,
         },
       });
       return {
