@@ -18,27 +18,19 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
     meta?: Record<string, unknown>;
 };
 
-export const authTokenCreate = <ThrowOnError extends boolean = true>(options: Options<AuthTokenCreateData, ThrowOnError>) => {
-    return (options.client ?? client).post<AuthTokenCreateResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/auth-token/',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
+export const authTokenCreate = <ThrowOnError extends boolean = true>(options: Options<AuthTokenCreateData, ThrowOnError>) => (options.client ?? client).post<AuthTokenCreateResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/auth-token/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * ViewSet for managing authors.
@@ -50,23 +42,15 @@ export const authTokenCreate = <ThrowOnError extends boolean = true>(options: Op
  * partial_update: Partially update an author
  * destroy: Delete an author
  */
-export const authorsList = <ThrowOnError extends boolean = true>(options?: Options<AuthorsListData, ThrowOnError>) => {
-    return (options?.client ?? client).get<AuthorsListResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/authors/',
-        ...options
-    });
-};
+export const authorsList = <ThrowOnError extends boolean = true>(options?: Options<AuthorsListData, ThrowOnError>) => (options?.client ?? client).get<AuthorsListResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/authors/',
+    ...options
+});
 
 /**
  * ViewSet for managing authors.
@@ -78,27 +62,19 @@ export const authorsList = <ThrowOnError extends boolean = true>(options?: Optio
  * partial_update: Partially update an author
  * destroy: Delete an author
  */
-export const authorsCreate = <ThrowOnError extends boolean = true>(options: Options<AuthorsCreateData, ThrowOnError>) => {
-    return (options.client ?? client).post<AuthorsCreateResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/authors/',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
+export const authorsCreate = <ThrowOnError extends boolean = true>(options: Options<AuthorsCreateData, ThrowOnError>) => (options.client ?? client).post<AuthorsCreateResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/authors/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * ViewSet for managing authors.
@@ -110,23 +86,15 @@ export const authorsCreate = <ThrowOnError extends boolean = true>(options: Opti
  * partial_update: Partially update an author
  * destroy: Delete an author
  */
-export const authorsDestroy = <ThrowOnError extends boolean = true>(options: Options<AuthorsDestroyData, ThrowOnError>) => {
-    return (options.client ?? client).delete<AuthorsDestroyResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/authors/{id}/',
-        ...options
-    });
-};
+export const authorsDestroy = <ThrowOnError extends boolean = true>(options: Options<AuthorsDestroyData, ThrowOnError>) => (options.client ?? client).delete<AuthorsDestroyResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/authors/{id}/',
+    ...options
+});
 
 /**
  * ViewSet for managing authors.
@@ -138,23 +106,15 @@ export const authorsDestroy = <ThrowOnError extends boolean = true>(options: Opt
  * partial_update: Partially update an author
  * destroy: Delete an author
  */
-export const authorsRetrieve = <ThrowOnError extends boolean = true>(options: Options<AuthorsRetrieveData, ThrowOnError>) => {
-    return (options.client ?? client).get<AuthorsRetrieveResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/authors/{id}/',
-        ...options
-    });
-};
+export const authorsRetrieve = <ThrowOnError extends boolean = true>(options: Options<AuthorsRetrieveData, ThrowOnError>) => (options.client ?? client).get<AuthorsRetrieveResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/authors/{id}/',
+    ...options
+});
 
 /**
  * ViewSet for managing authors.
@@ -166,27 +126,19 @@ export const authorsRetrieve = <ThrowOnError extends boolean = true>(options: Op
  * partial_update: Partially update an author
  * destroy: Delete an author
  */
-export const authorsPartialUpdate = <ThrowOnError extends boolean = true>(options: Options<AuthorsPartialUpdateData, ThrowOnError>) => {
-    return (options.client ?? client).patch<AuthorsPartialUpdateResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/authors/{id}/',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
+export const authorsPartialUpdate = <ThrowOnError extends boolean = true>(options: Options<AuthorsPartialUpdateData, ThrowOnError>) => (options.client ?? client).patch<AuthorsPartialUpdateResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/authors/{id}/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * ViewSet for managing authors.
@@ -198,165 +150,109 @@ export const authorsPartialUpdate = <ThrowOnError extends boolean = true>(option
  * partial_update: Partially update an author
  * destroy: Delete an author
  */
-export const authorsUpdate = <ThrowOnError extends boolean = true>(options: Options<AuthorsUpdateData, ThrowOnError>) => {
-    return (options.client ?? client).put<AuthorsUpdateResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/authors/{id}/',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
+export const authorsUpdate = <ThrowOnError extends boolean = true>(options: Options<AuthorsUpdateData, ThrowOnError>) => (options.client ?? client).put<AuthorsUpdateResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/authors/{id}/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * ViewSet for bookings with filtering and permissions.
  */
-export const bookingsList = <ThrowOnError extends boolean = true>(options?: Options<BookingsListData, ThrowOnError>) => {
-    return (options?.client ?? client).get<BookingsListResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/bookings/',
-        ...options
-    });
-};
+export const bookingsList = <ThrowOnError extends boolean = true>(options?: Options<BookingsListData, ThrowOnError>) => (options?.client ?? client).get<BookingsListResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/bookings/',
+    ...options
+});
 
 /**
  * ViewSet for bookings with filtering and permissions.
  */
-export const bookingsCreate = <ThrowOnError extends boolean = true>(options: Options<BookingsCreateData, ThrowOnError>) => {
-    return (options.client ?? client).post<BookingsCreateResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/bookings/',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
+export const bookingsCreate = <ThrowOnError extends boolean = true>(options: Options<BookingsCreateData, ThrowOnError>) => (options.client ?? client).post<BookingsCreateResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/bookings/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * ViewSet for bookings with filtering and permissions.
  */
-export const bookingsDestroy = <ThrowOnError extends boolean = true>(options: Options<BookingsDestroyData, ThrowOnError>) => {
-    return (options.client ?? client).delete<BookingsDestroyResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/bookings/{id}/',
-        ...options
-    });
-};
+export const bookingsDestroy = <ThrowOnError extends boolean = true>(options: Options<BookingsDestroyData, ThrowOnError>) => (options.client ?? client).delete<BookingsDestroyResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/bookings/{id}/',
+    ...options
+});
 
 /**
  * ViewSet for bookings with filtering and permissions.
  */
-export const bookingsRetrieve = <ThrowOnError extends boolean = true>(options: Options<BookingsRetrieveData, ThrowOnError>) => {
-    return (options.client ?? client).get<BookingsRetrieveResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/bookings/{id}/',
-        ...options
-    });
-};
+export const bookingsRetrieve = <ThrowOnError extends boolean = true>(options: Options<BookingsRetrieveData, ThrowOnError>) => (options.client ?? client).get<BookingsRetrieveResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/bookings/{id}/',
+    ...options
+});
 
 /**
  * ViewSet for bookings with filtering and permissions.
  */
-export const bookingsPartialUpdate = <ThrowOnError extends boolean = true>(options: Options<BookingsPartialUpdateData, ThrowOnError>) => {
-    return (options.client ?? client).patch<BookingsPartialUpdateResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/bookings/{id}/',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
+export const bookingsPartialUpdate = <ThrowOnError extends boolean = true>(options: Options<BookingsPartialUpdateData, ThrowOnError>) => (options.client ?? client).patch<BookingsPartialUpdateResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/bookings/{id}/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * ViewSet for bookings with filtering and permissions.
  */
-export const bookingsUpdate = <ThrowOnError extends boolean = true>(options: Options<BookingsUpdateData, ThrowOnError>) => {
-    return (options.client ?? client).put<BookingsUpdateResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/bookings/{id}/',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
+export const bookingsUpdate = <ThrowOnError extends boolean = true>(options: Options<BookingsUpdateData, ThrowOnError>) => (options.client ?? client).put<BookingsUpdateResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/bookings/{id}/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * ViewSet for managing books.
@@ -372,23 +268,15 @@ export const bookingsUpdate = <ThrowOnError extends boolean = true>(options: Opt
  * partial_update: Partially update a book
  * destroy: Delete a book
  */
-export const booksList = <ThrowOnError extends boolean = true>(options?: Options<BooksListData, ThrowOnError>) => {
-    return (options?.client ?? client).get<BooksListResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/books/',
-        ...options
-    });
-};
+export const booksList = <ThrowOnError extends boolean = true>(options?: Options<BooksListData, ThrowOnError>) => (options?.client ?? client).get<BooksListResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/books/',
+    ...options
+});
 
 /**
  * ViewSet for managing books.
@@ -404,27 +292,19 @@ export const booksList = <ThrowOnError extends boolean = true>(options?: Options
  * partial_update: Partially update a book
  * destroy: Delete a book
  */
-export const booksCreate = <ThrowOnError extends boolean = true>(options?: Options<BooksCreateData, ThrowOnError>) => {
-    return (options?.client ?? client).post<BooksCreateResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/books/',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options?.headers
-        }
-    });
-};
+export const booksCreate = <ThrowOnError extends boolean = true>(options?: Options<BooksCreateData, ThrowOnError>) => (options?.client ?? client).post<BooksCreateResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/books/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options?.headers
+    }
+});
 
 /**
  * ViewSet for managing books.
@@ -440,23 +320,15 @@ export const booksCreate = <ThrowOnError extends boolean = true>(options?: Optio
  * partial_update: Partially update a book
  * destroy: Delete a book
  */
-export const booksDestroy = <ThrowOnError extends boolean = true>(options: Options<BooksDestroyData, ThrowOnError>) => {
-    return (options.client ?? client).delete<BooksDestroyResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/books/{id}/',
-        ...options
-    });
-};
+export const booksDestroy = <ThrowOnError extends boolean = true>(options: Options<BooksDestroyData, ThrowOnError>) => (options.client ?? client).delete<BooksDestroyResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/books/{id}/',
+    ...options
+});
 
 /**
  * ViewSet for managing books.
@@ -472,23 +344,15 @@ export const booksDestroy = <ThrowOnError extends boolean = true>(options: Optio
  * partial_update: Partially update a book
  * destroy: Delete a book
  */
-export const booksRetrieve = <ThrowOnError extends boolean = true>(options: Options<BooksRetrieveData, ThrowOnError>) => {
-    return (options.client ?? client).get<BooksRetrieveResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/books/{id}/',
-        ...options
-    });
-};
+export const booksRetrieve = <ThrowOnError extends boolean = true>(options: Options<BooksRetrieveData, ThrowOnError>) => (options.client ?? client).get<BooksRetrieveResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/books/{id}/',
+    ...options
+});
 
 /**
  * ViewSet for managing books.
@@ -504,27 +368,19 @@ export const booksRetrieve = <ThrowOnError extends boolean = true>(options: Opti
  * partial_update: Partially update a book
  * destroy: Delete a book
  */
-export const booksPartialUpdate = <ThrowOnError extends boolean = true>(options: Options<BooksPartialUpdateData, ThrowOnError>) => {
-    return (options.client ?? client).patch<BooksPartialUpdateResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/books/{id}/',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
+export const booksPartialUpdate = <ThrowOnError extends boolean = true>(options: Options<BooksPartialUpdateData, ThrowOnError>) => (options.client ?? client).patch<BooksPartialUpdateResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/books/{id}/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * ViewSet for managing books.
@@ -540,27 +396,19 @@ export const booksPartialUpdate = <ThrowOnError extends boolean = true>(options:
  * partial_update: Partially update a book
  * destroy: Delete a book
  */
-export const booksUpdate = <ThrowOnError extends boolean = true>(options: Options<BooksUpdateData, ThrowOnError>) => {
-    return (options.client ?? client).put<BooksUpdateResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/books/{id}/',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
+export const booksUpdate = <ThrowOnError extends boolean = true>(options: Options<BooksUpdateData, ThrowOnError>) => (options.client ?? client).put<BooksUpdateResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/books/{id}/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * Update book details from OpenLibrary based on ISBN.
@@ -568,27 +416,19 @@ export const booksUpdate = <ThrowOnError extends boolean = true>(options: Option
  * Optionally provide an ISBN in the request body to update the book with data
  * from OpenLibrary. If no ISBN is provided, the book's existing ISBN will be used.
  */
-export const booksIsbnUpdateUpdate = <ThrowOnError extends boolean = true>(options: Options<BooksIsbnUpdateUpdateData, ThrowOnError>) => {
-    return (options.client ?? client).put<BooksIsbnUpdateUpdateResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/books/{id}/isbn_update/',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
+export const booksIsbnUpdateUpdate = <ThrowOnError extends boolean = true>(options: Options<BooksIsbnUpdateUpdateData, ThrowOnError>) => (options.client ?? client).put<BooksIsbnUpdateUpdateResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/books/{id}/isbn_update/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * ViewSet for managing genres.
@@ -600,23 +440,15 @@ export const booksIsbnUpdateUpdate = <ThrowOnError extends boolean = true>(optio
  * partial_update: Partially update a genre
  * destroy: Delete a genre
  */
-export const genresList = <ThrowOnError extends boolean = true>(options?: Options<GenresListData, ThrowOnError>) => {
-    return (options?.client ?? client).get<GenresListResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/genres/',
-        ...options
-    });
-};
+export const genresList = <ThrowOnError extends boolean = true>(options?: Options<GenresListData, ThrowOnError>) => (options?.client ?? client).get<GenresListResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/genres/',
+    ...options
+});
 
 /**
  * ViewSet for managing genres.
@@ -628,27 +460,19 @@ export const genresList = <ThrowOnError extends boolean = true>(options?: Option
  * partial_update: Partially update a genre
  * destroy: Delete a genre
  */
-export const genresCreate = <ThrowOnError extends boolean = true>(options: Options<GenresCreateData, ThrowOnError>) => {
-    return (options.client ?? client).post<GenresCreateResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/genres/',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
+export const genresCreate = <ThrowOnError extends boolean = true>(options: Options<GenresCreateData, ThrowOnError>) => (options.client ?? client).post<GenresCreateResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/genres/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * ViewSet for managing genres.
@@ -660,23 +484,15 @@ export const genresCreate = <ThrowOnError extends boolean = true>(options: Optio
  * partial_update: Partially update a genre
  * destroy: Delete a genre
  */
-export const genresDestroy = <ThrowOnError extends boolean = true>(options: Options<GenresDestroyData, ThrowOnError>) => {
-    return (options.client ?? client).delete<GenresDestroyResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/genres/{id}/',
-        ...options
-    });
-};
+export const genresDestroy = <ThrowOnError extends boolean = true>(options: Options<GenresDestroyData, ThrowOnError>) => (options.client ?? client).delete<GenresDestroyResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/genres/{id}/',
+    ...options
+});
 
 /**
  * ViewSet for managing genres.
@@ -688,23 +504,15 @@ export const genresDestroy = <ThrowOnError extends boolean = true>(options: Opti
  * partial_update: Partially update a genre
  * destroy: Delete a genre
  */
-export const genresRetrieve = <ThrowOnError extends boolean = true>(options: Options<GenresRetrieveData, ThrowOnError>) => {
-    return (options.client ?? client).get<GenresRetrieveResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/genres/{id}/',
-        ...options
-    });
-};
+export const genresRetrieve = <ThrowOnError extends boolean = true>(options: Options<GenresRetrieveData, ThrowOnError>) => (options.client ?? client).get<GenresRetrieveResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/genres/{id}/',
+    ...options
+});
 
 /**
  * ViewSet for managing genres.
@@ -716,27 +524,19 @@ export const genresRetrieve = <ThrowOnError extends boolean = true>(options: Opt
  * partial_update: Partially update a genre
  * destroy: Delete a genre
  */
-export const genresPartialUpdate = <ThrowOnError extends boolean = true>(options: Options<GenresPartialUpdateData, ThrowOnError>) => {
-    return (options.client ?? client).patch<GenresPartialUpdateResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/genres/{id}/',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
+export const genresPartialUpdate = <ThrowOnError extends boolean = true>(options: Options<GenresPartialUpdateData, ThrowOnError>) => (options.client ?? client).patch<GenresPartialUpdateResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/genres/{id}/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * ViewSet for managing genres.
@@ -748,340 +548,228 @@ export const genresPartialUpdate = <ThrowOnError extends boolean = true>(options
  * partial_update: Partially update a genre
  * destroy: Delete a genre
  */
-export const genresUpdate = <ThrowOnError extends boolean = true>(options: Options<GenresUpdateData, ThrowOnError>) => {
-    return (options.client ?? client).put<GenresUpdateResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/genres/{id}/',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
+export const genresUpdate = <ThrowOnError extends boolean = true>(options: Options<GenresUpdateData, ThrowOnError>) => (options.client ?? client).put<GenresUpdateResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/genres/{id}/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * ViewSet for retrieving images.
  * Only authenticated users can access images.
  * Users can only see images of items they have access to.
  */
-export const imagesList = <ThrowOnError extends boolean = true>(options?: Options<ImagesListData, ThrowOnError>) => {
-    return (options?.client ?? client).get<ImagesListResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/images/',
-        ...options
-    });
-};
+export const imagesList = <ThrowOnError extends boolean = true>(options?: Options<ImagesListData, ThrowOnError>) => (options?.client ?? client).get<ImagesListResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/images/',
+    ...options
+});
 
 /**
  * ViewSet for retrieving images.
  * Only authenticated users can access images.
  * Users can only see images of items they have access to.
  */
-export const imagesCreate = <ThrowOnError extends boolean = true>(options: Options<ImagesCreateData, ThrowOnError>) => {
-    return (options.client ?? client).post<ImagesCreateResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/images/',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
+export const imagesCreate = <ThrowOnError extends boolean = true>(options: Options<ImagesCreateData, ThrowOnError>) => (options.client ?? client).post<ImagesCreateResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/images/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * ViewSet for retrieving images.
  * Only authenticated users can access images.
  * Users can only see images of items they have access to.
  */
-export const imagesDestroy = <ThrowOnError extends boolean = true>(options: Options<ImagesDestroyData, ThrowOnError>) => {
-    return (options.client ?? client).delete<ImagesDestroyResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/images/{id}/',
-        ...options
-    });
-};
+export const imagesDestroy = <ThrowOnError extends boolean = true>(options: Options<ImagesDestroyData, ThrowOnError>) => (options.client ?? client).delete<ImagesDestroyResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/images/{id}/',
+    ...options
+});
 
 /**
  * ViewSet for retrieving images.
  * Only authenticated users can access images.
  * Users can only see images of items they have access to.
  */
-export const imagesRetrieve = <ThrowOnError extends boolean = true>(options: Options<ImagesRetrieveData, ThrowOnError>) => {
-    return (options.client ?? client).get<ImagesRetrieveResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/images/{id}/',
-        ...options
-    });
-};
+export const imagesRetrieve = <ThrowOnError extends boolean = true>(options: Options<ImagesRetrieveData, ThrowOnError>) => (options.client ?? client).get<ImagesRetrieveResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/images/{id}/',
+    ...options
+});
 
 /**
  * ViewSet for retrieving images.
  * Only authenticated users can access images.
  * Users can only see images of items they have access to.
  */
-export const imagesPartialUpdate = <ThrowOnError extends boolean = true>(options: Options<ImagesPartialUpdateData, ThrowOnError>) => {
-    return (options.client ?? client).patch<ImagesPartialUpdateResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/images/{id}/',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
+export const imagesPartialUpdate = <ThrowOnError extends boolean = true>(options: Options<ImagesPartialUpdateData, ThrowOnError>) => (options.client ?? client).patch<ImagesPartialUpdateResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/images/{id}/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * ViewSet for retrieving images.
  * Only authenticated users can access images.
  * Users can only see images of items they have access to.
  */
-export const imagesUpdate = <ThrowOnError extends boolean = true>(options: Options<ImagesUpdateData, ThrowOnError>) => {
-    return (options.client ?? client).put<ImagesUpdateResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/images/{id}/',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
+export const imagesUpdate = <ThrowOnError extends boolean = true>(options: Options<ImagesUpdateData, ThrowOnError>) => (options.client ?? client).put<ImagesUpdateResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/images/{id}/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * ViewSet for retrieving, creating, updating, and deleting items.
  */
-export const itemsList = <ThrowOnError extends boolean = true>(options?: Options<ItemsListData, ThrowOnError>) => {
-    return (options?.client ?? client).get<ItemsListResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/items/',
-        ...options
-    });
-};
+export const itemsList = <ThrowOnError extends boolean = true>(options?: Options<ItemsListData, ThrowOnError>) => (options?.client ?? client).get<ItemsListResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/items/',
+    ...options
+});
 
 /**
  * ViewSet for retrieving, creating, updating, and deleting items.
  */
-export const itemsCreate = <ThrowOnError extends boolean = true>(options?: Options<ItemsCreateData, ThrowOnError>) => {
-    return (options?.client ?? client).post<ItemsCreateResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/items/',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options?.headers
-        }
-    });
-};
+export const itemsCreate = <ThrowOnError extends boolean = true>(options?: Options<ItemsCreateData, ThrowOnError>) => (options?.client ?? client).post<ItemsCreateResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/items/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options?.headers
+    }
+});
 
 /**
  * ViewSet for retrieving, creating, updating, and deleting items.
  */
-export const itemsDestroy = <ThrowOnError extends boolean = true>(options: Options<ItemsDestroyData, ThrowOnError>) => {
-    return (options.client ?? client).delete<ItemsDestroyResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/items/{id}/',
-        ...options
-    });
-};
+export const itemsDestroy = <ThrowOnError extends boolean = true>(options: Options<ItemsDestroyData, ThrowOnError>) => (options.client ?? client).delete<ItemsDestroyResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/items/{id}/',
+    ...options
+});
 
 /**
  * ViewSet for retrieving, creating, updating, and deleting items.
  */
-export const itemsRetrieve = <ThrowOnError extends boolean = true>(options: Options<ItemsRetrieveData, ThrowOnError>) => {
-    return (options.client ?? client).get<ItemsRetrieveResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/items/{id}/',
-        ...options
-    });
-};
+export const itemsRetrieve = <ThrowOnError extends boolean = true>(options: Options<ItemsRetrieveData, ThrowOnError>) => (options.client ?? client).get<ItemsRetrieveResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/items/{id}/',
+    ...options
+});
 
 /**
  * ViewSet for retrieving, creating, updating, and deleting items.
  */
-export const itemsPartialUpdate = <ThrowOnError extends boolean = true>(options: Options<ItemsPartialUpdateData, ThrowOnError>) => {
-    return (options.client ?? client).patch<ItemsPartialUpdateResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/items/{id}/',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
+export const itemsPartialUpdate = <ThrowOnError extends boolean = true>(options: Options<ItemsPartialUpdateData, ThrowOnError>) => (options.client ?? client).patch<ItemsPartialUpdateResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/items/{id}/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * ViewSet for retrieving, creating, updating, and deleting items.
  */
-export const itemsUpdate = <ThrowOnError extends boolean = true>(options: Options<ItemsUpdateData, ThrowOnError>) => {
-    return (options.client ?? client).put<ItemsUpdateResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/items/{id}/',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
+export const itemsUpdate = <ThrowOnError extends boolean = true>(options: Options<ItemsUpdateData, ThrowOnError>) => (options.client ?? client).put<ItemsUpdateResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/items/{id}/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * Ai describe the item and populate fields.
  */
-export const itemsAiDescribeUpdate = <ThrowOnError extends boolean = true>(options: Options<ItemsAiDescribeUpdateData, ThrowOnError>) => {
-    return (options.client ?? client).put<ItemsAiDescribeUpdateResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/items/{id}/ai_describe/',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
+export const itemsAiDescribeUpdate = <ThrowOnError extends boolean = true>(options: Options<ItemsAiDescribeUpdateData, ThrowOnError>) => (options.client ?? client).put<ItemsAiDescribeUpdateResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/items/{id}/ai_describe/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * Generate an image from the item's name and description and attach it.
@@ -1090,52 +778,36 @@ export const itemsAiDescribeUpdate = <ThrowOnError extends boolean = true>(optio
  * as a new Image.original file for the item. Returns the created image
  * data via ImageSerializer.
  */
-export const itemsAiImageUpdate = <ThrowOnError extends boolean = true>(options: Options<ItemsAiImageUpdateData, ThrowOnError>) => {
-    return (options.client ?? client).put<ItemsAiImageUpdateResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/items/{id}/ai_image/',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
+export const itemsAiImageUpdate = <ThrowOnError extends boolean = true>(options: Options<ItemsAiImageUpdateData, ThrowOnError>) => (options.client ?? client).put<ItemsAiImageUpdateResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/items/{id}/ai_image/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * Reorder images for an item.
  */
-export const itemsReorderImagesUpdate = <ThrowOnError extends boolean = true>(options: Options<ItemsReorderImagesUpdateData, ThrowOnError>) => {
-    return (options.client ?? client).put<ItemsReorderImagesUpdateResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/items/{id}/reorder_images/',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
+export const itemsReorderImagesUpdate = <ThrowOnError extends boolean = true>(options: Options<ItemsReorderImagesUpdateData, ThrowOnError>) => (options.client ?? client).put<ItemsReorderImagesUpdateResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/items/{id}/reorder_images/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * ViewSet for messages related to bookings.
@@ -1143,23 +815,15 @@ export const itemsReorderImagesUpdate = <ThrowOnError extends boolean = true>(op
  * List requires either `booking` (booking-uuid) or `user` (user id) query param
  * to be provided to avoid returning global message lists.
  */
-export const messagesList = <ThrowOnError extends boolean = true>(options?: Options<MessagesListData, ThrowOnError>) => {
-    return (options?.client ?? client).get<MessagesListResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/messages/',
-        ...options
-    });
-};
+export const messagesList = <ThrowOnError extends boolean = true>(options?: Options<MessagesListData, ThrowOnError>) => (options?.client ?? client).get<MessagesListResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/messages/',
+    ...options
+});
 
 /**
  * ViewSet for messages related to bookings.
@@ -1167,27 +831,19 @@ export const messagesList = <ThrowOnError extends boolean = true>(options?: Opti
  * List requires either `booking` (booking-uuid) or `user` (user id) query param
  * to be provided to avoid returning global message lists.
  */
-export const messagesCreate = <ThrowOnError extends boolean = true>(options: Options<MessagesCreateData, ThrowOnError>) => {
-    return (options.client ?? client).post<MessagesCreateResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/messages/',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
+export const messagesCreate = <ThrowOnError extends boolean = true>(options: Options<MessagesCreateData, ThrowOnError>) => (options.client ?? client).post<MessagesCreateResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/messages/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * ViewSet for messages related to bookings.
@@ -1195,23 +851,15 @@ export const messagesCreate = <ThrowOnError extends boolean = true>(options: Opt
  * List requires either `booking` (booking-uuid) or `user` (user id) query param
  * to be provided to avoid returning global message lists.
  */
-export const messagesDestroy = <ThrowOnError extends boolean = true>(options: Options<MessagesDestroyData, ThrowOnError>) => {
-    return (options.client ?? client).delete<MessagesDestroyResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/messages/{id}/',
-        ...options
-    });
-};
+export const messagesDestroy = <ThrowOnError extends boolean = true>(options: Options<MessagesDestroyData, ThrowOnError>) => (options.client ?? client).delete<MessagesDestroyResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/messages/{id}/',
+    ...options
+});
 
 /**
  * ViewSet for messages related to bookings.
@@ -1219,23 +867,15 @@ export const messagesDestroy = <ThrowOnError extends boolean = true>(options: Op
  * List requires either `booking` (booking-uuid) or `user` (user id) query param
  * to be provided to avoid returning global message lists.
  */
-export const messagesRetrieve = <ThrowOnError extends boolean = true>(options: Options<MessagesRetrieveData, ThrowOnError>) => {
-    return (options.client ?? client).get<MessagesRetrieveResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/messages/{id}/',
-        ...options
-    });
-};
+export const messagesRetrieve = <ThrowOnError extends boolean = true>(options: Options<MessagesRetrieveData, ThrowOnError>) => (options.client ?? client).get<MessagesRetrieveResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/messages/{id}/',
+    ...options
+});
 
 /**
  * ViewSet for messages related to bookings.
@@ -1243,27 +883,19 @@ export const messagesRetrieve = <ThrowOnError extends boolean = true>(options: O
  * List requires either `booking` (booking-uuid) or `user` (user id) query param
  * to be provided to avoid returning global message lists.
  */
-export const messagesPartialUpdate = <ThrowOnError extends boolean = true>(options: Options<MessagesPartialUpdateData, ThrowOnError>) => {
-    return (options.client ?? client).patch<MessagesPartialUpdateResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/messages/{id}/',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
+export const messagesPartialUpdate = <ThrowOnError extends boolean = true>(options: Options<MessagesPartialUpdateData, ThrowOnError>) => (options.client ?? client).patch<MessagesPartialUpdateResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/messages/{id}/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * ViewSet for messages related to bookings.
@@ -1271,117 +903,77 @@ export const messagesPartialUpdate = <ThrowOnError extends boolean = true>(optio
  * List requires either `booking` (booking-uuid) or `user` (user id) query param
  * to be provided to avoid returning global message lists.
  */
-export const messagesUpdate = <ThrowOnError extends boolean = true>(options: Options<MessagesUpdateData, ThrowOnError>) => {
-    return (options.client ?? client).put<MessagesUpdateResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/messages/{id}/',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
+export const messagesUpdate = <ThrowOnError extends boolean = true>(options: Options<MessagesUpdateData, ThrowOnError>) => (options.client ?? client).put<MessagesUpdateResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/messages/{id}/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * ViewSet for retrieving user profiles.
  * Read-only access to profile information.
  */
-export const profilesList = <ThrowOnError extends boolean = true>(options?: Options<ProfilesListData, ThrowOnError>) => {
-    return (options?.client ?? client).get<ProfilesListResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/profiles/',
-        ...options
-    });
-};
+export const profilesList = <ThrowOnError extends boolean = true>(options?: Options<ProfilesListData, ThrowOnError>) => (options?.client ?? client).get<ProfilesListResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/profiles/',
+    ...options
+});
 
 /**
  * ViewSet for retrieving user profiles.
  * Read-only access to profile information.
  */
-export const profilesRetrieve = <ThrowOnError extends boolean = true>(options: Options<ProfilesRetrieveData, ThrowOnError>) => {
-    return (options.client ?? client).get<ProfilesRetrieveResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/profiles/{id}/',
-        ...options
-    });
-};
+export const profilesRetrieve = <ThrowOnError extends boolean = true>(options: Options<ProfilesRetrieveData, ThrowOnError>) => (options.client ?? client).get<ProfilesRetrieveResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/profiles/{id}/',
+    ...options
+});
 
 /**
  * Get the current user's profile.
  */
-export const profilesMeRetrieve = <ThrowOnError extends boolean = true>(options?: Options<ProfilesMeRetrieveData, ThrowOnError>) => {
-    return (options?.client ?? client).get<ProfilesMeRetrieveResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/profiles/me/',
-        ...options
-    });
-};
+export const profilesMeRetrieve = <ThrowOnError extends boolean = true>(options?: Options<ProfilesMeRetrieveData, ThrowOnError>) => (options?.client ?? client).get<ProfilesMeRetrieveResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/profiles/me/',
+    ...options
+});
 
 /**
  * Get the current user's profile.
  */
-export const profilesMePartialUpdate = <ThrowOnError extends boolean = true>(options?: Options<ProfilesMePartialUpdateData, ThrowOnError>) => {
-    return (options?.client ?? client).patch<ProfilesMePartialUpdateResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/profiles/me/',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options?.headers
-        }
-    });
-};
+export const profilesMePartialUpdate = <ThrowOnError extends boolean = true>(options?: Options<ProfilesMePartialUpdateData, ThrowOnError>) => (options?.client ?? client).patch<ProfilesMePartialUpdateResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/profiles/me/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options?.headers
+    }
+});
 
 /**
  * Public read-only ViewSet for confirmed bookings.
@@ -1389,23 +981,15 @@ export const profilesMePartialUpdate = <ThrowOnError extends boolean = true>(opt
  * This viewset only returns bookings with CONFIRMED status and is read-only.
  * Supports filtering via BookingFilter.
  */
-export const publicBookingsList = <ThrowOnError extends boolean = true>(options?: Options<PublicBookingsListData, ThrowOnError>) => {
-    return (options?.client ?? client).get<PublicBookingsListResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/public-bookings/',
-        ...options
-    });
-};
+export const publicBookingsList = <ThrowOnError extends boolean = true>(options?: Options<PublicBookingsListData, ThrowOnError>) => (options?.client ?? client).get<PublicBookingsListResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/public-bookings/',
+    ...options
+});
 
 /**
  * Public read-only ViewSet for confirmed bookings.
@@ -1413,67 +997,43 @@ export const publicBookingsList = <ThrowOnError extends boolean = true>(options?
  * This viewset only returns bookings with CONFIRMED status and is read-only.
  * Supports filtering via BookingFilter.
  */
-export const publicBookingsRetrieve = <ThrowOnError extends boolean = true>(options: Options<PublicBookingsRetrieveData, ThrowOnError>) => {
-    return (options.client ?? client).get<PublicBookingsRetrieveResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/public-bookings/{id}/',
-        ...options
-    });
-};
+export const publicBookingsRetrieve = <ThrowOnError extends boolean = true>(options: Options<PublicBookingsRetrieveData, ThrowOnError>) => (options.client ?? client).get<PublicBookingsRetrieveResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/public-bookings/{id}/',
+    ...options
+});
 
 /**
  * ViewSet for retrieving published items.
  * This viewset is read-only and only returns items with a published status.
  */
-export const publicItemsList = <ThrowOnError extends boolean = true>(options?: Options<PublicItemsListData, ThrowOnError>) => {
-    return (options?.client ?? client).get<PublicItemsListResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/public-items/',
-        ...options
-    });
-};
+export const publicItemsList = <ThrowOnError extends boolean = true>(options?: Options<PublicItemsListData, ThrowOnError>) => (options?.client ?? client).get<PublicItemsListResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/public-items/',
+    ...options
+});
 
 /**
  * ViewSet for retrieving published items.
  * This viewset is read-only and only returns items with a published status.
  */
-export const publicItemsRetrieve = <ThrowOnError extends boolean = true>(options: Options<PublicItemsRetrieveData, ThrowOnError>) => {
-    return (options.client ?? client).get<PublicItemsRetrieveResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/public-items/{id}/',
-        ...options
-    });
-};
+export const publicItemsRetrieve = <ThrowOnError extends boolean = true>(options: Options<PublicItemsRetrieveData, ThrowOnError>) => (options.client ?? client).get<PublicItemsRetrieveResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/public-items/{id}/',
+    ...options
+});
 
 /**
  * ViewSet for managing publishers.
@@ -1485,23 +1045,15 @@ export const publicItemsRetrieve = <ThrowOnError extends boolean = true>(options
  * partial_update: Partially update a publisher
  * destroy: Delete a publisher
  */
-export const publishersList = <ThrowOnError extends boolean = true>(options?: Options<PublishersListData, ThrowOnError>) => {
-    return (options?.client ?? client).get<PublishersListResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/publishers/',
-        ...options
-    });
-};
+export const publishersList = <ThrowOnError extends boolean = true>(options?: Options<PublishersListData, ThrowOnError>) => (options?.client ?? client).get<PublishersListResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/publishers/',
+    ...options
+});
 
 /**
  * ViewSet for managing publishers.
@@ -1513,27 +1065,19 @@ export const publishersList = <ThrowOnError extends boolean = true>(options?: Op
  * partial_update: Partially update a publisher
  * destroy: Delete a publisher
  */
-export const publishersCreate = <ThrowOnError extends boolean = true>(options: Options<PublishersCreateData, ThrowOnError>) => {
-    return (options.client ?? client).post<PublishersCreateResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/publishers/',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
+export const publishersCreate = <ThrowOnError extends boolean = true>(options: Options<PublishersCreateData, ThrowOnError>) => (options.client ?? client).post<PublishersCreateResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/publishers/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * ViewSet for managing publishers.
@@ -1545,23 +1089,15 @@ export const publishersCreate = <ThrowOnError extends boolean = true>(options: O
  * partial_update: Partially update a publisher
  * destroy: Delete a publisher
  */
-export const publishersDestroy = <ThrowOnError extends boolean = true>(options: Options<PublishersDestroyData, ThrowOnError>) => {
-    return (options.client ?? client).delete<PublishersDestroyResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/publishers/{id}/',
-        ...options
-    });
-};
+export const publishersDestroy = <ThrowOnError extends boolean = true>(options: Options<PublishersDestroyData, ThrowOnError>) => (options.client ?? client).delete<PublishersDestroyResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/publishers/{id}/',
+    ...options
+});
 
 /**
  * ViewSet for managing publishers.
@@ -1573,23 +1109,15 @@ export const publishersDestroy = <ThrowOnError extends boolean = true>(options: 
  * partial_update: Partially update a publisher
  * destroy: Delete a publisher
  */
-export const publishersRetrieve = <ThrowOnError extends boolean = true>(options: Options<PublishersRetrieveData, ThrowOnError>) => {
-    return (options.client ?? client).get<PublishersRetrieveResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/publishers/{id}/',
-        ...options
-    });
-};
+export const publishersRetrieve = <ThrowOnError extends boolean = true>(options: Options<PublishersRetrieveData, ThrowOnError>) => (options.client ?? client).get<PublishersRetrieveResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/publishers/{id}/',
+    ...options
+});
 
 /**
  * ViewSet for managing publishers.
@@ -1601,27 +1129,19 @@ export const publishersRetrieve = <ThrowOnError extends boolean = true>(options:
  * partial_update: Partially update a publisher
  * destroy: Delete a publisher
  */
-export const publishersPartialUpdate = <ThrowOnError extends boolean = true>(options: Options<PublishersPartialUpdateData, ThrowOnError>) => {
-    return (options.client ?? client).patch<PublishersPartialUpdateResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/publishers/{id}/',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
+export const publishersPartialUpdate = <ThrowOnError extends boolean = true>(options: Options<PublishersPartialUpdateData, ThrowOnError>) => (options.client ?? client).patch<PublishersPartialUpdateResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/publishers/{id}/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * ViewSet for managing publishers.
@@ -1633,27 +1153,19 @@ export const publishersPartialUpdate = <ThrowOnError extends boolean = true>(opt
  * partial_update: Partially update a publisher
  * destroy: Delete a publisher
  */
-export const publishersUpdate = <ThrowOnError extends boolean = true>(options: Options<PublishersUpdateData, ThrowOnError>) => {
-    return (options.client ?? client).put<PublishersUpdateResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/publishers/{id}/',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
+export const publishersUpdate = <ThrowOnError extends boolean = true>(options: Options<PublishersUpdateData, ThrowOnError>) => (options.client ?? client).put<PublishersUpdateResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/publishers/{id}/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * OpenApi3 schema for this API. Format can be selected via content negotiation.
@@ -1661,23 +1173,15 @@ export const publishersUpdate = <ThrowOnError extends boolean = true>(options: O
  * - YAML: application/vnd.oai.openapi
  * - JSON: application/vnd.oai.openapi+json
  */
-export const schemaRetrieve = <ThrowOnError extends boolean = true>(options?: Options<SchemaRetrieveData, ThrowOnError>) => {
-    return (options?.client ?? client).get<SchemaRetrieveResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/schema/',
-        ...options
-    });
-};
+export const schemaRetrieve = <ThrowOnError extends boolean = true>(options?: Options<SchemaRetrieveData, ThrowOnError>) => (options?.client ?? client).get<SchemaRetrieveResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/schema/',
+    ...options
+});
 
 /**
  * ViewSet for managing shelves.
@@ -1689,23 +1193,15 @@ export const schemaRetrieve = <ThrowOnError extends boolean = true>(options?: Op
  * partial_update: Partially update a shelf
  * destroy: Delete a shelf
  */
-export const shelvesList = <ThrowOnError extends boolean = true>(options?: Options<ShelvesListData, ThrowOnError>) => {
-    return (options?.client ?? client).get<ShelvesListResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/shelves/',
-        ...options
-    });
-};
+export const shelvesList = <ThrowOnError extends boolean = true>(options?: Options<ShelvesListData, ThrowOnError>) => (options?.client ?? client).get<ShelvesListResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/shelves/',
+    ...options
+});
 
 /**
  * ViewSet for managing shelves.
@@ -1717,27 +1213,19 @@ export const shelvesList = <ThrowOnError extends boolean = true>(options?: Optio
  * partial_update: Partially update a shelf
  * destroy: Delete a shelf
  */
-export const shelvesCreate = <ThrowOnError extends boolean = true>(options: Options<ShelvesCreateData, ThrowOnError>) => {
-    return (options.client ?? client).post<ShelvesCreateResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/shelves/',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
+export const shelvesCreate = <ThrowOnError extends boolean = true>(options: Options<ShelvesCreateData, ThrowOnError>) => (options.client ?? client).post<ShelvesCreateResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/shelves/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * ViewSet for managing shelves.
@@ -1749,23 +1237,15 @@ export const shelvesCreate = <ThrowOnError extends boolean = true>(options: Opti
  * partial_update: Partially update a shelf
  * destroy: Delete a shelf
  */
-export const shelvesDestroy = <ThrowOnError extends boolean = true>(options: Options<ShelvesDestroyData, ThrowOnError>) => {
-    return (options.client ?? client).delete<ShelvesDestroyResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/shelves/{id}/',
-        ...options
-    });
-};
+export const shelvesDestroy = <ThrowOnError extends boolean = true>(options: Options<ShelvesDestroyData, ThrowOnError>) => (options.client ?? client).delete<ShelvesDestroyResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/shelves/{id}/',
+    ...options
+});
 
 /**
  * ViewSet for managing shelves.
@@ -1777,23 +1257,15 @@ export const shelvesDestroy = <ThrowOnError extends boolean = true>(options: Opt
  * partial_update: Partially update a shelf
  * destroy: Delete a shelf
  */
-export const shelvesRetrieve = <ThrowOnError extends boolean = true>(options: Options<ShelvesRetrieveData, ThrowOnError>) => {
-    return (options.client ?? client).get<ShelvesRetrieveResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/shelves/{id}/',
-        ...options
-    });
-};
+export const shelvesRetrieve = <ThrowOnError extends boolean = true>(options: Options<ShelvesRetrieveData, ThrowOnError>) => (options.client ?? client).get<ShelvesRetrieveResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/shelves/{id}/',
+    ...options
+});
 
 /**
  * ViewSet for managing shelves.
@@ -1805,27 +1277,19 @@ export const shelvesRetrieve = <ThrowOnError extends boolean = true>(options: Op
  * partial_update: Partially update a shelf
  * destroy: Delete a shelf
  */
-export const shelvesPartialUpdate = <ThrowOnError extends boolean = true>(options: Options<ShelvesPartialUpdateData, ThrowOnError>) => {
-    return (options.client ?? client).patch<ShelvesPartialUpdateResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/shelves/{id}/',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
+export const shelvesPartialUpdate = <ThrowOnError extends boolean = true>(options: Options<ShelvesPartialUpdateData, ThrowOnError>) => (options.client ?? client).patch<ShelvesPartialUpdateResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/shelves/{id}/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * ViewSet for managing shelves.
@@ -1837,122 +1301,74 @@ export const shelvesPartialUpdate = <ThrowOnError extends boolean = true>(option
  * partial_update: Partially update a shelf
  * destroy: Delete a shelf
  */
-export const shelvesUpdate = <ThrowOnError extends boolean = true>(options: Options<ShelvesUpdateData, ThrowOnError>) => {
-    return (options.client ?? client).put<ShelvesUpdateResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/shelves/{id}/',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
+export const shelvesUpdate = <ThrowOnError extends boolean = true>(options: Options<ShelvesUpdateData, ThrowOnError>) => (options.client ?? client).put<ShelvesUpdateResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/shelves/{id}/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
-export const usersList = <ThrowOnError extends boolean = true>(options?: Options<UsersListData, ThrowOnError>) => {
-    return (options?.client ?? client).get<UsersListResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/users/',
-        ...options
-    });
-};
+export const usersList = <ThrowOnError extends boolean = true>(options?: Options<UsersListData, ThrowOnError>) => (options?.client ?? client).get<UsersListResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/users/',
+    ...options
+});
 
-export const usersRetrieve = <ThrowOnError extends boolean = true>(options: Options<UsersRetrieveData, ThrowOnError>) => {
-    return (options.client ?? client).get<UsersRetrieveResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/users/{id}/',
-        ...options
-    });
-};
+export const usersRetrieve = <ThrowOnError extends boolean = true>(options: Options<UsersRetrieveData, ThrowOnError>) => (options.client ?? client).get<UsersRetrieveResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/users/{id}/',
+    ...options
+});
 
-export const usersPartialUpdate = <ThrowOnError extends boolean = true>(options: Options<UsersPartialUpdateData, ThrowOnError>) => {
-    return (options.client ?? client).patch<UsersPartialUpdateResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/users/{id}/',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
+export const usersPartialUpdate = <ThrowOnError extends boolean = true>(options: Options<UsersPartialUpdateData, ThrowOnError>) => (options.client ?? client).patch<UsersPartialUpdateResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/users/{id}/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
-export const usersUpdate = <ThrowOnError extends boolean = true>(options: Options<UsersUpdateData, ThrowOnError>) => {
-    return (options.client ?? client).put<UsersUpdateResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/users/{id}/',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
+export const usersUpdate = <ThrowOnError extends boolean = true>(options: Options<UsersUpdateData, ThrowOnError>) => (options.client ?? client).put<UsersUpdateResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/users/{id}/',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
-export const usersMeRetrieve = <ThrowOnError extends boolean = true>(options?: Options<UsersMeRetrieveData, ThrowOnError>) => {
-    return (options?.client ?? client).get<UsersMeRetrieveResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                in: 'cookie',
-                name: 'sessionid',
-                type: 'apiKey'
-            },
-            {
-                name: 'Authorization',
-                type: 'apiKey'
-            }
-        ],
-        url: '/api/users/me/',
-        ...options
-    });
-};
+export const usersMeRetrieve = <ThrowOnError extends boolean = true>(options?: Options<UsersMeRetrieveData, ThrowOnError>) => (options?.client ?? client).get<UsersMeRetrieveResponses, unknown, ThrowOnError>({
+    security: [{
+            in: 'cookie',
+            name: 'sessionid',
+            type: 'apiKey'
+        }, { name: 'Authorization', type: 'apiKey' }],
+    url: '/api/users/me/',
+    ...options
+});
