@@ -201,6 +201,7 @@ const translations = {
     // Common
     'common.loading': 'Loading...',
     'common.error': 'Error',
+    'common.loadingError': 'Error while loading',
     'common.cancel': 'Cancel',
     'common.save': 'Save',
     'common.saving': 'Saving...',
@@ -573,6 +574,7 @@ const translations = {
     // Common
     'common.loading': 'Lädt...',
     'common.error': 'Fehler',
+    'common.loadingError': 'Fehler beim Laden',
     'common.cancel': 'Abbrechen',
     'common.save': 'Speichern',
     'common.saving': 'Speichert...',

@@ -5,10 +5,13 @@ import { HeroSection } from '@/components/layout/HeroSection';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useItems } from '@/hooks/useItems';
+import { type ItemCategoryFilter } from '@/hooks/types';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+
+const PAGE_SIZE = 20;
 
 // Mock data for initial demonstration
 const mockItems = [
@@ -72,12 +75,12 @@ const Index = () => {
   const pageParam = params.get('page');
   const currentPage = pageParam ? parseInt(pageParam, 10) : 1;
 
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const { items, loading, error, pagination } = useItems(
-    selectedCategory,
-    searchQuery,
-    currentPage,
-  );
+  const [selectedCategory, setSelectedCategory] = useState<ItemCategoryFilter>('all');
+  const itemsQuery = useItems({
+    category: selectedCategory === 'all' ? undefined : selectedCategory,
+    search: searchQuery,
+    page: currentPage,
+  });
   const { user } = useAuth();
 
   const handlePageChange = (newPage: number) => {
@@ -87,140 +90,152 @@ const Index = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const totalPages = Math.ceil(pagination.count / 20); // Assuming 20 items per page
-
-  if (error) {
+  if (itemsQuery.error) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
         <main className="container mx-auto px-4 py-8">
           <div className="text-center">
-            <p className="text-destructive">
-              {t('common.error')}: {error}
-            </p>
+            <p className="text-destructive">{t('common.loadingError')}</p>
           </div>
         </main>
       </div>
     );
   }
 
-  return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      {!user && <HeroSection />}
+  if (itemsQuery.isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="container mx-auto px-4 py-8">
+          <div className="text-center">
+            <p className="text-destructive">{t('index.loadingItems')}</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
-      <main className="container mx-auto px-4 py-8">
-        <div className="space-y-8">
-          <CategoryFilter
-            selectedCategory={selectedCategory}
-            onCategoryChange={setSelectedCategory}
-          />
+  if (itemsQuery.isSuccess) {
+    const totalPages = Math.ceil(itemsQuery.data.pagination.count / PAGE_SIZE);
 
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-foreground">
-                {searchQuery
-                  ? t('index.searchResults').replace('{query}', searchQuery)
-                  : selectedCategory === 'all'
-                    ? t('index.allItems')
-                    : t('index.categoryItems').replace('{category}', selectedCategory)}
-              </h2>
-              <div className="text-sm text-muted-foreground">
-                {t('index.itemsFound').replace('{count}', String(pagination.count))}
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        {!user && <HeroSection />}
+
+        <main className="container mx-auto px-4 py-8">
+          <div className="space-y-8">
+            <CategoryFilter
+              selectedCategory={selectedCategory}
+              onCategoryChange={setSelectedCategory}
+            />
+
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold text-foreground">
+                  {searchQuery
+                    ? t('index.searchResults').replace('{query}', searchQuery)
+                    : selectedCategory === 'all'
+                      ? t('index.allItems')
+                      : t('index.categoryItems').replace('{category}', selectedCategory)}
+                </h2>
+                <div className="text-sm text-muted-foreground">
+                  {t('index.itemsFound').replace(
+                    '{count}',
+                    String(itemsQuery.data.pagination.count),
+                  )}
+                </div>
               </div>
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {loading ? (
-                <div className="col-span-full text-center py-8">
-                  <p>{t('index.loadingItems')}</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {itemsQuery.data.items.length === 0 ? (
+                  <div className="col-span-full text-center py-8">
+                    <p>{t('index.noItemsFound')}</p>
+                  </div>
+                ) : (
+                  itemsQuery.data.items.map(item => (
+                    <ItemCard
+                      key={item.id}
+                      id={item.id}
+                      title={item.name}
+                      description={item.description || ''}
+                      category={item.category}
+                      condition={
+                        item.condition === 0 ? 'new' : item.condition === 1 ? 'used' : 'broken'
+                      }
+                      status={item.status}
+                      listingType="sell" // Django API doesn't have listing_type in list view, default to sell
+                      salePrice={item.sale_price ? parseFloat(item.sale_price) : undefined}
+                      salePriceCurrency={item.sale_price_currency}
+                      rentalPrice={item.rental_price ? parseFloat(item.rental_price) : undefined}
+                      rentalPriceCurrency={item.rental_price_currency}
+                      location="Location not set"
+                      imageUrl={item.first_image || '/placeholder.svg'}
+                      owner={item.user}
+                      createdAt={item.created_at}
+                      isFavorited={false}
+                    />
+                  ))
+                )}
+              </div>
+
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-center gap-2 pt-8">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                  >
+                    <ChevronLeft className="h-4 w-4 mr-1" />
+                    {t('index.previous')}
+                  </Button>
+
+                  <div className="flex items-center gap-2">
+                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                      let pageNum: number;
+                      if (totalPages <= 5) {
+                        pageNum = i + 1;
+                      } else if (currentPage <= 3) {
+                        pageNum = i + 1;
+                      } else if (currentPage >= totalPages - 2) {
+                        pageNum = totalPages - 4 + i;
+                      } else {
+                        pageNum = currentPage - 2 + i;
+                      }
+
+                      return (
+                        <Button
+                          key={pageNum}
+                          variant={currentPage === pageNum ? 'default' : 'outline'}
+                          size="sm"
+                          onClick={() => handlePageChange(pageNum)}
+                        >
+                          {pageNum}
+                        </Button>
+                      );
+                    })}
+                  </div>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                  >
+                    {t('index.next')}
+                    <ChevronRight className="h-4 w-4 ml-1" />
+                  </Button>
                 </div>
-              ) : items.length === 0 ? (
-                <div className="col-span-full text-center py-8">
-                  <p>{t('index.noItemsFound')}</p>
-                </div>
-              ) : (
-                items.map(item => (
-                  <ItemCard
-                    key={item.id}
-                    id={item.id}
-                    title={item.name}
-                    description={item.description || ''}
-                    category={item.category}
-                    condition={
-                      item.condition === 0 ? 'new' : item.condition === 1 ? 'used' : 'broken'
-                    }
-                    status={item.status}
-                    listingType="sell" // Django API doesn't have listing_type in list view, default to sell
-                    salePrice={item.sale_price ? parseFloat(item.sale_price) : undefined}
-                    salePriceCurrency={item.sale_price_currency}
-                    rentalPrice={item.rental_price ? parseFloat(item.rental_price) : undefined}
-                    rentalPriceCurrency={item.rental_price_currency}
-                    location="Location not set"
-                    imageUrl={item.first_image || '/placeholder.svg'}
-                    owner={item.user}
-                    createdAt={item.created_at}
-                    isFavorited={false}
-                  />
-                ))
               )}
             </div>
-
-            {/* Pagination Controls */}
-            {!loading && totalPages > 1 && (
-              <div className="flex items-center justify-center gap-2 pt-8">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  disabled={currentPage === 1}
-                >
-                  <ChevronLeft className="h-4 w-4 mr-1" />
-                  {t('index.previous')}
-                </Button>
-
-                <div className="flex items-center gap-2">
-                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                    let pageNum: number;
-                    if (totalPages <= 5) {
-                      pageNum = i + 1;
-                    } else if (currentPage <= 3) {
-                      pageNum = i + 1;
-                    } else if (currentPage >= totalPages - 2) {
-                      pageNum = totalPages - 4 + i;
-                    } else {
-                      pageNum = currentPage - 2 + i;
-                    }
-
-                    return (
-                      <Button
-                        key={pageNum}
-                        variant={currentPage === pageNum ? 'default' : 'outline'}
-                        size="sm"
-                        onClick={() => handlePageChange(pageNum)}
-                      >
-                        {pageNum}
-                      </Button>
-                    );
-                  })}
-                </div>
-
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                >
-                  {t('index.next')}
-                  <ChevronRight className="h-4 w-4 ml-1" />
-                </Button>
-              </div>
-            )}
           </div>
-        </div>
-      </main>
-    </div>
-  );
+        </main>
+      </div>
+    );
+  }
 };
 
 export default Index;
