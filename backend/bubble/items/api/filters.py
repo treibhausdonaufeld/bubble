@@ -9,7 +9,7 @@ from django.db.models import Q, QuerySet
 from pgvector.django import CosineDistance
 
 from bubble.items.embeddings import get_embedding_model
-from bubble.items.models import Item, ItemEmbedding, ItemStatus
+from bubble.items.models import ConditionType, Item, ItemEmbedding, ItemStatus
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +19,7 @@ class ItemFilter(django_filters.FilterSet):
 
     Supported query params:
     - status: multiple choice filter for status integers
+    - conditions: comma-delimited list of condition integers (0, 1, 2)
     - category: exact category value
     - published: boolean; if true restrict to published statuses
     - min_sale_price / max_sale_price: numeric range for sale_price
@@ -31,6 +32,12 @@ class ItemFilter(django_filters.FilterSet):
     status = django_filters.MultipleChoiceFilter(
         choices=ItemStatus.choices,
         field_name="status",
+        conjoined=False,  # OR logic for multiple values
+    )
+
+    conditions = django_filters.MultipleChoiceFilter(
+        choices=ConditionType.choices,
+        field_name="condition",
         conjoined=False,  # OR logic for multiple values
     )
 
