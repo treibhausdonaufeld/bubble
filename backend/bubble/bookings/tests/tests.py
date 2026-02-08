@@ -331,6 +331,7 @@ class BookingTimeToValidationTestCase(APITestCase):
     def test_booking_with_time_to_succeeds_regardless_of_open_end_setting(self):
         """Test providing time_to succeeds regardless of rental_open_end."""
         self.client.force_authenticate(user=self.booking_user)
+        future_time = (timezone.now() + timedelta(days=30)).isoformat()
 
         # Test with item that requires end time
         response = self.client.post(
@@ -338,7 +339,7 @@ class BookingTimeToValidationTestCase(APITestCase):
             {
                 "item": str(self.item_requires_end_time.id),
                 "offer": "20.00",
-                "time_to": "2025-12-31T23:59:59Z",
+                "time_to": future_time,
             },
             format="json",
         )
@@ -352,7 +353,7 @@ class BookingTimeToValidationTestCase(APITestCase):
             {
                 "item": str(self.item_allows_open_end.id),
                 "offer": "25.00",
-                "time_to": "2025-12-31T23:59:59Z",
+                "time_to": future_time,
             },
             format="json",
         )
