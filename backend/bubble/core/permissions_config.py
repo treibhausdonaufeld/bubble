@@ -5,10 +5,10 @@ created automatically after migrations. Modify this file to change the
 default permission structure.
 """
 
-from enum import Enum
+from enum import StrEnum
 
 
-class DefaultGroup(str, Enum):
+class DefaultGroup(StrEnum):
     """Enum for default group names."""
 
     DEFAULT = "Default"

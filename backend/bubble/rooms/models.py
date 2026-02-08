@@ -4,7 +4,7 @@ from django.utils.translation import gettext_lazy as _
 
 def upload_to_room_photos(instance: "Room", filename: str):
     """Upload path for room photos."""
-    extension = filename.split(".")[-1] if "." in filename else "jpg"
+    extension = filename.rsplit(".", maxsplit=1)[-1] if "." in filename else "jpg"
     return f"rooms/{instance.pk}/photo.{extension}"
 
 
