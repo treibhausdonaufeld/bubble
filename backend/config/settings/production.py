@@ -22,8 +22,15 @@ SECRET_KEY = env("DJANGO_SECRET_KEY")
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = env.list(
     "DJANGO_ALLOWED_HOSTS",
-    default=["bubble.treibhausdonaufeld.at"],
+    default=[],
 )
+
+# 2. Grab the dynamic Pod IP injected by K8s
+pod_ip = env("POD_IP", None)
+
+# 3. Append it to the list if it's found
+if pod_ip:
+    ALLOWED_HOSTS.append(pod_ip)
 
 ALLOWED_CIDR_NETS = env.list(
     "ALLOWED_CIDR_NETS", default=["172.16.0.0/12", "192.168.0.0/16", "127.0.0.1/32"]
