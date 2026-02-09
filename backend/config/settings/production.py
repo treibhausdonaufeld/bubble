@@ -26,7 +26,7 @@ ALLOWED_HOSTS = env.list(
 )
 
 # 2. Grab the dynamic Pod IP injected by K8s
-pod_ip = env("POD_IP", None)
+pod_ip = env("POD_IP", default="")
 
 # 3. Append it to the list if it's found
 if pod_ip:
