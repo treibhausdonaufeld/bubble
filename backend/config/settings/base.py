@@ -105,9 +105,7 @@ LOCAL_APPS = [
     "bubble.bookings.apps.BookingsConfig",
     "bubble.core.apps.CoreConfig",
     "bubble.favorites.apps.FavoritesConfig",
-    "bubble.rooms.apps.RoomsConfig",
     "bubble.books.apps.BooksConfig",
-    # "bubble.payments.apps.PaymentsConfig",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
