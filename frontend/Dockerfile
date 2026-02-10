@@ -1,6 +1,10 @@
 # Build stage
 FROM node:24-alpine AS build
 
+# Create non-root user for build and ensure /app is owned by it
+RUN adduser -D app && mkdir -p /app && chown -R app /app
+USER app
+
 WORKDIR /app
 
 # Copy package files
