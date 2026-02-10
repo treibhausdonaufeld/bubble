@@ -32,7 +32,7 @@ The backend exposes its types as OpenAPI types.
 
 Whenever the backend types change, the corresponding type information for the frontend should be updated.
 
-Also, this usually be done when the package _@hey-api/openapi-ts_ in the frontend is upgraded.
+Also, this should usually be done when the _@hey-api/openapi-ts_ package in the frontend is upgraded.
 
 run `npm run types:openapi` to update the types
 
