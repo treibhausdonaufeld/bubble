@@ -1,21 +1,23 @@
 # Build stage
-FROM oven/bun:1-alpine AS build
+FROM node:24-alpine AS build
 
-USER bun
+# Create non-root user for build and ensure /app is owned by it
+RUN adduser -D app && mkdir -p /app && chown -R app /app
+USER app
 
 WORKDIR /app
 
 # Copy package files
-COPY bun.lockb package*.json ./
+COPY package*.json ./
 
 # Install dependencies
-RUN bun install
+RUN npm ci
 
 # Copy source code
 COPY . .
 
 # Build the app
-RUN bun run build
+RUN npm run build
 
 # Production stage
 FROM nginxinc/nginx-unprivileged:alpine-slim

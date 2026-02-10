@@ -1,18 +1,16 @@
-FROM oven/bun:1-alpine
-
-USER bun
+FROM node:24-alpine
 
 WORKDIR /app
 
-# Copy package files and bun.lockb
-COPY --chown=bun:bun package.json bun.lockb ./
+# Copy package files
+COPY package*.json ./
 
-# Install dependencies with Bun
-RUN bun install
+# Install dependencies
+RUN npm ci
 
 # Copy source code
-COPY --chown=bun:bun . .
+COPY . .
 
 EXPOSE 8080
 
-CMD ["bun", "run", "dev", "--host", "0.0.0.0"]
+CMD ["npm", "run", "dev"]
