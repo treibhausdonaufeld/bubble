@@ -17,10 +17,9 @@ import { cn } from '@/lib/utils';
 import { useTheme } from '@/providers/theme-provider';
 import { Handshake, Library, LogOut, Moon, Plus, Search, Sun, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 
 export const Header = () => {
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
   const { theme, setTheme } = useTheme();
   const { user, signOut, loading } = useAuth();
   const navigate = useNavigate();
@@ -78,7 +77,7 @@ export const Header = () => {
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between gap-4">
           {/* Logo */}
-          <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
+          <NavLink to="/" className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg overflow-hidden">
               <img src="/icon-192.png" alt="bubble logo" className="h-10 w-10 object-cover" />
             </div>
@@ -86,13 +85,11 @@ export const Header = () => {
               <h1 className="text-xl font-bold text-foreground">bubble</h1>
               <p className="text-xs text-muted-foreground">Community Network</p>
             </div>
-          </div>
+          </NavLink>
 
           {/* Search Bar */}
           <div className="flex-1 max-w-lg">
-            <div
-              className={cn('relative transition-all duration-300', isSearchFocused && 'scale-105')}
-            >
+            <div className={cn('relative transition-all duration-300 focus-within:scale-105')}>
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder={t('header.search')}
@@ -104,8 +101,6 @@ export const Header = () => {
                     handleSearchSubmit(searchTerm);
                   }
                 }}
-                onFocus={() => setIsSearchFocused(true)}
-                onBlur={() => setIsSearchFocused(false)}
               />
             </div>
           </div>
@@ -186,12 +181,11 @@ export const Header = () => {
                     align="end"
                     className="w-56 bg-background border border-border z-50"
                   >
-                    <DropdownMenuItem
-                      className="flex items-center"
-                      onClick={() => navigate('/profile')}
-                    >
-                      <User className="w-4 h-4 mr-2" />
-                      {t('header.myProfile')}
+                    <DropdownMenuItem asChild className="flex items-center">
+                      <NavLink to="/profile">
+                        <User className="w-4 h-4 mr-2" />
+                        {t('header.myProfile')}
+                      </NavLink>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
