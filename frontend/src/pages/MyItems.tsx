@@ -191,27 +191,17 @@ const MyItems = () => {
                 <Grid3X3 className="h-4 w-4" />
               </Button>
             </div>
-
-            <Button onClick={() => navigate('/create-item')} className="gap-2">
-              <Plus className="h-4 w-4" />
-              {t('myItems.createItem')}
-            </Button>
           </div>
         </div>
 
         {items.length === 0 ? (
           <div className="text-center py-12">
             <div className="max-w-md mx-auto">
-              <div className="mb-4">
-                <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-gradient-subtle flex items-center justify-center">
-                  <Plus className="h-12 w-12 text-muted-foreground" />
-                </div>
-              </div>
               <h3 className="text-xl font-semibold text-foreground mb-2">{t('myItems.noItems')}</h3>
               <p className="text-muted-foreground mb-6">{t('myItems.createFirst')}</p>
               <Button onClick={() => navigate('/create-item')} className="gap-2">
                 <Plus className="h-4 w-4" />
-                {t('myItems.createItem')}
+                {t('myItems.shareItem')}
               </Button>
             </div>
           </div>
