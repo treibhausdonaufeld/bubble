@@ -60,6 +60,11 @@ const translations = {
     'index.previous': 'Previous',
     'index.next': 'Next',
 
+    // Browse Nav
+    'browse.buy': 'Buy',
+    'browse.bookOrRent': 'Book / Rent',
+    'browse.wanted': 'Wanted',
+
     // Items
     'item.available': 'Available',
     'item.unavailable': 'Unavailable',
@@ -419,6 +424,11 @@ const translations = {
     'index.noItemsFound': 'Keine Artikel in dieser Kategorie gefunden.',
     'index.previous': 'Zurück',
     'index.next': 'Weiter',
+
+    // Browse Nav
+    'browse.buy': 'Kaufen',
+    'browse.bookOrRent': 'Buchen / Mieten',
+    'browse.wanted': 'Gesucht',
 
     // Items
     'item.available': 'Verfügbar',
