@@ -26,12 +26,16 @@ export default defineConfig(({ mode }) => ({
     },
 
     // Prevent watching Docker-mounted DB/storage volumes that can’t be watched (EINVAL)
-    watch: {
-      ignored: ['**/volumes/**'],
-      // If issues persist in certain environments, enable polling:
-      // usePolling: true,
-      // interval: 1000,
-    },
+    watch:
+      process.env.VITE_USE_POLLING === 'true'
+        ? {
+            ignored: ['**/volumes/**'],
+            usePolling: true,
+            interval: 1000,
+          }
+        : {
+            ignored: ['**/volumes/**'],
+          },
   },
   plugins: [
     tailwindcss(),

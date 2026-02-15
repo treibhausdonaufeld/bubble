@@ -36,6 +36,19 @@ Also, this should usually be done when the _@hey-api/openapi-ts_ package in the 
 
 run `npm run types:openapi` to update the types
 
+## File system polling on Windows
+
+On containers that run on a Windows host, it is necessary to enable file system polling to detect file changes for the live dev server.
+
+You can enable this by creating _compose.override.yaml_ and setting an environment variable there:
+
+```yaml
+services:
+  frontend:
+    environment:
+      - VITE_USE_POLLING=true
+```
+
 # Backend stuff
 
 Everything in `backend` folder please.
