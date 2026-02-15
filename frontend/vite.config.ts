@@ -28,9 +28,8 @@ export default defineConfig(({ mode }) => ({
     // Prevent watching Docker-mounted DB/storage volumes that can’t be watched (EINVAL)
     watch: {
       ignored: ['**/volumes/**'],
-      // If issues persist in certain environments, enable polling:
-      // usePolling: true,
-      // interval: 1000,
+      usePolling: process.env.VITE_USE_POLLING === 'true',
+      interval: process.env.VITE_USE_POLLING === 'true' ? 1000 : undefined,
     },
   },
   plugins: [
