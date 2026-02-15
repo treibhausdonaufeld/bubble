@@ -38,7 +38,7 @@ run `npm run types:openapi` to update the types
 
 ## File system polling on Windows
 
-On containers that run on a Windows host it is necessary to enable file system polling to detect file changes for the live dev server.
+On containers that run on a Windows host, it is necessary to enable file system polling to detect file changes for the live dev server.
 
 You can enable this by creating _compose.override.yaml_ and setting an environment variable there:
 
