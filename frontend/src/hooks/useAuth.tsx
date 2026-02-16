@@ -1,5 +1,6 @@
 import { authAPI, Session, SessionResponse, User } from '@/services/custom/auth';
-import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { createContext, ReactNode, useContext } from 'react';
 
 interface AuthContextType {
   user?: User;
@@ -25,71 +26,50 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const responseData: SessionResponse = await authAPI.getSession();
+  const { data: sessionData, isLoading } = useQuery({
+    queryKey: ['session'],
+    queryFn: async () => {
+      const responseData: SessionResponse = await authAPI.getSession();
+      return responseData.meta.is_authenticated ? responseData.data : null;
+    },
+    retry: false,
+  });
 
-        if (responseData.meta.is_authenticated) {
-          setSession(responseData.data);
-        } else {
-          setSession(null);
-        }
-      } catch (error) {
-        setSession(null);
-      } finally {
-        setLoading(false);
+  const logoutMutation = useMutation({
+    mutationFn: async () => {
+      await authAPI.logout();
+    },
+    onSuccess: () => {
+      queryClient.setQueryData(['session'], null);
+    },
+    onError: (err: unknown) => {
+      // Clear session even on error (e.g., 401 means already logged out)
+      queryClient.setQueryData(['session'], null);
+
+      const isUnauthorized =
+        err instanceof Error &&
+        (err.message.includes('401') || err.message.toLowerCase().includes('unauthorized'));
+
+      if (!isUnauthorized) {
+        console.error('Logout failed:', err);
       }
-    };
-
-    checkAuth();
-  }, []);
+    },
+  });
 
   const signOut = async () => {
-    try {
-      await authAPI.logout();
-      // Clear local state and refresh
-      setSession(null);
-      window.location.href = '/';
-    } catch (error: any) {
-      // If error message or response indicates 401, treat as successful logout
-      if (
-        error &&
-        typeof error === 'object' &&
-        (error.message?.includes('401') || error.message?.toLowerCase().includes('unauthorized'))
-      ) {
-        setSession(null);
-        window.location.href = '/';
-      } else {
-        console.error('Logout failed:', error);
-        // Still clear local state even if logout call fails
-        setSession(null);
-      }
-    }
+    await logoutMutation.mutateAsync();
   };
 
-  const refreshAuth = async () => {
-    try {
-      const responseData: SessionResponse = await authAPI.getSession();
-
-      if (responseData.meta.is_authenticated) {
-        setSession(responseData.data);
-      } else {
-        setSession(null);
-      }
-    } catch (error) {
-      console.error('Auth refresh failed:', error);
-      setSession(null);
-    }
+  const refreshAuth = () => {
+    return queryClient.invalidateQueries({ queryKey: ['session'] });
   };
 
   const value = {
-    user: session?.user,
-    session,
-    loading,
+    user: sessionData?.user,
+    session: sessionData ?? null,
+    loading: isLoading,
     signOut,
     refreshAuth,
   };
