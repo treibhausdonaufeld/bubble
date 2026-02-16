@@ -1,31 +1,8 @@
-import { authAPI, SessionResponse } from '@/services/custom/auth';
+import { authAPI, Session, SessionResponse, User } from '@/services/custom/auth';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
-// Custom types for Django session auth
-interface User {
-  id: string;
-  email: string;
-  username: string;
-  display: string;
-  has_usable_password: boolean;
-}
-
-interface Session {
-  user: User;
-  methods: Array<{
-    method: 'password' | 'socialaccount' | 'mfa';
-    at: number;
-    email?: string;
-    username?: string;
-    reauthenticated?: boolean;
-    provider?: string;
-    uid?: string;
-    type?: 'recovery_codes' | 'totp';
-  }>;
-}
-
 interface AuthContextType {
-  user: User | null;
+  user?: User;
   session: Session | null;
   loading: boolean;
   signOut: () => Promise<void>;
@@ -33,7 +10,6 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType>({
-  user: null,
   session: null,
   loading: true,
   signOut: async () => {},
@@ -49,7 +25,6 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -59,27 +34,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const responseData: SessionResponse = await authAPI.getSession();
 
         if (responseData.meta.is_authenticated) {
-          const userData: User = {
-            id: responseData.data.user.id,
-            email: responseData.data.user.email,
-            username: responseData.data.user.username,
-            display: responseData.data.user.display,
-            has_usable_password: responseData.data.user.has_usable_password,
-          };
-
-          const sessionData: Session = {
-            user: userData,
-            methods: responseData.data.methods,
-          };
-
-          setUser(userData);
-          setSession(sessionData);
+          setSession(responseData.data);
         } else {
-          setUser(null);
           setSession(null);
         }
       } catch (error) {
-        setUser(null);
         setSession(null);
       } finally {
         setLoading(false);
@@ -93,7 +52,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       await authAPI.logout();
       // Clear local state and refresh
-      setUser(null);
       setSession(null);
       window.location.href = '/';
     } catch (error: any) {
@@ -103,13 +61,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         typeof error === 'object' &&
         (error.message?.includes('401') || error.message?.toLowerCase().includes('unauthorized'))
       ) {
-        setUser(null);
         setSession(null);
         window.location.href = '/';
       } else {
         console.error('Logout failed:', error);
         // Still clear local state even if logout call fails
-        setUser(null);
         setSession(null);
       }
     }
@@ -120,34 +76,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const responseData: SessionResponse = await authAPI.getSession();
 
       if (responseData.meta.is_authenticated) {
-        const userData: User = {
-          id: responseData.data.user.id,
-          email: responseData.data.user.email,
-          username: responseData.data.user.username,
-          display: responseData.data.user.display,
-          has_usable_password: responseData.data.user.has_usable_password,
-        };
-
-        const sessionData: Session = {
-          user: userData,
-          methods: responseData.data.methods,
-        };
-
-        setUser(userData);
-        setSession(sessionData);
+        setSession(responseData.data);
       } else {
-        setUser(null);
         setSession(null);
       }
     } catch (error) {
       console.error('Auth refresh failed:', error);
-      setUser(null);
       setSession(null);
     }
   };
 
   const value = {
-    user,
+    user: session?.user,
     session,
     loading,
     signOut,
