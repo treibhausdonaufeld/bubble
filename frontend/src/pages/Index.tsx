@@ -1,7 +1,6 @@
 import { ItemCard } from '@/components/items/ItemCard';
 import { CategoryFilter } from '@/components/layout/CategoryFilter';
 import { Header } from '@/components/layout/Header';
-import { HeroSection } from '@/components/layout/HeroSection';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useItems } from '@/hooks/useItems';
@@ -122,7 +121,6 @@ const Index = () => {
     return (
       <div className="min-h-screen bg-background">
         <Header />
-        {!user && <HeroSection />}
 
         <main className="container mx-auto px-4 py-8">
           <div className="space-y-8">

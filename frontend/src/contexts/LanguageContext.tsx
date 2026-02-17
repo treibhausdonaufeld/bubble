@@ -25,14 +25,6 @@ const translations = {
     'header.light': 'Light',
     'header.dark': 'Dark',
 
-    // Hero Section
-    'hero.tagline': 'Building Stronger Communities Together',
-    'hero.title': 'Share & Discover in Your Community',
-    'hero.subtitle':
-      'Connect with neighbors to share, lend, and discover items in your local area. Building stronger communities through sharing.',
-    'hero.getStarted': 'Get Started',
-    'hero.learnMore': 'Learn More',
-
     // Auth
     'auth.signIn': 'Sign In',
     'auth.signUp': 'Sign Up',
@@ -392,14 +384,6 @@ const translations = {
     'header.theme': 'Design',
     'header.light': 'Hell',
     'header.dark': 'Dunkel',
-
-    // Hero Section
-    'hero.tagline': 'Zusammen stärkere Gemeinschaften aufbauen',
-    'hero.title': 'Teile & Entdecke in deiner Community',
-    'hero.subtitle':
-      'Verbinde dich mit Nachbarn, um Artikel in deiner Umgebung zu teilen, zu leihen und zu entdecken. Stärkere Gemeinschaften durch Teilen.',
-    'hero.getStarted': 'Loslegen',
-    'hero.learnMore': 'Mehr erfahren',
 
     // Auth
     'auth.signIn': 'Anmelden',

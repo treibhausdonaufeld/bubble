@@ -8,7 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { authAPI, LoginCredentials } from '@/services/custom/auth';
 import { client } from '@/services/django/client.gen';
-import { ArrowLeft, Eye, EyeOff, Loader } from 'lucide-react';
+import { Eye, EyeOff, Loader } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -101,17 +101,6 @@ const Auth = () => {
   return (
     <div className="min-h-screen bg-linear-to-br from-background to-muted flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <div className="mb-6">
-          <Button
-            variant="ghost"
-            onClick={() => navigate('/')}
-            className="mb-4 text-muted-foreground hover:text-foreground"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            {t('auth.backToHome')}
-          </Button>
-        </div>
-
         <Card className="shadow-lg border-0 bg-card/50 backdrop-blur-xs">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl font-bold bg-linear-to-r from-primary to-primary-glow bg-clip-text text-transparent">
@@ -136,12 +125,7 @@ const Auth = () => {
             </div>
 
             {/* Divider */}
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase"></div>
-            </div>
+            <div className="border-t" />
 
             <form onSubmit={handleLogin} className="space-y-4">
               {/* CSRF Token */}
