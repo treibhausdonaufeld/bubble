@@ -42,11 +42,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       await authAPI.logout();
     },
     onSuccess: () => {
-      queryClient.setQueryData(['session'], null);
+      // Clear all data from the cache.
+      // This could be refined in the future to clear only user-specific data.
+      queryClient.clear();
     },
     onError: (err: unknown) => {
-      // Clear session even on error (e.g., 401 means already logged out)
-      queryClient.setQueryData(['session'], null);
+      // Clear data even on error (e.g., 401 means already logged out)
+      queryClient.clear();
 
       const isUnauthorized =
         err instanceof Error &&
