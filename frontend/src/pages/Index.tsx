@@ -2,7 +2,6 @@ import { ItemCard } from '@/components/items/ItemCard';
 import { CategoryFilter } from '@/components/layout/CategoryFilter';
 import { Header } from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
-import { useAuth } from '@/hooks/useAuth';
 import { useItems } from '@/hooks/useItems';
 import { type ItemCategoryFilter } from '@/hooks/types';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -80,7 +79,6 @@ const Index = () => {
     search: searchQuery,
     page: currentPage,
   });
-  const { user } = useAuth();
 
   const handlePageChange = (newPage: number) => {
     const newParams = new URLSearchParams(location.search);
