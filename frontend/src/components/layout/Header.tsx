@@ -21,7 +21,7 @@ import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 
 export const Header = () => {
   const { theme, setTheme } = useTheme();
-  const { user, signOut, loading } = useAuth();
+  const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { data: unreadMessages } = useUnreadMessages();
@@ -72,6 +72,10 @@ export const Header = () => {
     }
   };
 
+  if (!user) {
+    throw new Error('Header requires an authenticated user.');
+  }
+
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md">
       <div className="container mx-auto px-4 py-3">
@@ -107,145 +111,123 @@ export const Header = () => {
 
           {/* Actions */}
           <div className="flex items-center gap-2">
-            {user && (
-              <>
-                {/* Bookings */}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => navigate('/bookings')}
-                  aria-current={location.pathname.startsWith('/bookings') ? 'page' : undefined}
-                  className={cn(
-                    'relative gap-2',
-                    location.pathname.startsWith('/bookings') && 'font-semibold',
-                  )}
-                  title={t('header.myBookings')}
+            {/* Bookings */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/bookings')}
+              aria-current={location.pathname.startsWith('/bookings') ? 'page' : undefined}
+              className={cn(
+                'relative gap-2',
+                location.pathname.startsWith('/bookings') && 'font-semibold',
+              )}
+              title={t('header.myBookings')}
+            >
+              <Handshake className="h-5 w-5" />
+              <span className="hidden sm:inline">{t('messages.title')}</span>
+
+              {unreadCount > 0 && (
+                <Badge
+                  variant="destructive"
+                  className="absolute -top-1 -right-1 h-5 min-w-[20px] px-1 text-xs"
                 >
-                  <Handshake className="h-5 w-5" />
-                  <span className="hidden sm:inline">{t('messages.title')}</span>
+                  {unreadCount}
+                </Badge>
+              )}
+            </Button>
 
-                  {unreadCount > 0 && (
-                    <Badge
-                      variant="destructive"
-                      className="absolute -top-1 -right-1 h-5 min-w-[20px] px-1 text-xs"
-                    >
-                      {unreadCount}
-                    </Badge>
-                  )}
+            {/* My Items */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/my-items')}
+              aria-current={location.pathname.startsWith('/my-items') ? 'page' : undefined}
+              className={cn('gap-2', location.pathname.startsWith('/my-items') && 'font-semibold')}
+              title={t('header.myItems')}
+            >
+              <Library className="h-5 w-5" />
+              <span className="hidden sm:inline">{t('myItems.title')}</span>
+            </Button>
+
+            {/* Add Item */}
+            <Button
+              variant="default"
+              size="sm"
+              className="gap-2"
+              onClick={() => navigate('/create-item')}
+              aria-current={location.pathname.startsWith('/create-item') ? 'page' : undefined}
+            >
+              <Plus className="h-4 w-4" />
+              <span className="hidden sm:inline">{t('header.shareItem')}</span>
+            </Button>
+
+            {/* Profile Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="icon" className="relative">
+                  <Avatar className="w-5 h-5">
+                    <AvatarFallback className="text-xs">
+                      {user.email?.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
                 </Button>
-
-                {/* My Items */}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => navigate('/my-items')}
-                  aria-current={location.pathname.startsWith('/my-items') ? 'page' : undefined}
-                  className={cn(
-                    'gap-2',
-                    location.pathname.startsWith('/my-items') && 'font-semibold',
-                  )}
-                  title={t('header.myItems')}
-                >
-                  <Library className="h-5 w-5" />
-                  <span className="hidden sm:inline">{t('myItems.title')}</span>
-                </Button>
-
-                {/* Add Item */}
-                <Button
-                  variant="default"
-                  size="sm"
-                  className="gap-2"
-                  onClick={() => navigate('/create-item')}
-                  aria-current={location.pathname.startsWith('/create-item') ? 'page' : undefined}
-                >
-                  <Plus className="h-4 w-4" />
-                  <span className="hidden sm:inline">{t('header.shareItem')}</span>
-                </Button>
-              </>
-            )}
-
-            {user ? (
-              <>
-                {/* Profile Dropdown */}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="icon" className="relative">
-                      <Avatar className="w-5 h-5">
-                        <AvatarFallback className="text-xs">
-                          {user.email?.charAt(0).toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    align="end"
-                    className="w-56 bg-background border border-border z-50"
-                  >
-                    <DropdownMenuItem asChild className="flex items-center">
-                      <NavLink to="/profile">
-                        <User className="w-4 h-4 mr-2" />
-                        {t('header.myProfile')}
-                      </NavLink>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      className="flex items-center justify-between"
-                      onClick={toggleTheme}
-                    >
-                      <div className="flex items-center">
-                        {theme === 'dark' ? (
-                          <Moon className="w-4 h-4 mr-2" />
-                        ) : (
-                          <Sun className="w-4 h-4 mr-2" />
-                        )}
-                        {t('header.theme')}
-                      </div>
-                      <span className="text-xs text-muted-foreground">
-                        {theme === 'dark' ? t('header.dark') : t('header.light')}
-                      </span>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      onClick={() => setLanguage('en')}
-                      className={cn(
-                        'flex items-center cursor-pointer',
-                        language === 'en' && 'bg-accent',
-                      )}
-                    >
-                      🇺🇸 English
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => setLanguage('de')}
-                      className={cn(
-                        'flex items-center cursor-pointer',
-                        language === 'de' && 'bg-accent',
-                      )}
-                    >
-                      🇩🇪 Deutsch
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      className="flex items-center text-destructive focus:text-destructive"
-                      onClick={handleSignOut}
-                    >
-                      <LogOut className="w-4 h-4 mr-2" />
-                      {t('header.signOut')}
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </>
-            ) : (
-              /* Sign In Button */
-              <Button
-                variant="community"
-                size="sm"
-                onClick={() => navigate('/auth')}
-                className="gap-2"
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                className="w-56 bg-background border border-border z-50"
               >
-                <User className="h-4 w-4" />
-                <span className="hidden sm:inline">{t('header.signIn')}</span>
-              </Button>
-            )}
+                <DropdownMenuItem asChild className="flex items-center">
+                  <NavLink to="/profile">
+                    <User className="w-4 h-4 mr-2" />
+                    {t('header.myProfile')}
+                  </NavLink>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="flex items-center justify-between"
+                  onClick={toggleTheme}
+                >
+                  <div className="flex items-center">
+                    {theme === 'dark' ? (
+                      <Moon className="w-4 h-4 mr-2" />
+                    ) : (
+                      <Sun className="w-4 h-4 mr-2" />
+                    )}
+                    {t('header.theme')}
+                  </div>
+                  <span className="text-xs text-muted-foreground">
+                    {theme === 'dark' ? t('header.dark') : t('header.light')}
+                  </span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => setLanguage('en')}
+                  className={cn(
+                    'flex items-center cursor-pointer',
+                    language === 'en' && 'bg-accent',
+                  )}
+                >
+                  🇺🇸 English
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setLanguage('de')}
+                  className={cn(
+                    'flex items-center cursor-pointer',
+                    language === 'de' && 'bg-accent',
+                  )}
+                >
+                  🇩🇪 Deutsch
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="flex items-center text-destructive focus:text-destructive"
+                  onClick={handleSignOut}
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  {t('header.signOut')}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>

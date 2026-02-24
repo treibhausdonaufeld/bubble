@@ -23,7 +23,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/hooks/useAuth';
 import { useUpdateItem } from '@/hooks/useCreateItem';
 import { useMyItem } from '@/hooks/useMyItem';
 import { imagesAPI } from '@/services/custom/images';
@@ -48,7 +47,6 @@ const EditItem = () => {
   const handleBackClick = () => {
     navigate(-1);
   };
-  const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { t, language } = useLanguage();
@@ -136,15 +134,6 @@ const EditItem = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!user) {
-      toast({
-        title: 'Error',
-        description: 'You must be logged in to update an item.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
     // Validate required fields
     if (!formData.name || !formData.category || formData.condition === '') {
       console.log(formData);
@@ -211,15 +200,6 @@ const EditItem = () => {
   };
 
   const handlePublish = async () => {
-    if (!user) {
-      toast({
-        title: 'Error',
-        description: 'You must be logged in to publish an item.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
     // Validate required fields
     if (!formData.name || !formData.category || formData.condition === '') {
       console.log(formData);
@@ -512,11 +492,6 @@ const EditItem = () => {
         </div>
       </div>
     );
-  }
-
-  if (!user) {
-    navigate('/auth');
-    return null;
   }
 
   return (

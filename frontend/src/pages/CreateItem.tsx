@@ -24,7 +24,7 @@ interface WizardData {
 }
 
 const CreateItem = () => {
-  const { user, loading: authLoading } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const createItemMutation = useCreateItem();
@@ -32,15 +32,6 @@ const CreateItem = () => {
   const [loading, setLoading] = useState(false);
 
   const handleImageStepComplete = async (data: WizardData) => {
-    if (!user) {
-      toast({
-        title: 'Error',
-        description: 'You must be logged in to list an item.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
     try {
       // Redirect to edit page instead of item detail
       navigate(`/edit-item/${data.tempItemId}`);
@@ -57,27 +48,6 @@ const CreateItem = () => {
   const handleBack = () => {
     navigate('/');
   };
-
-  useEffect(() => {
-    if (!authLoading && !user) {
-      navigate('/auth');
-    }
-  }, [authLoading, user, navigate]);
-
-  if (authLoading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-2 text-sm text-muted-foreground">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return null;
-  }
 
   return (
     <div className="min-h-screen bg-background">

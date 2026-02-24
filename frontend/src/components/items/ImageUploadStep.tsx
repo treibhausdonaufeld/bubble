@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/hooks/useAuth';
 import { useCreateItem } from '@/hooks/useCreateItem';
 import { imagesAPI } from '@/services/custom/images';
 import { itemsAiDescribeUpdate } from '@/services/django';
@@ -24,7 +23,6 @@ export const ImageUploadStep = ({ onBack, onComplete }: ImageUploadStepProps) =>
   const navigate = useNavigate();
   const { toast } = useToast();
   const { language, t } = useLanguage();
-  const { user } = useAuth();
   const createItemMutation = useCreateItem();
 
   const [images, setImages] = useState<{ url: string; file: File }[]>([]);
@@ -137,7 +135,7 @@ export const ImageUploadStep = ({ onBack, onComplete }: ImageUploadStepProps) =>
         });
       }
     },
-    [user, images, language, navigate, toast, createItemMutation],
+    [images, language, navigate, toast, createItemMutation],
   );
 
   const handleSkipAI = () => {

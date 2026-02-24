@@ -20,7 +20,6 @@ import {
 } from '@/components/ui/select';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/hooks/useAuth';
 import { useUpdateItem } from '@/hooks/useCreateItem';
 import {
   Author,
@@ -49,7 +48,6 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const EditBook = () => {
-  const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { t, language } = useLanguage();
@@ -260,15 +258,6 @@ const EditBook = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!user) {
-      toast({
-        title: 'Error',
-        description: 'You must be logged in to update a book.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
     if (!editItemUuid) {
       toast({
         title: 'Error',
@@ -319,7 +308,7 @@ const EditBook = () => {
   };
 
   const handlePublish = async () => {
-    if (!user || !editItemUuid) {
+    if (!editItemUuid) {
       toast({
         title: 'Error',
         description: 'You must be logged in and have a valid book ID.',

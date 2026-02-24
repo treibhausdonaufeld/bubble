@@ -60,16 +60,6 @@ export const ItemCard = ({
 
   const isOwner = user && owner && user.id === owner;
 
-  const handleMessageOwner = () => {
-    if (!user) {
-      navigate('/auth');
-      return;
-    }
-
-    // Contact functionality removed - navigate to item details instead
-    navigate(`/item/${id}`);
-  };
-
   const conditionColors = {
     new: 'bg-success text-success-foreground',
     used: 'bg-warning text-warning-foreground',
@@ -173,10 +163,6 @@ export const ItemCard = ({
                         className="w-full"
                         onClick={e => {
                           e.stopPropagation();
-                          if (!user) {
-                            navigate('/auth');
-                            return;
-                          }
                           navigate(`/item/${id}#booking`);
                         }}
                         disabled={(isOwner && !!salePrice) || !user}
