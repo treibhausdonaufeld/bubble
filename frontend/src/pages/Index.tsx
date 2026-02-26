@@ -1,13 +1,22 @@
+import { BrowseNav } from '@/components/browse/BrowseNav';
 import { ItemCard } from '@/components/items/ItemCard';
 import { CategoryFilter } from '@/components/layout/CategoryFilter';
 import { Header } from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
 import { useItems } from '@/hooks/useItems';
 import { type ItemCategoryFilter } from '@/hooks/types';
+import { type Status402Enum } from '@/services/django';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+
+type BrowseItemsPageFilters = {
+  status?: Status402Enum | Status402Enum[];
+  minSalePrice?: number;
+  minRentalPrice?: number;
+  maxSalePrice?: number;
+};
 
 const PAGE_SIZE = 20;
 
@@ -69,15 +78,28 @@ const Index = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const params = new URLSearchParams(location.search);
+  const typeParam = params.get('type');
   const searchQuery = params.get('search') || undefined;
   const pageParam = params.get('page');
   const currentPage = pageParam ? parseInt(pageParam, 10) : 1;
+  let itemFilters: BrowseItemsPageFilters | undefined;
+  if (typeParam === 'buy') {
+    itemFilters = { minSalePrice: 0 };
+  } else if (typeParam === 'rent') {
+    itemFilters = { minRentalPrice: 0 };
+  } else if (typeParam === 'wanted') {
+    itemFilters = { maxSalePrice: -0.001 };
+  }
 
   const [selectedCategory, setSelectedCategory] = useState<ItemCategoryFilter>('all');
   const itemsQuery = useItems({
     category: selectedCategory === 'all' ? undefined : selectedCategory,
     search: searchQuery,
     page: currentPage,
+    status: itemFilters?.status,
+    minSalePrice: itemFilters?.minSalePrice,
+    minRentalPrice: itemFilters?.minRentalPrice,
+    maxSalePrice: itemFilters?.maxSalePrice,
   });
 
   const handlePageChange = (newPage: number) => {
@@ -120,8 +142,9 @@ const Index = () => {
       <div className="min-h-screen bg-background">
         <Header />
 
-        <main className="container mx-auto px-4 py-8">
-          <div className="space-y-8">
+        <main className="container mx-auto px-4 py-4">
+          <div className="space-y-4">
+            <BrowseNav />
             <CategoryFilter
               selectedCategory={selectedCategory}
               onCategoryChange={setSelectedCategory}
