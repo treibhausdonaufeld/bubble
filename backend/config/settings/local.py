@@ -23,6 +23,7 @@ CACHES = {
         "LOCATION": "",
     },
 }
+CONSTANCE_DATABASE_CACHE_BACKEND = "default"
 
 DEBUG = env("DJANGO_DEBUG", default=True)
 

@@ -54,6 +54,8 @@ CACHES = {
         },
     },
 }
+CONSTANCE_DATABASE_CACHE_BACKEND = "default"
+
 
 # SECURITY
 # ------------------------------------------------------------------------------
