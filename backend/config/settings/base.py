@@ -493,7 +493,7 @@ CONSTANCE_CONFIG = {
     "REQUIRE_LOGIN": (True, "Require a user to login to view the site"),
     "DEFAULT_ITEM_VISIBILITY": (
         "authenticated",
-        "Select default item visiblity for new items. Options: public, authenticated, internal, hidden",
+        "Select default item visibility for new items. Options: public, authenticated, internal, hidden",
         "item_visibility",
     ),
 }
