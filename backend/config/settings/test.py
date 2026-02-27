@@ -35,3 +35,5 @@ TEMPLATES[0]["OPTIONS"]["debug"] = True  # type: ignore[index]
 MEDIA_URL = "http://media.testserver/"
 # Your stuff...
 # ------------------------------------------------------------------------------
+
+CONSTANCE_BACKEND = "constance.backends.database.DatabaseBackend"
