@@ -1,4 +1,4 @@
-export COMPOSE_FILE := "docker-compose.yml"
+export COMPOSE_FILE := "compose.yaml"
 
 ## Just does not yet manage signals for subprocesses reliably, which can lead to unexpected behavior.
 ## Exercise caution before expanding its usage in production environments.
@@ -35,8 +35,12 @@ logs *args:
 
 # manage: Executes `manage.py` command.
 manage +args:
-    @docker compose run --rm django python ./manage.py {{args}}
+    @docker compose run --rm backend python ./manage.py {{args}}
 
 # manage: Executes `manage.py` command.
 run +args:
-    @docker compose run --rm django {{args}}
+    @docker compose run --rm backend {{args}}
+
+# manage: Executes `manage.py` command.
+tests:
+    @docker compose run --rm backend pytest
