@@ -2,6 +2,7 @@
 
 from django.utils.translation import gettext_lazy as _
 from djmoney.contrib.django_rest_framework import MoneyField
+from guardian.shortcuts import get_groups_with_perms, get_users_with_perms
 from rest_framework import serializers, status
 
 from bubble.items.models import Image, Item, money_defaults
@@ -61,6 +62,7 @@ class ItemSerializer(serializers.ModelSerializer):
     first_image = serializers.SerializerMethodField()
     sale_price = MoneyField(**money_defaults, required=False, allow_null=True)
     rental_price = MoneyField(**money_defaults, required=False, allow_null=True)
+    co_owners = serializers.SerializerMethodField()
 
     class Meta:
         model = Item
@@ -71,6 +73,7 @@ class ItemSerializer(serializers.ModelSerializer):
             "created_at",
             "date_updated",
             "images",
+            "co_owners",
         ]
 
     def get_first_image(self, obj):
@@ -83,6 +86,23 @@ class ItemSerializer(serializers.ModelSerializer):
             if first_image.thumbnail:
                 return first_image.thumbnail.url
         return None
+
+    def get_co_owners(self, obj):
+        """Return list of co-owner user IDs and group IDs (those with change_item)."""
+        users = get_users_with_perms(obj, attach_perms=True, with_group_users=False)
+        groups = get_groups_with_perms(obj, attach_perms=True)
+
+        co_owner_users = [
+            {"id": u.pk, "username": u.username}
+            for u, perms in users.items()
+            if "change_item" in perms and u != obj.user
+        ]
+        co_owner_groups = [
+            {"id": g.pk, "name": g.name}
+            for g, perms in groups.items()
+            if "change_item" in perms
+        ]
+        return {"users": co_owner_users, "groups": co_owner_groups}
 
     def validate(self, attrs):
         """
