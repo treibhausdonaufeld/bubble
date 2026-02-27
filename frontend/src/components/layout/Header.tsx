@@ -12,10 +12,11 @@ import { Input } from '@/components/ui/input';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/hooks/useAuth';
 import { useUnreadMessages } from '@/hooks/useMessages';
+import * as Sentry from '@sentry/react';
 
 import { cn } from '@/lib/utils';
 import { useTheme } from '@/providers/theme-provider';
-import { Handshake, Library, LogOut, Moon, Plus, Search, Sun, User } from 'lucide-react';
+import { Bug, Handshake, Library, LogOut, Moon, Plus, Search, Sun, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 

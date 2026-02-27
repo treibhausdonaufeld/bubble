@@ -47,7 +47,7 @@ services:
     image: bubble-frontend
     environment:
       - BACKEND_HOST=${BACKEND_HOST:-backend:8000}
-      - TRACKING_PROJECT_ID=${SENTRY_DSN:-}
+      - VITE_SENTRY_DSN=${SENTRY_DSN:-}
     ports:
       - '8080:8888'
     volumes:
