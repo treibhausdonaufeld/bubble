@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 import { Status402Enum } from '@/services/django';
 import { Clock, ShoppingCart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { getStatusColor, getStatusLabel } from './status';
+import { getStatusColor, getStatusLabel } from '@/components/items/status';
 import { convertLineBreaks } from '@/lib/convertLineBreaks';
 
 interface ItemCardProps {
