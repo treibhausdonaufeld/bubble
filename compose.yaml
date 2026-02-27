@@ -53,6 +53,11 @@ services:
   redis:
     image: ghcr.io/dragonflydb/dragonfly:latest
     restart: always
+    command: >
+      dragonfly
+        --maxmemory 2gb
+        --proactor_threads 4
+        --cache_mode
     environment:
       # required to work with django-channels
       # https://github.com/dragonflydb/dragonfly/issues/182#issuecomment-1241624150
