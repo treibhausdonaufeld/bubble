@@ -1,0 +1,115 @@
+import uuid
+
+from django.conf import settings
+from django.db import models
+from django.utils.translation import gettext_lazy as _
+from guardian.models import GroupObjectPermissionBase, UserObjectPermissionBase
+from guardian.shortcuts import assign_perm, get_objects_for_user
+
+from bubble.items.models import Item
+
+AUTH_USER_MODEL = settings.AUTH_USER_MODEL
+
+
+class CollectionManager(models.Manager):
+    def get_for_user(self, user) -> models.QuerySet:
+        """Return a queryset filtered by user permissions."""
+        collections_with_view_permission = get_objects_for_user(
+            user,
+            f"{self.model._meta.app_label}.view_{self.model._meta.model_name}",  # noqa: SLF001
+            accept_global_perms=False,
+        )
+        return self.filter(pk__in=collections_with_view_permission)
+
+
+class Collection(models.Model):
+    """
+    A collection of items that can be shared with other users.
+    The creator is the owner and can grant permissions to other users or groups.
+    """
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=200)
+    description = models.TextField(blank=True)
+    owner = models.ForeignKey(
+        AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="owned_collections",
+    )
+    items = models.ManyToManyField(
+        Item,
+        through="CollectionItem",
+        related_name="collections",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    # Custom manager
+    objects = CollectionManager()
+
+    class Meta:
+        ordering = ["-created_at"]
+        permissions = [
+            ("add_items", "Can add items to collection"),
+            ("remove_items", "Can remove items from collection"),
+        ]
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None
+        super().save(*args, **kwargs)
+
+        # Assign all permissions to owner on creation
+        if is_new and self.owner:
+            app_label = self._meta.app_label
+            model_name = self._meta.model_name
+            assign_perm(f"{app_label}.view_{model_name}", self.owner, obj=self)
+            assign_perm(f"{app_label}.change_{model_name}", self.owner, obj=self)
+            assign_perm(f"{app_label}.delete_{model_name}", self.owner, obj=self)
+            assign_perm(f"{app_label}.add_items", self.owner, obj=self)
+            assign_perm(f"{app_label}.remove_items", self.owner, obj=self)
+
+
+class CollectionItem(models.Model):
+    """
+    Through model for the many-to-many relationship between Collection and Item.
+    Allows additional metadata about the item in the collection.
+    """
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    collection = models.ForeignKey(
+        Collection, on_delete=models.CASCADE, related_name="collection_items"
+    )
+    item = models.ForeignKey(
+        Item, on_delete=models.CASCADE, related_name="collection_items"
+    )
+    added_at = models.DateTimeField(auto_now_add=True)
+    added_by = models.ForeignKey(
+        AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="added_collection_items",
+    )
+    note = models.TextField(blank=True, help_text=_("Optional note about this item"))
+    ordering = models.IntegerField(default=0)
+
+    class Meta:
+        ordering = ["ordering", "added_at"]
+        unique_together = ["collection", "item"]
+
+    def __str__(self):
+        return f"{self.item.name} in {self.collection.name}"
+
+
+class CollectionUserObjectPermission(UserObjectPermissionBase):
+    """User-level permissions for Collection objects."""
+
+    content_object = models.ForeignKey(Collection, on_delete=models.CASCADE)
+
+
+class CollectionGroupObjectPermission(GroupObjectPermissionBase):
+    """Group-level permissions for Collection objects."""
+
+    content_object = models.ForeignKey(Collection, on_delete=models.CASCADE)
