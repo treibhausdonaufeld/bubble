@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/react';
+import { feedbackIntegration } from '@sentry/react';
 
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
@@ -19,6 +20,13 @@ if (window._env_?.TRACKING_PROJECT_ID) {
     // Adds request headers and IP for users, for more info visit:
     // https://docs.sentry.io/platforms/javascript/guides/react/configuration/options/#sendDefaultPii
     sendDefaultPii: true,
+    integrations: [
+      feedbackIntegration({
+        colorScheme: 'system',
+        // Don't inject default floating button; we use a custom trigger in the Header
+        autoInject: false,
+      }),
+    ],
   });
 }
 

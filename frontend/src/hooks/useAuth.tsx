@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react';
 import { authAPI, Session, SessionResponse, User } from '@/services/custom/auth';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createContext, ReactNode, useContext } from 'react';
@@ -32,7 +33,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     queryKey: ['session'],
     queryFn: async () => {
       const responseData: SessionResponse = await authAPI.getSession();
-      return responseData.meta.is_authenticated ? responseData.data : null;
+      if (responseData.meta.is_authenticated) {
+        const { user } = responseData.data;
+        Sentry.setUser({ id: user.id, username: user.username, email: user.email });
+        return responseData.data;
+      }
+      Sentry.setUser(null);
+      return null;
     },
     retry: false,
   });
@@ -42,6 +49,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       await authAPI.logout();
     },
     onSuccess: () => {
+      Sentry.setUser(null);
       // Clear all data from the cache.
       // This could be refined in the future to clear only user-specific data.
       queryClient.clear();

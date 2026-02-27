@@ -24,6 +24,7 @@ const translations = {
     'header.theme': 'Theme',
     'header.light': 'Light',
     'header.dark': 'Dark',
+    'header.reportBug': 'Report Bug',
 
     // Auth
     'auth.signIn': 'Sign In',
@@ -390,6 +391,7 @@ const translations = {
     'header.theme': 'Design',
     'header.light': 'Hell',
     'header.dark': 'Dunkel',
+    'header.reportBug': 'Fehler melden',
 
     // Auth
     'auth.signIn': 'Anmelden',
