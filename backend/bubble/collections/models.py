@@ -58,7 +58,8 @@ class Collection(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        is_new = self.pk is None
+        # Check if this is a new object by checking if it exists in the database
+        is_new = self._state.adding
         super().save(*args, **kwargs)
 
         # Assign all permissions to owner on creation
