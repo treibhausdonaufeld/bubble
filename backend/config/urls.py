@@ -8,6 +8,8 @@ from django.views.i18n import JavaScriptCatalog
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
 
+from bubble.core.api.views import ConfigView
+
 urlpatterns = [
     path("i18n/", include("django.conf.urls.i18n")),
     path(
@@ -29,6 +31,7 @@ if settings.DEBUG:
 urlpatterns += [
     # API base url
     path("api/", include("config.api_router")),
+    path("api/config/", ConfigView.as_view(), name="config"),
     # Include the API endpoints:
     path("api/_allauth/", include("allauth.headless.urls")),
     # DRF auth token

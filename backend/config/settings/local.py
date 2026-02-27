@@ -24,6 +24,24 @@ CACHES = {
     },
 }
 
+CONSTANCE_BACKEND = "constance.backends.database.DatabaseBackend"
+
+if REDIS_URL := env("REDIS_URL"):
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": REDIS_URL,
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+                # Mimicking memcache behavior.
+                # https://github.com/jazzband/django-redis#memcached-exceptions-behavior
+                "IGNORE_EXCEPTIONS": True,
+            },
+        },
+    }
+    CONSTANCE_DATABASE_CACHE_BACKEND = "default"
+
+
 DEBUG = env("DJANGO_DEBUG", default=True)
 
 # EMAIL
