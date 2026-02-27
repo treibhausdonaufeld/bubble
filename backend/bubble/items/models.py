@@ -47,6 +47,13 @@ class RentalPeriodType(models.TextChoices):
     WEEKLY = "w", _("Weekly")
 
 
+class VisibilityType(models.IntegerChoices):
+    PUBLIC = 0, _("Public")
+    AUTHENTICATED = 1, _("Authenticated")
+    SPECIFIC = 2, _("Specific")
+    PRIVATE = 3, _("Private")
+
+
 class CategoryType(models.TextChoices):
     BOOKS = "books", _("Books")
     CLOTHING = "clothing", _("Clothing")
@@ -175,6 +182,17 @@ class Item(models.Model):
         default=ItemStatus.DRAFT,
     )
 
+    visibility = models.IntegerField(
+        choices=VisibilityType,
+        default=VisibilityType.AUTHENTICATED,
+        help_text=_(
+            "Who can see this item: Public (everyone), "
+            "Authenticated (logged-in users), "
+            "Specific (selected users/groups), "
+            "or Private (owner and co-owners only)."
+        ),
+    )
+
     # enable history tracking
     history = HistoricalRecords()
 
@@ -214,9 +232,10 @@ class Item(models.Model):
         super().save(*args, **kwargs)
 
         if self.user:
-            # give all object permission to self.request.user on instance
+            # give owner full object permissions on instance
             app_label = self._meta.model._meta.app_label  # noqa: SLF001
             model_name = self._meta.model._meta.model_name  # noqa: SLF001
+            assign_perm(f"{app_label}.view_{model_name}", self.user, obj=self)
             assign_perm(f"{app_label}.change_{model_name}", self.user, obj=self)
             assign_perm(f"{app_label}.delete_{model_name}", self.user, obj=self)
 
