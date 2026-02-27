@@ -497,3 +497,5 @@ CONSTANCE_CONFIG = {
         "item_visibility",
     ),
 }
+
+CONSTANCE_CONFIG_PUBLIC = ["REQUIRE_LOGIN", "DEFAULT_ITEM_VISIBILITY"]
