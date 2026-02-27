@@ -227,21 +227,6 @@ export const Header = () => {
                   <LogOut className="w-4 h-4 mr-2" />
                   {t('header.signOut')}
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  className="flex items-center"
-                  onClick={() => {
-                    const feedback = Sentry.getFeedback();
-                    if (feedback) {
-                      feedback.openDialog();
-                    } else {
-                      console.warn('Sentry feedback integration is not available.');
-                    }
-                  }}
-                >
-                  <Bug className="w-4 h-4 mr-2" />
-                  {t('header.reportBug')}
-                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

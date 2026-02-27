@@ -9,14 +9,16 @@ declare global {
   interface Window {
     _env_?: {
       VITE_API_URL?: string;
-      TRACKING_PROJECT_ID?: string;
+      VITE_SENTRY_DSN?: string;
     };
   }
 }
 
-if (window._env_?.TRACKING_PROJECT_ID) {
+const dsn = window._env_?.VITE_SENTRY_DSN || import.meta.env.VITE_SENTRY_DSN;
+
+if (dsn) {
   Sentry.init({
-    dsn: window._env_?.TRACKING_PROJECT_ID,
+    dsn: dsn,
     // Adds request headers and IP for users, for more info visit:
     // https://docs.sentry.io/platforms/javascript/guides/react/configuration/options/#sendDefaultPii
     sendDefaultPii: true,
@@ -24,7 +26,7 @@ if (window._env_?.TRACKING_PROJECT_ID) {
       feedbackIntegration({
         colorScheme: 'system',
         // Don't inject default floating button; we use a custom trigger in the Header
-        autoInject: false,
+        autoInject: true,
       }),
     ],
   });

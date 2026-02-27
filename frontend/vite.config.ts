@@ -42,8 +42,8 @@ export default defineConfig(({ mode }) => ({
     react(),
     sentryVitePlugin({
       authToken: process.env.SENTRY_AUTH_TOKEN,
-      org: 'fabslab',
-      project: 'thd-bubble',
+      org: 'treibhaus-donaufeld',
+      project: 'bubble-frontend',
     }),
   ].filter(Boolean),
   resolve: {
