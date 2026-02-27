@@ -1,7 +1,6 @@
 import { BookingDialog } from '@/components/items/BookingDialog';
 import { RentalCalendar } from '@/components/items/RentalCalendar';
 import { getStatusColor, getStatusLabel } from '@/components/items/status';
-import { Header } from '@/components/layout/Header';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -156,11 +155,8 @@ const ItemDetail = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center">{t('common.loading')}</div>
-        </div>
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center">{t('common.loading')}</div>
       </div>
     );
   }
@@ -214,8 +210,7 @@ const ItemDetail = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
+    <>
       <div className="container mx-auto max-w-4xl px-4 py-8">
         <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
           <ArrowLeft className="mr-2 h-4 w-4" />
@@ -472,7 +467,7 @@ const ItemDetail = () => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

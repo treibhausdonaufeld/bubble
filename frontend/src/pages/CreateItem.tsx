@@ -1,5 +1,4 @@
 import { ImageUploadStep } from '@/components/items/ImageUploadStep';
-import { Header } from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
@@ -50,29 +49,24 @@ const CreateItem = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      <div className="container mx-auto max-w-2xl px-4 py-8">
-        {/* Header with Back Button */}
-        <div className="space-y-6">
-          <Button variant="ghost" onClick={() => navigate(-1)} className="gap-2">
-            <ArrowLeft className="h-4 w-4" />
-            Back
-          </Button>
+    <div className="container mx-auto max-w-2xl px-4 py-8">
+      {/* Header with Back Button */}
+      <div className="space-y-6">
+        <Button variant="ghost" onClick={() => navigate(-1)} className="gap-2">
+          <ArrowLeft className="h-4 w-4" />
+          Back
+        </Button>
 
-          {/* Simple Header */}
-          <div className="space-y-2">
-            <h1 className="text-2xl font-bold">List New Item</h1>
-            <p className="text-muted-foreground">
-              Upload images and let AI help create your listing
-            </p>
-          </div>
+        {/* Simple Header */}
+        <div className="space-y-2">
+          <h1 className="text-2xl font-bold">List New Item</h1>
+          <p className="text-muted-foreground">Upload images and let AI help create your listing</p>
         </div>
+      </div>
 
-        {/* ImageUploadStep only */}
-        <div className="mt-8">
-          <ImageUploadStep onComplete={handleImageStepComplete} onBack={handleBack} />
-        </div>
+      {/* ImageUploadStep only */}
+      <div className="mt-8">
+        <ImageUploadStep onComplete={handleImageStepComplete} onBack={handleBack} />
       </div>
     </div>
   );

@@ -5,7 +5,6 @@ import {
   PricingFields,
   StatusField,
 } from '@/components/items/ItemFormFields';
-import { Header } from '@/components/layout/Header';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -485,78 +484,179 @@ const EditItem = () => {
 
   if (loadingItem) {
     return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <div className="container mx-auto py-8">
-          <div className="text-center">{t('common.loading')}</div>
-        </div>
+      <div className="container mx-auto py-8">
+        <div className="text-center">{t('common.loading')}</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      <div className="container mx-auto py-8 space-y-0 p-3">
-        {/* Back Button */}
-        <Button variant="ghost" onClick={handleBackClick} className="mb-6 gap-2">
-          <ArrowLeft className="h-4 w-4" />
-          {t('common.back')}
-        </Button>
+    <div className="container mx-auto py-8 space-y-0 p-3">
+      {/* Back Button */}
+      <Button variant="ghost" onClick={handleBackClick} className="mb-6 gap-2">
+        <ArrowLeft className="h-4 w-4" />
+        {t('common.back')}
+      </Button>
 
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle>{editItemUuid ? t('itemDetail.editItem') : t('editItem.name')}</CardTitle>
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle>{editItemUuid ? t('itemDetail.editItem') : t('editItem.name')}</CardTitle>
+            <div className="flex gap-2">
+              {editItemUuid &&
+                (existingImages.length > 0 ? (
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        disabled={aiProcessing}
+                        className="gap-2"
+                      >
+                        <Sparkles className={`h-4 w-4 ${aiProcessing ? 'animate-spin' : ''}`} />
+                        {aiProcessing ? t('editItem.aiMagicProcessing') : t('editItem.aiMagic')}
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>{t('editItem.aiMagicWarningTitle')}</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          {t('editItem.aiMagicWarningDescription')}
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>{t('editItem.aiMagicWarningCancel')}</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleAiProcess}>
+                          {t('editItem.aiMagicWarningContinue')}
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                ) : (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={
+                      aiProcessing || (!formData.name && !formData.description) || images.length < 1
+                    }
+                    className="gap-2"
+                    onClick={handleAiImageGenerate}
+                  >
+                    <Sparkles className={`h-4 w-4 ${aiProcessing ? 'animate-spin' : ''}`} />
+                    {aiProcessing ? t('editItem.aiMagicProcessing') : t('editItem.aiMagic')}
+                  </Button>
+                ))}
+              {formData.status === 0 && editItemUuid && (
+                <Button
+                  type="button"
+                  variant="default"
+                  onClick={handlePublish}
+                  disabled={loading || updateItemMutation.isPending || aiProcessing}
+                  className="gap-2"
+                >
+                  {t('editItem.publish')}
+                </Button>
+              )}
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Image Upload and AI Processing Section */}
+            <Card className="border-dashed">
+              <CardContent className="space-y-4">
+                <ImageManager
+                  onImagesChange={setImages}
+                  onExistingImagesChange={setExistingImages}
+                  existingImages={existingImages}
+                  maxImages={16}
+                  isEditing={!aiProcessing}
+                  resetNewImagesToken={resetNewImagesToken}
+                />
+
+                {images.length > 0 && (
+                  <div className="flex items-center gap-2">
+                    <Badge variant="secondary" className="gap-1">
+                      <CheckCircle className="h-3 w-3" />
+                      {images.length} new image
+                      {images.length !== 1 ? 's' : ''} ready to upload
+                    </Badge>
+                  </div>
+                )}
+
+                {/* Processing State */}
+                {processingState !== 'idle' && (
+                  <div className="space-y-3 p-4 bg-muted/50 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <Loader className="h-4 w-4 animate-spin" />
+                      <span className="text-sm font-medium">{getProcessingMessage()}</span>
+                    </div>
+                    <Progress value={progress} className="w-full" />
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <BasicFields
+              formData={formData}
+              setFormData={setFormData}
+              disabled={aiProcessing}
+              descriptionRef={descriptionRef}
+            />
+
+            <CategoryConditionFields
+              formData={formData}
+              setFormData={setFormData}
+              categories={categories}
+              onCategoryChange={async category => {
+                // Update local state immediately
+                setFormData(prev => ({ ...prev, category: category as CategoryEnum }));
+
+                // If switching to books, persist change first then navigate
+                if (category === 'books' && editItemUuid) {
+                  try {
+                    await updateItemMutation.mutateAsync({
+                      itemUuid: editItemUuid,
+                      data: { category: category as CategoryEnum },
+                    });
+                    navigate(`/edit-book/${editItemUuid}`);
+                  } catch (err) {
+                    console.error('Error updating category before switching to EditBook:', err);
+                    toast({
+                      title: t('editItem.updateErrorTitle'),
+                      description: (err as any)?.message || t('editItem.updateErrorDescription'),
+                      variant: 'destructive',
+                    });
+                  }
+                }
+              }}
+            />
+
+            <PricingFields formData={formData} setFormData={setFormData} disabled={aiProcessing} />
+
+            <div className="flex items-end justify-between gap-4 pt-4">
+              {/* Status field */}
+              <div className="flex-1 max-w-xs space-y-2">
+                <StatusField
+                  formData={formData}
+                  setFormData={setFormData}
+                  disabled={aiProcessing}
+                />
+              </div>
+
               <div className="flex gap-2">
-                {editItemUuid &&
-                  (existingImages.length > 0 ? (
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          disabled={aiProcessing}
-                          className="gap-2"
-                        >
-                          <Sparkles className={`h-4 w-4 ${aiProcessing ? 'animate-spin' : ''}`} />
-                          {aiProcessing ? t('editItem.aiMagicProcessing') : t('editItem.aiMagic')}
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>{t('editItem.aiMagicWarningTitle')}</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            {t('editItem.aiMagicWarningDescription')}
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>
-                            {t('editItem.aiMagicWarningCancel')}
-                          </AlertDialogCancel>
-                          <AlertDialogAction onClick={handleAiProcess}>
-                            {t('editItem.aiMagicWarningContinue')}
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  ) : (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      disabled={
-                        aiProcessing ||
-                        (!formData.name && !formData.description) ||
-                        images.length < 1
-                      }
-                      className="gap-2"
-                      onClick={handleAiImageGenerate}
-                    >
-                      <Sparkles className={`h-4 w-4 ${aiProcessing ? 'animate-spin' : ''}`} />
-                      {aiProcessing ? t('editItem.aiMagicProcessing') : t('editItem.aiMagic')}
-                    </Button>
-                  ))}
-                {formData.status === 0 && editItemUuid && (
+                <Button
+                  type="submit"
+                  disabled={loading || updateItemMutation.isPending || aiProcessing}
+                >
+                  {loading || updateItemMutation.isPending
+                    ? t('common.saving')
+                    : editItemUuid
+                      ? t('common.save')
+                      : t('editItem.listItem')}
+                </Button>
+
+                {formData.status === 0 && (
                   <Button
                     type="button"
                     variant="default"
@@ -569,124 +669,9 @@ const EditItem = () => {
                 )}
               </div>
             </div>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Image Upload and AI Processing Section */}
-              <Card className="border-dashed">
-                <CardContent className="space-y-4">
-                  <ImageManager
-                    onImagesChange={setImages}
-                    onExistingImagesChange={setExistingImages}
-                    existingImages={existingImages}
-                    maxImages={16}
-                    isEditing={!aiProcessing}
-                    resetNewImagesToken={resetNewImagesToken}
-                  />
-
-                  {images.length > 0 && (
-                    <div className="flex items-center gap-2">
-                      <Badge variant="secondary" className="gap-1">
-                        <CheckCircle className="h-3 w-3" />
-                        {images.length} new image
-                        {images.length !== 1 ? 's' : ''} ready to upload
-                      </Badge>
-                    </div>
-                  )}
-
-                  {/* Processing State */}
-                  {processingState !== 'idle' && (
-                    <div className="space-y-3 p-4 bg-muted/50 rounded-lg">
-                      <div className="flex items-center gap-2">
-                        <Loader className="h-4 w-4 animate-spin" />
-                        <span className="text-sm font-medium">{getProcessingMessage()}</span>
-                      </div>
-                      <Progress value={progress} className="w-full" />
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-
-              <BasicFields
-                formData={formData}
-                setFormData={setFormData}
-                disabled={aiProcessing}
-                descriptionRef={descriptionRef}
-              />
-
-              <CategoryConditionFields
-                formData={formData}
-                setFormData={setFormData}
-                categories={categories}
-                onCategoryChange={async category => {
-                  // Update local state immediately
-                  setFormData(prev => ({ ...prev, category: category as CategoryEnum }));
-
-                  // If switching to books, persist change first then navigate
-                  if (category === 'books' && editItemUuid) {
-                    try {
-                      await updateItemMutation.mutateAsync({
-                        itemUuid: editItemUuid,
-                        data: { category: category as CategoryEnum },
-                      });
-                      navigate(`/edit-book/${editItemUuid}`);
-                    } catch (err) {
-                      console.error('Error updating category before switching to EditBook:', err);
-                      toast({
-                        title: t('editItem.updateErrorTitle'),
-                        description: (err as any)?.message || t('editItem.updateErrorDescription'),
-                        variant: 'destructive',
-                      });
-                    }
-                  }
-                }}
-              />
-
-              <PricingFields
-                formData={formData}
-                setFormData={setFormData}
-                disabled={aiProcessing}
-              />
-
-              <div className="flex items-end justify-between gap-4 pt-4">
-                {/* Status field */}
-                <div className="flex-1 max-w-xs space-y-2">
-                  <StatusField
-                    formData={formData}
-                    setFormData={setFormData}
-                    disabled={aiProcessing}
-                  />
-                </div>
-
-                <div className="flex gap-2">
-                  <Button
-                    type="submit"
-                    disabled={loading || updateItemMutation.isPending || aiProcessing}
-                  >
-                    {loading || updateItemMutation.isPending
-                      ? t('common.saving')
-                      : editItemUuid
-                        ? t('common.save')
-                        : t('editItem.listItem')}
-                  </Button>
-
-                  {formData.status === 0 && (
-                    <Button
-                      type="button"
-                      variant="default"
-                      onClick={handlePublish}
-                      disabled={loading || updateItemMutation.isPending || aiProcessing}
-                      className="gap-2"
-                    >
-                      {t('editItem.publish')}
-                    </Button>
-                  )}
-                </div>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 };
