@@ -473,3 +473,27 @@ SPECTACULAR_SETTINGS = {
 # ------------------------------------------------------------------------------
 
 DEFAULT_CURRENCY = env("DEFAULT_CURRENCY", default="EUR")
+
+CONSTANCE_ADDITIONAL_FIELDS = {
+    "item_visibility": [
+        "django.forms.fields.ChoiceField",
+        {
+            "widget": "django.forms.Select",
+            "choices": (
+                ("public", "Public"),
+                ("authenticated", "All logged in user"),
+                ("internal", "Internal groups only"),
+                ("hidden", "Hidden"),
+            ),
+        },
+    ],
+}
+
+CONSTANCE_CONFIG = {
+    "REQUIRE_LOGIN": (True, "Require a user to login to view the site"),
+    "DEFAULT_ITEM_VISIBILITY": (
+        "authenticated",
+        "Select default item visiblity for new items. Options: public, authenticated, internal, hidden",
+        "item_visibility",
+    ),
+}
