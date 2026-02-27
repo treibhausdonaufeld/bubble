@@ -41,6 +41,6 @@ manage +args:
 run +args:
     @docker compose run --rm backend {{args}}
 
-# manage: Executes `manage.py` command.
+# tests: run pytests
 tests:
     @docker compose run --rm backend pytest
