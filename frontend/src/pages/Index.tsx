@@ -95,9 +95,15 @@ const Index = () => {
 
   const [selectedCategory, setSelectedCategory] = useState<ItemCategoryFilter>('all');
   const [selectedConditions, setSelectedConditions] = useState<ConditionEnum[]>(DEFAULT_CONDITIONS);
+
+  let conditions: ConditionEnum[] | undefined;
+  if (typeParam === 'buy' && selectedConditions.length > 0) {
+    conditions = selectedConditions;
+  }
+
   const itemsQuery = useItems({
     category: selectedCategory === 'all' ? undefined : selectedCategory,
-    conditions: selectedConditions.length > 0 ? selectedConditions : undefined,
+    conditions: conditions,
     search: searchQuery,
     page: currentPage,
     status: itemFilters?.status,
