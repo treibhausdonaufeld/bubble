@@ -18,6 +18,7 @@ import ItemDetail from './pages/ItemDetail';
 import MyItems from './pages/MyItems';
 import NotFound from './pages/NotFound';
 import Profile from './pages/Profile';
+import { Header } from './components/layout/Header';
 
 const queryClient = new QueryClient();
 
@@ -43,18 +44,21 @@ const ProtectedRoutes = () => {
 
   // User is authenticated, render normal routes
   return (
-    <Routes>
-      <Route path="/" element={<Index />} />
-      <Route path="/create-item" element={<CreateItem />} />
-      <Route path="/edit-item/:itemUuid" element={<EditItem />} />
-      <Route path="/edit-book/:itemUuid" element={<EditBook />} />
-      <Route path="/item/:itemUuid" element={<ItemDetail />} />
-      <Route path="/my-items" element={<MyItems />} />
-      <Route path="/profile" element={<Profile />} />
-      <Route path="/bookings" element={<Bookings />} />
-      {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+    <div className="min-h-screen bg-background">
+      <Header />
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/create-item" element={<CreateItem />} />
+        <Route path="/edit-item/:itemUuid" element={<EditItem />} />
+        <Route path="/edit-book/:itemUuid" element={<EditBook />} />
+        <Route path="/item/:itemUuid" element={<ItemDetail />} />
+        <Route path="/my-items" element={<MyItems />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/bookings" element={<Bookings />} />
+        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </div>
   );
 };
 
