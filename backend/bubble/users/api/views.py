@@ -1,3 +1,4 @@
+from django.contrib.auth.models import Group
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin, UpdateModelMixin
@@ -7,7 +8,19 @@ from rest_framework.viewsets import GenericViewSet, ReadOnlyModelViewSet
 
 from bubble.users.models import Profile, User
 
-from .serializers import ProfileSerializer, UserSerializer
+from .serializers import GroupSerializer, ProfileSerializer, UserSerializer
+
+
+class GroupViewSet(ReadOnlyModelViewSet):
+    """
+    Read-only viewset for listing and retrieving auth groups.
+    Used by the frontend group picker when managing item co-owners/viewers.
+    Only accessible to authenticated users.
+    """
+
+    serializer_class = GroupSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = Group.objects.all().order_by("name")
 
 
 class UserViewSet(RetrieveModelMixin, ListModelMixin, UpdateModelMixin, GenericViewSet):

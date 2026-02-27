@@ -1,6 +1,15 @@
+from django.contrib.auth.models import Group
 from rest_framework import serializers
 
 from bubble.users.models import Profile, User
+
+
+class GroupSerializer(serializers.ModelSerializer):
+    """Serializer for auth Group model."""
+
+    class Meta:
+        model = Group
+        fields = ["id", "name"]
 
 
 class ProfileSerializer(serializers.ModelSerializer[Profile]):
