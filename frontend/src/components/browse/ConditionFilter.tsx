@@ -1,6 +1,5 @@
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { cn } from '@/lib/utils';
 import type { ConditionEnum } from '@/services/django/types.gen';
 import { CheckCircle2, Circle } from 'lucide-react';
 
@@ -39,9 +38,7 @@ export const ConditionFilter = ({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-foreground">{t('index.condition')}</h3>
-      </div>
+      <h3 className="text-lg font-semibold text-foreground">{t('index.condition')}</h3>
 
       <div className="flex flex-wrap gap-2">
         {CONDITIONS.map(condition => {
@@ -54,13 +51,9 @@ export const ConditionFilter = ({
               variant={isSelected ? 'community' : 'outline'}
               size="sm"
               onClick={() => toggleCondition(condition)}
-              className={cn(
-                'gap-2 transition-all duration-300',
-                isSelected ? 'shadow-glow scale-105' : 'hover:scale-105 hover:shadow-medium',
-              )}
             >
               <Icon className="h-4 w-4" />
-              <span className="hidden sm:inline">{getConditionName(condition)}</span>
+              <span>{getConditionName(condition)}</span>
             </Button>
           );
         })}
