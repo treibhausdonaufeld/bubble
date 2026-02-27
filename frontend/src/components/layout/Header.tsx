@@ -16,14 +16,15 @@ import { useUnreadMessages } from '@/hooks/useMessages';
 import { cn } from '@/lib/utils';
 import { useTheme } from '@/providers/theme-provider';
 import { Handshake, Library, LogOut, Moon, Plus, Search, Sun, User } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { SubmitEvent } from 'react';
+import { NavLink, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 
 export const Header = () => {
   const { theme, setTheme } = useTheme();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { data: unreadMessages } = useUnreadMessages();
 
   const { language, setLanguage, t } = useLanguage();
@@ -39,37 +40,15 @@ export const Header = () => {
     navigate('/');
   };
 
-  const [searchTerm, setSearchTerm] = useState('');
+  const searchTerm = searchParams.get('search') || '';
 
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const q = params.get('search') || '';
-    setSearchTerm(q);
-  }, [location.search]);
+  const handleSearchChange = (term: string) => {
+    setSearchParams({ ...searchParams, search: term }, { replace: true });
+  };
 
-  // Debounced search
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (searchTerm && searchTerm.trim() !== '') {
-        navigate(`/?search=${encodeURIComponent(searchTerm.trim())}`);
-      } else if (searchTerm === '') {
-        // Only clear if we're on a search page
-        const params = new URLSearchParams(location.search);
-        if (params.has('search')) {
-          navigate('/');
-        }
-      }
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [searchTerm, navigate, location.search]);
-
-  const handleSearchSubmit = (term: string) => {
-    if (term && term.trim() !== '') {
-      navigate(`/?search=${encodeURIComponent(term.trim())}`);
-    } else {
-      navigate('/');
-    }
+  const handleSubmit = (event: SubmitEvent) => {
+    event.preventDefault();
+    setSearchParams(searchParams, { replace: false });
   };
 
   if (!user) {
@@ -92,22 +71,17 @@ export const Header = () => {
           </NavLink>
 
           {/* Search Bar */}
-          <div className="flex-1 max-w-lg">
+          <form className="flex-1 max-w-lg" onSubmit={handleSubmit}>
             <div className={cn('relative transition-all duration-300 focus-within:scale-105')}>
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder={t('header.search')}
                 className="pl-10 shadow-soft focus:shadow-medium transition-shadow"
                 value={searchTerm}
-                onChange={e => setSearchTerm(e.target.value)}
-                onKeyDown={e => {
-                  if (e.key === 'Enter') {
-                    handleSearchSubmit(searchTerm);
-                  }
-                }}
+                onChange={e => handleSearchChange(e.target.value)}
               />
             </div>
-          </div>
+          </form>
 
           {/* Actions */}
           <div className="flex items-center gap-2">
