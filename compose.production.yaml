@@ -28,6 +28,7 @@ x-backend: &backend
     - DJANGO_SECURE_SSL_REDIRECT=${DJANGO_SECURE_SSL_REDIRECT:-true}
     - DJANGO_SESSION_COOKIE_SECURE=${DJANGO_SESSION_COOKIE_SECURE:-true}
     - ACCOUNT_EMAIL_VERIFICATION=${ACCOUNT_EMAIL_VERIFICATION:-true}
+    - SENTRY_DSN=${SENTRY_DSN:-}
   env_file:
     - ./backend/.env-docker.production
   volumes:
@@ -47,7 +48,8 @@ services:
     image: bubble-frontend
     environment:
       - BACKEND_HOST=${BACKEND_HOST:-backend:8000}
-      - VITE_SENTRY_DSN=${SENTRY_DSN:-}
+      - VITE_SENTRY_DSN=${VITE_SENTRY_DSN:-}
+      - VITE_SENTRY_ENVIRONMENT=${VITE_SENTRY_ENVIRONMENT:-production}
     ports:
       - '8080:8888'
     volumes:
@@ -68,6 +70,11 @@ services:
   redis:
     image: ghcr.io/dragonflydb/dragonfly:latest
     restart: always
+    command: >
+      dragonfly
+        --maxmemory 2gb
+        --proactor_threads 4
+        --cache_mode
     environment:
       # required to work with django-channels
       # https://github.com/dragonflydb/dragonfly/issues/182#issuecomment-1241624150

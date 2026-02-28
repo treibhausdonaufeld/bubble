@@ -1,5 +1,4 @@
 import * as Sentry from '@sentry/react';
-import { feedbackIntegration } from '@sentry/react';
 
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
@@ -16,16 +15,18 @@ declare global {
 
 const dsn = window._env_?.VITE_SENTRY_DSN || import.meta.env.VITE_SENTRY_DSN;
 
+console.log(`Initializing Sentry with DSN: ${dsn || 'not set'}`);
 if (dsn) {
   Sentry.init({
     dsn: dsn,
     // Adds request headers and IP for users, for more info visit:
     // https://docs.sentry.io/platforms/javascript/guides/react/configuration/options/#sendDefaultPii
     sendDefaultPii: true,
+    tracesSampleRate: 1.0,
     integrations: [
-      feedbackIntegration({
+      Sentry.browserTracingIntegration(),
+      Sentry.feedbackIntegration({
         colorScheme: 'system',
-        // Don't inject default floating button; we use a custom trigger in the Header
         autoInject: true,
       }),
     ],
