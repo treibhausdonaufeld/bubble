@@ -24,6 +24,8 @@ Located in `frontend/`. Built with Vite, TypeScript, and Tailwind CSS.
 - `src/contexts/`: Global state management (e.g., `LanguageContext`).
 - `src/pages/`: Main application views.
 
+To update types after backend changes, run `npm run types:openapi` to regenerate the SDK.
+
 ## Technology Stack
 
 - **Backend:** Python 3.12+, Django 5.x, Django Rest Framework, Channels (WebSockets), Celery (Background Tasks).
