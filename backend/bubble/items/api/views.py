@@ -3,6 +3,7 @@
 import contextlib
 import uuid as _uuid
 
+from constance import config
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -84,29 +85,31 @@ class PublicItemViewSet(viewsets.ReadOnlyModelViewSet, ItemBaseViewSet):
             Item.objects.published().select_related("user").prefetch_related("images")
         )
 
-        if user.is_authenticated:
-            # Items the user has explicit view permission on
-            # (covers SPECIFIC + PRIVATE for co-owners/viewers)
-            explicitly_visible = get_objects_for_user(
-                user,
-                "items.view_item",
-                accept_global_perms=False,
-            ).values_list("pk", flat=True)
+        if not user.is_authenticated:
+            if config.REQUIRE_LOGIN:
+                # If login is required, anonymous users see nothing
+                return base_qs.none()
+            # Anonymous users: only PUBLIC items
+            return base_qs.filter(visibility=VisibilityType.PUBLIC)
 
-            return base_qs.filter(
-                # PUBLIC or AUTHENTICATED always visible
-                models.Q(
-                    visibility__in=[VisibilityType.PUBLIC, VisibilityType.AUTHENTICATED]
-                )
-                # SPECIFIC: user must have explicit view_item
-                | models.Q(
-                    visibility=VisibilityType.SPECIFIC, pk__in=explicitly_visible
-                )
-                # PRIVATE: owner + co-owners get view_item in Item.save()
-                | models.Q(visibility=VisibilityType.PRIVATE, pk__in=explicitly_visible)
+        # Items the user has explicit view permission on
+        # (covers SPECIFIC + PRIVATE for co-owners/viewers)
+        explicitly_visible = get_objects_for_user(
+            user,
+            "items.view_item",
+            accept_global_perms=False,
+        ).values_list("pk", flat=True)
+
+        return base_qs.filter(
+            # PUBLIC or AUTHENTICATED always visible
+            models.Q(
+                visibility__in=[VisibilityType.PUBLIC, VisibilityType.AUTHENTICATED]
             )
-        # Anonymous users: only PUBLIC items
-        return base_qs.filter(visibility=VisibilityType.PUBLIC)
+            # SPECIFIC: user must have explicit view_item
+            | models.Q(visibility=VisibilityType.SPECIFIC, pk__in=explicitly_visible)
+            # PRIVATE: owner + co-owners get view_item in Item.save()
+            | models.Q(visibility=VisibilityType.PRIVATE, pk__in=explicitly_visible)
+        )
 
 
 class ItemViewSet(viewsets.ModelViewSet, ItemBaseViewSet):
