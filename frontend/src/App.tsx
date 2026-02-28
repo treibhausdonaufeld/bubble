@@ -1,8 +1,10 @@
+import React from 'react';
 import { Toaster as Sonner } from '@/components/ui/sonner';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { AuthProvider, useAuth } from '@/hooks/useAuth';
+import { useAppConfig } from '@/hooks/useAppConfig';
 import { NotificationProvider } from '@/providers/NotificationProvider';
 import { ThemeProvider } from '@/providers/theme-provider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -25,11 +27,21 @@ const queryClient = new QueryClient();
 // Configure the API client once at startup
 configureApiClient();
 
-const ProtectedRoutes = () => {
-  const { session, loading } = useAuth();
+// Wraps routes that always require authentication, even when REQUIRE_LOGIN=false.
+const AuthRequired = ({ children }: { children: React.ReactNode }) => {
+  const { session } = useAuth();
+  if (!session) {
+    return <Auth />;
+  }
+  return <>{children}</>;
+};
 
-  // Show loading state while checking authentication
-  if (loading) {
+const ProtectedRoutes = () => {
+  const { session, loading: authLoading } = useAuth();
+  const { requireLogin, loading: configLoading } = useAppConfig();
+
+  // Wait for both the session check and the config fetch to resolve
+  if (authLoading || configLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-lg">Loading...</div>
@@ -37,24 +49,67 @@ const ProtectedRoutes = () => {
     );
   }
 
-  // If not authenticated, show Auth component regardless of route
-  if (!session) {
+  // REQUIRE_LOGIN=true (default): gate everything behind login
+  if (requireLogin && !session) {
     return <Auth />;
   }
 
-  // User is authenticated, render normal routes
+  // REQUIRE_LOGIN=false or user is authenticated: render the app.
+  // User-specific routes are individually guarded by <AuthRequired>.
   return (
     <div className="min-h-screen bg-background">
       <Header />
       <Routes>
         <Route path="/" element={<Index />} />
-        <Route path="/create-item" element={<CreateItem />} />
-        <Route path="/edit-item/:itemUuid" element={<EditItem />} />
-        <Route path="/edit-book/:itemUuid" element={<EditBook />} />
         <Route path="/item/:itemUuid" element={<ItemDetail />} />
-        <Route path="/my-items" element={<MyItems />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/bookings" element={<Bookings />} />
+        <Route
+          path="/create-item"
+          element={
+            <AuthRequired>
+              <CreateItem />
+            </AuthRequired>
+          }
+        />
+        <Route
+          path="/edit-item/:itemUuid"
+          element={
+            <AuthRequired>
+              <EditItem />
+            </AuthRequired>
+          }
+        />
+        <Route
+          path="/edit-book/:itemUuid"
+          element={
+            <AuthRequired>
+              <EditBook />
+            </AuthRequired>
+          }
+        />
+        <Route
+          path="/my-items"
+          element={
+            <AuthRequired>
+              <MyItems />
+            </AuthRequired>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <AuthRequired>
+              <Profile />
+            </AuthRequired>
+          }
+        />
+        <Route
+          path="/bookings"
+          element={
+            <AuthRequired>
+              <Bookings />
+            </AuthRequired>
+          }
+        />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
