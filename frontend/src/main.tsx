@@ -8,17 +8,28 @@ declare global {
   interface Window {
     _env_?: {
       VITE_API_URL?: string;
-      TRACKING_PROJECT_ID?: string;
+      VITE_SENTRY_DSN?: string;
     };
   }
 }
 
-if (window._env_?.TRACKING_PROJECT_ID) {
+const dsn = window._env_?.VITE_SENTRY_DSN || import.meta.env.VITE_SENTRY_DSN;
+
+console.log(`Initializing Sentry with DSN: ${dsn || 'not set'}`);
+if (dsn) {
   Sentry.init({
-    dsn: window._env_?.TRACKING_PROJECT_ID,
+    dsn: dsn,
     // Adds request headers and IP for users, for more info visit:
     // https://docs.sentry.io/platforms/javascript/guides/react/configuration/options/#sendDefaultPii
     sendDefaultPii: true,
+    tracesSampleRate: 1.0,
+    integrations: [
+      Sentry.browserTracingIntegration(),
+      Sentry.feedbackIntegration({
+        colorScheme: 'system',
+        autoInject: true,
+      }),
+    ],
   });
 }
 

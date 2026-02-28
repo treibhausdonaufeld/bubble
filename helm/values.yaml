@@ -61,7 +61,7 @@ frontend:
   # Environment variables
   env:
     BACKEND_HOST: 'backend:8000'
-    TRACKING_PROJECT_ID: ''
+    VITE_SENTRY_DSN: ''
 
 # ============================================================================
 # Backend Configuration

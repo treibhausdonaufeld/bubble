@@ -1,7 +1,6 @@
 import { BookingDialog } from '@/components/items/BookingDialog';
 import { RentalCalendar } from '@/components/items/RentalCalendar';
 import { getStatusColor, getStatusLabel } from '@/components/items/status';
-import { Header } from '@/components/layout/Header';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -156,11 +155,8 @@ const ItemDetail = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center">{t('common.loading')}</div>
-        </div>
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center">{t('common.loading')}</div>
       </div>
     );
   }
@@ -214,8 +210,7 @@ const ItemDetail = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
+    <>
       <div className="container mx-auto max-w-4xl px-4 py-8">
         <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
           <ArrowLeft className="mr-2 h-4 w-4" />
@@ -324,7 +319,7 @@ const ItemDetail = () => {
             </p>
 
             {/* Show owner details to logged-in users */}
-            {user && <UserInfoBox userUuid={item.user} />}
+            {<UserInfoBox userUuid={item.user} />}
 
             {/* Action Buttons */}
             <div className="flex items-center gap-2 pt-4">
@@ -363,42 +358,27 @@ const ItemDetail = () => {
               {/* Booking dialog: show for non-owners, and also show for owners when item is rentable */}
               {(!isOwner || !!rental_price) && (
                 <div className={isOwner ? 'ml-2' : ''}>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div>
-                          {(() => {
-                            const buyingAllowed = item.status === 2 || item.status === 3; // 2 = available, 3 = reserved
+                  <div>
+                    {(() => {
+                      const buyingAllowed = item.status === 2 || item.status === 3; // 2 = available, 3 = reserved
 
-                            return (
-                              <BookingDialog
-                                itemUuid={item.id}
-                                itemName={name}
-                                salePrice={sale_price}
-                                salePriceCurrency={sale_price_currency || undefined}
-                                rentalPrice={rental_price}
-                                rentalPriceCurrency={rental_price_currency || undefined}
-                                preselectedStartDate={selectedStartDate}
-                                preselectedEndDate={selectedEndDate}
-                                controlledOpen={showBookingDialog}
-                                onControlledOpenChange={setShowBookingDialog}
-                                disabled={
-                                  !user ||
-                                  (isOwner && !!sale_price) ||
-                                  (!buyingAllowed && !!sale_price)
-                                }
-                              />
-                            );
-                          })()}
-                        </div>
-                      </TooltipTrigger>
-                      {!user && (
-                        <TooltipContent>
-                          <p>{t('auth.loginRequired')}</p>
-                        </TooltipContent>
-                      )}
-                    </Tooltip>
-                  </TooltipProvider>
+                      return (
+                        <BookingDialog
+                          itemUuid={item.id}
+                          itemName={name}
+                          salePrice={sale_price}
+                          salePriceCurrency={sale_price_currency || undefined}
+                          rentalPrice={rental_price}
+                          rentalPriceCurrency={rental_price_currency || undefined}
+                          preselectedStartDate={selectedStartDate}
+                          preselectedEndDate={selectedEndDate}
+                          controlledOpen={showBookingDialog}
+                          onControlledOpenChange={setShowBookingDialog}
+                          disabled={(isOwner && !!sale_price) || (!buyingAllowed && !!sale_price)}
+                        />
+                      );
+                    })()}
+                  </div>
                 </div>
               )}
             </div>
@@ -406,7 +386,7 @@ const ItemDetail = () => {
         </div>
 
         {/* Rental Calendar - Only show for rental items */}
-        {rental_price && user && (
+        {rental_price && (
           <div className="mt-8" id="booking" ref={rentalCalendarRef}>
             <RentalCalendar
               itemUuid={itemUuid}
@@ -487,7 +467,7 @@ const ItemDetail = () => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

@@ -18,6 +18,31 @@ import { getCookie } from '@/lib/utils';
 
 // Django API authentication integration
 
+// Core types for Django allauth session management
+export interface User {
+  id: string;
+  email: string;
+  username: string;
+  display: string;
+  has_usable_password: boolean;
+}
+
+export interface AuthMethod {
+  method: 'password' | 'socialaccount' | 'mfa';
+  at: number;
+  email?: string;
+  username?: string;
+  reauthenticated?: boolean;
+  provider?: string;
+  uid?: string;
+  type?: 'recovery_codes' | 'totp';
+}
+
+export interface Session {
+  user: User;
+  methods: AuthMethod[];
+}
+
 export interface LoginCredentials {
   username: string;
   password: string;
@@ -25,21 +50,7 @@ export interface LoginCredentials {
 
 export interface LoginResponse {
   status: number;
-  data: {
-    user: {
-      id: string;
-      display: string;
-      email: string;
-      has_usable_password: boolean;
-      username: string;
-    };
-    methods: Array<{
-      method: 'password' | 'socialaccount' | 'mfa';
-      at: number;
-      username?: string;
-      email?: string;
-    }>;
-  };
+  data: Session;
   meta: {
     is_authenticated: boolean;
   };
@@ -49,25 +60,7 @@ export interface SessionResponse {
   meta: {
     is_authenticated: boolean;
   };
-  data: {
-    user: {
-      id: string;
-      email: string;
-      username: string;
-      display: string;
-      has_usable_password: boolean;
-    };
-    methods: Array<{
-      method: 'password' | 'socialaccount' | 'mfa';
-      at: number;
-      email?: string;
-      username?: string;
-      reauthenticated?: boolean;
-      provider?: string;
-      uid?: string;
-      type?: 'recovery_codes' | 'totp';
-    }>;
-  };
+  data: Session;
 }
 
 class AuthAPI {

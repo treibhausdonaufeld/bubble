@@ -37,8 +37,8 @@ spec:
           env:
             - name: BACKEND_HOST
               value: {{ include "bubble.backend.fullname" . }}:{{ .Values.backend.service.port }}
-            - name: TRACKING_PROJECT_ID
-              value: {{ .Values.frontend.env.TRACKING_PROJECT_ID | quote }}
+            - name: VITE_SENTRY_DSN
+              value: {{ .Values.frontend.env.VITE_SENTRY_DSN | quote }}
           livenessProbe:
             httpGet:
               path: /healthz

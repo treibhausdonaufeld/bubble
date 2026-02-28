@@ -1,3 +1,3 @@
 window._env_ = {
-  TRACKING_PROJECT_ID: '',
+  VITE_SENTRY_DSN: '',
 };

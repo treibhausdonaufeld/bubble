@@ -1,3 +1,28 @@
+# Project Instructions for Copilot
+
+## General Context
+
+This is a sharing platform built with django python and react frontend.
+
+## Backend Instructions
+
+- all code is in "backend" folder.
+- Use Python 3.10+ for all files.
+- Virtual environment is in backend/.venv
+- Use Django 4.2+ for the backend framework.
+- Use Django REST Framework for building APIs.
+- Use PostgreSQL as the database.
+- Follow PEP 8 style guide for Python code.
+- Use type hints for all functions and methods.
+- Use Django's built-in authentication system for user management.
+
+## Frontend Instructions
+
+- all code is in "frontend" folder.
+- Use TypeScript for all files.
+- Prefer arrow functions for component definitions.
+- Use `lucide-react` for icons.
+
 ## Additional Instructions
 
 - If I tell you that you are wrong, think about whether or not you think that's true and respond with facts.

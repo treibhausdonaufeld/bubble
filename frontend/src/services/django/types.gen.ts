@@ -2206,6 +2206,14 @@ export type ItemsListData = {
          * * `vehicles` - Vehicles
          */
         category?: 'books' | 'clothing' | 'electronics' | 'furniture' | 'garden' | 'kitchen' | 'other' | 'rooms' | 'sports' | 'tools' | 'toys' | 'vehicles';
+        /**
+         * Condition of the item
+         *
+         * * `0` - New
+         * * `1` - Used
+         * * `2` - Broken
+         */
+        conditions?: Array<0 | 1 | 2>;
         created_after?: string;
         created_before?: string;
         max_rental_price?: number;
@@ -2642,6 +2650,14 @@ export type PublicItemsListData = {
          * * `vehicles` - Vehicles
          */
         category?: 'books' | 'clothing' | 'electronics' | 'furniture' | 'garden' | 'kitchen' | 'other' | 'rooms' | 'sports' | 'tools' | 'toys' | 'vehicles';
+        /**
+         * Condition of the item
+         *
+         * * `0` - New
+         * * `1` - Used
+         * * `2` - Broken
+         */
+        conditions?: Array<0 | 1 | 2>;
         created_after?: string;
         created_before?: string;
         max_rental_price?: number;

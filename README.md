@@ -13,7 +13,47 @@ Run
 - `docker compose exec backend python manage.py createsuperuser`
 - open http://localhost:8080 and log in
 
-# Update Translations
+# Frontend
+
+For autocompletion and type checks inside your IDE, install the npm packages locally in the _frontend/_ folder:
+
+```
+npm ci
+```
+
+## Update packages
+
+- check with `npm outdated`
+- upgrade with `npm update`
+
+## Update API types
+
+The backend exposes its types as OpenAPI types.
+
+Whenever the backend types change, the corresponding type information for the frontend should be updated.
+
+Also, this should usually be done when the _@hey-api/openapi-ts_ package in the frontend is upgraded.
+
+run `npm run types:openapi` to update the types
+
+## File system polling on Windows
+
+On containers that run on a Windows host, it is necessary to enable file system polling to detect file changes for the live dev server.
+
+You can enable this by creating _compose.override.yaml_ and setting an environment variable there:
+
+```yaml
+services:
+  frontend:
+    environment:
+      - VITE_USE_POLLING=true
+```
+
+# Backend stuff
+
+Everything in `backend` folder please.
+
+## Update Translations
 
 Start by configuring the `LANGUAGES` settings in `base.py`, by uncommenting languages you are willing to support. Then, translation strings will be placed in this folder when running:
 
@@ -21,30 +61,13 @@ Start by configuring the `LANGUAGES` settings in `base.py`, by uncommenting lang
 docker compose run --rm backend python manage.py makemessages --all --no-location
 ```
 
-# Frontend
-
-Everything with `bun` please. In the `frontend` folder.
-
-## Update packages
-
-- check with `bun outdated`
-- upgrade with `bun update`
-
-## Update API types
-
-run `bun run types:openapi` to update types
-
-# Backend stuff
-
-Everything in `backend` folder please.
-
-### Type checks
+## Type checks
 
 Running type checks with mypy:
 
     $ mypy bubble
 
-### Test coverage
+## Test coverage
 
 To run the tests, check your test coverage, and generate an HTML coverage report:
 
@@ -52,11 +75,11 @@ To run the tests, check your test coverage, and generate an HTML coverage report
     $ coverage html
     $ open htmlcov/index.html
 
-#### Running tests with pytest
+### Running tests with pytest
 
     $ pytest
 
-### Celery
+## Celery
 
 This app comes with Celery.
 
@@ -76,7 +99,7 @@ or you can embed the beat service inside a worker with the `-B` option (not reco
 celery -A config.celery_app worker -B -l info
 ```
 
-### Email Server
+## Email Server
 
 In development, it is often nice to be able to see emails that are being sent from your application. For that reason local SMTP server [Mailpit](https://github.com/axllent/mailpit) with a web interface is available as docker container.
 
@@ -85,14 +108,14 @@ Please check [cookiecutter-django Docker documentation](https://cookiecutter-dja
 
 With Mailpit running, to view messages that are sent by your application, open your browser and go to `http://127.0.0.1:8025`
 
-### Sentry
+## Sentry
 
 Sentry is an error logging aggregator service. You can sign up for a free account at <https://sentry.io/signup/?code=cookiecutter> or download and host it yourself.
 The system is set up with reasonable defaults, including 404 logging and integration with the WSGI application.
 
 You must set the DSN url in production.
 
-## Embeddings
+# Embeddings
 
 Suggested models:
 

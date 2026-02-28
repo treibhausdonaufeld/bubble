@@ -25,14 +25,6 @@ const translations = {
     'header.light': 'Light',
     'header.dark': 'Dark',
 
-    // Hero Section
-    'hero.tagline': 'Building Stronger Communities Together',
-    'hero.title': 'Share & Discover in Your Community',
-    'hero.subtitle':
-      'Connect with neighbors to share, lend, and discover items in your local area. Building stronger communities through sharing.',
-    'hero.getStarted': 'Get Started',
-    'hero.learnMore': 'Learn More',
-
     // Auth
     'auth.signIn': 'Sign In',
     'auth.signUp': 'Sign Up',
@@ -67,6 +59,12 @@ const translations = {
     'index.noItemsFound': 'No items found in this category.',
     'index.previous': 'Previous',
     'index.next': 'Next',
+    'index.condition': 'Condition',
+
+    // Browse Nav
+    'browse.buy': 'Buy',
+    'browse.bookOrRent': 'Book / Rent',
+    'browse.wanted': 'Wanted',
 
     // Items
     'item.available': 'Available',
@@ -312,7 +310,7 @@ const translations = {
     'myItems.title': 'Items',
     'myItems.noItems': 'No items yet',
     'myItems.createFirst': 'Create your first item to get started!',
-    'myItems.createItem': 'Create Item',
+    'myItems.shareItem': 'Share Item',
     'myItems.status': 'Status',
     'myItems.changeStatus': 'Change Status',
     'myItems.statusUpdated': 'Item status updated successfully',
@@ -393,14 +391,6 @@ const translations = {
     'header.light': 'Hell',
     'header.dark': 'Dunkel',
 
-    // Hero Section
-    'hero.tagline': 'Zusammen stärkere Gemeinschaften aufbauen',
-    'hero.title': 'Teile & Entdecke in deiner Community',
-    'hero.subtitle':
-      'Verbinde dich mit Nachbarn, um Artikel in deiner Umgebung zu teilen, zu leihen und zu entdecken. Stärkere Gemeinschaften durch Teilen.',
-    'hero.getStarted': 'Loslegen',
-    'hero.learnMore': 'Mehr erfahren',
-
     // Auth
     'auth.signIn': 'Anmelden',
     'auth.signUp': 'Registrieren',
@@ -435,6 +425,12 @@ const translations = {
     'index.noItemsFound': 'Keine Artikel in dieser Kategorie gefunden.',
     'index.previous': 'Zurück',
     'index.next': 'Weiter',
+    'index.condition': 'Zustand',
+
+    // Browse Nav
+    'browse.buy': 'Kaufen',
+    'browse.bookOrRent': 'Buchen / Mieten',
+    'browse.wanted': 'Gesucht',
 
     // Items
     'item.available': 'Verfügbar',
@@ -687,7 +683,7 @@ const translations = {
     'myItems.title': 'Artikel',
     'myItems.noItems': 'Noch keine Artikel',
     'myItems.createFirst': 'Erstelle deinen ersten Artikel um loszulegen!',
-    'myItems.createItem': 'Artikel erstellen',
+    'myItems.shareItem': 'Artikel teilen',
     'myItems.status': 'Status',
     'myItems.changeStatus': 'Status ändern',
     'myItems.statusUpdated': 'Artikel Status erfolgreich aktualisiert',

@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 import { Status402Enum } from '@/services/django';
 import { Clock, ShoppingCart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { getStatusColor, getStatusLabel } from './status';
+import { getStatusColor, getStatusLabel } from '@/components/items/status';
 import { convertLineBreaks } from '@/lib/convertLineBreaks';
 
 interface ItemCardProps {
@@ -59,16 +59,6 @@ export const ItemCard = ({
   const { t } = useLanguage();
 
   const isOwner = user && owner && user.id === owner;
-
-  const handleMessageOwner = () => {
-    if (!user) {
-      navigate('/auth');
-      return;
-    }
-
-    // Contact functionality removed - navigate to item details instead
-    navigate(`/item/${id}`);
-  };
 
   const conditionColors = {
     new: 'bg-success text-success-foreground',
@@ -173,10 +163,6 @@ export const ItemCard = ({
                         className="w-full"
                         onClick={e => {
                           e.stopPropagation();
-                          if (!user) {
-                            navigate('/auth');
-                            return;
-                          }
                           navigate(`/item/${id}#booking`);
                         }}
                         disabled={(isOwner && !!salePrice) || !user}

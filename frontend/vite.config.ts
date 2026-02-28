@@ -26,20 +26,33 @@ export default defineConfig(({ mode }) => ({
     },
 
     // Prevent watching Docker-mounted DB/storage volumes that can’t be watched (EINVAL)
-    watch: {
-      ignored: ['**/volumes/**'],
-      // If issues persist in certain environments, enable polling:
-      // usePolling: true,
-      // interval: 1000,
-    },
+    watch:
+      process.env.VITE_USE_POLLING === 'true'
+        ? {
+            ignored: ['**/volumes/**'],
+            usePolling: true,
+            interval: 1000,
+          }
+        : {
+            ignored: ['**/volumes/**'],
+          },
   },
   plugins: [
     tailwindcss(),
     react(),
     sentryVitePlugin({
       authToken: process.env.SENTRY_AUTH_TOKEN,
-      org: 'fabslab',
-      project: 'thd-bubble',
+      org: 'treibhaus-donaufeld',
+      project: 'bubble-frontend',
+      sourcemaps: {
+        // As you're enabling client source maps, you probably want to delete them after they're uploaded to Sentry.
+        // Set the appropriate glob pattern for your output folder - some glob examples below:
+        filesToDeleteAfterUpload: [
+          './**/*.map',
+          '.*/**/public/**/*.map',
+          './dist/**/client/**/*.map',
+        ],
+      },
     }),
   ].filter(Boolean),
   resolve: {

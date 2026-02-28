@@ -6,7 +6,6 @@ import {
   PricingFields,
   StatusField,
 } from '@/components/items/ItemFormFields';
-import { Header } from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -20,7 +19,6 @@ import {
 } from '@/components/ui/select';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/hooks/useAuth';
 import { useUpdateItem } from '@/hooks/useCreateItem';
 import {
   Author,
@@ -49,7 +47,6 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const EditBook = () => {
-  const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { t, language } = useLanguage();
@@ -260,15 +257,6 @@ const EditBook = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!user) {
-      toast({
-        title: 'Error',
-        description: 'You must be logged in to update a book.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
     if (!editItemUuid) {
       toast({
         title: 'Error',
@@ -319,7 +307,7 @@ const EditBook = () => {
   };
 
   const handlePublish = async () => {
-    if (!user || !editItemUuid) {
+    if (!editItemUuid) {
       toast({
         title: 'Error',
         description: 'You must be logged in and have a valid book ID.',
@@ -398,277 +386,258 @@ const EditBook = () => {
 
   if (loadingBook) {
     return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <div className="container mx-auto py-8 flex items-center justify-center">
-          <Loader className="h-8 w-8 animate-spin" />
-        </div>
+      <div className="container mx-auto py-8 flex items-center justify-center">
+        <Loader className="h-8 w-8 animate-spin" />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <div className="container mx-auto py-8">
-          <Card>
-            <CardContent className="pt-6">
-              <p className="text-destructive">Error loading book: {(error as Error).message}</p>
-            </CardContent>
-          </Card>
-        </div>
+      <div className="container mx-auto py-8">
+        <Card>
+          <CardContent className="pt-6">
+            <p className="text-destructive">Error loading book: {(error as Error).message}</p>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      <div className="container mx-auto py-8 space-y-6">
-        <div className="flex items-center justify-between">
-          <Button variant="ghost" onClick={() => navigate(-1)} className="gap-2">
-            <ArrowLeft className="h-4 w-4" />
-            {t('common.back')}
-          </Button>
-          <h1 className="text-2xl font-bold">{t('editItem.editBook')}</h1>
-        </div>
+    <div className="container mx-auto py-8 space-y-6">
+      <div className="flex items-center justify-between">
+        <Button variant="ghost" onClick={() => navigate(-1)} className="gap-2">
+          <ArrowLeft className="h-4 w-4" />
+          {t('common.back')}
+        </Button>
+        <h1 className="text-2xl font-bold">{t('editItem.editBook')}</h1>
+      </div>
 
-        {/* Images Card */}
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('editItem.images')}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ImageManager
-              onImagesChange={setImages}
-              onExistingImagesChange={setExistingImages}
-              existingImages={existingImages}
-              maxImages={16}
-              isEditing={!aiProcessing}
-              resetNewImagesToken={resetNewImagesToken}
+      {/* Images Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle>{t('editItem.images')}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ImageManager
+            onImagesChange={setImages}
+            onExistingImagesChange={setExistingImages}
+            existingImages={existingImages}
+            maxImages={16}
+            isEditing={!aiProcessing}
+            resetNewImagesToken={resetNewImagesToken}
+          />
+        </CardContent>
+      </Card>
+
+      {/* Book Details Form */}
+      <Card>
+        <CardHeader>
+          <CardTitle>{t('editItem.bookDetails')}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <BasicFields
+              formData={formData}
+              setFormData={setFormData}
+              disabled={aiProcessing}
+              descriptionRef={descriptionRef}
             />
-          </CardContent>
-        </Card>
 
-        {/* Book Details Form */}
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('editItem.bookDetails')}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <BasicFields
-                formData={formData}
-                setFormData={setFormData}
-                disabled={aiProcessing}
-                descriptionRef={descriptionRef}
-              />
+            <CategoryConditionFields
+              formData={formData}
+              setFormData={setFormData}
+              categories={categories}
+              onCategoryChange={async category => {
+                // Update local state immediately
+                setFormData(prev => ({ ...prev, category: category as CategoryEnum }));
 
-              <CategoryConditionFields
-                formData={formData}
-                setFormData={setFormData}
-                categories={categories}
-                onCategoryChange={async category => {
-                  // Update local state immediately
-                  setFormData(prev => ({ ...prev, category: category as CategoryEnum }));
-
-                  // If switching away from books, persist the change first, then navigate
-                  if (category !== 'books' && editItemUuid) {
-                    try {
-                      await updateItemMutation.mutateAsync({
-                        itemUuid: editItemUuid,
-                        data: { category: category as CategoryEnum },
-                      });
-                      navigate(`/edit-item/${editItemUuid}`);
-                    } catch (err) {
-                      console.error('Error updating category before switching to EditItem:', err);
-                      toast({
-                        title: t('editItem.updateErrorTitle'),
-                        description: (err as any)?.message || t('editItem.updateErrorDescription'),
-                        variant: 'destructive',
-                      });
-                    }
+                // If switching away from books, persist the change first, then navigate
+                if (category !== 'books' && editItemUuid) {
+                  try {
+                    await updateItemMutation.mutateAsync({
+                      itemUuid: editItemUuid,
+                      data: { category: category as CategoryEnum },
+                    });
+                    navigate(`/edit-item/${editItemUuid}`);
+                  } catch (err) {
+                    console.error('Error updating category before switching to EditItem:', err);
+                    toast({
+                      title: t('editItem.updateErrorTitle'),
+                      description: (err as any)?.message || t('editItem.updateErrorDescription'),
+                      variant: 'destructive',
+                    });
                   }
-                }}
-              />
+                }
+              }}
+            />
 
-              {/* Book-specific fields */}
-              {/* ISBN, Year, Topic - compact row */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="isbn">{t('editItem.isbn')}</Label>
-                  <div className="flex gap-2">
-                    <Input
-                      id="isbn"
-                      type="text"
-                      placeholder={t('editItem.enterIsbn')}
-                      value={formData.isbn}
-                      onChange={e => setFormData({ ...formData, isbn: e.target.value })}
-                      disabled={aiProcessing}
-                      className="flex-1"
-                    />
-                    <BarcodeScanner onScan={handleBarcodeScan} title={t('editItem.scanIsbn')} />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="year">{t('editItem.year')}</Label>
+            {/* Book-specific fields */}
+            {/* ISBN, Year, Topic - compact row */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="isbn">{t('editItem.isbn')}</Label>
+                <div className="flex gap-2">
                   <Input
-                    id="year"
-                    type="number"
-                    placeholder={t('editItem.enterYear')}
-                    value={formData.year}
-                    onChange={e => setFormData({ ...formData, year: e.target.value })}
-                    disabled={aiProcessing}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="topic">{t('editItem.topic')}</Label>
-                  <Input
-                    id="topic"
+                    id="isbn"
                     type="text"
-                    placeholder={t('editItem.enterTopic')}
-                    value={formData.topic}
-                    onChange={e => setFormData({ ...formData, topic: e.target.value })}
+                    placeholder={t('editItem.enterIsbn')}
+                    value={formData.isbn}
+                    onChange={e => setFormData({ ...formData, isbn: e.target.value })}
                     disabled={aiProcessing}
+                    className="flex-1"
                   />
+                  <BarcodeScanner onScan={handleBarcodeScan} title={t('editItem.scanIsbn')} />
                 </div>
               </div>
 
-              {/* Authors and Genres - 2 column row */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="authors">{t('editItem.authors')}</Label>
-                  <Select
-                    value={formData.author_ids.join(',')}
-                    onValueChange={value => {
-                      const ids = value ? value.split(',').filter(Boolean) : [];
-                      setFormData({ ...formData, author_ids: ids });
-                    }}
-                    disabled={aiProcessing}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder={t('editItem.selectAuthors')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {authors?.map((author: Author) => (
-                        <SelectItem key={author.id} value={author.id}>
-                          {author.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="genres">{t('editItem.genres')}</Label>
-                  <Select
-                    value={formData.genre_ids.join(',')}
-                    onValueChange={value => {
-                      const ids = value ? value.split(',').filter(Boolean) : [];
-                      setFormData({ ...formData, genre_ids: ids });
-                    }}
-                    disabled={aiProcessing}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder={t('editItem.selectGenres')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {genres?.map((genre: Genre) => (
-                        <SelectItem key={genre.id} value={genre.id}>
-                          {genre.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              {/* Publisher and Shelf - 2 column row */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="publisher">{t('editItem.publisher')}</Label>
-                  <Select
-                    value={formData.verlag_id}
-                    onValueChange={value => setFormData({ ...formData, verlag_id: value })}
-                    disabled={aiProcessing}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder={t('editItem.selectPublisher')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {publishers?.map((publisher: Publisher) => (
-                        <SelectItem key={publisher.id} value={publisher.id}>
-                          {publisher.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="shelf">{t('editItem.shelf')}</Label>
-                  <Select
-                    value={formData.shelf_id}
-                    onValueChange={value => setFormData({ ...formData, shelf_id: value })}
-                    disabled={aiProcessing}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder={t('editItem.selectShelf')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {shelves?.map((shelf: Shelf) => (
-                        <SelectItem key={shelf.id} value={shelf.id}>
-                          {shelf.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <PricingFields
-                formData={formData}
-                setFormData={setFormData}
-                disabled={aiProcessing}
-              />
-
-              <div className="flex items-end justify-between gap-4 pt-4">
-                <StatusField
-                  formData={formData}
-                  setFormData={setFormData}
+              <div className="space-y-2">
+                <Label htmlFor="year">{t('editItem.year')}</Label>
+                <Input
+                  id="year"
+                  type="number"
+                  placeholder={t('editItem.enterYear')}
+                  value={formData.year}
+                  onChange={e => setFormData({ ...formData, year: e.target.value })}
                   disabled={aiProcessing}
                 />
-
-                <div className="flex gap-2">
-                  <Button
-                    type="submit"
-                    disabled={loading || updateBookMutation.isPending || aiProcessing}
-                  >
-                    {loading || updateBookMutation.isPending
-                      ? t('common.saving')
-                      : t('common.save')}
-                  </Button>
-
-                  {formData.status === 0 && (
-                    <Button
-                      type="button"
-                      variant="default"
-                      onClick={handlePublish}
-                      disabled={loading || updateBookMutation.isPending || aiProcessing}
-                      className="gap-2"
-                    >
-                      {t('editItem.publish')}
-                    </Button>
-                  )}
-                </div>
               </div>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="topic">{t('editItem.topic')}</Label>
+                <Input
+                  id="topic"
+                  type="text"
+                  placeholder={t('editItem.enterTopic')}
+                  value={formData.topic}
+                  onChange={e => setFormData({ ...formData, topic: e.target.value })}
+                  disabled={aiProcessing}
+                />
+              </div>
+            </div>
+
+            {/* Authors and Genres - 2 column row */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="authors">{t('editItem.authors')}</Label>
+                <Select
+                  value={formData.author_ids.join(',')}
+                  onValueChange={value => {
+                    const ids = value ? value.split(',').filter(Boolean) : [];
+                    setFormData({ ...formData, author_ids: ids });
+                  }}
+                  disabled={aiProcessing}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('editItem.selectAuthors')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {authors?.map((author: Author) => (
+                      <SelectItem key={author.id} value={author.id}>
+                        {author.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="genres">{t('editItem.genres')}</Label>
+                <Select
+                  value={formData.genre_ids.join(',')}
+                  onValueChange={value => {
+                    const ids = value ? value.split(',').filter(Boolean) : [];
+                    setFormData({ ...formData, genre_ids: ids });
+                  }}
+                  disabled={aiProcessing}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('editItem.selectGenres')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {genres?.map((genre: Genre) => (
+                      <SelectItem key={genre.id} value={genre.id}>
+                        {genre.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Publisher and Shelf - 2 column row */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="publisher">{t('editItem.publisher')}</Label>
+                <Select
+                  value={formData.verlag_id}
+                  onValueChange={value => setFormData({ ...formData, verlag_id: value })}
+                  disabled={aiProcessing}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('editItem.selectPublisher')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {publishers?.map((publisher: Publisher) => (
+                      <SelectItem key={publisher.id} value={publisher.id}>
+                        {publisher.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="shelf">{t('editItem.shelf')}</Label>
+                <Select
+                  value={formData.shelf_id}
+                  onValueChange={value => setFormData({ ...formData, shelf_id: value })}
+                  disabled={aiProcessing}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('editItem.selectShelf')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {shelves?.map((shelf: Shelf) => (
+                      <SelectItem key={shelf.id} value={shelf.id}>
+                        {shelf.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <PricingFields formData={formData} setFormData={setFormData} disabled={aiProcessing} />
+
+            <div className="flex items-end justify-between gap-4 pt-4">
+              <StatusField formData={formData} setFormData={setFormData} disabled={aiProcessing} />
+
+              <div className="flex gap-2">
+                <Button
+                  type="submit"
+                  disabled={loading || updateBookMutation.isPending || aiProcessing}
+                >
+                  {loading || updateBookMutation.isPending ? t('common.saving') : t('common.save')}
+                </Button>
+
+                {formData.status === 0 && (
+                  <Button
+                    type="button"
+                    variant="default"
+                    onClick={handlePublish}
+                    disabled={loading || updateBookMutation.isPending || aiProcessing}
+                    className="gap-2"
+                  >
+                    {t('editItem.publish')}
+                  </Button>
+                )}
+              </div>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 };

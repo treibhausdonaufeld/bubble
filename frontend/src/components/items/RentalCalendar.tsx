@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
 import { publicBookingsList } from '@/services/django';
 import { useQuery } from '@tanstack/react-query';
@@ -42,7 +41,6 @@ export const RentalCalendar = ({
   onBookNow,
 }: RentalCalendarProps) => {
   const { t } = useLanguage();
-  const { user } = useAuth();
   const [viewMode, setViewMode] = useState<'weekly' | 'monthly'>('weekly');
 
   // Fetch existing bookings for this item
@@ -524,26 +522,9 @@ export const RentalCalendar = ({
 
             {/* Book Now button bottom-right */}
             <div className="absolute right-4 bottom-4">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div>
-                      <Button
-                        size="sm"
-                        onClick={() => onBookNow && onBookNow(selectedStart, selectedEnd)}
-                        disabled={!user}
-                      >
-                        {t('booking.bookNow')}
-                      </Button>
-                    </div>
-                  </TooltipTrigger>
-                  {!user && (
-                    <TooltipContent>
-                      <p>{t('auth.loginRequired')}</p>
-                    </TooltipContent>
-                  )}
-                </Tooltip>
-              </TooltipProvider>
+              <Button size="sm" onClick={() => onBookNow && onBookNow(selectedStart, selectedEnd)}>
+                {t('booking.bookNow')}
+              </Button>
             </div>
           </div>
         )}
