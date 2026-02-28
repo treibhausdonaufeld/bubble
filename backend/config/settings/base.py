@@ -399,18 +399,18 @@ if nextcloud_server_url := env("NEXTCLOUD_SERVER_URL", default=""):
         ],
     }
 
-if authentik_server_url := env("AUTHENTIK_SERVER_URL", default=""):
+if oidc_server_url := env("OIDC_SERVER_URL", default=""):
     SOCIALACCOUNT_PROVIDERS["openid_connect"] = {
         "APPS": [
             {
-                "provider_id": "authentik",
-                "name": "Treibhaus Anmeldung",
-                "client_id": env("AUTHENTIK_CLIENT_ID", default="default_client_id"),
-                "secret": env("AUTHENTIK_SECRET", default="default_secret"),
+                "provider_id": env("OIDC_PROVIDER_ID", default="oidc"),
+                "name": env("OIDC_PROVIDER_NAME", default="OpenID Connect"),
+                "client_id": env("OIDC_CLIENT_ID", default=""),
+                "secret": env("OIDC_SECRET", default=""),
                 "settings": {
-                    "server_url": authentik_server_url,
-                    "internal_group_name": "Mitglieder",
-                    # "admin_group_name": "admin",
+                    "server_url": oidc_server_url,
+                    "internal_group_name": env("OIDC_INTERNAL_GROUP_NAME", default=""),
+                    "admin_group_name": env("OIDC_ADMIN_GROUP_NAME", default="admin"),
                 },
             },
         ],
