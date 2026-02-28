@@ -215,7 +215,7 @@ class ItemViewSet(viewsets.ModelViewSet, ItemBaseViewSet):
             )
 
     @action(detail=True, methods=["get", "post", "delete"], url_path="co-owners")
-    def co_owners(self, request, pk=None):
+    def co_owners(self, request, id=None):  # noqa: A002
         """
         Manage co-owners of an item.
 
@@ -280,7 +280,7 @@ class ItemViewSet(viewsets.ModelViewSet, ItemBaseViewSet):
         return None
 
     @action(detail=True, methods=["get", "post", "delete"], url_path="viewers")
-    def viewers(self, request, pk=None):
+    def viewers(self, request, id=None):  # noqa: A002
         """
         Manage specific viewers of an item (SPECIFIC visibility).
 
