@@ -21,7 +21,21 @@ if READ_DOT_ENV_FILE:
 
 # GENERAL
 
-FRONTEND_URL = env.str("FRONTEND_URL", "http://localhost:8080")
+# https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
+ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=[])
+
+# set the dynamic Pod IP injected by K8s
+if pod_ip := env("POD_IP", default="").strip():
+    ALLOWED_HOSTS.append(pod_ip)
+
+if "localhost" not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append("localhost")
+if "127.0.0.1" not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append("127.0.0.1")
+
+FRONTEND_URL = env.str("FRONTEND_URL", default="")
+if not FRONTEND_URL and ALLOWED_HOSTS:
+    FRONTEND_URL = f"https://{ALLOWED_HOSTS[0]}"
 
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#debug
@@ -445,6 +459,7 @@ REST_FRAMEWORK = {
 
 HEADLESS_FRONTEND_URLS = {
     "socialaccount_login_error": FRONTEND_URL,
+    "account_confirm_email": FRONTEND_URL,
 }
 HEADLESS_SERVE_SPECIFICATION = True
 HEADLESS_ONLY = True
