@@ -27,7 +27,11 @@ ALLOWED_CIDR_NETS = env.list(
 
 # DATABASES
 # ------------------------------------------------------------------------------
-DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=60)
+# ASGI (uvicorn) workers do not support persistent connections — Django's
+# CONN_MAX_AGE mechanism is WSGI-only. Under async workers, connections are
+# never returned to the per-thread cache and just pile up idle. Keep it at 0
+# so every request opens and closes its own connection cleanly.
+DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=0)
 
 # CACHES
 # ------------------------------------------------------------------------------
