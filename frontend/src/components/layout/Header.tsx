@@ -15,7 +15,7 @@ import { useUnreadMessages } from '@/hooks/useMessages';
 
 import { cn } from '@/lib/utils';
 import { useTheme } from '@/providers/theme-provider';
-import { Handshake, Library, LogOut, Moon, Plus, Search, Sun, User } from 'lucide-react';
+import { Handshake, Library, LogIn, LogOut, Moon, Plus, Search, Sun, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 
@@ -73,7 +73,48 @@ export const Header = () => {
   };
 
   if (!user) {
-    throw new Error('Header requires an authenticated user.');
+    return (
+      <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md">
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex items-center justify-between gap-4">
+            <NavLink to="/" className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg overflow-hidden">
+                <img src="/icon-192.png" alt="bubble logo" className="h-10 w-10 object-cover" />
+              </div>
+              <div className="hidden sm:block">
+                <h1 className="text-xl font-bold text-foreground">bubble</h1>
+                <p className="text-xs text-muted-foreground">Community Network</p>
+              </div>
+            </NavLink>
+            <div className="flex-1 max-w-lg">
+              <div className={cn('relative transition-all duration-300 focus-within:scale-105')}>
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  placeholder={t('header.search')}
+                  className="pl-10 shadow-soft focus:shadow-medium transition-shadow"
+                  value={searchTerm}
+                  onChange={e => setSearchTerm(e.target.value)}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter') {
+                      handleSearchSubmit(searchTerm);
+                    }
+                  }}
+                />
+              </div>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2"
+              onClick={() => navigate('/profile')}
+            >
+              <LogIn className="h-4 w-4" />
+              <span className="hidden sm:inline">{t('header.signIn')}</span>
+            </Button>
+          </div>
+        </div>
+      </header>
+    );
   }
 
   return (
