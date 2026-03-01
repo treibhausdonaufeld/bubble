@@ -33,7 +33,8 @@ if pod_ip:
     ALLOWED_HOSTS.append(pod_ip)
 
 ALLOWED_CIDR_NETS = env.list(
-    "ALLOWED_CIDR_NETS", default=["172.16.0.0/12", "192.168.0.0/16", "127.0.0.1/32"]
+    "ALLOWED_CIDR_NETS",
+    default=["172.16.0.0/12", "192.168.0.0/16", "127.0.0.1/32", "10.0.0.0/8"],
 )
 
 # DATABASES
