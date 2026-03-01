@@ -20,17 +20,16 @@ from .base import (
 # https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
 SECRET_KEY = env("DJANGO_SECRET_KEY")
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = env.list(
-    "DJANGO_ALLOWED_HOSTS",
-    default=[],
-)
+ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=[])
 
-# 2. Grab the dynamic Pod IP injected by K8s
-pod_ip = env("POD_IP", default="")
-
-# 3. Append it to the list if it's found
-if pod_ip:
+# set the dynamic Pod IP injected by K8s
+if pod_ip := env("POD_IP", default="").strip():
     ALLOWED_HOSTS.append(pod_ip)
+
+if "localhost" not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append("localhost")
+if "127.0.0.1" not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append("127.0.0.1")
 
 ALLOWED_CIDR_NETS = env.list(
     "ALLOWED_CIDR_NETS",
