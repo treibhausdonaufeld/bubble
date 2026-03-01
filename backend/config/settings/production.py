@@ -148,6 +148,18 @@ SPECTACULAR_SETTINGS["SERVERS"] = [
 # ------------------------------------------------------------------------------
 
 
+# LOGGING
+# ------------------------------------------------------------------------------
+if DEBUG:  # noqa: F405
+    LOGGING["root"]["level"] = "DEBUG"  # noqa: F405
+    LOGGING["handlers"]["console"]["level"] = "DEBUG"  # noqa: F405
+    LOGGING["loggers"]["django.request"] = {  # noqa: F405
+        "level": "DEBUG",
+        "handlers": ["console"],
+        "propagate": False,
+    }
+
+
 # `instrument_logging=True` sets up logging instrumentation.
 # if you do not want to send logs or are using `loguru`, pass `instrument_logging=False`
 SENTRY_DSN = env("SENTRY_DSN", default="")
