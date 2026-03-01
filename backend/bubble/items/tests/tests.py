@@ -6,6 +6,7 @@ from decimal import Decimal
 from io import BytesIO
 from unittest.mock import patch
 
+from constance import config
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.urls import reverse
@@ -16,7 +17,7 @@ from rest_framework.test import APIClient
 
 from bubble.core.permissions_config import DefaultGroup
 from bubble.items.ai.image_analyze import ItemImageResult
-from bubble.items.models import Image, Item, ItemStatus
+from bubble.items.models import Image, Item, ItemStatus, VisibilityType
 from bubble.items.tests.factories import ItemOwnerUserFactory
 from bubble.users.tests.factories import UserFactory
 
@@ -590,6 +591,7 @@ class AnonymousUserItemAccessTestCase(TestCase):
     """Tests for anonymous user access to ItemViewSet."""
 
     def setUp(self):
+        config.REQUIRE_LOGIN = False
         self.client = APIClient()
         self.user = ItemOwnerUserFactory(
             username="testowner", email="owner@example.com", password=TEST_PASSWORD
@@ -601,7 +603,8 @@ class AnonymousUserItemAccessTestCase(TestCase):
             description="This is a draft item",
             user=self.user,
             sale_price=Decimal("10.00"),
-            status=1,  # DRAFT - should not be visible to anonymous users
+            status=ItemStatus.PROCESSING,  # Not published - not visible to anonymous
+            visibility=VisibilityType.PUBLIC,
             category="TOOLS",
         )
         self.published_item = Item.objects.create(
@@ -609,9 +612,14 @@ class AnonymousUserItemAccessTestCase(TestCase):
             description="This is a published item",
             user=self.user,
             sale_price=Decimal("20.00"),
-            status=2,  # AVAILABLE - should be visible to anonymous users
+            status=ItemStatus.AVAILABLE,  # Published - visible to anonymous users
+            visibility=VisibilityType.PUBLIC,
             category="TOOLS",
         )
+
+    def tearDown(self):
+        """Restore default constance config."""
+        config.REQUIRE_LOGIN = True
 
     def test_anonymous_user_can_view_published_items_only(self):
         """Test that anonymous users can only see published items."""
@@ -647,6 +655,7 @@ class PublishedEndpointFilterTestCase(TestCase):
 
     def setUp(self):
         """Set up test data."""
+        config.REQUIRE_LOGIN = False
         self.client = APIClient()
         self.user = ItemOwnerUserFactory(
             username="testowner", email="owner@example.com", password=TEST_PASSWORD
@@ -658,6 +667,7 @@ class PublishedEndpointFilterTestCase(TestCase):
             description="High-performance laptop for gaming",
             user=self.user,
             status=ItemStatus.AVAILABLE,
+            visibility=VisibilityType.PUBLIC,
             sale_price=Decimal("1500.00"),
             category="electronics",
         )
@@ -667,6 +677,7 @@ class PublishedEndpointFilterTestCase(TestCase):
             description="Beautiful oak desk for home office",
             user=self.user,
             status=ItemStatus.AVAILABLE,
+            visibility=VisibilityType.PUBLIC,
             sale_price=Decimal("300.00"),
             category="furniture",
         )
@@ -676,6 +687,7 @@ class PublishedEndpointFilterTestCase(TestCase):
             description="Ergonomic office chair",
             user=self.user,
             status=ItemStatus.RESERVED,
+            visibility=VisibilityType.PUBLIC,
             sale_price=Decimal("200.00"),
             category="furniture",
         )
@@ -686,9 +698,14 @@ class PublishedEndpointFilterTestCase(TestCase):
             description="Another laptop in draft",
             user=self.user,
             status=ItemStatus.DRAFT,
+            visibility=VisibilityType.PUBLIC,
             sale_price=Decimal("1000.00"),
             category="electronics",
         )
+
+    def tearDown(self):
+        """Restore default constance config."""
+        config.REQUIRE_LOGIN = True
 
     def test_published_endpoint_search_filter(self):
         """Test that search filter works on published endpoint."""
