@@ -1,9 +1,11 @@
+import { AccessManager } from '@/components/items/AccessManager';
 import { ImageManager } from '@/components/items/ImageManager';
 import {
   BasicFields,
   CategoryConditionFields,
   PricingFields,
   StatusField,
+  VisibilityField,
 } from '@/components/items/ItemFormFields';
 import {
   AlertDialog,
@@ -35,6 +37,7 @@ import {
   PatchedItemWritable,
   RentalPeriodEnum,
   Status402Enum,
+  VisibilityEnum,
 } from '@/services/django';
 import { useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, CheckCircle, Loader, Sparkles } from 'lucide-react';
@@ -71,6 +74,7 @@ const EditItem = () => {
     category: '' as CategoryEnum | '',
     condition: '' as ConditionEnum | '',
     status: '' as Status402Enum | '',
+    visibility: 1 as VisibilityEnum | '',
     sale_price: '',
     rental_price: '',
     rental_period: '' as RentalPeriodEnum | '',
@@ -102,6 +106,7 @@ const EditItem = () => {
         category: item.category || '',
         condition: item.condition !== undefined ? item.condition : '',
         status: item.status !== undefined && item.status !== null ? item.status : '',
+        visibility: item.visibility !== undefined && item.visibility !== null ? item.visibility : 1,
         sale_price: item.sale_price?.toString() || '',
         rental_price: item.rental_price?.toString() || '',
         rental_period: (item.rental_period as RentalPeriodEnum) || '',
@@ -172,6 +177,8 @@ const EditItem = () => {
         category: formData.category as CategoryEnum,
         condition: formData.condition as ConditionEnum,
         status: formData.status !== '' ? (formData.status as Status402Enum) : undefined,
+        visibility:
+          formData.visibility !== '' ? (formData.visibility as VisibilityEnum) : undefined,
         sale_price: formData.sale_price === '' ? null : formData.sale_price,
         rental_price: formData.rental_price === '' ? null : formData.rental_price,
         rental_period:
@@ -238,6 +245,8 @@ const EditItem = () => {
         category: formData.category as CategoryEnum,
         condition: formData.condition as ConditionEnum,
         status: 2, // Set to Available
+        visibility:
+          formData.visibility !== '' ? (formData.visibility as VisibilityEnum) : undefined,
         sale_price: formData.sale_price === '' ? null : formData.sale_price,
         rental_price: formData.rental_price === '' ? null : formData.rental_price,
         rental_period:
@@ -635,9 +644,14 @@ const EditItem = () => {
             <PricingFields formData={formData} setFormData={setFormData} disabled={aiProcessing} />
 
             <div className="flex items-end justify-between gap-4 pt-4">
-              {/* Status field */}
-              <div className="flex-1 max-w-xs space-y-2">
+              {/* Status and Visibility fields */}
+              <div className="flex gap-4">
                 <StatusField
+                  formData={formData}
+                  setFormData={setFormData}
+                  disabled={aiProcessing}
+                />
+                <VisibilityField
                   formData={formData}
                   setFormData={setFormData}
                   disabled={aiProcessing}
@@ -670,6 +684,13 @@ const EditItem = () => {
               </div>
             </div>
           </form>
+
+          {/* Access management — co-owners and specific viewers */}
+          {editItemUuid && (
+            <div className="mt-6 pt-6 border-t">
+              <AccessManager itemId={editItemUuid} visibility={formData.visibility} />
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
