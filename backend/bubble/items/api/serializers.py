@@ -134,6 +134,7 @@ class ItemListSerializer(ItemSerializer):
     """Lightweight serializer for item lists."""
 
     images = None
+    co_owners = None
 
 
 class ItemMinimalSerializer(ItemListSerializer):

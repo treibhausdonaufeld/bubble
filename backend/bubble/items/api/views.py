@@ -8,6 +8,7 @@ from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.files.base import ContentFile
 from django.db import models
+from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 from django_filters.rest_framework import DjangoFilterBackend
 from guardian.shortcuts import (
@@ -248,11 +249,11 @@ class ItemViewSet(viewsets.ModelViewSet, ItemBaseViewSet):
             user_id = request.data.get("user")
             group_id = request.data.get("group")
             if user_id:
-                target = User.objects.get(pk=user_id)
+                target = get_object_or_404(User, pk=user_id)
                 assign_perm("items.view_item", target, item)
                 assign_perm("items.change_item", target, item)
             elif group_id:
-                target = Group.objects.get(pk=group_id)
+                target = get_object_or_404(Group, pk=group_id)
                 assign_perm("items.view_item", target, item)
                 assign_perm("items.change_item", target, item)
             else:
@@ -263,11 +264,11 @@ class ItemViewSet(viewsets.ModelViewSet, ItemBaseViewSet):
             user_id = request.data.get("user")
             group_id = request.data.get("group")
             if user_id:
-                target = User.objects.get(pk=user_id)
+                target = get_object_or_404(User, pk=user_id)
                 remove_perm("items.view_item", target, item)
                 remove_perm("items.change_item", target, item)
             elif group_id:
-                target = Group.objects.get(pk=group_id)
+                target = get_object_or_404(Group, pk=group_id)
                 remove_perm("items.view_item", target, item)
                 remove_perm("items.change_item", target, item)
             else:
@@ -314,10 +315,10 @@ class ItemViewSet(viewsets.ModelViewSet, ItemBaseViewSet):
             user_id = request.data.get("user")
             group_id = request.data.get("group")
             if user_id:
-                target = User.objects.get(pk=user_id)
+                target = get_object_or_404(User, pk=user_id)
                 assign_perm("items.view_item", target, item)
             elif group_id:
-                target = Group.objects.get(pk=group_id)
+                target = get_object_or_404(Group, pk=group_id)
                 assign_perm("items.view_item", target, item)
             else:
                 raise ValidationError(_("Provide 'user' or 'group'."))
@@ -327,10 +328,10 @@ class ItemViewSet(viewsets.ModelViewSet, ItemBaseViewSet):
             user_id = request.data.get("user")
             group_id = request.data.get("group")
             if user_id:
-                target = User.objects.get(pk=user_id)
+                target = get_object_or_404(User, pk=user_id)
                 remove_perm("items.view_item", target, item)
             elif group_id:
-                target = Group.objects.get(pk=group_id)
+                target = get_object_or_404(Group, pk=group_id)
                 remove_perm("items.view_item", target, item)
             else:
                 raise ValidationError(_("Provide 'user' or 'group'."))
