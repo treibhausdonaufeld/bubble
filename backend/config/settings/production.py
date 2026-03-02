@@ -19,26 +19,19 @@ from .base import (
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
 SECRET_KEY = env("DJANGO_SECRET_KEY")
-# https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = env.list(
-    "DJANGO_ALLOWED_HOSTS",
-    default=[],
-)
-
-# 2. Grab the dynamic Pod IP injected by K8s
-pod_ip = env("POD_IP", default="")
-
-# 3. Append it to the list if it's found
-if pod_ip:
-    ALLOWED_HOSTS.append(pod_ip)
 
 ALLOWED_CIDR_NETS = env.list(
-    "ALLOWED_CIDR_NETS", default=["172.16.0.0/12", "192.168.0.0/16", "127.0.0.1/32"]
+    "ALLOWED_CIDR_NETS",
+    default=["172.16.0.0/12", "192.168.0.0/16", "127.0.0.1/32", "10.0.0.0/8"],
 )
 
 # DATABASES
 # ------------------------------------------------------------------------------
-DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=60)
+# ASGI (uvicorn) workers do not support persistent connections — Django's
+# CONN_MAX_AGE mechanism is WSGI-only. Under async workers, connections are
+# never returned to the per-thread cache and just pile up idle. Keep it at 0
+# so every request opens and closes its own connection cleanly.
+DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=0)
 
 # CACHES
 # ------------------------------------------------------------------------------
@@ -145,6 +138,18 @@ SPECTACULAR_SETTINGS["SERVERS"] = [
 ]
 # Your stuff...
 # ------------------------------------------------------------------------------
+
+
+# LOGGING
+# ------------------------------------------------------------------------------
+if DEBUG:  # noqa: F405
+    LOGGING["root"]["level"] = "DEBUG"  # noqa: F405
+    LOGGING["handlers"]["console"]["level"] = "DEBUG"  # noqa: F405
+    LOGGING["loggers"]["django.request"] = {  # noqa: F405
+        "level": "DEBUG",
+        "handlers": ["console"],
+        "propagate": False,
+    }
 
 
 # `instrument_logging=True` sets up logging instrumentation.

@@ -10,7 +10,13 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { CategoryEnum, ConditionEnum, RentalPeriodEnum, Status402Enum } from '@/services/django';
+import {
+  CategoryEnum,
+  ConditionEnum,
+  RentalPeriodEnum,
+  Status402Enum,
+  VisibilityEnum,
+} from '@/services/django';
 import { useEffect, useState } from 'react';
 
 interface BasicFieldsProps {
@@ -362,6 +368,56 @@ export const StatusField = ({ formData, setFormData, disabled }: StatusFieldProp
           {statuses.map(status => (
             <SelectItem key={status.value} value={status.value.toString()}>
               {t(`status.${status.label.toLowerCase()}`)}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+};
+
+interface VisibilityFieldProps {
+  formData: {
+    visibility: VisibilityEnum | '';
+  };
+  setFormData: (data: any) => void;
+  disabled?: boolean;
+}
+
+export const VisibilityField = ({ formData, setFormData, disabled }: VisibilityFieldProps) => {
+  const { t } = useLanguage();
+
+  const visibilities: { value: VisibilityEnum; label: string }[] = [
+    { value: 0, label: 'public' },
+    { value: 1, label: 'authenticated' },
+    { value: 2, label: 'specific' },
+    { value: 3, label: 'private' },
+  ];
+
+  return (
+    <div className="flex-1 max-w-xs space-y-2">
+      <Label htmlFor="visibility" className="text-sm">
+        {t('editItem.visibility')}
+      </Label>
+      <Select
+        value={formData.visibility !== '' ? formData.visibility.toString() : ''}
+        onValueChange={value =>
+          value !== ''
+            ? setFormData({
+                ...formData,
+                visibility: parseInt(value) as VisibilityEnum,
+              })
+            : null
+        }
+        disabled={disabled}
+      >
+        <SelectTrigger>
+          <SelectValue placeholder={t('editItem.selectVisibility')} />
+        </SelectTrigger>
+        <SelectContent>
+          {visibilities.map(v => (
+            <SelectItem key={v.value} value={v.value.toString()}>
+              {t(`visibility.${v.label}`)}
             </SelectItem>
           ))}
         </SelectContent>

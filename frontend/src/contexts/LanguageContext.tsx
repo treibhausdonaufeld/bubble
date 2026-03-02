@@ -116,6 +116,27 @@ const translations = {
     'editItem.aiMagicWarningContinue': 'Continue',
     'editItem.aiMagicImage': 'Generate Image',
     'editItem.scanIsbn': 'Scan ISBN',
+    'editItem.visibility': 'Visibility',
+    'editItem.selectVisibility': 'Select Visibility',
+
+    // Visibility
+    'visibility.public': 'Public',
+    'visibility.authenticated': 'Authenticated Users',
+    'visibility.specific': 'Specific Users / Groups',
+    'visibility.private': 'Private',
+
+    // Access Manager
+    'accessManager.title': 'Access Management',
+    'accessManager.coOwnersTitle': 'Co-owners',
+    'accessManager.coOwnersDescription': 'Co-owners can edit and manage bookings for this item.',
+    'accessManager.viewersTitle': 'Specific Viewers',
+    'accessManager.viewersDescription': 'These users and groups can view this item.',
+    'accessManager.users': 'Users',
+    'accessManager.groups': 'Groups',
+    'accessManager.addUser': 'Add User',
+    'accessManager.searchUsers': 'Search users...',
+    'accessManager.addGroup': 'Add Group',
+    'accessManager.searchGroups': 'Search groups...',
 
     // Categories
     'categories.all': 'All Categories',
@@ -487,6 +508,28 @@ const translations = {
     'editItem.aiMagicWarningContinue': 'Fortfahren',
     'editItem.aiMagicImage': 'Bild generieren',
     'editItem.scanIsbn': 'ISBN scannen',
+    'editItem.visibility': 'Sichtbarkeit',
+    'editItem.selectVisibility': 'Sichtbarkeit auswählen',
+
+    // Visibility
+    'visibility.public': 'Öffentlich',
+    'visibility.authenticated': 'Angemeldete Nutzer',
+    'visibility.specific': 'Bestimmte Nutzer / Gruppen',
+    'visibility.private': 'Privat',
+
+    // Access Manager
+    'accessManager.title': 'Zugriffsverwaltung',
+    'accessManager.coOwnersTitle': 'Mitbesitzer',
+    'accessManager.coOwnersDescription':
+      'Mitbesitzer können diesen Artikel bearbeiten und Buchungen verwalten.',
+    'accessManager.viewersTitle': 'Bestimmte Betrachter',
+    'accessManager.viewersDescription': 'Diese Nutzer und Gruppen können den Artikel sehen.',
+    'accessManager.users': 'Nutzer',
+    'accessManager.groups': 'Gruppen',
+    'accessManager.addUser': 'Nutzer hinzufügen',
+    'accessManager.searchUsers': 'Nutzer suchen...',
+    'accessManager.addGroup': 'Gruppe hinzufügen',
+    'accessManager.searchGroups': 'Gruppen suchen...',
 
     // Categories
     'categories.all': 'Alle Kategorien',

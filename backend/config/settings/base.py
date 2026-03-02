@@ -21,7 +21,21 @@ if READ_DOT_ENV_FILE:
 
 # GENERAL
 
-FRONTEND_URL = env.str("FRONTEND_URL", "http://localhost:8080")
+# https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
+ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=[])
+
+# set the dynamic Pod IP injected by K8s
+if pod_ip := env("POD_IP", default="").strip():
+    ALLOWED_HOSTS.append(pod_ip)
+
+if "localhost" not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append("localhost")
+if "127.0.0.1" not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append("127.0.0.1")
+
+FRONTEND_URL = env.str("FRONTEND_URL", default="")
+if not FRONTEND_URL and ALLOWED_HOSTS:
+    FRONTEND_URL = f"https://{ALLOWED_HOSTS[0]}"
 
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#debug
@@ -399,18 +413,18 @@ if nextcloud_server_url := env("NEXTCLOUD_SERVER_URL", default=""):
         ],
     }
 
-if authentik_server_url := env("AUTHENTIK_SERVER_URL", default=""):
+if oidc_server_url := env("OIDC_SERVER_URL", default=""):
     SOCIALACCOUNT_PROVIDERS["openid_connect"] = {
         "APPS": [
             {
-                "provider_id": "authentik",
-                "name": "Treibhaus Anmeldung",
-                "client_id": env("AUTHENTIK_CLIENT_ID", default="default_client_id"),
-                "secret": env("AUTHENTIK_SECRET", default="default_secret"),
+                "provider_id": env("OIDC_PROVIDER_ID", default="oidc"),
+                "name": env("OIDC_PROVIDER_NAME", default="OpenID Connect"),
+                "client_id": env("OIDC_CLIENT_ID", default=""),
+                "secret": env("OIDC_SECRET", default=""),
                 "settings": {
-                    "server_url": authentik_server_url,
-                    "internal_group_name": "Mitglieder",
-                    # "admin_group_name": "admin",
+                    "server_url": oidc_server_url,
+                    "internal_group_name": env("OIDC_INTERNAL_GROUP_NAME", default=""),
+                    "admin_group_name": env("OIDC_ADMIN_GROUP_NAME", default="admin"),
                 },
             },
         ],
@@ -445,6 +459,7 @@ REST_FRAMEWORK = {
 
 HEADLESS_FRONTEND_URLS = {
     "socialaccount_login_error": FRONTEND_URL,
+    "account_confirm_email": FRONTEND_URL,
 }
 HEADLESS_SERVE_SPECIFICATION = True
 HEADLESS_ONLY = True
