@@ -1967,6 +1967,11 @@ export type BooksListData = {
     body?: never;
     path?: never;
     query?: {
+        author?: number;
+        author_name?: string;
+        genre?: number;
+        genre_name?: string;
+        isbn?: string;
         /**
          * Which field to use when ordering the results.
          */
@@ -1975,10 +1980,18 @@ export type BooksListData = {
          * A page number within the paginated result set.
          */
         page?: number;
+        publisher?: number;
+        publisher_name?: string;
         /**
          * A search term.
          */
         search?: string;
+        shelf?: number;
+        shelf_name?: string;
+        topic?: string;
+        year?: number;
+        year_max?: number;
+        year_min?: number;
     };
     url: '/api/books/';
 };
@@ -2005,6 +2018,9 @@ export type BooksCreateResponse = BooksCreateResponses[keyof BooksCreateResponse
 export type BooksDestroyData = {
     body?: never;
     path: {
+        /**
+         * A UUID string identifying this book.
+         */
         id: string;
     };
     query?: never;
@@ -2023,6 +2039,9 @@ export type BooksDestroyResponse = BooksDestroyResponses[keyof BooksDestroyRespo
 export type BooksRetrieveData = {
     body?: never;
     path: {
+        /**
+         * A UUID string identifying this book.
+         */
         id: string;
     };
     query?: never;
@@ -2038,6 +2057,9 @@ export type BooksRetrieveResponse = BooksRetrieveResponses[keyof BooksRetrieveRe
 export type BooksPartialUpdateData = {
     body?: PatchedBookWritable;
     path: {
+        /**
+         * A UUID string identifying this book.
+         */
         id: string;
     };
     query?: never;
@@ -2053,6 +2075,9 @@ export type BooksPartialUpdateResponse = BooksPartialUpdateResponses[keyof Books
 export type BooksUpdateData = {
     body?: BookWritable;
     path: {
+        /**
+         * A UUID string identifying this book.
+         */
         id: string;
     };
     query?: never;
@@ -2073,6 +2098,9 @@ export type BooksIsbnUpdateUpdateData = {
         isbn?: string;
     };
     path: {
+        /**
+         * A UUID string identifying this book.
+         */
         id: string;
     };
     query?: never;
@@ -2286,6 +2314,9 @@ export type ImagesCreateResponse = ImagesCreateResponses[keyof ImagesCreateRespo
 export type ImagesDestroyData = {
     body?: never;
     path: {
+        /**
+         * A UUID string identifying this image.
+         */
         id: string;
     };
     query?: never;
@@ -2304,6 +2335,9 @@ export type ImagesDestroyResponse = ImagesDestroyResponses[keyof ImagesDestroyRe
 export type ImagesRetrieveData = {
     body?: never;
     path: {
+        /**
+         * A UUID string identifying this image.
+         */
         id: string;
     };
     query?: never;
@@ -2319,6 +2353,9 @@ export type ImagesRetrieveResponse = ImagesRetrieveResponses[keyof ImagesRetriev
 export type ImagesPartialUpdateData = {
     body?: PatchedImageWritable;
     path: {
+        /**
+         * A UUID string identifying this image.
+         */
         id: string;
     };
     query?: never;
@@ -2334,6 +2371,9 @@ export type ImagesPartialUpdateResponse = ImagesPartialUpdateResponses[keyof Ima
 export type ImagesUpdateData = {
     body: ImageWritable;
     path: {
+        /**
+         * A UUID string identifying this image.
+         */
         id: string;
     };
     query?: never;
@@ -2351,6 +2391,37 @@ export type ItemsListData = {
     path?: never;
     query?: {
         /**
+         * Category of the item
+         *
+         * * `books` - Books
+         * * `clothing` - Clothing
+         * * `electronics` - Electronics
+         * * `furniture` - Furniture
+         * * `garden` - Garden
+         * * `kitchen` - Kitchen
+         * * `other` - Other
+         * * `rooms` - Rooms
+         * * `sports` - Sports
+         * * `tools` - Tools
+         * * `toys` - Toys
+         * * `vehicles` - Vehicles
+         */
+        category?: 'books' | 'clothing' | 'electronics' | 'furniture' | 'garden' | 'kitchen' | 'other' | 'rooms' | 'sports' | 'tools' | 'toys' | 'vehicles';
+        /**
+         * Condition of the item
+         *
+         * * `0` - New
+         * * `1` - Used
+         * * `2` - Broken
+         */
+        conditions?: Array<0 | 1 | 2>;
+        created_after?: string;
+        created_before?: string;
+        max_rental_price?: number;
+        max_sale_price?: number;
+        min_rental_price?: number;
+        min_sale_price?: number;
+        /**
          * Which field to use when ordering the results.
          */
         ordering?: string;
@@ -2358,10 +2429,21 @@ export type ItemsListData = {
          * A page number within the paginated result set.
          */
         page?: number;
+        published?: boolean;
         /**
          * A search term.
          */
         search?: string;
+        /**
+         * * `0` - Draft
+         * * `1` - Processing
+         * * `2` - Available
+         * * `3` - Reserved
+         * * `4` - Rented
+         * * `5` - Sold
+         */
+        status?: Array<0 | 1 | 2 | 3 | 4 | 5>;
+        user?: string;
     };
     url: '/api/items/';
 };
@@ -2388,6 +2470,9 @@ export type ItemsCreateResponse = ItemsCreateResponses[keyof ItemsCreateResponse
 export type ItemsDestroyData = {
     body?: never;
     path: {
+        /**
+         * A UUID string identifying this item.
+         */
         id: string;
     };
     query?: never;
@@ -2406,6 +2491,9 @@ export type ItemsDestroyResponse = ItemsDestroyResponses[keyof ItemsDestroyRespo
 export type ItemsRetrieveData = {
     body?: never;
     path: {
+        /**
+         * A UUID string identifying this item.
+         */
         id: string;
     };
     query?: never;
@@ -2421,6 +2509,9 @@ export type ItemsRetrieveResponse = ItemsRetrieveResponses[keyof ItemsRetrieveRe
 export type ItemsPartialUpdateData = {
     body?: PatchedItemWritable;
     path: {
+        /**
+         * A UUID string identifying this item.
+         */
         id: string;
     };
     query?: never;
@@ -2436,6 +2527,9 @@ export type ItemsPartialUpdateResponse = ItemsPartialUpdateResponses[keyof Items
 export type ItemsUpdateData = {
     body?: ItemWritable;
     path: {
+        /**
+         * A UUID string identifying this item.
+         */
         id: string;
     };
     query?: never;
@@ -2451,6 +2545,9 @@ export type ItemsUpdateResponse = ItemsUpdateResponses[keyof ItemsUpdateResponse
 export type ItemsAiDescribeUpdateData = {
     body?: ItemWritable;
     path: {
+        /**
+         * A UUID string identifying this item.
+         */
         id: string;
     };
     query?: never;
@@ -2466,6 +2563,9 @@ export type ItemsAiDescribeUpdateResponse = ItemsAiDescribeUpdateResponses[keyof
 export type ItemsAiImageUpdateData = {
     body?: ItemWritable;
     path: {
+        /**
+         * A UUID string identifying this item.
+         */
         id: string;
     };
     query?: never;
@@ -2481,6 +2581,9 @@ export type ItemsAiImageUpdateResponse = ItemsAiImageUpdateResponses[keyof Items
 export type ItemsCoOwnersDestroyData = {
     body?: never;
     path: {
+        /**
+         * A UUID string identifying this item.
+         */
         id: string;
     };
     query?: never;
@@ -2499,6 +2602,9 @@ export type ItemsCoOwnersDestroyResponse = ItemsCoOwnersDestroyResponses[keyof I
 export type ItemsCoOwnersRetrieveData = {
     body?: never;
     path: {
+        /**
+         * A UUID string identifying this item.
+         */
         id: string;
     };
     query?: never;
@@ -2514,6 +2620,9 @@ export type ItemsCoOwnersRetrieveResponse = ItemsCoOwnersRetrieveResponses[keyof
 export type ItemsCoOwnersCreateData = {
     body?: ItemWritable;
     path: {
+        /**
+         * A UUID string identifying this item.
+         */
         id: string;
     };
     query?: never;
@@ -2529,6 +2638,9 @@ export type ItemsCoOwnersCreateResponse = ItemsCoOwnersCreateResponses[keyof Ite
 export type ItemsReorderImagesUpdateData = {
     body?: ItemWritable;
     path: {
+        /**
+         * A UUID string identifying this item.
+         */
         id: string;
     };
     query?: never;
@@ -2544,6 +2656,9 @@ export type ItemsReorderImagesUpdateResponse = ItemsReorderImagesUpdateResponses
 export type ItemsViewersDestroyData = {
     body?: never;
     path: {
+        /**
+         * A UUID string identifying this item.
+         */
         id: string;
     };
     query?: never;
@@ -2562,6 +2677,9 @@ export type ItemsViewersDestroyResponse = ItemsViewersDestroyResponses[keyof Ite
 export type ItemsViewersRetrieveData = {
     body?: never;
     path: {
+        /**
+         * A UUID string identifying this item.
+         */
         id: string;
     };
     query?: never;
@@ -2577,6 +2695,9 @@ export type ItemsViewersRetrieveResponse = ItemsViewersRetrieveResponses[keyof I
 export type ItemsViewersCreateData = {
     body?: ItemWritable;
     path: {
+        /**
+         * A UUID string identifying this item.
+         */
         id: string;
     };
     query?: never;
@@ -2828,6 +2949,37 @@ export type PublicItemsListData = {
     path?: never;
     query?: {
         /**
+         * Category of the item
+         *
+         * * `books` - Books
+         * * `clothing` - Clothing
+         * * `electronics` - Electronics
+         * * `furniture` - Furniture
+         * * `garden` - Garden
+         * * `kitchen` - Kitchen
+         * * `other` - Other
+         * * `rooms` - Rooms
+         * * `sports` - Sports
+         * * `tools` - Tools
+         * * `toys` - Toys
+         * * `vehicles` - Vehicles
+         */
+        category?: 'books' | 'clothing' | 'electronics' | 'furniture' | 'garden' | 'kitchen' | 'other' | 'rooms' | 'sports' | 'tools' | 'toys' | 'vehicles';
+        /**
+         * Condition of the item
+         *
+         * * `0` - New
+         * * `1` - Used
+         * * `2` - Broken
+         */
+        conditions?: Array<0 | 1 | 2>;
+        created_after?: string;
+        created_before?: string;
+        max_rental_price?: number;
+        max_sale_price?: number;
+        min_rental_price?: number;
+        min_sale_price?: number;
+        /**
          * Which field to use when ordering the results.
          */
         ordering?: string;
@@ -2835,10 +2987,21 @@ export type PublicItemsListData = {
          * A page number within the paginated result set.
          */
         page?: number;
+        published?: boolean;
         /**
          * A search term.
          */
         search?: string;
+        /**
+         * * `0` - Draft
+         * * `1` - Processing
+         * * `2` - Available
+         * * `3` - Reserved
+         * * `4` - Rented
+         * * `5` - Sold
+         */
+        status?: Array<0 | 1 | 2 | 3 | 4 | 5>;
+        user?: string;
     };
     url: '/api/public-items/';
 };
@@ -2852,6 +3015,9 @@ export type PublicItemsListResponse = PublicItemsListResponses[keyof PublicItems
 export type PublicItemsRetrieveData = {
     body?: never;
     path: {
+        /**
+         * A UUID string identifying this item.
+         */
         id: string;
     };
     query?: never;
