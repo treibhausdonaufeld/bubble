@@ -10,13 +10,14 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.urls import reverse
 from djmoney.money import Money
+from guardian.shortcuts import assign_perm
 from PIL import Image as PILImage
 from rest_framework import status
 from rest_framework.test import APIClient
 
 from bubble.core.permissions_config import DefaultGroup
 from bubble.items.ai.image_analyze import ItemImageResult
-from bubble.items.models import Image, Item, ItemStatus
+from bubble.items.models import Image, Item, ItemStatus, VisibilityType
 from bubble.items.tests.factories import ItemOwnerUserFactory
 from bubble.users.tests.factories import UserFactory
 
@@ -876,3 +877,203 @@ class AIDescribeItemTestCase(TestCase):
 
         # Verify analyze_image was not called
         mock_analyze_image.assert_not_called()
+
+
+class VisibilityFilterTestCase(TestCase):
+    """Test visibility-based filtering in PublicItemViewSet."""
+
+    def setUp(self):
+        self.client = APIClient()
+        self.owner = ItemOwnerUserFactory(
+            username="visowner", email="visowner@example.com", password=TEST_PASSWORD
+        )
+        self.auth_user = ItemOwnerUserFactory(
+            username="authuser", email="authuser@example.com", password=TEST_PASSWORD
+        )
+        self.url = reverse("api:public-item-list")
+
+        self.public_item = Item.objects.create(
+            name="Public Item",
+            user=self.owner,
+            status=ItemStatus.AVAILABLE,
+            visibility=VisibilityType.PUBLIC,
+            sale_price=Decimal("10.00"),
+        )
+        self.auth_item = Item.objects.create(
+            name="Auth Item",
+            user=self.owner,
+            status=ItemStatus.AVAILABLE,
+            visibility=VisibilityType.AUTHENTICATED,
+            sale_price=Decimal("10.00"),
+        )
+        self.specific_item = Item.objects.create(
+            name="Specific Item",
+            user=self.owner,
+            status=ItemStatus.AVAILABLE,
+            visibility=VisibilityType.SPECIFIC,
+            sale_price=Decimal("10.00"),
+        )
+        self.private_item = Item.objects.create(
+            name="Private Item",
+            user=self.owner,
+            status=ItemStatus.AVAILABLE,
+            visibility=VisibilityType.PRIVATE,
+            sale_price=Decimal("10.00"),
+        )
+
+    def _names(self, response):
+        return {item["name"] for item in response.json()["results"]}
+
+    def test_anonymous_sees_only_public(self):
+        response = self.client.get(self.url)
+        assert response.status_code == status.HTTP_200_OK
+        names = self._names(response)
+        assert self.public_item.name in names
+        assert self.auth_item.name not in names
+        assert self.specific_item.name not in names
+        assert self.private_item.name not in names
+
+    def test_authenticated_sees_public_and_authenticated(self):
+        self.client.force_authenticate(user=self.auth_user)
+        response = self.client.get(self.url)
+        assert response.status_code == status.HTTP_200_OK
+        names = self._names(response)
+        assert self.public_item.name in names
+        assert self.auth_item.name in names
+        assert self.specific_item.name not in names
+        assert self.private_item.name not in names
+
+    def test_specific_viewer_sees_specific_item(self):
+        assign_perm("items.view_item", self.auth_user, self.specific_item)
+        self.client.force_authenticate(user=self.auth_user)
+        response = self.client.get(self.url)
+        assert response.status_code == status.HTTP_200_OK
+        names = self._names(response)
+        assert self.specific_item.name in names
+
+    def test_authenticated_without_permission_cannot_see_specific(self):
+        self.client.force_authenticate(user=self.auth_user)
+        response = self.client.get(self.url)
+        assert response.status_code == status.HTTP_200_OK
+        names = self._names(response)
+        assert self.specific_item.name not in names
+
+    def test_co_owner_sees_private_item(self):
+        assign_perm("items.view_item", self.auth_user, self.private_item)
+        self.client.force_authenticate(user=self.auth_user)
+        response = self.client.get(self.url)
+        assert response.status_code == status.HTTP_200_OK
+        names = self._names(response)
+        assert self.private_item.name in names
+
+    def test_owner_sees_own_private_item_via_public_endpoint(self):
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.get(self.url)
+        assert response.status_code == status.HTTP_200_OK
+        names = self._names(response)
+        assert self.private_item.name in names
+
+
+class CoOwnersViewersTestCase(TestCase):
+    """Test co-owners and viewers custom actions on ItemViewSet."""
+
+    def setUp(self):
+        self.client = APIClient()
+        self.owner = ItemOwnerUserFactory(
+            username="coowner_owner",
+            email="coowner@example.com",
+            password=TEST_PASSWORD,
+        )
+        self.other_user = ItemOwnerUserFactory(
+            username="coowner_other",
+            email="other2@example.com",
+            password=TEST_PASSWORD,
+        )
+        self.item = Item.objects.create(
+            name="Managed Item",
+            user=self.owner,
+            status=ItemStatus.AVAILABLE,
+            visibility=VisibilityType.SPECIFIC,
+            sale_price=Decimal("10.00"),
+        )
+
+    def test_get_co_owners_returns_empty_initially(self):
+        self.client.force_authenticate(user=self.owner)
+        url = reverse("api:item-co-owners", kwargs={"id": self.item.id})
+        response = self.client.get(url)
+        assert response.status_code == status.HTTP_200_OK
+        data = response.json()
+        assert data["users"] == []
+        assert data["groups"] == []
+
+    def test_post_grants_co_owner(self):
+        self.client.force_authenticate(user=self.owner)
+        url = reverse("api:item-co-owners", kwargs={"id": self.item.id})
+        response = self.client.post(url, {"user": self.other_user.pk}, format="json")
+        assert response.status_code == status.HTTP_200_OK
+        get_response = self.client.get(url)
+        user_ids = [u["id"] for u in get_response.json()["users"]]
+        assert self.other_user.pk in user_ids
+
+    def test_delete_revokes_co_owner(self):
+        assign_perm("items.view_item", self.other_user, self.item)
+        assign_perm("items.change_item", self.other_user, self.item)
+        self.client.force_authenticate(user=self.owner)
+        url = reverse("api:item-co-owners", kwargs={"id": self.item.id})
+        response = self.client.delete(url, {"user": self.other_user.pk}, format="json")
+        assert response.status_code == status.HTTP_200_OK
+        get_response = self.client.get(url)
+        user_ids = [u["id"] for u in get_response.json()["users"]]
+        assert self.other_user.pk not in user_ids
+
+    def test_non_owner_gets_403_on_co_owners(self):
+        self.client.force_authenticate(user=self.other_user)
+        url = reverse("api:item-co-owners", kwargs={"id": self.item.id})
+        response = self.client.get(url)
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    def test_invalid_user_id_returns_404_on_co_owners(self):
+        self.client.force_authenticate(user=self.owner)
+        url = reverse("api:item-co-owners", kwargs={"id": self.item.id})
+        response = self.client.post(url, {"user": 99999}, format="json")
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    def test_get_viewers_returns_empty_initially(self):
+        self.client.force_authenticate(user=self.owner)
+        url = reverse("api:item-viewers", kwargs={"id": self.item.id})
+        response = self.client.get(url)
+        assert response.status_code == status.HTTP_200_OK
+        data = response.json()
+        assert data["users"] == []
+        assert data["groups"] == []
+
+    def test_post_grants_viewer(self):
+        self.client.force_authenticate(user=self.owner)
+        url = reverse("api:item-viewers", kwargs={"id": self.item.id})
+        response = self.client.post(url, {"user": self.other_user.pk}, format="json")
+        assert response.status_code == status.HTTP_200_OK
+        get_response = self.client.get(url)
+        user_ids = [u["id"] for u in get_response.json()["users"]]
+        assert self.other_user.pk in user_ids
+
+    def test_delete_revokes_viewer(self):
+        assign_perm("items.view_item", self.other_user, self.item)
+        self.client.force_authenticate(user=self.owner)
+        url = reverse("api:item-viewers", kwargs={"id": self.item.id})
+        response = self.client.delete(url, {"user": self.other_user.pk}, format="json")
+        assert response.status_code == status.HTTP_200_OK
+        get_response = self.client.get(url)
+        user_ids = [u["id"] for u in get_response.json()["users"]]
+        assert self.other_user.pk not in user_ids
+
+    def test_non_owner_gets_403_on_viewers(self):
+        self.client.force_authenticate(user=self.other_user)
+        url = reverse("api:item-viewers", kwargs={"id": self.item.id})
+        response = self.client.get(url)
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    def test_invalid_user_id_returns_404_on_viewers(self):
+        self.client.force_authenticate(user=self.owner)
+        url = reverse("api:item-viewers", kwargs={"id": self.item.id})
+        response = self.client.post(url, {"user": 99999}, format="json")
+        assert response.status_code == status.HTTP_404_NOT_FOUND

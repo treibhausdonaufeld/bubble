@@ -229,10 +229,11 @@ class Item(models.Model):
                 self.slug = f"{original_slug}-{counter}"
                 counter += 1
 
+        is_new = self._state.adding
         super().save(*args, **kwargs)
 
-        if self.user:
-            # give owner full object permissions on instance
+        if is_new and self.user:
+            # give owner full object permissions on instance (only on creation)
             app_label = self._meta.model._meta.app_label  # noqa: SLF001
             model_name = self._meta.model._meta.model_name  # noqa: SLF001
             assign_perm(f"{app_label}.view_{model_name}", self.user, obj=self)

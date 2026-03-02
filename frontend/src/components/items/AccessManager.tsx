@@ -12,21 +12,11 @@ import {
   itemsViewersRetrieve,
   usersList,
   VisibilityEnum,
+  type CoOwnersList,
 } from '@/services/django';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { X } from 'lucide-react';
 import { useState } from 'react';
-
-interface AccessEntry {
-  id: string | number;
-  username?: string;
-  name?: string;
-}
-
-interface AccessList {
-  users: AccessEntry[];
-  groups: AccessEntry[];
-}
 
 interface AccessManagerProps {
   itemId: string;
@@ -57,7 +47,7 @@ const AccessPanel = ({
 }: {
   title: string;
   description: string;
-  data: AccessList | undefined;
+  data: CoOwnersList | undefined;
   isLoading: boolean;
   onAddUser: (id: string | number) => void;
   onAddGroup: (id: string | number) => void;
@@ -70,19 +60,21 @@ const AccessPanel = ({
   const [groupSearch, setGroupSearch] = useState('');
 
   const { data: allUsers } = useQuery({
-    queryKey: ['users'],
+    queryKey: ['users', userSearch],
     queryFn: async () => {
       const res = await usersList();
       return res.data?.results ?? [];
     },
+    enabled: userSearch.length > 0,
   });
 
   const { data: allGroups } = useQuery({
-    queryKey: ['groups'],
+    queryKey: ['groups', groupSearch],
     queryFn: async () => {
       const res = await groupsList();
       return res.data?.results ?? [];
     },
+    enabled: groupSearch.length > 0,
   });
 
   const existingUserIds = new Set((data?.users ?? []).map(u => String(u.id)));
@@ -217,7 +209,7 @@ export const AccessManager = ({ itemId, visibility }: AccessManagerProps) => {
     queryKey: coOwnersKey,
     queryFn: async () => {
       const res = await itemsCoOwnersRetrieve({ path: { id: itemId } });
-      return (res.data ?? { users: [], groups: [] }) as AccessList;
+      return (res.data ?? { users: [], groups: [] }) as CoOwnersList;
     },
   });
 
@@ -225,7 +217,7 @@ export const AccessManager = ({ itemId, visibility }: AccessManagerProps) => {
     queryKey: viewersKey,
     queryFn: async () => {
       const res = await itemsViewersRetrieve({ path: { id: itemId } });
-      return (res.data ?? { users: [], groups: [] }) as AccessList;
+      return (res.data ?? { users: [], groups: [] }) as CoOwnersList;
     },
     // Only fetch viewers when visibility is SPECIFIC
     enabled: visibility === 2,
@@ -233,49 +225,49 @@ export const AccessManager = ({ itemId, visibility }: AccessManagerProps) => {
 
   const addCoOwnerUser = useMutation({
     mutationFn: (userId: string | number) =>
-      itemsCoOwnersCreate({ path: { id: itemId }, body: { user: userId } as any }),
+      itemsCoOwnersCreate({ path: { id: itemId }, body: { user: userId } }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: coOwnersKey }),
   });
 
   const removeCoOwnerUser = useMutation({
     mutationFn: (userId: string | number) =>
-      itemsCoOwnersDestroy({ path: { id: itemId }, body: { user: userId } as any }),
+      itemsCoOwnersDestroy({ path: { id: itemId }, body: { user: userId } }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: coOwnersKey }),
   });
 
   const addCoOwnerGroup = useMutation({
     mutationFn: (groupId: string | number) =>
-      itemsCoOwnersCreate({ path: { id: itemId }, body: { group: groupId } as any }),
+      itemsCoOwnersCreate({ path: { id: itemId }, body: { group: groupId } }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: coOwnersKey }),
   });
 
   const removeCoOwnerGroup = useMutation({
     mutationFn: (groupId: string | number) =>
-      itemsCoOwnersDestroy({ path: { id: itemId }, body: { group: groupId } as any }),
+      itemsCoOwnersDestroy({ path: { id: itemId }, body: { group: groupId } }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: coOwnersKey }),
   });
 
   const addViewerUser = useMutation({
     mutationFn: (userId: string | number) =>
-      itemsViewersCreate({ path: { id: itemId }, body: { user: userId } as any }),
+      itemsViewersCreate({ path: { id: itemId }, body: { user: userId } }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: viewersKey }),
   });
 
   const removeViewerUser = useMutation({
     mutationFn: (userId: string | number) =>
-      itemsViewersDestroy({ path: { id: itemId }, body: { user: userId } as any }),
+      itemsViewersDestroy({ path: { id: itemId }, body: { user: userId } }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: viewersKey }),
   });
 
   const addViewerGroup = useMutation({
     mutationFn: (groupId: string | number) =>
-      itemsViewersCreate({ path: { id: itemId }, body: { group: groupId } as any }),
+      itemsViewersCreate({ path: { id: itemId }, body: { group: groupId } }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: viewersKey }),
   });
 
   const removeViewerGroup = useMutation({
     mutationFn: (groupId: string | number) =>
-      itemsViewersDestroy({ path: { id: itemId }, body: { group: groupId } as any }),
+      itemsViewersDestroy({ path: { id: itemId }, body: { group: groupId } }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: viewersKey }),
   });
 
